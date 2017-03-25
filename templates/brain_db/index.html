@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}Brain DB{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid">
+    {% include '_flashmessages.html' %}
+    <div class="col-md-offset-3 col-md-6">
+        
+        <div class="jumbotron">
+            
+            {% if session.get('username') %}
+                
+                {% if not scan %}
+                    <h2 class="diplay-3">Welcome to MBAM</h2>
+                    <p class="lead">To get started, upload an MRI scan (if you already have one), 
+                    or complete a survey or psychophysics study.</p>
+                    <hr class="my-4">
+                    <p class="lead text-center">
+                        <a class="btn btn-default btn-lg" href="{{ url_for('upload') }}" role="button">Upload Scan</a>
+                        <a class="btn btn-default btn-lg" href="{{ url_for('study_index') }}" role="button">Conduct Study</a>
+                    </p>
+                {% else %}
+                    <h2 class="diplay-3">Welcome back</h2>
+                    <p class="lead">View your MRI scan and Z-map, or complete a survey or psychophysics study.</p>
+                    <hr class="my-4">
+                    <p class="lead text-center">
+                        <a class="btn btn-default btn-lg" href="{{ url_for('raw_view') }}" role="button">My Brain</a>
+                        <a class="btn btn-default btn-lg" href="{{ url_for('study_index') }}" role="button">Conduct Study</a>
+                    </p>
+                {% endif %}
+                
+            {% else %}
+                <h1 class="diplay-3">MBAM</h1>
+                <p class="lead">Lorem ipsum dolor sit amet, consectetuer adipiscing elit,
+                sed diam nonummy nibh euismod tincidunt ut laoreet dolore
+                magna aliquam erat volutpat.</p>
+                <hr class="my-4">
+                <p class="lead text-center">
+                    <a class="btn btn-default btn-lg" href="{{ url_for('register') }}" role="button">Register</a>
+                    <a class="btn btn-default btn-lg" href="{{ url_for('login') }}" role="button">Login</a>
+                </p>
+            {% endif %}
+        </div>
+        
+        {% if counts %}
+        <div class="row col-md-offset-1 col-md-9">
+            <ul class="list-group center">
+                <a class="list-group-item" href="#"><i class="fa fa-database" aria-hidden="true"></i>&nbsp; <strong>{{ counts.seed }}</strong> brains in the seed database so far!</a>
+                <a class="list-group-item" href="#"><i class="fa fa-users" aria-hidden="true"></i>&nbsp; <strong>{{ counts.user }}</strong> brains submitted so far!</a>
+            </ul>
+        </div>
+        {% endif %}
+    </div>
+</div>
+</div>
+
+{% endblock %}

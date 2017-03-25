@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}{{ images.title }}{% endblock %}
+
+{% block content %}
+
+<div class="container">
+    {% include '_flashmessages.html' %}
+    <div class="col-md-2">
+        <h3></h3>
+        <ul class="list-group center">
+            <h3>MRI Views</h3>
+            <a class="list-group-item text-center" href="{{ url_for('raw_view') }}"><strong>Raw</strong></a>
+            <a class="list-group-item text-center" href="{{ url_for('raw_zscore_view') }}"><strong>Raw + Z-map</strong></a>
+            <a class="list-group-item text-center" href="{{ url_for('mni_view') }}"><strong>Std</strong></a>
+            <a class="list-group-item text-center" href="{{ url_for('mni_zscore_view') }}"><strong>Std + Z-map</strong></a>
+            <h3>Predictions</h3>
+            <a class="list-group-item text-center" href="{{ url_for('predict',trait='age') }}"><strong>BrainAGE.</strong></a>
+            <a class="list-group-item text-center" href="{{ url_for('predict',trait='sex') }}"><strong>BrainSEX.</strong></a>
+        </ul>
+    </div>
+    
+    <div class="col-md-8">
+       
+        <footer>
+            <div class="pull-left bottom-align-text">
+                <strong style="font-size:18px">{{ images.title }}</strong>
+            </div>
+            <div class="pull-right bottom-align-text">
+                <ul class="list-inline">
+                    <li><a href = "{{ url_for('edit',user_id=session.get('user_id')) }}">Edit or Replace Scan</a></li>
+                    <li><a href = "{{ url_for('delete',user_id=session.get('user_id')) }}">Delete Scan</a></li>
+                </ul>
+            </div>
+        </footer>
+
+       
+        {% if images.template_url %}
+            <div class="papaya" data-params="params"></div>
+        {% elif images.age_distro %}
+            <div class="text-center">
+                <img src="{{ images.age_distro }}" class="rounded img-responsive">
+            </div>
+        {% elif images.sex_distro %}
+            <div class="text-center">
+                <img src="{{ images.sex_distro }}" class="rounded img-responsive">
+            </div>
+        {% endif %}
+        
+        <br>
+
+  </div>  
+</div>
+
+{% if images.template_url %}
+  
+    <script type="text/javascript">
+        var params = [];
+        params["worldSpace"] = true;
+        
+        if("{{ images.overlay_url }}" != "None") {
+            params["images"] = ["{{ images.template_url }}", "{{ images.overlay_url }}"];
+            params["{{ images.overlay_base }}"] = {"min": 1.96, "max": 8};
+        } else {
+            params["images"] = ["{{ images.template_url }}"];
+        }
+        
+        // test if the template is MNI base
+        if("{{ images.template_base }}" == "MNI152_T1_1.5mm.nii.gz") {
+            params["{{ images.template_base }}"] = {"min": 0, "max": 8000};
+        } else {
+            // Here set custom range for subject's own T1. Maybe need to rescale during preprocessing
+            params["{{ images.template_base }}"] = {"min": 0, "max": 200};
+        }
+        
+        // # Here set parameters for the UI 
+        params["kioskMode"] = true; //this will remove file, edit, settings from the top
+        params["showControlBar"] = true;
+        params["atlas"] = "MNI (Nearest Grey Matter)";
+        params["atlasURL"]="{{ url_for('static', filename='papaya/build/data/Talairach_labels_1mm.nii.gz') }}"
+    </script>
+{% endif %}
+
+
+{% endblock %}

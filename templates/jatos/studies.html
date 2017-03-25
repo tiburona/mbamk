@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}Available Experiments{% endblock %}
+
+{% block content %}
+
+<div class="row">
+    
+    <div class="col-md-offset-3 col-md-6">
+        
+        {% include '_flashmessages.html' %}
+        
+        <h1><a href="{{ url_for('study_index') }}">Experiment List</a></h1>
+        
+        <div class = "post-list">
+        
+            {% for study in studies.items %}
+            <div class = "row post-item">
+                <div class="col-md-9">
+                    <h4><a href="{{ url_for('study',study_id=study.id) }}">{{ study.title }}</a></h4>
+                    <div class="text-muted">Completed by <a href="#">{{ session['username'] }}</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="post-paginate">
+            {% if studies.has_prev %}
+            <a href="{{ url_for('study_index', page=studies.prev_num) }}">&lt;&lt; Newer Scans</a>
+            {% else %}
+            &lt;&lt; Newer scans
+            {% endif %} |
+            
+            {% if studies.has_next %}
+            <a href="{{ url_for('study_index', page=studies.next_num) }}">Older Scans &gt;&gt; </a>
+            {% else %}
+            Older Scans &gt;&gt; 
+            {% endif %}
+        </div>
+        
+    </div>
+</div>
+
+{% endblock %}
