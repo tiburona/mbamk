@@ -1,11 +1,15 @@
 First step is deploy the flask app from github repo. 
+
 $ git clone https://github.com/spiropan/flask_brain_db
 
 Clone this repo to your local machine. In the top level directory, create a virtual environment:
+
 $ virtualenv venv
+
 $ source venv/bin/activate
 
 Now install the required modules:
+
 $ pip install -r requirements.txt
 
 Download and install Jatos from https://github.com/JATOS/JATOS/releases
