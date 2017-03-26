@@ -17,7 +17,6 @@ https://github.com/JATOS/JATOS/releases
 Unzip and cd into folder (i.e. jatos-2.2.4_linux_java).
 Modify the conf/production.conf file to include:
 # Database configuration - MySQL database
-# ~~~~~
 db.default.url="jdbc:mysql://localhost/brain_db?characterEncoding=UTF-8"
 db.default.username='mbam'
 db.default.driver=com.mysql.jdbc.Driver
