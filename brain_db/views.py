@@ -26,17 +26,19 @@ SCANS_PER_PAGE = 10
 @app.route('/')
 @app.route('/index')
 def index():
-    if session['user_id']:
+    if session['logged_in']:
         user_id=session['user_id']
         scan=Scan.query.filter_by(user_id=user_id).first()
         # Here assign value to session indicating whether user has uploaded scan or not
         if scan:
             session['scan_uploaded']=True
         else:
-            session['scan_uploaded']="Test"
+            session['scan_uploaded']=None
         counts=None
     else:
+        print "ok here"
         counts = get_db_counts()
+        scan=None
     return render_template('brain_db/index.html', scan=scan,counts=counts)
  
 @app.route('/admin')
@@ -545,7 +547,7 @@ def predict(trait):
     EXPERIMENT=SUBJECT + "_MR1"
     SCAN='*' # Need to change so can find scan by scan type
          
-    calculate=1 # for now recalculate each time
+    calculate=0 # for now recalculate each time
     
     predict_file = bdir + 'data/' + SUBJECT + '/' + EXPERIMENT + '/age_sex_predictions.json'
     predict_url  = url_bdir + 'data/' + SUBJECT + '/' + EXPERIMENT + '/age_sex_predictions.json'

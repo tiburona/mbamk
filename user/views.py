@@ -23,6 +23,7 @@ def login():
                 session['username'] = form.username.data
                 session['is_author'] = user.is_author
                 session['user_id'] = user.id
+                session['logged_in'] = True
                 flash("User %s logged in" % form.username.data)
                 if 'next' in session:
                     next = session.get('next')
@@ -78,5 +79,6 @@ def register():
 def logout():
     session.pop('username')
     session.pop('is_author')
+    session['logged_in'] = False
     flash("User logged out")
     return redirect(url_for('index'))

@@ -1,7 +1,7 @@
 import pyxnat
 import collections
 
-xnat = pyxnat.Interface(config="/home/ubuntu/workspace/flask_brain_db/mind-xnat.cfg")
+xnat = pyxnat.Interface(config="mind-xnat.cfg")
 seed_projects=['IXI'] # Here will add additional projects
 user_project=['MBAM_TEST']
 
