@@ -3,7 +3,7 @@ import os
 SECRET_KEY='you-will-never-guess'
 DEBUG = True
 
-DB_USERNAME = 'spiropan'
+DB_USERNAME = 'mbam'
 DB_PASSWORD = ''
 BRAIN_DATABASE_NAME = 'brain_db'
 #BRAIN_DATABASE_NAME2 = 'jatos'
