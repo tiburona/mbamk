@@ -5,3 +5,11 @@ https://www.digitalocean.com/community/tutorials/how-to-serve-flask-applications
 https://hub.docker.com/r/danriti/nginx-gunicorn-flask/~/dockerfile/
 
 **https://medium.com/@pvs/containerized-micro-services-in-python-d140ea3f6420**
+
+https://realpython.com/blog/python/dockerizing-flask-with-compose-and-machine-from-localhost-to-the-cloud/
+
+https://hub.docker.com/r/laztoum/flask-gunicorn-nginx/
+
+**http://www.patricksoftwareblog.com/how-to-use-docker-and-docker-compose-to-create-a-flask-application/**
+
+https://www.digitalocean.com/community/tutorials/how-to-configure-a-continuous-integration-testing-environment-with-docker-and-docker-compose-on-ubuntu-14-04
