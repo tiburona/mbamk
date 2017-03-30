@@ -46,6 +46,9 @@ services:
    volumes:
      - data:/var/lib/mysql
    ports:
+<<<<<<< HEAD
+     - "3306:3306"
+=======
      - "3306:3306"
    environment:
        MYSQL_DATABASE: "brain_db"
@@ -55,3 +58,4 @@ services:
 
 volumes:
    data:
+>>>>>>> f9a82267981ac53ad7164cebfe8586c9462cef0a
