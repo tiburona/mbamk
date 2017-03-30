@@ -11,7 +11,21 @@ services:
    command: /usr/local/bin/gunicorn -w 2 -b :8000 wsgi:app
    depends_on:
      - mysql
- 
+   
+ jatos:
+   restart: always
+   build: ./jatos
+   expose:
+    - "9000"
+   depends_on:
+    - mysql   
+   environment:
+       JATOS_DB_URL: "jdbc:mysql://mysql/brain_db?characterEncoding=UTF-8"
+       JATOS_DB_USERNAME: "mbam"
+       JATOS_DB_PASSWORD: "mbam123"
+       JATOS_DB_DRIVER: "com.mysql.jdbc.Driver"
+       JATOS_JPA: "mysqlPersistenceUnit"
+
  nginx:
    restart: always
    build: ./nginx
@@ -24,16 +38,24 @@ services:
    depends_on:
      - web
  
- data:
-   image: mysql:5.7
-   volumes:
-     - /var/lib/mysql
-   command: "true"
- 
  mysql:
+   container_name: mbam_mysql
    restart: always
+   image: mysql:5.7
    build: ./mysql
-   volumes_from:
-     - data
+   volumes:
+     - data:/var/lib/mysql
    ports:
+<<<<<<< HEAD
      - "3306:3306"
+=======
+     - "3306:3306"
+   environment:
+       MYSQL_DATABASE: "brain_db"
+       MYSQL_ROOT_PASSWORD: "test"
+       MYSQL_USER: "mbam"
+       MYSQL_PASSWORD: "mbam123"
+
+volumes:
+   data:
+>>>>>>> f9a82267981ac53ad7164cebfe8586c9462cef0a
