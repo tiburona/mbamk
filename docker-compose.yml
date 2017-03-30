@@ -12,6 +12,20 @@ services:
    depends_on:
      - mysql
    
+ jatos:
+   restart: always
+   build: ./jatos
+   expose:
+    - "9000"
+   depends_on:
+    - mysql   
+   environment:
+       JATOS_DB_URL: "jdbc:mysql://mysql/brain_db?characterEncoding=UTF-8"
+       JATOS_DB_USERNAME: "mbam"
+       JATOS_DB_PASSWORD: "mbam123"
+       JATOS_DB_DRIVER: "com.mysql.jdbc.Driver"
+       JATOS_JPA: "mysqlPersistenceUnit"
+
  nginx:
    restart: always
    build: ./nginx
@@ -25,7 +39,7 @@ services:
      - web
  
  mysql:
-   container_name: flask_mysql
+   container_name: mbam_mysql
    restart: always
    image: mysql:5.7
    build: ./mysql
