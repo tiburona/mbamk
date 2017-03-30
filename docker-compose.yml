@@ -36,4 +36,4 @@ services:
    volumes_from:
      - data
    ports:
-     - "3307:3307"
+     - "3306:3306"
