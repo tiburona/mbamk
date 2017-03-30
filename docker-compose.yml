@@ -11,7 +11,7 @@ services:
    command: /usr/local/bin/gunicorn -w 2 -b :8000 wsgi:app
    depends_on:
      - mysql
- 
+   
  nginx:
    restart: always
    build: ./nginx
@@ -24,16 +24,20 @@ services:
    depends_on:
      - web
  
- data:
-   image: mysql:5.7
-   volumes:
-     - /var/lib/mysql
-   command: "true"
- 
  mysql:
+   container_name: flask_mysql
    restart: always
+   image: mysql:5.7
    build: ./mysql
-   volumes_from:
-     - data
+   volumes:
+     - data:/var/lib/mysql
    ports:
-     - "3307:3307"
+     - "3306:3306"
+   environment:
+       MYSQL_DATABASE: "brain_db"
+       MYSQL_ROOT_PASSWORD: "test"
+       MYSQL_USER: "mbam"
+       MYSQL_PASSWORD: "mbam123"
+
+volumes:
+   data:
