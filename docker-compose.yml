@@ -8,9 +8,9 @@ services:
      - "8000"
    volumes:
      - /usr/src/app/flask_brain_db/static
-   command: /usr/local/bin/gunicorn -w 2 -b :8000 wsgi:app
+   command: bash -c "python manage.py db upgrade && /usr/local/bin/gunicorn -w 2 -b :8000 wsgi:app"
    depends_on:
-     - mysql
+     - jatos
    
  jatos:
    restart: always
