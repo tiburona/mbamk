@@ -50,3 +50,7 @@ In MySQL brain_db database there should now be all required tables
 
 Now can start the application using
 $ python manage.py runserver
+
+
+# To run on local MAC OSX and get mail to work follow these instructions
+http://www.developerfiles.com/how-to-send-emails-from-localhost-mac-os-x-el-capitan/
