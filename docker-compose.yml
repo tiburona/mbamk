@@ -4,11 +4,10 @@ services:
  web:
    restart: always
    build: ./web
-   expose:
-     - "8000"
    volumes:
      - /usr/src/app/flask_brain_db/static
-   command: bash -c "python manage.py db upgrade && /usr/local/bin/gunicorn -w 2 -b :8000 wsgi:app"
+     - /etc/letsencrypt:/etc/letsencrypt
+   command: bash -c "sleep 10 && python manage.py db upgrade && /usr/local/bin/gunicorn -w 2 -b :8000 wsgi:app"
    depends_on:
      - jatos
    
@@ -31,6 +30,7 @@ services:
    build: ./nginx
    ports:
      - "80:80"
+     - "443:443"
    volumes:
      - /www/static
    volumes_from:
@@ -42,7 +42,7 @@ services:
    restart: always
    build: ./mysql
    volumes:
-     - data:/var/lib/mysql
+     - /var/lib/mysql:/var/lib/mysql
    ports:
      - "3306:3306"
    environment:
@@ -50,7 +50,4 @@ services:
        MYSQL_ROOT_PASSWORD: "test"
        MYSQL_USER: "mbam"
        MYSQL_PASSWORD: "mbam123"
-
-volumes:
-   data:
 
