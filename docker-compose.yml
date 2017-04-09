@@ -39,9 +39,7 @@ services:
      - web
  
  mysql:
-   container_name: mbam_mysql
    restart: always
-   image: mysql:5.7
    build: ./mysql
    volumes:
      - data:/var/lib/mysql
