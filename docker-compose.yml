@@ -33,6 +33,7 @@ services:
      - "443:443"
    volumes:
      - /www/static
+     - /www/public
    volumes_from:
      - web
    depends_on:
