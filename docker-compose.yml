@@ -53,11 +53,11 @@ services:
        MYSQL_USER: "mbam"
        MYSQL_PASSWORD: "mbam123"
        
- volumes:
-   # Below will map local path (/var/lib/mysql) to docker volume
-   mysql-data:/var/lib/mysql
-   ssl-cert:/etc/letsencrypt
-   web-static:./web/flask_brain_db/static
+volumes:
+  # Below will map local path (/var/lib/mysql) to docker volume
+  mysql-data:/var/lib/mysql
+  ssl-cert:/etc/letsencrypt
+  web-static:./web/flask_brain_db/static
    
    
 
