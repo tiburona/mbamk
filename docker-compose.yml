@@ -34,8 +34,8 @@ services:
    volumes:
      - /www/static
      - /www/public
-     web-static
-     ssl-cert
+     - web-static
+     - ssl-cert
    depends_on:
      - web
  
