@@ -1,4 +1,4 @@
-version: '2'
+version: '3'
  
 services:
  web:
@@ -34,8 +34,8 @@ services:
    volumes:
      - /www/static
      - /www/public
-   volumes_from:
-     - web
+     - /usr/src/app/flask_brain_db/static
+     - /etc/letsencrypt:/etc/letsencrypt
    depends_on:
      - web
  
