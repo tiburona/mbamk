@@ -5,7 +5,7 @@ services:
    restart: always
    build: ./web
    volumes:
-     - /usr/src/app/flask_brain_db/static
+     - web-static:/usr/src/app/flask_brain_db/static
      - /etc/letsencrypt:/etc/letsencrypt
    command: bash -c "sleep 10 && python manage.py db upgrade && /usr/local/bin/gunicorn -w 2 -b :8000 wsgi:app"
    depends_on:
@@ -17,7 +17,9 @@ services:
    expose:
     - "9000"
    depends_on:
-    - mysql   
+    - mysql  
+   volumes:
+    - jatos-data:/opt/docker
    environment:
        JATOS_DB_URL: "jdbc:mysql://mysql/brain_db?characterEncoding=UTF-8"
        JATOS_DB_USERNAME: "mbam"
@@ -34,7 +36,7 @@ services:
    volumes:
      - /www/static
      - /www/public
-     - /usr/src/app/flask_brain_db/static
+     - web-static:/usr/src/app/flask_brain_db/static
      - /etc/letsencrypt:/etc/letsencrypt
    depends_on:
      - web
@@ -52,3 +54,6 @@ services:
        MYSQL_USER: "mbam"
        MYSQL_PASSWORD: "mbam123"
 
+volumes:
+  jatos-data:
+  web-static:
