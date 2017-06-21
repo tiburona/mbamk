@@ -5,8 +5,8 @@ services:
    restart: always
    build: ./web
    volumes:
-     - /usr/src/app/flask_brain_db/static
-     - /etc/letsencrypt:/etc/letsencrypt
+     - web-static:/usr/src/app/flask_brain_db/static
+     - ssl-cert:/etc/letsencrypt
    command: bash -c "sleep 10 && python manage.py db upgrade && /usr/local/bin/gunicorn -w 2 -b :8000 wsgi:app"
    depends_on:
      - jatos
@@ -43,7 +43,8 @@ services:
    restart: always
    build: ./mysql
    volumes:
-     - /var/lib/mysql:/var/lib/mysql
+       # Below will map named volume to container path
+     - mysql-data:/var/lib/mysql
    ports:
      - "3306:3306"
    environment:
@@ -51,4 +52,12 @@ services:
        MYSQL_ROOT_PASSWORD: "test"
        MYSQL_USER: "mbam"
        MYSQL_PASSWORD: "mbam123"
+       
+volumes:
+  # Below will map local path (/var/lib/mysql) to docker volume
+  mysql-data:/var/lib/mysql
+  ssl-cert:/etc/letsencrypt
+  web-static:./web/flask_brain_db/static
+   
+   
 
