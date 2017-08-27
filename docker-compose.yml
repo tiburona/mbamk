@@ -5,7 +5,7 @@ services:
    restart: always
    build: ./web
    volumes:
-     - web-static:/usr/src/app/flask_brain_db/static
+     - web-data:/usr/src/app/flask_brain_db/static/images/data
      - /etc/letsencrypt:/etc/letsencrypt
    command: bash -c "sleep 10 && python manage.py db upgrade && /usr/local/bin/gunicorn -w 2 -b :8000 wsgi:app"
    depends_on:
@@ -36,7 +36,7 @@ services:
    volumes:
      - /www/static
      - /www/public
-     - web-static:/usr/src/app/flask_brain_db/static
+     - web-data:/usr/src/app/flask_brain_db/static/images/data
      - /etc/letsencrypt:/etc/letsencrypt
    depends_on:
      - web
@@ -56,4 +56,4 @@ services:
 
 volumes:
   jatos-data:
-  web-static:
+  web-data:
