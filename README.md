@@ -54,3 +54,18 @@ $ python manage.py runserver
 
 # To run on local MAC OSX and get mail to work follow these instructions
 http://www.developerfiles.com/how-to-send-emails-from-localhost-mac-os-x-el-capitan/
+
+#############################################################################
+# Common error messages and short term fixes:
+1) sqlalchemy.exc.InternalError: (pymysql.err.InternalError) (1050, u"Table 'role' already exists") [SQL: u'\nCREATE TABLE `role` (\n\tid INTEGER NOT NULL AUTO_INCREMENT, \n\tname VARCHAR(80), \n\tdescription VARCHAR(255), \n\tPRIMARY KEY (id), \n\tUNIQUE (name)\n)\n\n']
+
+BELOW MYSQL COMMAND WILL FIX ABOVE ERROR MESSAGE:
+INSERT INTO alembic_version (version_num) VALUES ('a78d98748544');
+
+2) nginx_1  | 2017/09/15 19:24:16 [error] 5#5: *1 open() "/usr/src/app/flask_brain_db/static/papaya/build/papaya.css" failed (2: No such file or directory), client: 79.129.130.214, server: dev.mybrainandme.org, request: "GET /static/papaya/build/papaya.css HTTP/1.1", host: "dev.mybrainandme.org", referrer: "https://dev.mybrainandme.org/"
+
+3) For now to switch between production and staging need to uncomment line in the nginx/Dockerfile. Is there a better solution??
+
+4) To add SSL to new server must run the four lines of code from the 'deployment_notes.md' to run letsencrypt. Is there a way to add an automation script that will check for 
+a certificate, and if not available install, or if expired, renew?
+
