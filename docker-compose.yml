@@ -36,7 +36,7 @@ services:
      - "443:443"
    volumes:
      - ./web/flask_brain_db/static:/usr/src/app/flask_brain_db/static
-     - web-data:/usr/src/app/flask_brain_db/static/images/data
+    # - web-data:/usr/src/app/flask_brain_db/static/images/data
      - /etc/letsencrypt:/etc/letsencrypt
    depends_on:
      - web
