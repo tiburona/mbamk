@@ -32,5 +32,5 @@ $ sudo git clone https://github.com/letsencrypt/letsencrypt
 
 $ cd letsencrypt
 
-$ sudo ./letsencrypt-auto certonly --standalone --renew-by-default --email spiropan@gmail.com -d www.mybrainandme.org -d mybrainandme.org
+$ sudo ./letsencrypt-auto certonly --standalone --renew-by-default --email spiropan@gmail.com -d www.mybrainandme.org -d mybrainandme.org -d jatos.mybrainandme.org -d dev.mybrainandme.org -d dev.jatos.mybrainandme.org
 
