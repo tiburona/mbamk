@@ -64,8 +64,17 @@ INSERT INTO alembic_version (version_num) VALUES ('a78d98748544');
 
 2) nginx_1  | 2017/09/15 19:24:16 [error] 5#5: *1 open() "/usr/src/app/flask_brain_db/static/papaya/build/papaya.css" failed (2: No such file or directory), client: 79.129.130.214, server: dev.mybrainandme.org, request: "GET /static/papaya/build/papaya.css HTTP/1.1", host: "dev.mybrainandme.org", referrer: "https://dev.mybrainandme.org/"
 
+TO FIX THIS BE SURE TO BIND MAP (OR LATER COPY FILES IN THE DOCKERFILE) FROM ./web/flask_brain_db/static:/usr/src/app/flask_brain_db/static ONLY UNDER THE
+NGINX SERVICE, AND *NOT* UNDER THE WEB SERVICE
+
 3) For now to switch between production and staging need to uncomment line in the nginx/Dockerfile. Is there a better solution??
 
 4) To add SSL to new server must run the four lines of code from the 'deployment_notes.md' to run letsencrypt. Is there a way to add an automation script that will check for 
 a certificate, and if not available install, or if expired, renew?
 
+5) Automate setting up SMTP on the new Digital Ocean Droplet's? Follow below links:
+https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-postfix-as-a-send-only-smtp-server-on-ubuntu-14-04
+https://accounts.google.com/b/0/DisplayUnlockCaptcha
+
+6) Set up .htpasswd to restict access to the development site:
+https://www.digitalocean.com/community/tutorials/how-to-set-up-password-authentication-with-nginx-on-ubuntu-14-04
