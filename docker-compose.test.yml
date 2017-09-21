@@ -3,10 +3,8 @@ version: '3'
 services:
  sut:
    build: ./web
-   dockerfile: Dockerfile.test
-   links:
-     - web
-     
+   command: bash -c "cd /usr/src/app/flask_brain_db/ && python test.py" 
+  
  web:
    restart: always
    build: ./web
