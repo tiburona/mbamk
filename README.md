@@ -78,3 +78,8 @@ https://accounts.google.com/b/0/DisplayUnlockCaptcha
 
 6) Set up .htpasswd to restict access to the development site:
 https://www.digitalocean.com/community/tutorials/how-to-set-up-password-authentication-with-nginx-on-ubuntu-14-04
+
+
+Useful tool to convert MySQL tables to SQLAlchemy code: 
+sqacodegen. I used this to easily model the Jatos (v2 and v3) database in SQLAlchemy. 
+https://pypi.python.org/pypi/sqlacodegen
