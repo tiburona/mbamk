@@ -5,7 +5,7 @@ services:
    restart: always
    build: ./web
    volumes:
-     - web-data:/usr/src/app/flask_brain_db/static/images/data
+     - user-data:/usr/src/app/flask_brain_db/static/images/data
      - /etc/letsencrypt:/etc/letsencrypt
    command: bash -c "sleep 10 && python manage.py db upgrade && /usr/local/bin/gunicorn -w 2 -b :8000 wsgi:app"
    depends_on:
@@ -35,7 +35,7 @@ services:
      - "443:443"
    volumes:
      - ./web/flask_brain_db/static:/usr/src/app/flask_brain_db/static
-     - web-data:/usr/src/app/flask_brain_db/static/images/data
+     - user-data:/usr/src/app/flask_brain_db/static/images/data
      - /etc/letsencrypt:/etc/letsencrypt
    depends_on:
      - web
@@ -44,7 +44,7 @@ services:
    restart: always
    build: ./mysql
    volumes:
-     - /var/lib/mysql:/var/lib/mysql
+     - mysql-data:/var/lib/mysql
    ports:
      - "3306:3306"
    environment:
@@ -55,4 +55,5 @@ services:
 
 volumes:
   jatos-data:
-  web-data:
+  user-data:
+  mysql-data:
