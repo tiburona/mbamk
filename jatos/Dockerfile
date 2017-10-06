@@ -1,1 +1,1 @@
-FROM jatos/jatos:2.2.4
+FROM jatos/jatos:3.1.8
