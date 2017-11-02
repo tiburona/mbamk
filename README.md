@@ -87,3 +87,6 @@ https://pypi.python.org/pypi/sqlacodegen
 Command to provision DO droplet using docker-machine:
 $ docker-machine create --driver=digitalocean --digitalocean-access-token=$DO_TOKEN --digitalocean-size=1gb blog
 
+To set up separate MySQL DO Droplet follow:
+https://www.digitalocean.com/community/tutorials/how-to-set-up-a-remote-database-to-optimize-site-performance-with-mysql
+
