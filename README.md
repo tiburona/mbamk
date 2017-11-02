@@ -83,3 +83,7 @@ https://www.digitalocean.com/community/tutorials/how-to-set-up-password-authenti
 Useful tool to convert MySQL tables to SQLAlchemy code: 
 sqacodegen. I used this to easily model the Jatos (v2 and v3) database in SQLAlchemy. 
 https://pypi.python.org/pypi/sqlacodegen
+
+Command to provision DO droplet using docker-machine:
+$ docker-machine create --driver=digitalocean --digitalocean-access-token=$DO_TOKEN --digitalocean-size=1gb blog
+
