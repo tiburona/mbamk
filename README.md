@@ -87,9 +87,19 @@ https://pypi.python.org/pypi/sqlacodegen
 #Commands to provision DO droplet using docker-machine:
 $ docker-machine create --driver=digitalocean --digitalocean-access-token=$DO_TOKEN --digitalocean-size=1gb blog
 
+To create user and add to sudoers follow:
+https://www.digitalocean.com/community/tutorials/how-to-create-a-sudo-user-on-ubuntu-quickstart
+
+To set up SSH keys on docker-machine provisioned DO droplets follow:
+Add the public keys from MacBook Air (id_rsa.pub) and from home computer (do_key_public) to the authorized_keys in each DO droplet
+https://askubuntu.com/questions/466549/bash-home-user-ssh-authorized-keys-no-such-file-or-directory
+
+
+https://askubuntu.com/questions/466549/bash-home-user-ssh-authorized-keys-no-such-file-or-directory
+
+
 To set up separate MySQL DO Droplet follow:
 https://www.digitalocean.com/community/tutorials/how-to-set-up-a-remote-database-to-optimize-site-performance-with-mysql
 
-Add the public keys from MacBook Air and from home computer
-https://askubuntu.com/questions/466549/bash-home-user-ssh-authorized-keys-no-such-file-or-directory
+
 
