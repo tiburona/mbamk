@@ -29,7 +29,10 @@ services:
 
  nginx:
    restart: always
-   build: ./nginx
+   build:
+     context: ./nginx
+     args:
+       - NGINX_CONFIG_FILE=${NGINX_CONFIG_FILE}
    ports:
      - "80:80"
      - "443:443"
