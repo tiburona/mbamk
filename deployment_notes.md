@@ -34,3 +34,6 @@ $ cd letsencrypt
 
 $ sudo ./letsencrypt-auto certonly --standalone --renew-by-default --email spiropan@gmail.com -d www.mybrainandme.org -d mybrainandme.org -d jatos.mybrainandme.org -d dev.mybrainandme.org -d dev.jatos.mybrainandme.org
 
+$ to rebuild only a single service 
+$ docker-compose up -d --no-deps --build <service_name>
+
