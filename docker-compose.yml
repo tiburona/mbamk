@@ -4,6 +4,8 @@ services:
  web:
    restart: always
    build: ./web
+   env_file:
+     - app_config.env
    volumes:
      - user-data:/usr/src/app/flask_brain_db/static/images/data
      - /etc/letsencrypt:/etc/letsencrypt
