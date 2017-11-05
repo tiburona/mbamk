@@ -1,2 +1,8 @@
-./app_config.env
-./.env
+*.pyc
+
+/app_config.env
+/.env
+/web/flask_brain_db/app_config.py
+/web/venv/
+/web/flask_brain_db/xnat.cfg
+/web/flask_brain_db/xnat_c9.cfg
