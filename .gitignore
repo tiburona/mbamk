@@ -1,6 +1,7 @@
 *.pyc
 
 /app_config.env
+/jatos_config.env
 /.env
 /web/flask_brain_db/app_config.py
 /web/venv/

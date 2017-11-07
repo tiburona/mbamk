@@ -22,12 +22,8 @@ services:
     - mysql  
    volumes:
     - jatos-data:/opt/docker
-   environment:
-       JATOS_DB_URL: "jdbc:mysql://mysql/brain_db?characterEncoding=UTF-8&useSSL=false"
-       JATOS_DB_USERNAME: "mbam"
-       JATOS_DB_PASSWORD: "mbam123"
-       JATOS_DB_DRIVER: "com.mysql.jdbc.Driver"
-       JATOS_JPA: "mysqlPersistenceUnit"
+   env_file:
+     - jatos_config.env
 
  nginx:
    restart: always
