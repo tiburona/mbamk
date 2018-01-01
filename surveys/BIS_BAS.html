@@ -1,18 +1,18 @@
 <!DOCTYPE html>
-<!-- This will administer the 1994 Carver and White 20 item BIS/BAS scales 
-as in http://www.psy.miami.edu/faculty/ccarver/sclBISBAS.html 
+<!-- This will administer the 1994 Carver and White 20 item BIS/BAS scales
+as in http://www.psy.miami.edu/faculty/ccarver/sclBISBAS.html
 
 Items other than 2 and 22 are reverse-scored.
 
-BAS Drive:  3, 9, 12, 21 
-BAS Fun Seeking:  5, 10, 15, 20 
+BAS Drive:  3, 9, 12, 21
+BAS Fun Seeking:  5, 10, 15, 20
 BAS Reward Responsiveness:  4, 7, 14, 18, 23
 
 BIS:  2, 8, 13, 16, 19, 22, 24
 
-Items 1, 6, 11, 17,  are fillers. 
+Items 1, 6, 11, 17,  are fillers.
 
---> 
+-->
 <html>
 
 <head>
@@ -32,23 +32,23 @@ Items 1, 6, 11, 17,  are fillers.
             $("#username").html(jatos.urlQueryParameters.username);
             //$("#buttons").show();
         });
-	 
-	Survey.Survey.cssType = "bootstrap";
+
+	      Survey.Survey.cssType = "bootstrap";
         Survey.defaultBootstrapCss.navigationButton = "btn btn-green";
 
         window.survey = new Survey.Model({
-        	pages: [{
+          pages: [{
         		questions: [{
 			  		type: "html",
    					name: "intro",
         		html: "<h4>Welcome <span id=username></span>! Please answer the following questions.</h4>"
-			},
+			      },
         		{
         		questions: [{
         		type: "matrix",
         		name: "bis-bas-scale",
 			  		title: "Please answer the following questions.",
-			  			columns: [{		
+			  		columns: [{
         						value: 1,
         						text: "very true for me"
 							},
@@ -64,7 +64,8 @@ Items 1, 6, 11, 17,  are fillers.
 							value: 4,
 							text: "very false for me"
 							}],
-						  rows: [{
+						  rows: [
+              {
 							value: "bis-bas-1",
 							text: "A person's family is the most important thing in life.",
 							isRequired: true
@@ -79,7 +80,7 @@ Items 1, 6, 11, 17,  are fillers.
 							},
 							{
 							value: "bis-bas-4",
-							text: "When I'm doing well at something I love to keep at it." 
+							text: "When I'm doing well at something I love to keep at it."
 							},
 							{
 							value: "bis-bas-5",
@@ -99,7 +100,7 @@ Items 1, 6, 11, 17,  are fillers.
 							},
 							{
 							value: "bis-bas-9",
-							text: "When I want something I usually go all-out to get it." 
+							text: "When I want something I usually go all-out to get it."
 							},
 							{
 							value: "bis-bas-10",
@@ -119,7 +120,7 @@ Items 1, 6, 11, 17,  are fillers.
 							},
 							{
 							value: "bis-bas-14",
-							text: "When I see an opportunity for something I like I get excited right away." 
+							text: "When I see an opportunity for something I like I get excited right away."
 							},
 							{
 							value: "bis-bas-15",
@@ -135,7 +136,7 @@ Items 1, 6, 11, 17,  are fillers.
 							},
 							{
 							value: "bis-bas-18",
-							text: "When good things happen to me, it affects me strongly." 
+							text: "When good things happen to me, it affects me strongly."
 							},
 							{
 							value: "bis-bas-19",
@@ -151,7 +152,7 @@ Items 1, 6, 11, 17,  are fillers.
 							},
 							{
 							value: "bis-bas-22",
-							text: "I have very few fears compared to my friends." 
+							text: "I have very few fears compared to my friends."
 							},
 							{
 							value: "bis-bas-23",
@@ -160,10 +161,13 @@ Items 1, 6, 11, 17,  are fillers.
 							{
 							value: "bis-bas-24",
 							text: "I worry about making mistakes."
-							}]
-						}]
-	
-        });
+							}
+            ]
+
+          }]
+        }]
+      }]
+    });
 
         survey.onComplete.add(function (result) {
             //$("#sex-survey").hide(); // Hides the 'Thank you for completing ...' message
@@ -179,7 +183,7 @@ Items 1, 6, 11, 17,  are fillers.
 			 	var q = survey.getQuestionByName('bis-bas-scale');
 				q.isAllRowRequired = true;
 				survey.render();
-        
+
     </script>
 </body>
 
