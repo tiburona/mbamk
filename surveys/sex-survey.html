@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script src="/study_assets/sex-survey/static/javascript/jquery-3.1.1.min.js"></script>
+    <script src="/study_assets/sex-survey/static/survey-jquery/survey.jquery.js"></script>
+    <script src="/assets/javascripts/jatos.js"></script>
+    <link rel="stylesheet" href="/study_assets/sex-survey/static/bootstrap-3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/study_assets/sex-survey/study.css">
+</head>
+
+<body>
+    <div id="sex-survey"></div>
+
+    <script type="text/javascript">
+        jatos.onLoad(function() {
+            //$("#text").html(jatos.componentJsonInput.text);
+            $("#username").html(jatos.urlQueryParameters.username);
+            //$("#buttons").show();
+        });
+	 
+	Survey.Survey.cssType = "bootstrap";
+        Survey.defaultBootstrapCss.navigationButton = "btn btn-green";
+
+        window.survey = new Survey.Model({
+            pages: [{
+                    questions: [{
+			    type: "html",
+   			    name: "intro",
+                            html: "<h4>Welcome <span id=username></span>! Please answer the following questions.</h4>"
+			},
+			{
+                            type: "radiogroup",
+                            name: "sex-orientation-1",
+			    isRequired: true,
+                            title: "Which category best describes your feelings of sexual attraction to others?",
+                            choices: ["Only attracted to females", "Mostly attracted to females", "Equally attracted to males and females",
+                                "Mostly attracted to males","Only attracted to males","Do not know"
+                            ]
+                        },
+                        {
+                            type: "radiogroup",
+                            name: "sex-orientation-2",
+			    isRequired: true,
+                            title: "In your lifetime, have you had sex with only males, only females, both males and females or have you not had sex?",
+                            choices: ["Only males","Only females","Both males and females","Never had sex",
+                                "Do not know"
+                            ]
+                        },
+                        {
+                            type: "radiogroup",
+                            name: "sex-orientation-3",
+			    isRequired: true,
+                            title: "In the preceding year, have you had sex with only males, only females, both males and females or have you not had sex?",
+                            choices: ["Only males","Only females","Both males and females","Never had sex",
+                                "Do not know"
+                            ]
+                        },
+                        {
+                            type: "radiogroup",
+                            name: "sex-orientation-4",
+			    isRequired: true,
+                            title: "Which of the categories best describes you?",
+                            choices: ["Heterosexual (straight)","Gay or Lesbian","Bisexual","Not sure","Other",
+                                "Do not know"
+                            ]
+                        }    
+                    ]
+                },
+                {
+                       questions: [{
+                            type: "matrix",
+                            name: "sex-role-id",
+			    title: "Please answer the following questions.",
+			    columns: [{		
+                            	value: 1,
+                                text: "Not at all"
+				},
+				{
+				value: 2,
+				text: "Very little"
+				},
+				{
+				value: 3,
+				text: "Fairly"
+				},
+				{
+				value: 4,
+				text: "Very much"
+				},
+				{ 
+				value: 5,
+				text: "Extremely"
+				},
+				{
+				value: "NA",
+				text: "Do not know"
+				}
+			     ],
+			     rows: [{
+				value: "masculine-id",
+				text: "In general, how masculine do you think you are?",
+				isRequired: true
+				},
+				{
+				value: "masculine-behavior",
+				text: "In general, how masculine do you act or behave?"
+				},
+				{
+				value: "masculine-appearance",
+				text: "How masculine do you think you appear or come across to others?"
+				},
+				{
+				value: "feminine-id",
+				text: "In general, how feminine do you think you are?"
+				},
+				{
+				value: "feminine-behavior",
+				text: "In general, how feminine do you act or behave?"
+				},
+				{
+				value: "feminine-appearance",
+				text: "How feminine do you think you appear or come across to others?"
+				}
+                             ]
+			  }
+                    ]
+                },
+		{
+                	questions: [{ 
+		            type: "radiogroup",
+                            name: "transgender-identity-1",
+			    isRequired: true,
+                            title: "Assigned sex at birth: What sex were you assigned at birth, on your original birth certificate? (check one)",
+                            choices: ["Male","Female"]
+			},
+			{
+			   type: "radiogroup",
+			   name: "transgender-identity-2",
+			   isRequired: true,
+			   title: "Current gender identity: How do you describe yourself? (check one)",
+		           choices: ["Male","Female","Transgender","Do not identify as male, female, or transgender"]
+			}
+		    ]
+		}                        
+            ]
+        });
+
+        survey.onComplete.add(function (result) {
+            //$("#sex-survey").hide(); // Hides the 'Thank you for completing ...' message
+            //jatos.submitResultData(JSON.stringify(result.data), jatos.startNextComponent);
+            jatos.submitResultData(JSON.stringify(result.data), window.location.replace("https://dev.mybrainandme.org"));
+        });
+
+        $("#sex-survey").Survey({
+            model: survey
+        });
+
+
+	//window.location.replace("https://dev.mybrainandme.org");
+ 	var q = survey.getQuestionByName('sex-role-id');
+	q.isAllRowRequired = true;
+	survey.render();
+        
+    </script>
+</body>
+
+</html>
