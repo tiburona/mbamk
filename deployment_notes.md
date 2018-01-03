@@ -29,10 +29,11 @@ Make sure to opn up port 443 first
 $ iptables -A INPUT -p tcp -m tcp --dport 443 -j ACCEPT
 
 $ sudo git clone https://github.com/letsencrypt/letsencrypt 
-
 $ cd letsencrypt
-
 $ sudo ./letsencrypt-auto certonly --standalone --renew-by-default --email spiropan@gmail.com -d www.mybrainandme.org -d mybrainandme.org -d jatos.mybrainandme.org -d dev.mybrainandme.org -d dev.jatos.mybrainandme.org
+
+UPDATED certbot installation instructions using apt-get are at:
+https://www.digitalocean.com/community/tutorials/how-to-secure-nginx-with-let-s-encrypt-on-ubuntu-16-04
 
 $ to rebuild only a single service 
 $ docker-compose up -d --no-deps --build <service_name>
