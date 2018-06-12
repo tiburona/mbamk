@@ -76,6 +76,11 @@ a certificate, and if not available install, or if expired, renew?
 https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-postfix-as-a-send-only-smtp-server-on-ubuntu-14-04
 https://accounts.google.com/b/0/DisplayUnlockCaptcha
 
+Here if on Linode and using GMAIL:
+https://www.linode.com/docs/email/postfix/configure-postfix-to-send-mail-using-gmail-and-google-apps-on-debian-or-ubuntu/
+
+App password is saved in mbaminfo Drive file called Important Info
+
 6) Set up .htpasswd to restict access to the development site:
 https://www.digitalocean.com/community/tutorials/how-to-set-up-password-authentication-with-nginx-on-ubuntu-14-04
 
