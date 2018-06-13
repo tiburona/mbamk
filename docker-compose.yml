@@ -4,12 +4,14 @@ services:
  web:
    restart: always
    build: ./web
+   environment:
+     - "PYTHONUNBUFFERED=1"
    env_file:
      - app_config.env
    volumes:
      - user-data:/usr/src/app/flask_brain_db/static/images/data
      - /etc/letsencrypt:/etc/letsencrypt
-   command: bash -c "sleep 10 && python manage.py db upgrade && /usr/local/bin/gunicorn -w 2 -b :8000 wsgi:app"
+   command: bash -c "sleep 10 && python manage.py db upgrade && /usr/local/bin/gunicorn -w 1 -b :8000 wsgi:app"
    depends_on:
      - jatos
    
