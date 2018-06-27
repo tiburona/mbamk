@@ -47,6 +47,10 @@ Now run the migrate command to make the mbam tables (muser and scan)
 $ python manage.py db upgrade
 
 In MySQL brain_db database there should now be all required tables 
+If above doesn't work then can run below (or maybe only need the below). 
+$ python manage.py shell
+>> import db
+>> dp.create_all()
 
 Now can start the application using
 $ python manage.py runserver
