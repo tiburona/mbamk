@@ -23,5 +23,9 @@ services:
        timeout: 6s
        retries: 30
 
+  nginx:
+    ports:
+     - "81:81"
+
 volumes:
   mysql-data:
