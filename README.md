@@ -4,11 +4,13 @@
 
 `$ git clone https://github.com/spiropan/mbam`
 
+(or clone via ssh)
+
 3. Install a local version of XNAT.  Instructions are [here](https://wiki.xnat.org/display/XNAT17/Running+XNAT+in+a+Vagrant+Virtual+Machine).  Use the one-line XNAT setup.  You will know it has worked when you can navigate to 10.1.1.17 in your browser and get an XNAT login page.  The login and password are both 'xnat', which of course you can change in your configuration if you wish.
 
 4. You'll need an XNAT project.  Log in to your XNAT instance and go to **New -> Project**.  Fill out the values for Project Title, Running Title, and Project ID
 
-5. There are two configuration files that should be placed in the top-level directory.  The first should be named `.env`.  It needs only the following line
+5. There are three configuration files that should be placed in the top-level directory.  The first should be named `.env`.  It needs only the following line
 `NGINX_CONFIG_FILE=local.conf`
 
 The second is called `app_config.env`.
@@ -33,6 +35,16 @@ XNAT_PSWD=admin # or <your-password> if you changed it
 XNAT_URL=10.1.1.7
 
 RUN_FROM=local
+```
+
+Finally create a file named `jatos_config.env`.
+
+```
+JATOS_DB_URL=jdbc:mysql://mysql/brain_db?characterEncoding=UTF-8&useSSL=false
+JATOS_DB_USERNAME=mbam
+JATOS_DB_PASSWORD=mbam123
+JATOS_DB_DRIVER=com.mysql.jdbc.Driver
+JATOS_JPA=mysqlPersistenceUnit
 ```
 
 6. Once those configuration files are in place, run
