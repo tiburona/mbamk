@@ -2,8 +2,7 @@
 
 2. Clone this repository:
 
-`git clone https://github.com/spiropan/mbam`
-
+`git clone https://github.com/spiropan/mbam`  
 (or clone via ssh)
 
 3. Install a local version of XNAT.  Instructions are [here](https://wiki.xnat.org/display/XNAT17/Running+XNAT+in+a+Vagrant+Virtual+Machine).  Use the one-line XNAT setup.  You will know it has worked when you can navigate to 10.1.1.17 in your browser and get an XNAT login page.  The login and password are both 'xnat', which of course you can change in your configuration if you wish.
@@ -11,10 +10,8 @@
 4. You'll need an XNAT project.  Log in to your XNAT instance and go to **New -> Project**.  Fill out the values for Project Title, Running Title, and Project ID
 
 5. There are three configuration files that should be placed in the top-level directory.  The first should be named `.env`.  It needs only the following line
-`NGINX_CONFIG_FILE=local.conf`
-
-The second is called `app_config.env`.
-
+`NGINX_CONFIG_FILE=local.conf`  
+The second is called `app_config.env`. 
 It should begin something like this:
 
 ```
@@ -25,7 +22,7 @@ DB_USERNAME=mbam
 DB_PASSWORD=mbam123
 ```
 
-`DB_USERNAME` and `DB_HOST` should be kept the same; they are also set in the docker-compose file that configures the MySQL container. 
+`DB_USERNAME` and `DB_HOST` should be kept the same; they are also set in the docker-compose file that configures the MySQL container.
 
 `app_config.env` then continues:
 
