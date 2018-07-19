@@ -2,7 +2,7 @@
 
 2. Clone this repository:
 
-`$ git clone https://github.com/spiropan/mbam`
+`git clone https://github.com/spiropan/mbam`
 
 (or clone via ssh)
 
@@ -25,7 +25,7 @@ DB_USERNAME=mbam
 DB_PASSWORD=mbam123
 ```
 
-You can change the key and password values if you like; they are configuring a local database instance.   
+`DB_USERNAME` and `DB_HOST` should be kept the same; they are also set in the docker-compose file that configures the MySQL container. 
 
 `app_config.env` then continues:
 
@@ -52,8 +52,4 @@ Your `JATOS_DB_USERNAME` and `JATOS_DB_PASSWORD` should match their analogues in
 
 6. Once those configuration files are in place, run
 
-`$ docker-compose up -d mysql`
-
-and finally
-
-`$ docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d`
+`docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d`
