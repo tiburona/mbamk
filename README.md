@@ -1,7 +1,6 @@
 1. If you haven't already, the first step is to [install Docker](https://docs.docker.com/install/).
 
-2. Clone this repository:
-
+2. Clone this repository:  
 `git clone https://github.com/spiropan/mbam`  
 (or clone via ssh)
 
@@ -9,44 +8,43 @@
 
 4. You'll need an XNAT project.  Log in to your XNAT instance and go to **New -> Project**.  Fill out the values for Project Title, Running Title, and Project ID
 
-5. There are three configuration files that should be placed in the top-level directory.  The first should be named `.env`.  It needs only the following line
-`NGINX_CONFIG_FILE=local.conf`  
-The second is called `app_config.env`. 
-It should begin something like this:
+5. There are three configuration files that should be placed in the top-level directory.  The first should be named `.env`.  It needs only the following line:  
+`NGINX_CONFIG_FILE=local.conf`
 
-```
-SECRET_KEY=you-will-never-guess
-DB_ROOT_PASSWORD=test
-DB_HOST=mysql
-DB_USERNAME=mbam
-DB_PASSWORD=mbam123
-```
+   The second is called `app_config.env`.  It should begin like this:
 
-`DB_USERNAME` and `DB_HOST` should be kept the same; they are also set in the docker-compose file that configures the MySQL container.
+   ```
+   SECRET_KEY=you-will-never-guess
+   DB_ROOT_PASSWORD=test
+   DB_HOST=mysql
+   DB_USERNAME=mbam
+   DB_PASSWORD=mbam123
+   ```
 
-`app_config.env` then continues:
+   `DB_USERNAME` and `DB_HOST` should be kept the same; they are also set in the docker-compose file that configures the MySQL container.
 
-```
-XNAT_PROJECT=<project-id> # you created this project in step 4
-XNAT_USER=admin # or <your-xnat-user> if you changed it
-XNAT_PSWD=admin # or <your-password> if you changed it
-XNAT_URL=10.1.1.7
+   `app_config.env` then continues:
 
-RUN_FROM=local
-```
+   ```
+   XNAT_USER=admin # or <your-xnat-user> if you changed it
+   XNAT_PSWD=admin # or <your-password> if you changed it
+   XNAT_URL=10.1.1.7
 
-Finally create a file named `jatos_config.env`.
+   RUN_FROM=local
+   ```
 
-```
-JATOS_DB_URL=jdbc:mysql://mysql/brain_db?characterEncoding=UTF-8&useSSL=false
-JATOS_DB_USERNAME=mbam
-JATOS_DB_PASSWORD=mbam123
-JATOS_DB_DRIVER=com.mysql.jdbc.Driver
-JATOS_JPA=mysqlPersistenceUnit
-```
+   Finally create a file named `jatos_config.env`.
 
-Your `JATOS_DB_USERNAME` and `JATOS_DB_PASSWORD` should match their analogues in `app_config.env`: `DB_USERNAME` and `DB_PASSWORD`.
+   ```
+   JATOS_DB_URL=jdbc:mysql://mysql/brain_db?characterEncoding=UTF-8&useSSL=false
+   JATOS_DB_USERNAME=mbam
+   JATOS_DB_PASSWORD=mbam123
+   JATOS_DB_DRIVER=com.mysql.jdbc.Driver
+   JATOS_JPA=mysqlPersistenceUnit
+   ```
+
+   Your `JATOS_DB_USERNAME` and `JATOS_DB_PASSWORD` should match their analogues in `app_config.env`: `DB_USERNAME` and `DB_PASSWORD`.
 
 6. Once those configuration files are in place, run
 
-`docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d`
+   `docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d`
