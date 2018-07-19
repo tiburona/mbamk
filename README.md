@@ -21,6 +21,7 @@ It should begin something like this:
 SECRET_KEY=you-will-never-guess
 DB_ROOT_PASSWORD=test
 DB_HOST=mysql
+DB_USERNAME=mbam
 DB_PASSWORD=mbam123
 ```
 
@@ -46,6 +47,8 @@ JATOS_DB_PASSWORD=mbam123
 JATOS_DB_DRIVER=com.mysql.jdbc.Driver
 JATOS_JPA=mysqlPersistenceUnit
 ```
+
+Your `JATOS_DB_USERNAME` and `JATOS_DB_PASSWORD` should match their analogues in `app_config.env`: `DB_USERNAME` and `DB_PASSWORD`.
 
 6. Once those configuration files are in place, run
 
