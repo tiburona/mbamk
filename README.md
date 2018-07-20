@@ -57,8 +57,6 @@ you may need to also install [docker-compose](https://docs.docker.com/compose/in
 
    Your `JATOS_DB_USERNAME` and `JATOS_DB_PASSWORD` should match their analogues in `app_config.env`: `DB_USERNAME` and `DB_PASSWORD`.
 
-
 6. Once those configuration files are in place, run
 
-   `docker-compose -f docker-compose.dev.yml up -d`
-
+   `docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d`
