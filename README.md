@@ -1,4 +1,5 @@
-1. If you haven't already, the first step is to [install Docker](https://docs.docker.com/install/).
+1. If you haven't already, the first step is to [install Docker](https://docs.docker.com/install/). If you're using Linux,
+you may need to also install [docker-compose](https://docs.docker.com/compose/install/).
 
 2. Clone this repository:  
 `git clone https://github.com/spiropan/mbam`  
@@ -31,6 +32,17 @@
    XNAT_URL=10.1.1.7
 
    RUN_FROM=local
+   ````
+   The below are settings for running the pilot flirt and labeling pipeline (i.e. clicking the "Labeled MRI" in the main volume view.
+   To run on your local XNAT you can install the Xsync plugin from [here](https://download.xnat.org/), sync MBAM_FILES
+   project from the MIND-XNAT server, and note its XNAT session id. Documentation for how to setup and use the Xsync plugin is [here](https://wiki.xnat.org/pages/viewpage.action?pageId=51642418).
+   You will also need to copy the flirt-wrapper and flirt-applyxfm-wrapper commands into your local xnat (see the XNAT-CS-TUTORIAL). We will update/optimize this
+   process in the near future. Use the below values if your XNAT_URL is https://mind-xnat.nyspi.org.
+
+   ```
+   XNAT_RESOURCES_ID=MIND_E08399
+   FLIRT_COMMAND_ID=15
+   APPLYXFM_COMMAND_ID=18
    ```
 
    Finally create a file named `jatos_config.env`.
