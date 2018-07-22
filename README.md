@@ -41,7 +41,7 @@ you may need to also install [docker-compose](https://docs.docker.com/compose/in
 
    ```
    XNAT_RESOURCES_ID=MIND_E08399
-   FLIRT_COMMAND_ID=15
+   FLIRT_COMMAND_ID=19
    APPLYXFM_COMMAND_ID=18
    ```
 
@@ -59,4 +59,16 @@ you may need to also install [docker-compose](https://docs.docker.com/compose/in
 
 6. Once those configuration files are in place, run
 
-   `docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d`
+   `docker-compose up -d`
+
+   Note that on your local environment, this command will load from the docker-compose.yml file, and then add the settings in the docker-compose.override.yml file.
+   On the staging server (dev.mybrainandme.org), the startup command would be 
+   
+   `docker-compose -f docker-compose.yml -f docker-compose.dev.yml -f docker-compose.prod.yml`
+
+   while on the production server, the command would be
+
+   `docker-compose -f docker-compose.yml -f docker-compose.prod.yml`
+
+   The docker-compose.override.yml and the docker-compose.dev.yml are (for now) identical, but they both exist in order to 1) shorten the startup command on 
+   local environments and 2) allow for any future additional settings to be set and tested on the staging server. 
