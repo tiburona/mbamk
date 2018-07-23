@@ -36,7 +36,7 @@ you may need to also install [docker-compose](https://docs.docker.com/compose/in
    ````
    The below are settings for running the pilot flirt and labeling pipeline (i.e. clicking the "Labeled MRI" in the main volume view. To run on your local XNAT you can install the Xsync plugin from [here](https://download.xnat.org/), sync MBAM_FILES project from the MIND-XNAT server, and note its XNAT session id. Documentation for how to setup and use the Xsync plugin [here](https://wiki.xnat.org/pages/viewpage.action?pageId=51642418).
 
-   You will also need to install the container plugin, add a new image (mindnyspi/flirt-applyxfm) and copy the pipelines/flirt-reg-applyxfm/command.json into a new command under this image (see [part 1](https://github.com/MIND-NYSPI/xnat-cs-tutorial/blob/master/tutorial_part1.md) of the XNAT-CS-TUTORIAL). We will update/optimize this process in the near future. Use the below values if your XNAT_URL is https://mind-xnat.nyspi.org, otherwise adjust them for as needed for your local environment.
+   Optional: You will also need to install the container plugin, add a new image (mindnyspi/flirt-applyxfm) and copy the pipelines/flirt-reg-applyxfm/command.json into a new command under this image (see [part 1](https://github.com/MIND-NYSPI/xnat-cs-tutorial/blob/master/tutorial_part1.md) of the XNAT-CS-TUTORIAL). We will update/optimize this process in the near future. Use the below values if your XNAT_URL is https://mind-xnat.nyspi.org, otherwise adjust them for as needed for your local environment.
 
    ```
    XNAT_RESOURCES_ID=MIND_E08399
@@ -59,8 +59,7 @@ you may need to also install [docker-compose](https://docs.docker.com/compose/in
 
    `docker-compose up -d`
 
-   Note that on your local environment, this command will load from the docker-compose.yml file, and then add the settings in the docker-compose.override.yml file.
-   On the staging server (dev.mybrainandme.org), the startup command would be
+   Note that on your local environment, this command will load from the docker-compose.yml file, and then add the settings in the docker-compose.override.yml file. On the staging server (dev.mybrainandme.org), the startup command would be
 
    `docker-compose -f docker-compose.yml -f docker-compose.dev.yml -f docker-compose.prod.yml`
 
@@ -68,5 +67,4 @@ you may need to also install [docker-compose](https://docs.docker.com/compose/in
 
    `docker-compose -f docker-compose.yml -f docker-compose.prod.yml`
 
-   The docker-compose.override.yml and the docker-compose.dev.yml are (for now) identical, but they both exist in order to 1) shorten the startup command on
-   local environments and 2) allow for any future additional settings to be set and tested on the staging server.
+   The docker-compose.override.yml and the docker-compose.dev.yml are (for now) identical, but they both exist in order to 1) shorten the startup command on local environments and 2) allow for any future additional settings to be set and tested on the staging server.
