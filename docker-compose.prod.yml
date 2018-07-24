@@ -1,9 +1,11 @@
 version: '3'
 
 services:
-   volumes:
-     - /etc/letsencrypt:/etc/letsencrypt
+  web:
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt
+    command: bash -c "sleep 20 && python manage.py db upgrade && /usr/local/bin/gunicorn -w 1 -b :8000 wsgi:app"
 
- nginx:
-   volumes:
-     - /etc/letsencrypt:/etc/letsencrypt
+  nginx:
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt
