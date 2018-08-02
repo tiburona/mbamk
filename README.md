@@ -1,11 +1,13 @@
 1. If you haven't already, the first step is to [install Docker](https://docs.docker.com/install/). If you're using Linux,
-you may need to also install [docker-compose](https://docs.docker.com/compose/install/).
+you may need to also install docker-compose using [this link](https://docs.docker.com/compose/install/). Be sure to use the link since
+default apt repositories may not have up to date version of docker-compose that is required to read yml version 3 files. 
 
 2. Clone this repository:  
 `git clone https://github.com/spiropan/mbam`  
 (or clone via ssh)
 
-3. Install a local version of XNAT.  Instructions are [here](https://wiki.xnat.org/display/XNAT17/Running+XNAT+in+a+Vagrant+Virtual+Machine).  Use the one-line XNAT setup.  You will know it has worked when you can navigate to 10.1.1.17 in your browser and get an XNAT login page.  The login and password are both 'xnat', which of course you can change in your configuration if you wish.
+3. Install a local version of XNAT using [these instructions](https://wiki.xnat.org/display/XNAT17/Running+XNAT+in+a+Vagrant+Virtual+Machine).  Use the one-line XNAT setup.  You will know it has worked when you can navigate to 10.1.1.17 in your browser and get an XNAT login page.  The login and password are both 'admin', which of course you can change in your configuration if you wish.
+   The above link also explains what you need to know to interact with and conntrol your local XNAT. You will also need to install the XNAT Container services plugin. You can find instructions [here](https://github.com/MIND-NYSPI/xnat-cs-tutorial/blob/master/tutorial_part1.md#installing-the-container-service-plugin). 
 
 4. You'll need an XNAT project.  Log in to your XNAT instance and go to **New -> Project**.  Fill out the values for Project Title, Running Title, and Project ID
 
@@ -30,19 +32,11 @@ you may need to also install [docker-compose](https://docs.docker.com/compose/in
    ```
    XNAT_USER=admin # or <your-xnat-user> if you changed it
    XNAT_PSWD=admin # or <your-password> if you changed it
-   XNAT_URL=10.1.1.7
+   XNAT_URL=10.1.1.17
 
    RUN_FROM=local
    ````
-   The below are settings for running the pilot flirt and labeling pipeline (i.e. clicking the "Labeled MRI" in the main volume view. To run on your local XNAT you can install the Xsync plugin from [here](https://download.xnat.org/), sync MBAM_FILES project from the MIND-XNAT server, and note its XNAT session id. Documentation for how to setup and use the Xsync plugin [here](https://wiki.xnat.org/pages/viewpage.action?pageId=51642418).
-
-   Optional: You will also need to install the container plugin, add a new image (mindnyspi/flirt-applyxfm) and copy the pipelines/flirt-reg-applyxfm/command.json into a new command under this image (see [part 1](https://github.com/MIND-NYSPI/xnat-cs-tutorial/blob/master/tutorial_part1.md) of the XNAT-CS-TUTORIAL). We will update/optimize this process in the near future. Use the below values if your XNAT_URL is https://mind-xnat.nyspi.org, otherwise adjust them for as needed for your local environment.
-
-   ```
-   XNAT_RESOURCES_ID=MIND_E08399
-   FLIRT_COMMAND_ID=20
-   ```
-
+   
    Finally create a file named `jatos_config.env`.
 
    ```
