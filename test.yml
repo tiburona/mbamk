@@ -5,5 +5,5 @@ services:
    build: ./web
    env_file:
      - app_config.env
-   command: bash -c "python manage.py test" 
+   command: bash -c "python manage.py cov" 
   
