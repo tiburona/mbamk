@@ -3,11 +3,11 @@ version: '3'
 services:
   web:
     volumes:
-      - /Users/Spiro/mbam/web/flask_brain_db:/usr/src/app/flask_brain_db      
+      - ./web/flask_brain_db:/usr/src/app/flask_brain_db      
 
   jatos:
     depends_on:
-      - mysql 
+      - mysql
 
   mysql:
    restart: always
