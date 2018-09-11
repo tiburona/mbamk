@@ -1,15 +1,15 @@
 1. If you haven't already, the first step is to [install Docker](https://docs.docker.com/install/). If you're using Linux,
 you may need to also install docker-compose using [this link](https://docs.docker.com/compose/install/). Be sure to use the link since
-default apt repositories may not have up to date version of docker-compose that is required to read yml version 3 files. 
+default apt repositories may not have up to date version of docker-compose that is required to read yml version 3 files.
 
 2. Clone this repository:  
 `git clone https://github.com/spiropan/mbam`  
 (or clone via ssh)
 
 3. Install a local version of XNAT using [these instructions](https://wiki.xnat.org/display/XNAT17/Running+XNAT+in+a+Vagrant+Virtual+Machine).  Use the one-line XNAT setup.  You will know it has worked when you can navigate to 10.1.1.17 in your browser and get an XNAT login page.  The login and password are both 'admin', which of course you can change in your configuration if you wish.
-   The above link also explains what you need to know to interact with and conntrol your local XNAT. You will also need to install the XNAT Container services plugin. You can find instructions [here](https://github.com/MIND-NYSPI/xnat-cs-tutorial/blob/master/tutorial_part1.md#installing-the-container-service-plugin). 
+   The above link also explains what you need to know to interact with and control your local XNAT. You will also need to install the XNAT Container services plugin. You can find instructions [here](https://github.com/MIND-NYSPI/xnat-cs-tutorial/blob/master/tutorial_part1.md#installing-the-container-service-plugin).
 
-4. You'll need an XNAT project.  Log in to your XNAT instance and go to **New -> Project**.  Fill out the values for Project Title, Running Title, and Project ID
+4. You'll need an XNAT project and you'll need to replace the DicomToNifti.xml pipeline with the custom pipeline in the repository.  For the project, log in to your XNAT instance and go to **New -> Project**.  Fill out the values for Project Title, Running Title, and Project ID. For the pipeline file (required for .zip uploading), copy the ./pipelines/DicomToNifti.xml in the MBAM repository to the /data/xnat/pipeline/catalog/mricron/ folder in the xnat VM that was installed in step 3. You should be able to use the "vagrant ssh" command and the share directories that were set up in step 3 above to transfer the file. If you get stuck with this let us know and we'll improve the instructions. You'll then need to add the pipeline to the site (Administer -> Pipelines -> Add Pipeline to Repository), and then also to the project (On the project page, press the Pipelines tab and then click Add More Pipelines).
 
 5. There are three configuration files that should be placed in the top-level directory.  The first should be named `.env`.  It needs only the following line:  
 
@@ -36,7 +36,7 @@ default apt repositories may not have up to date version of docker-compose that 
 
    RUN_FROM=local
    ````
-   
+
    Finally create a file named `jatos_config.env`.
 
    ```
