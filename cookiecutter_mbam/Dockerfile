@@ -4,7 +4,7 @@ FROM python:3
 
 COPY . /app
 
-WORKDIR /app/mbam/cookiecutter_mbam/
+WORKDIR /app/cookiecutter_mbam/
 
 RUN pip install pipenv
 
@@ -12,7 +12,7 @@ RUN pip install pipenv
 # -- From cookiecutter auto docs for starting app in production mode
 ENV FLASK_ENV=production
 ENV FLASK_DEBUG=0
-ENV DATABASE_URL="mysql+pymysql://mbam:mbam123@0.0.0.0/brain_db"
+ENV DATABASE_URL="mysql+pymysql://mbam:mbam123@mysql/brain_db"
 
 # Install node and npm
 RUN apt-get install -y curl \

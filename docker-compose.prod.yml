@@ -4,7 +4,7 @@ services:
   web:
     volumes:
       - /etc/letsencrypt:/etc/letsencrypt
-    command: bash -c "sleep 20 && python manage.py db upgrade && /usr/local/bin/gunicorn -w 1 -b :8000 wsgi:app"
+    command: bash -c "sleep 20 && flask db upgrade && flask run"
 
   nginx:
     volumes:
