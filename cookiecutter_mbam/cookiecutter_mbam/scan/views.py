@@ -22,7 +22,7 @@ def add():
         f = form.scan_file.data
         user_id = str(current_user.get_id())
         exp_id = str(session['curr_experiment'])
-        ScanService(user_id, exp_id).upload(f)
+        ScanService(user_id, exp_id).add(f)
         flash('You successfully added a new scan.', 'success')
         return redirect(url_for('experiment.experiments'))
     else:

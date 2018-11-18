@@ -29,9 +29,8 @@ class TestScanUpload:
         When the upload method calls _process_file
         _process_file returns a two tuple: (the gzipped file object, False)
         """
-
-        with open('/Users/katie/spiro/mbam/cookiecutter_mbam/files/T1.nii', 'rb') as f:
-            file = FileStorage(f)
+        f = open('/Users/katie/spiro/mbam/cookiecutter_mbam/files/T1.nii', 'rb')
+        file = FileStorage(f)
         file_object, import_service = new_scan_service._process_file(file)
         assert not import_service
         assert type(file_object).__name__ == 'GzipFile'
@@ -39,7 +38,7 @@ class TestScanUpload:
     def test_zip_file(self, new_scan_service, mocker):
         """
         Given that an zip folder of dicoms is passed to the scan service upload method
-        When the upload method calls _process file
+        When the upload method calls _process_file
         1) _process_file returns a two tuple: (the file object, True)
         2) _generate_xnat_identifers returns a dict in which the 'resource' type is 'DICOM'
         3) xnat_put is called with expected args, including imp=True
@@ -47,7 +46,6 @@ class TestScanUpload:
 
         f = open('/Users/katie/spiro/mbam/cookiecutter_mbam/files/DICOM.zip', 'rb')
         file = FileStorage(f)
-        print(type(file))
         file_object, import_service = new_scan_service._process_file(file)
         assert import_service
         xc = XNATConnection()
@@ -61,9 +59,6 @@ class TestScanUpload:
         new_scan_service.xc.xnat_put.assert_called_with(file=file, imp=True, project= 'MBAM_TEST',
                                                                    subject='000001', experiment='000001_MR2')
         f.close(); file.close()
-
-
-
 
     def test_xnat_ids_correctly_generated_for_multiple_experiments_and_scans(self, new_scan_service):
         """
