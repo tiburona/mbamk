@@ -1,15 +1,18 @@
 # -- From https://github.com/pypa/pipenv/blob/master/Dockerfile
-FROM kennethreitz/pipenv
+#FROM kennethreitz/pipenv
+FROM python:3
 
 COPY . /app
 
 WORKDIR /app/mbam/cookiecutter_mbam/
 
+RUN pip install pipenv
+
 # -- Replace with the correct path to your app's main executable
 # -- From cookiecutter auto docs for starting app in production mode
 ENV FLASK_ENV=production
 ENV FLASK_DEBUG=0
-#ENV DATABASE_URL="<YOUR DATABASE URL>"
+ENV DATABASE_URL="mysql+pymysql://mbam:mbam123@0.0.0.0/brain_db"
 
 # Install node and npm
 RUN apt-get install -y curl \
@@ -18,7 +21,7 @@ RUN apt-get install -y curl \
 && curl -L https://www.npmjs.com/install.sh | sh
 
 # Install the Flask App dependencies
-RUN ["pipenv","install"]
+RUN ["pipenv","install","--system","--deploy"]
 # Install node modeuls
 RUN ["npm","install"]
 

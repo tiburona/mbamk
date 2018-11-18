@@ -7,10 +7,10 @@ services:
    environment:
      - "PYTHONUNBUFFERED=1"
    env_file:
-     - app_config.env
+     - ./cookiecutter_mbam/.env
    volumes:
-     - user-data:/usr/src/app/flask_brain_db/static/images/data
-   command: bash -c "sleep 20 && python manage.py db upgrade && python manage.py runserver"
+     - user-data:/app/cookiecutter_mbam/files
+   command: bash -c "sleep 20 && flask db upgrade && flask run"
    depends_on:
      - jatos
 
@@ -34,8 +34,8 @@ services:
      - "80:80"
      - "443:443"
    volumes:
-     - ./web/flask_brain_db/static:/usr/src/app/flask_brain_db/static
-     - user-data:/usr/src/app/flask_brain_db/static/images/data
+     - ./cookiecutter_mbam/files:/app/cookiecutter_mbam/files
+     - user-data:/app/cookiecutter_mbam/files
    depends_on:
      - web
 
