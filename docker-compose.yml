@@ -9,7 +9,7 @@ services:
    env_file:
      - ./cookiecutter_mbam/.env
    volumes:
-     - user-data:/app/cookiecutter_mbam/files
+     - user-data:/app/cookiecutter_mbam/static/files
    command: bash -c "sleep 20 && flask db upgrade && flask run"
    depends_on:
      - jatos
@@ -34,8 +34,7 @@ services:
      - "80:80"
      - "443:443"
    volumes:
-     - ./cookiecutter_mbam/files:/app/cookiecutter_mbam/files
-     - user-data:/app/cookiecutter_mbam/files
+     - user-data:/app/cookiecutter_mbam/static/files
    depends_on:
      - web
 

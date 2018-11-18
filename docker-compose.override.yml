@@ -3,7 +3,7 @@ version: '3'
 services:
   web:
     volumes:
-      - ./web/cookiecutter_mbam:/app/cookiecutter_mbam      
+      - ./cookiecutter_mbam:/app      
 
   jatos:
     depends_on:

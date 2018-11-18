@@ -3,10 +3,7 @@
 FROM python:3
 
 COPY . /app
-
-WORKDIR /app/cookiecutter_mbam/
-
-RUN pip install pipenv
+WORKDIR /app
 
 # -- Replace with the correct path to your app's main executable
 # -- From cookiecutter auto docs for starting app in production mode
@@ -20,10 +17,7 @@ RUN apt-get install -y curl \
 && apt-get install -y nodejs \
 && curl -L https://www.npmjs.com/install.sh | sh
 
-# Install the Flask App dependencies
-RUN ["pipenv","install","--system","--deploy"]
-# Install node modeuls
-RUN ["npm","install"]
-
+RUN ["pip","install","pipenv"]
+RUN ["pipenv","install","--system","--deploy"] # install the app and dep
+RUN ["npm","install"] # install node modules
 RUN ["npm", "run","build"] # build assets with webpack
-#RUN ["flask", "run"] # start the flask server
