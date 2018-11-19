@@ -21,7 +21,7 @@ class XNATConnection:
         :return: None
         """
         config = configparser.ConfigParser()
-        config.read('/Users/katie/spiro/cookiecutter_mbam/setup.cfg')
+        config.read(current_app.root_path + '/setup.cfg')
         self.xnat_config = config['XNAT']
         self.upload_config = config['uploads']
 
@@ -37,7 +37,7 @@ class XNATConnection:
         [setattr(self, k, v) for k, v in self.xnat_config.items()]
         for dest in ['archive', 'prearchive']:
             setattr(self, dest + '_prefix', '/data/{}/projects/{}'.format(dest, self.project))
-            self.file_dest = self.upload_config['uploaded_scans_dest']
+            self.file_dest = current_app.root_path + self.upload_config['uploaded_scans_dest']
 
     def xnat_put(self, url='', file=None, imp=False, **kwargs):
         """ The method to create an XNAT object
@@ -133,14 +133,3 @@ class XNATConnection:
             uris['scan'] = 'hello'
 
         return (uris['subject'], uris['experiment'], uris['scan'])
-
-
-
-
-
-
-
-
-
-
-

@@ -2,22 +2,21 @@
 My Brain and Me
 ===============================
 
-Cookiecutter MBAB
-
+Cookiecutter MBAM
 
 Quickstart
 ----------
 
 Run the following commands to bootstrap your environment ::
 
-    git clone https://github.com/tiburona/cookiecutter_mbam
+    git clone https://github.com/spiropan/mbam
     cd cookiecutter_mbam
     pipenv install --dev
-    cp .env.example .env
     npm install
     npm start  # run the webpack dev server and flask server using concurrently
 
-You will see a pretty welcome screen.
+You will see a pretty welcome screen. You may need to run pipenv shell before npm start
+and modify contents of the .env file.
 
 Once you have installed your DBMS, run the following to create your app's
 database tables and perform the initial migration ::
