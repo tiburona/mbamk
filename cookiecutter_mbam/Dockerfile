@@ -3,13 +3,11 @@
 FROM python:3
 
 COPY . /app
-WORKDIR /app
 
-# -- Replace with the correct path to your app's main executable
-# -- From cookiecutter auto docs for starting app in production mode
-ENV FLASK_ENV=production
-ENV FLASK_DEBUG=0
-ENV DATABASE_URL="mysql+pymysql://mbam:mbam123@mysql/brain_db"
+# Replace .env file with a .env file for Dockerfile
+COPY ./cookiecutter_mbam/.docker_env /app/cookiecutter_mbam/.env
+
+WORKDIR /app
 
 # Install node and npm
 RUN apt-get install -y curl \
@@ -21,3 +19,9 @@ RUN ["pip","install","pipenv"]
 RUN ["pipenv","install","--system","--deploy"] # install the app and dep
 RUN ["npm","install"] # install node modules
 RUN ["npm", "run","build"] # build assets with webpack
+
+# -- Replace with the correct path to your app's main executable
+# -- From cookiecutter auto docs for starting app in production mode
+ENV FLASK_ENV=production
+ENV FLASK_DEBUG=0
+ENV DATABASE_URL="mysql+pymysql://mbam:mbam123@mysql/brain_db"
