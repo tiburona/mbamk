@@ -16,7 +16,7 @@ To spin up a non-dockerized version of the app for development, you can skip ste
 
 4. You'll need an XNAT project and you'll need to replace the DicomToNifti.xml pipeline with the custom pipeline in the repository. For the project, log in to your XNAT instance and go to **New -> Project**. Fill out the values for Project Title , Running Title, and Project ID and set to 'MBAM_TEST'. For the pipeline file (required for .zip uploading), copy the ./pipelines/DicomToNifti.xml in the MBAM repository to the /data/xnat/pipeline/catalog/mricron/ folder in the xnat VM that was installed in step 3. You should be able to use the "vagrant ssh" command and the share directories that were set up in step 3 above to transfer the file. If you get stuck with this let us know and we'll improve the instructions. You'll then need to add the pipeline to the site (Administer -> Pipelines -> Add Pipeline to Repository), and then also to the project (On the project page, press the Pipelines tab and then click Add More Pipelines).
 
-5. The repo *should* with everything already preconfigured to bootstrap the app for development. See [here](Configuration_Files.md) for a description of these files.
+5. The repo *should* come with configuration files already preconfigured to bootstrap the app for development. You may need to change them though depending on your environment. See [here](Configuration_Files.md) for a description of these files. 
 
 6. To spin up a dockerized version of the app (that includes docker containers for Flask app,
   NGINX, MySQL and JATOS, but not XNAT), see below:
