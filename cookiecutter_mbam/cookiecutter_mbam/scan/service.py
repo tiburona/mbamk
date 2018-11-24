@@ -3,9 +3,6 @@
 
 This module implements uploading a scan file to XNAT and adding a scan to the database.
 
-Todo: Maybe the public method should be called add, and that should kick off an upload procedure, rather than the
-other way around.
-
 Todo: do we want to infer file type from extension?  Or use some other method?
 
 Todo: Right now if we use the import service XNAT is inferring its own scan id.  What do we want to do about that?
@@ -15,9 +12,11 @@ fact.
 
 Todo: Upload security for zip files?
 
-
+Todo: make a consistent choice about uri versus url?
 """
+
 import os
+import configparser
 from cookiecutter_mbam.xnat import XNATConnection
 from cookiecutter_mbam.experiment import Experiment
 from cookiecutter_mbam.user import User
@@ -28,18 +27,24 @@ from flask import current_app
 def debug():
     assert current_app.debug == False, "Don't panic! You're here by request of debug()"
 
-
 class ScanService:
 
     def __init__(self, user_id, exp_id):
         self.user_id = user_id
         self.user = User.get_by_id(self.user_id)
         self.experiment = Experiment.get_by_id(exp_id)
-        self.xc = XNATConnection()
+        self.instance_path = current_app.instance_path[:-8]
+        self._config_read()
+
+    def _config_read(self):
+        config = configparser.ConfigParser()
+        config.read('/Users/katie/spiro/mbam/cookiecutter_mbam/setup.cfg')
+        self.upload_dest = os.path.join(self.instance_path, config['uploads']['uploaded_scans_dest'])
+        self.xc = XNATConnection(config=config['XNAT'])
 
     # todo: what is the actual URI of the experiment I've created?  Why does it have the XNAT prefix?
     # maybe that's the accessor?  Is the accessor in the URI?
-    def upload(self, image_file):
+    def add(self, image_file):
         """The top level public method for adding a scan
 
         Calls methods to infer file type and further process the file, generate xnat identifiers and query strings,
@@ -50,45 +55,60 @@ class ScanService:
         :return: None
 
         """
-        file, dcm = self._process_file(image_file)
+        local_path, dcm = self._process_file(image_file)
         xnat_ids = self._generate_xnat_identifiers(dcm=dcm)
-        existing_attributes = self._check_for_existing_xnat_ids()
-        uris = self.xc.upload_scan(xnat_ids, existing_attributes, image_file, import_service=dcm)
-        scan = self._add_scan()
+        existing_xnat_ids = self._check_for_existing_xnat_ids()
+        uris = self.xc.upload_scan(xnat_ids, existing_xnat_ids, local_path, import_service=dcm)
+        scan = self._add_scan_to_database()
         keywords = ['subject', 'experiment', 'scan']
         self._update_database_objects(keywords=keywords, objects=[self.user, self.experiment, scan],
-                                     ids=['{}_id'.format(xnat_ids[kw]['xnat_id']) for kw in keywords], uris=uris)
+                                      ids=['{}_id'.format(xnat_ids[kw]['xnat_id']) for kw in keywords], uris=uris)
+        os.remove(local_path)
 
-    def _add_scan(self):
+    def delete(self, scan_id, delete_from_xnat=False):
+        """ Delete a scan from the database
+
+        Deletes a scan from the database and optionally deletes it from XNAT. Only admins should delete a scan from XNAT
+
+        :param int scan_id: the database id of the scan to delete
+        :param bool delete_from_xnat: whether to delete the scan file from XNAT, default False
+        :return: None
+        """
+        scan = Scan.get_by_id(scan_id)
+        if delete_from_xnat:
+            self._delete_from_xnat(self, scan)
+            self.experiment.update(num_scans=self.experiment.num_scans - 1)
+        scan.delete()
+
+    # TODO: Implement xnat_delete method in xnat connection
+    def _delete_from_xnat(self, scan):
+        """
+        :param scan_id:
+        :return:
+        """
+        self.xc.xnat_delete(scan.xnat_uri)
+
+    def _add_scan_to_database(self):
         """Add a scan to the database
 
         Creates the scan object, adds it to the database, and increments the parent experiment's scan count
         :return: scan
         """
         scan = Scan.create(experiment_id=self.experiment.id)
-        self.experiment.num_scans += 1
+        self.experiment.update(num_scans = self.experiment.num_scans + 1)
         return scan
-
-
+    
     def _process_file(self, image_file):
-        """Infer file type from extension and respond to file type as necessary
-
-        Uses file extension to infer whether file should be left alone or gzipped, or whether zip file will be sent to
-        import service.
-
-        :param file object image_file: the file object
-        :return: a two-tuple of the image file, and a boolean indicating the file type is dcm
-        :rtype: tuple
-
-        """
-        image_file_name = image_file.filename
-        file_name, file_ext = os.path.splitext(image_file_name)
-        dcm = False
-        if file_ext == '.nii':
-            image_file = (gzip_file(image_file, file_name))
-        if file_ext == '.zip':
-            dcm = True
-        return (image_file, dcm)
+        name, ext = os.path.splitext(image_file.filename)
+        local_path = os.path.join(self.upload_dest, image_file.filename)
+        image_file.save(local_path)
+        if ext == '.nii':
+            image_file, gz_path = gzip_file(local_path)
+            os.remove(local_path)
+            local_path = gz_path
+        image_file.close()
+        dcm = ext == '.zip'
+        return (local_path, dcm)
 
     def _generate_xnat_identifiers(self, dcm=False):
         """Generate object ids for use in XNAT
@@ -136,7 +156,6 @@ class ScanService:
         return {k: getattr(v, k) if getattr(v, k) else '' for k, v in {'xnat_subject_id': self.user,
                                                                        'xnat_experiment_id': self.experiment}.items()}
 
-
     # todo: the check for existence before reassigning the values is verbose.  Decide whether its important.
     def _update_database_objects(self, objects=[], keywords=[], uris=[], ids=[],):
         """Update database objects
@@ -145,7 +164,7 @@ class ScanService:
         and xnat id.
 
         :param list objects: user, experiment, and scan
-        :param list keywords: 'subject', 'experiment', and 'scan'
+        :param list keywords: 'subje    ct', 'experiment', and 'scan'
         :param list uris: xnat uris
         :param list ids: xnat ids
         :return: None
@@ -154,7 +173,7 @@ class ScanService:
         for (obj, kw, uri, id) in attributes:
             if not hasattr(obj, 'xnat_uri'):
                 obj.update({'xnat_uri': uri})
-            if not hasattr(obj,'xnat_{}_id'.format(kw)):
+            if not hasattr(obj, 'xnat_{}_id'.format(kw)):
                 obj.update({'xnat_{}_id'.format(kw): id})
 
 
