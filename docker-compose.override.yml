@@ -3,7 +3,7 @@ version: '3'
 services:
   web:
     volumes:
-      - ./web/flask_brain_db:/usr/src/app/flask_brain_db      
+      - ./cookiecutter_mbam:/app      
 
   jatos:
     depends_on:

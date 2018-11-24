@@ -7,6 +7,7 @@ RUN rm  /etc/nginx/conf.d/default.conf
 ARG NGINX_CONFIG_FILE
 COPY $NGINX_CONFIG_FILE /etc/nginx/conf.d/
 COPY .htpasswd /etc/nginx/
+
 # The below is so that we can change nginx settings on the fly and debug
 # using vim within the shell but eventually want to take out since it increases
 # build time.

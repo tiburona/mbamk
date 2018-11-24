@@ -10,6 +10,7 @@ class XNATConnection:
 
     def __init__(self, config):
         self.xnat_config = config
+        self._read_config()
         self._set_attributes()
         self.xnat_hierarchy = ['subject', 'experiment', 'scan', 'resource', 'file']
 
@@ -21,7 +22,8 @@ class XNATConnection:
         :return: None
         """
         config = configparser.ConfigParser()
-        config_path = os.path.join(current_app.instance_path[:-8], 'setup.cfg')
+        self.instance_path = current_app.instance_path[:-8]
+        config_path = os.path.join(self.instance_path, 'setup.cfg')
         config.read(config_path)
         self.xnat_config = config['XNAT']
         self.upload_config = config['uploads']
@@ -37,6 +39,8 @@ class XNATConnection:
         [setattr(self, k, v) for k, v in self.xnat_config.items()]
         for dest in ['archive', 'prearchive']:
             setattr(self, dest + '_prefix', '/data/{}/projects/{}'.format(dest, self.project))
+        self.file_dest = os.path.join(self.instance_path, self.upload_config['uploaded_scans_dest'])
+
 
     # todo: wrap everything in a try/except again
     def xnat_put(self, url='', file_path=None, imp=False, **kwargs):

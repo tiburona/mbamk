@@ -33,12 +33,13 @@ class ScanService:
         self.user_id = user_id
         self.user = User.get_by_id(self.user_id)
         self.experiment = Experiment.get_by_id(exp_id)
+        self.instance_path = current_app.instance_path[:-8]
         self._config_read()
 
     def _config_read(self):
         config = configparser.ConfigParser()
         config.read('/Users/katie/spiro/mbam/cookiecutter_mbam/setup.cfg')
-        self.upload_dest = config['uploads']['uploaded_scans_dest']
+        self.upload_dest = os.path.join(self.instance_path, config['uploads']['uploaded_scans_dest'])
         self.xc = XNATConnection(config=config['XNAT'])
 
     # todo: what is the actual URI of the experiment I've created?  Why does it have the XNAT prefix?
