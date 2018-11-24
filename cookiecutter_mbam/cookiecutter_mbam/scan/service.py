@@ -12,7 +12,6 @@ fact.
 
 Todo: Upload security for zip files?
 
-Todo: make a consistent choice about uri versus url?
 """
 
 import os
@@ -59,10 +58,11 @@ class ScanService:
         xnat_ids = self._generate_xnat_identifiers(dcm=dcm)
         existing_xnat_ids = self._check_for_existing_xnat_ids()
         uris = self.xc.upload_scan(xnat_ids, existing_xnat_ids, local_path, import_service=dcm)
-        scan = self._add_scan_to_database()
+        scan = self._add_scan_to_database() # todo: what should scan's string repr be?
         keywords = ['subject', 'experiment', 'scan']
         self._update_database_objects(keywords=keywords, objects=[self.user, self.experiment, scan],
                                       ids=['{}_id'.format(xnat_ids[kw]['xnat_id']) for kw in keywords], uris=uris)
+        debug()
         os.remove(local_path)
 
     def delete(self, scan_id, delete_from_xnat=False):
@@ -83,7 +83,7 @@ class ScanService:
     # TODO: Implement xnat_delete method in xnat connection
     def _delete_from_xnat(self, scan):
         """
-        :param scan_id:
+        :param object scan: the database object corresponding to the scan to delete in xnat
         :return:
         """
         self.xc.xnat_delete(scan.xnat_uri)
@@ -156,7 +156,6 @@ class ScanService:
         return {k: getattr(v, k) if getattr(v, k) else '' for k, v in {'xnat_subject_id': self.user,
                                                                        'xnat_experiment_id': self.experiment}.items()}
 
-    # todo: the check for existence before reassigning the values is verbose.  Decide whether its important.
     def _update_database_objects(self, objects=[], keywords=[], uris=[], ids=[],):
         """Update database objects
 
@@ -164,17 +163,15 @@ class ScanService:
         and xnat id.
 
         :param list objects: user, experiment, and scan
-        :param list keywords: 'subje    ct', 'experiment', and 'scan'
+        :param list keywords: 'subject', 'experiment', and 'scan'
         :param list uris: xnat uris
         :param list ids: xnat ids
         :return: None
         """
         attributes = zip(objects, keywords, uris, ids)
         for (obj, kw, uri, id) in attributes:
-            if not hasattr(obj, 'xnat_uri'):
-                obj.update({'xnat_uri': uri})
-            if not hasattr(obj, 'xnat_{}_id'.format(kw)):
-                obj.update({'xnat_{}_id'.format(kw): id})
+            obj.update(xnat_uri=uri)
+            obj.update(**{'xnat_{}_id'.format(kw): id})
 
 
 

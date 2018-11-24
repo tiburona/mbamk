@@ -10,23 +10,8 @@ class XNATConnection:
 
     def __init__(self, config):
         self.xnat_config = config
-        self._read_config()
         self._set_attributes()
         self.xnat_hierarchy = ['subject', 'experiment', 'scan', 'resource', 'file']
-
-    def _read_config(self):
-        """ Read config file
-
-        Part of the instance initialization, reads config file for XNAT variables and uploaded file destination
-
-        :return: None
-        """
-        config = configparser.ConfigParser()
-        self.instance_path = current_app.instance_path[:-8]
-        config_path = os.path.join(self.instance_path, 'setup.cfg')
-        config.read(config_path)
-        self.xnat_config = config['XNAT']
-        self.upload_config = config['uploads']
 
     def _set_attributes(self):
         """ Set attributes on self
@@ -39,11 +24,10 @@ class XNATConnection:
         [setattr(self, k, v) for k, v in self.xnat_config.items()]
         for dest in ['archive', 'prearchive']:
             setattr(self, dest + '_prefix', '/data/{}/projects/{}'.format(dest, self.project))
-        self.file_dest = os.path.join(self.instance_path, self.upload_config['uploaded_scans_dest'])
 
 
     # todo: wrap everything in a try/except again
-    def xnat_put(self, url='', file_path=None, imp=False, **kwargs):
+    def _xnat_put(self, url='', file_path=None, imp=False, **kwargs):
         """ The method to create an XNAT object
 
         Uses the xnatpy session.put, session.upload, or session.services.import_ method to add an object to XNAT.
@@ -52,12 +36,12 @@ class XNATConnection:
         :param str file_path: path to a file to upload
         :param bool imp: whether to use the import service (True if file is zip of dicoms, otherwise False)
         :param kwargs kwargs: arguments to pass to the import service (project, subject, and experiment)
-        :return: None
+        :return: str the XNAT URI of the created scan, if the import service was invoked, or else an empty string
         """
         with xnat.connect(self.server, self.user, self.password) as session:
             if imp:
                 session.services.import_(file_path, overwrite='delete', **kwargs)
-                    # todo: need to call something like xnat_get to get the scan uri and return it to calling method
+                return self._xnat_get_last_scan_uri(session)
             elif file_path:
                 session.upload(url, file_path)
             else:
@@ -65,13 +49,27 @@ class XNATConnection:
                     session.put(url)
                 except:
                     pass
+            return ''
 
-    def xnat_get(self):
-        # todo: This needs to be a method that gets the name of the scan uri some how.
-        pass
+    def _xnat_get_last_scan_uri(self, session, **kwargs):
+        """
+        :param session: the xnatpy XNAT connection object
+        :return: the uri of the last created scan
+        :rtype: str
+        """
+        project = self.project
+        subject = self.xnat_ids['subject']['xnat_id']
+        experiment = self.xnat_ids['experiment']['xnat_id']
+        return session.projects[project].subjects[subject].experiments[experiment].scans[-1].uri
 
     def xnat_delete(self, url):
-        # this needs to delete the specified resource from xNAT
+        """ Delete an item from XNAT
+
+        Deletes an item from XNAT.
+
+        :param url: The REST path of the resource to delete
+        :return: None
+        """
         try:
             with xnat.connect(self.server, self.user, self.password) as session:
                 session.delete(url)
@@ -79,7 +77,6 @@ class XNATConnection:
             # todo: handle errors!
             pass
 
-    # todo: fix the fake scan uri
     def upload_scan(self, xnat_ids, existing_xnat_ids, file_path, import_service=False):
         """The method to upload a scan to XNAT
 
@@ -121,19 +118,13 @@ class XNATConnection:
                 query = ''
 
             if level == 'file':
-                self.xnat_put(url=uri + query, file_path=file_path)
+                self._xnat_put(url=uri + query, file_path=file_path)
             else:
-                if not exists_already: self.xnat_put(url=uri + query)
+                if not exists_already: self._xnat_put(url=uri + query)
 
         if import_service:
-            self.xnat_put(file_path=file_path, imp=True, project=self.project,
-                          subject = self.xnat_ids['subject']['xnat_id'],
-                          experiment = self.xnat_ids['experiment']['xnat_id'])
-
-        # todo: make this the real scan uri!
-        try:
-            uris['scan']
-        except:
-            uris['scan'] = 'hello'
+            uris['scan'] = self._xnat_put(file_path=file_path, imp=True, project=self.project,
+                                          subject = self.xnat_ids['subject']['xnat_id'],
+                                          experiment = self.xnat_ids['experiment']['xnat_id'])
 
         return (uris['subject'], uris['experiment'], uris['scan'])
