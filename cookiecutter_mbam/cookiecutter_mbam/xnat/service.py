@@ -1,5 +1,6 @@
 import os
 import xnat
+import configparser
 
 from flask import current_app
 def debug():
@@ -11,6 +12,19 @@ class XNATConnection:
         self.xnat_config = config
         self._set_attributes()
         self.xnat_hierarchy = ['subject', 'experiment', 'scan', 'resource', 'file']
+
+    def _read_config(self):
+        """ Read config file
+
+        Part of the instance initialization, reads config file for XNAT variables and uploaded file destination
+
+        :return: None
+        """
+        config = configparser.ConfigParser()
+        config_path = os.path.join(current_app.instance_path[:-8], 'setup.cfg')
+        config.read(config_path)
+        self.xnat_config = config['XNAT']
+        self.upload_config = config['uploads']
 
     def _set_attributes(self):
         """ Set attributes on self
@@ -51,6 +65,15 @@ class XNATConnection:
     def xnat_get(self):
         # todo: This needs to be a method that gets the name of the scan uri some how.
         pass
+
+    def xnat_delete(self, url):
+        # this needs to delete the specified resource from xNAT
+        try:
+            with xnat.connect(self.server, self.user, self.password) as session:
+                session.delete(url)
+        except:
+            # todo: handle errors!
+            pass
 
     # todo: fix the fake scan uri
     def upload_scan(self, xnat_ids, existing_xnat_ids, file_path, import_service=False):

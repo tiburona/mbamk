@@ -64,6 +64,29 @@ class ScanService:
                                       ids=['{}_id'.format(xnat_ids[kw]['xnat_id']) for kw in keywords], uris=uris)
         os.remove(local_path)
 
+    def delete(self, scan_id, delete_from_xnat=False):
+        """ Delete a scan from the database
+
+        Deletes a scan from the database and optionally deletes it from XNAT. Only admins should delete a scan from XNAT
+
+        :param int scan_id: the database id of the scan to delete
+        :param bool delete_from_xnat: whether to delete the scan file from XNAT, default False
+        :return: None
+        """
+        scan = Scan.get_by_id(scan_id)
+        if delete_from_xnat:
+            self._delete_from_xnat(self, scan)
+            self.experiment.update(num_scans=self.experiment.num_scans - 1)
+        scan.delete()
+
+    # TODO: Implement xnat_delete method in xnat connection
+    def _delete_from_xnat(self, scan):
+        """
+        :param scan_id:
+        :return:
+        """
+        self.xc.xnat_delete(scan.xnat_uri)
+
     def _add_scan_to_database(self):
         """Add a scan to the database
 
@@ -71,7 +94,7 @@ class ScanService:
         :return: scan
         """
         scan = Scan.create(experiment_id=self.experiment.id)
-        self.experiment.num_scans += 1
+        self.experiment.update(num_scans = self.experiment.num_scans + 1)
         return scan
     
     def _process_file(self, image_file):
