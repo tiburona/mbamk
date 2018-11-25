@@ -45,10 +45,10 @@ class TestScanUpload:
 
     def copy_file_to_upload_dest(self, scan_service, basename):
         instance_path = scan_service.instance_path
-        upload_dest = scan_service.upload_dest
         src_path = os.path.join(instance_path, 'files', basename)
-        copy(src_path, upload_dest)
-        return os.path.join(upload_dest, basename)
+        dst_path = os.path.join(instance_path, 'files', 'test_files')
+        copy(src_path, dst_path)
+        return os.path.join(dst_path, basename)
 
     def test_process_uncompressed_scan(self, new_scan_service):
         """
@@ -83,7 +83,6 @@ class TestScanUpload:
     def test_process_zip_file(self, mocked_scan_service):
         """
         When _process_file is passed a zip file, it returns a two tuple: (the file path, True)
-
         """
         zip_path = self.copy_file_to_upload_dest(mocked_scan_service, 'DICOMS.zip')
         with open(zip_path, 'rb') as f:
@@ -106,13 +105,14 @@ class TestScanUpload:
         # as it stands it's creating coupling.  These are supposedly tests of scan service, but they break if I
         # change the xnat service
         zip_path = self.copy_file_to_upload_dest(mocked_scan_service, 'DICOMS.zip')
+        upload_path = os.path.join(mocked_scan_service.instance_path, 'static', 'files', 'DICOMS.zip')
         with open(zip_path, 'rb') as f:
             file = FileStorage(f)
             mocked_scan_service.add(file)
             mocked_scan_service._generate_xnat_identifiers.assert_called_with(dcm=True)
             xnat_ids = mocked_scan_service._generate_xnat_identifiers(dcm=True)
             assert xnat_ids['resource']['xnat_id'] == 'DICOM'
-            mocked_scan_service.xc._xnat_put.assert_called_with(file_path=zip_path, imp=True, project='MBAM_TEST',
+            mocked_scan_service.xc._xnat_put.assert_called_with(file_path=upload_path, imp=True, project='MBAM_TEST',
                                                             subject='000001', experiment='000001_MR2')
             file.close()
 

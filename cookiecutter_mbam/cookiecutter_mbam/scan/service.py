@@ -103,7 +103,7 @@ class ScanService:
         :return:
         """
         name, ext = os.path.splitext(image_file.filename)
-        local_path = os.path.join(self.upload_dest, image_file.filename)
+        local_path = os.path.join(self.upload_dest, os.path.basename(image_file.filename))
         image_file.save(local_path)
         if ext == '.nii':
             image_file, gz_path = gzip_file(local_path)
