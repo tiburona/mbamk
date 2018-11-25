@@ -37,7 +37,7 @@ class ScanService:
 
     def _config_read(self):
         config = configparser.ConfigParser()
-        config.read('/Users/katie/spiro/mbam/cookiecutter_mbam/setup.cfg')
+        config.read(os.path.join(self.instance_path, 'setup.cfg'))
         self.upload_dest = os.path.join(self.instance_path, config['uploads']['uploaded_scans_dest'])
         self.xc = XNATConnection(config=config['XNAT'])
 
@@ -62,7 +62,6 @@ class ScanService:
         keywords = ['subject', 'experiment', 'scan']
         self._update_database_objects(keywords=keywords, objects=[self.user, self.experiment, scan],
                                       ids=['{}_id'.format(xnat_ids[kw]['xnat_id']) for kw in keywords], uris=uris)
-        debug()
         os.remove(local_path)
 
     def delete(self, scan_id, delete_from_xnat=False):
@@ -95,10 +94,14 @@ class ScanService:
         :return: scan
         """
         scan = Scan.create(experiment_id=self.experiment.id)
-        self.experiment.update(num_scans = self.experiment.num_scans + 1)
+        self.experiment.update(num_scans=self.experiment.num_scans + 1)
         return scan
     
     def _process_file(self, image_file):
+        """
+        :param image_file:
+        :return:
+        """
         name, ext = os.path.splitext(image_file.filename)
         local_path = os.path.join(self.upload_dest, image_file.filename)
         image_file.save(local_path)

@@ -4,13 +4,15 @@ from pytest_mock import mocker
 from datetime import datetime
 from werkzeug.datastructures import FileStorage
 from cookiecutter_mbam.user import User
-from cookiecutter_mbam.xnat import XNATConnection
 from cookiecutter_mbam.experiment.service import ExperimentService
 from cookiecutter_mbam.scan.service import ScanService, gzip_file
-from flask import current_app
 from unittest.mock import patch
 from shutil import copy
-import configparser
+
+# Todo: write functional test assessing whether XNAT upload works.  It should actually add a scan to XNAT
+# then query XNAT to find out if the scan is there.
+# Todo: write unit test of add method.  This should assess only that the database changes are as expected for all
+# three types of scans
 
 
 
@@ -27,28 +29,42 @@ def new_scan_service(db):
     ss2 = ScanService(user.id, experiment2.id)
     return ss2
 
+@pytest.fixture(scope='function')
+@pytest.mark.usefixtures('db')
+def mocked_scan_service(db, mocker):
+    ss = new_scan_service(db)
+    ss.xc._xnat_put = mocker.MagicMock()
+    ss._update_database_objects = mocker.MagicMock()
+    mocker.spy(ss.xc, '_xnat_put')
+    mocker.spy(ss, '_generate_xnat_identifiers')
+    return ss
+
+# todo: find another place to copy files to so I actually test the copying process.
+
 class TestScanUpload:
 
-    def test_uncompressed_scan(self, new_scan_service):
+    def copy_file_to_upload_dest(self, scan_service, basename):
+        instance_path = scan_service.instance_path
+        upload_dest = scan_service.upload_dest
+        src_path = os.path.join(instance_path, 'files', basename)
+        copy(src_path, upload_dest)
+        return os.path.join(upload_dest, basename)
+
+    def test_process_uncompressed_scan(self, new_scan_service):
         """
         Given that an uncompressed nii file is passed to the scan service upload method
         When the upload method calls _process_file
         gzip_file is also called with the local path to the file
-        _process_file returns a two-tuple: (the path gzip_file returned, False_
+        _process_file returns a two-tuple: (the path gzip_file returned, False)
         """
-        instance_path = new_scan_service.instance_path
-        upload_dest = new_scan_service.upload_dest
-        nii_path = os.path.join(instance_path, 'files', 'structural.nii')
-        new_scan_service.upload_dest
-        copy(nii_path, upload_dest)
-        nii_path = os.path.join(upload_dest, os.path.basename(nii_path))
+        nii_path = self.copy_file_to_upload_dest(new_scan_service, 'structural.nii')
         f = open(nii_path, 'rb')
         file = FileStorage(f)
         with patch('cookiecutter_mbam.scan.service.gzip_file') as mocked_gzip:
-            zipped_path = os.path.join(upload_dest, 'structural.nii.gz')
+            zipped_path = os.path.join(new_scan_service.upload_dest, 'structural.nii.gz')
             mocked_gzip.return_value = (open(nii_path, 'rb'), zipped_path)
             file_path, import_service = new_scan_service._process_file(file)
-            mocked_gzip.assert_called_with(os.path.join(upload_dest, os.path.basename(nii_path)))
+            mocked_gzip.assert_called_with(os.path.join(new_scan_service.upload_dest, os.path.basename(nii_path)))
             assert not import_service
 
 
@@ -62,44 +78,43 @@ class TestScanUpload:
         file_object, file_path = gzip_file(nii_path)
         assert type(file_object).__name__ == 'GzipFile'
         assert os.path.basename(file_path) == 'structural.nii.gz'
+        os.remove(file_path)
 
-    def test_zip_file(self, new_scan_service, mocker):
+    def test_process_zip_file(self, mocked_scan_service):
         """
-        Given that an zip folder of dicoms is passed to the scan service upload method
-        When the upload method calls _process_file
-        1) _process_file returns a two tuple: (the file path, True)
-        2) _generate_xnat_identifers returns a dict in which the 'resource' type is 'DICOM'
-        3) xnat_put is called with expected args, including imp=True
+        When _process_file is passed a zip file, it returns a two tuple: (the file path, True)
+
         """
-        instance_path = new_scan_service.instance_path
-        upload_dest = new_scan_service.upload_dest
-        zip_path = os.path.join(instance_path, 'files', 'DICOMS.zip')
-        copy(zip_path, upload_dest)
-        zip_path = os.path.join(upload_dest, os.path.basename(zip_path))
-        f = open(zip_path, 'rb')
-        file = FileStorage(f)
-        file_path, import_service = new_scan_service._process_file(file)
-        assert import_service
-        # assert file_path == os.path.join(upload_dest, 'DICOMS.zip')
-        config = configparser.ConfigParser()
-        config.read(os.path.join(instance_path, 'setup.cfg'))
-        xc = XNATConnection(config=config['XNAT'])
-        xc._xnat_put = mocker.MagicMock()
-        new_scan_service.xc = xc
-        new_scan_service._update_database_objects = mocker.MagicMock()
-        mocker.spy(new_scan_service.xc, '_xnat_put')
-        mocker.spy(new_scan_service, '_generate_xnat_identifiers')
+        zip_path = self.copy_file_to_upload_dest(mocked_scan_service, 'DICOMS.zip')
+        with open(zip_path, 'rb') as f:
+            file = FileStorage(f)
+            file_path, import_service = mocked_scan_service._process_file(file)
+            assert import_service
+            assert file_path == os.path.join(mocked_scan_service.upload_dest, 'DICOMS.zip')
+            file.close()
 
-        f = open(zip_path, 'rb')
-        file = FileStorage(f)
-
-        new_scan_service.add(file)
-        new_scan_service._generate_xnat_identifiers.assert_called_with(dcm=True)
-        xnat_ids = new_scan_service._generate_xnat_identifiers(dcm=True)
-        assert xnat_ids['resource']['xnat_id'] == 'DICOM'
-        new_scan_service.xc._xnat_put.assert_called_with(file_path=file_path, imp=True, project= 'MBAM_TEST',
-                                                                   subject='000001', experiment='000001_MR2')
-        f.close(); file.close()
+    def test_zip_file_initiates_import_service(self, mocked_scan_service):
+        """
+        Given that a zip file is passed to the add method,
+        when _generate_xnat_ids is called it generates a resource id of 'DICOM',
+        and when _xnat_put is called it is passed arguments that will invoke the import service
+        :param mocked_scan_service:
+        :return:
+        """
+        # todo: I think this test is inappropriate, in that it reaches in to test a method on the xnat service
+        # it would be more appropriate to test what xc.upload_scan was called with
+        # as it stands it's creating coupling.  These are supposedly tests of scan service, but they break if I
+        # change the xnat service
+        zip_path = self.copy_file_to_upload_dest(mocked_scan_service, 'DICOMS.zip')
+        with open(zip_path, 'rb') as f:
+            file = FileStorage(f)
+            mocked_scan_service.add(file)
+            mocked_scan_service._generate_xnat_identifiers.assert_called_with(dcm=True)
+            xnat_ids = mocked_scan_service._generate_xnat_identifiers(dcm=True)
+            assert xnat_ids['resource']['xnat_id'] == 'DICOM'
+            mocked_scan_service.xc._xnat_put.assert_called_with(file_path=zip_path, imp=True, project='MBAM_TEST',
+                                                            subject='000001', experiment='000001_MR2')
+            file.close()
 
     def test_xnat_ids_correctly_generated_for_multiple_experiments_and_scans(self, new_scan_service):
         """
