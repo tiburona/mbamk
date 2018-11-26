@@ -61,7 +61,7 @@ class ScanService:
         scan = self._add_scan_to_database() # todo: what should scan's string repr be?
         keywords = ['subject', 'experiment', 'scan']
         self._update_database_objects(keywords=keywords, objects=[self.user, self.experiment, scan],
-                                      ids=['{}_id'.format(xnat_ids[kw]['xnat_id']) for kw in keywords], uris=uris)
+                                      ids=[xnat_ids[kw]['xnat_id'] for kw in keywords], uris=uris)
         os.remove(local_path)
 
     def delete(self, scan_id, delete_from_xnat=False):
