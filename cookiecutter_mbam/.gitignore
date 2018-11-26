@@ -49,15 +49,12 @@ env/
 /node_modules/
 
 # webpack-built files
-/cookiecutter_mbam/static/build/
-/cookiecutter_mbam/webpack/manifest.json
+cookiecutter_mbam/static/build/
+cookiecutter_mbam/webpack/manifest.json
 
 # Configuration
-<<<<<<< HEAD
+
 #.env
-=======
-.env
->>>>>>> cookiecutter_mbam
 
 # Development database
 *.db
@@ -67,9 +64,11 @@ env/
 *.nii
 *.zip
 DICOM*
-
-/cookiecutter_mbam/static/files
+cookiecutter_mbam/static/files
 
 # Mac file browsing
 
 .DS_Store
+
+.idea
+.idea/*
