@@ -63,6 +63,7 @@ class ScanService:
         self._update_database_objects(keywords=keywords, objects=[self.user, self.experiment, scan],
                                       ids=[xnat_ids[kw]['xnat_id'] for kw in keywords], uris=uris)
         os.remove(local_path)
+        debug()
 
     def delete(self, scan_id, delete_from_xnat=False):
         """ Delete a scan from the database
@@ -94,7 +95,7 @@ class ScanService:
         :return: scan
         """
         scan = Scan.create(experiment_id=self.experiment.id)
-        self.experiment.update(num_scans=self.experiment.num_scans + 1)
+        # self.experiment.update(num_scans=self.experiment.num_scans + 1)
         return scan
     
     def _process_file(self, image_file):
@@ -175,6 +176,7 @@ class ScanService:
         for (obj, kw, uri, id) in attributes:
             obj.update(xnat_uri=uri)
             obj.update(**{'xnat_{}_id'.format(kw): id})
+            print(id)
 
 
 

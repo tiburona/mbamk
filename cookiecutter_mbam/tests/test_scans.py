@@ -4,42 +4,65 @@ from pytest_mock import mocker
 from datetime import datetime
 from werkzeug.datastructures import FileStorage
 from cookiecutter_mbam.user import User
+from cookiecutter_mbam.scan import Scan
 from cookiecutter_mbam.experiment.service import ExperimentService
 from cookiecutter_mbam.scan.service import ScanService, gzip_file
 from unittest.mock import patch
 from shutil import copy
+from .factories import UserFactory
+from .factories import ExperimentFactory
+from factory import Iterator, Sequence, PostGenerationMethodCall
+import faker
+fake = faker.Faker()
 
 # Todo: write functional test assessing whether XNAT upload works.  It should actually add a scan to XNAT
 # then query XNAT to find out if the scan is there.
 # Todo: write unit test of add method.  This should assess only that the database changes are as expected for all
 # three types of scans
+# would a feature test check how scan service and xnat service were working together?
 
 
+# what if I parameterize only the fixture.  I accept that I need three tests for gz
+
+
+
+def generate_parameters():
+    test_data = []
+    root_path  = '/data/archive/experiments/'
+    for num_exp in range(2):
+        for num_scans in range(2):
+            exp_id = '000001_MR' + str(num_exp + 1)
+            scan_id = 'T1_' + str(num_scans + 1)
+            exp_uri = os.path.join(root_path, exp_id)
+            scan_uri = os.path.join(root_path, exp_id, 'scans', scan_id)
+            test_data.append((num_exp, num_scans, exp_id, scan_id, exp_uri, scan_uri))
+    return test_data
+
+
+parameters = generate_parameters()
 
 @pytest.fixture(scope='function')
 @pytest.mark.usefixtures('db')
-def new_scan_service(db):
-    user = User.create(username='Princess Leia', email='dontatme@me.com')
-    date = datetime.strptime('Jun 1 2005  1:33PM', '%b %d %Y %I:%M%p')
-    es = ExperimentService()
-    es.add(date=date, scanner='GE', num_scans=2, user=user)
-    experiment2 = es.add(date=date, scanner='GE', num_scans=2, user=user)
-    ss1 = ScanService(user.id, experiment2.id)
-    ss1._add_scan_to_database()
-    ss2 = ScanService(user.id, experiment2.id)
-    return ss2
+def mocked_scan_service(db, mocker, request):
+    user = UserFactory(password='myprecious')
+    db.session.add(user)
 
-@pytest.fixture(scope='function')
-@pytest.mark.usefixtures('db')
-def mocked_scan_service(db, mocker):
-    ss = new_scan_service(db)
-    ss.xc._xnat_put = mocker.MagicMock()
-    ss._update_database_objects = mocker.MagicMock()
-    mocker.spy(ss.xc, '_xnat_put')
+    for num_exp in range(request.param[0]):
+        experiment = ExperimentFactory(user_id = user.id)
+        db.session.add(experiment)
+
+    ss = ScanService(experiment.user_id, experiment.id)
+    for num_scan in range(request.param[1]):
+        ss._add_scan_to_database()
+
+    ss.xc.upload_scan = mocker.MagicMock()
+    ss.xc.upload_scan.return_value = ('/data/archive/subjects/000001',
+                                      request.param[4],
+                                      request.param[5])
     mocker.spy(ss, '_generate_xnat_identifiers')
+    ss.param = request.param
     return ss
 
-# todo: find another place to copy files to so I actually test the copying process.
 
 class TestScanUpload:
 
@@ -49,6 +72,44 @@ class TestScanUpload:
         dst_path = os.path.join(instance_path, 'files', 'test_files')
         copy(src_path, dst_path)
         return os.path.join(dst_path, basename)
+
+    @pytest.mark.parametrize('mocked_scan_service', parameters, indirect=True)
+    def test_add(self, mocked_scan_service):
+        for file_name in ['T1.nii.gz', 'structural.nii', 'DICOMS.zip']:
+            path = self.copy_file_to_upload_dest(mocked_scan_service, file_name)
+            f = open(path, 'rb')
+            file = FileStorage(f)
+            experiment = mocked_scan_service.experiment
+            assert experiment.xnat_uri == None
+            assert experiment.xnat_id == None
+            mocked_scan_service.add(file)
+            retrieved_scans = Scan.query.filter((Scan.experiment_id == mocked_scan_service.experiment.id))
+            assert retrieved_scans.count() == parameters[1] # really should be the number of scans I added to the experiment
+            assert mocked_scan_service.experiment.num_scans == parameters[1] # same as before
+            scan = retrieved_scans.order_by(Scan.created_at.desc()).first()
+            assert experiment.xnat_uri ==  mocked_scan_service.param[4]# can retrieve from test_data
+            assert experiment.xnat_id == mocked_scan_service.param[2]
+            assert scan.xnat_id == mocked_scan_service.param[3]
+            assert scan.xnat_uri == mocked_scan_service.param[5]
+
+
+
+    def test_gz_add(self, mocked_scan_service):
+        gz_path = self.copy_file_to_upload_dest(mocked_scan_service, 'T1.nii.gz')
+        f = open(gz_path, 'rb')
+        file = FileStorage(f)
+        experiment = mocked_scan_service.experiment
+        assert experiment.xnat_uri == None
+        assert experiment.xnat_id == None
+        mocked_scan_service.add(file)
+        retrieved_scans = Scan.query.filter((Scan.experiment_id == mocked_scan_service.experiment.id))
+        assert retrieved_scans.count() == 2
+        assert mocked_scan_service.experiment.num_scans == 2
+        scan = retrieved_scans.order_by(Scan.created_at.desc()).first()
+        assert experiment.xnat_uri == '/data/archive/experiments/000001_MR2'
+        assert experiment.xnat_id == '000001_MR2'
+        assert scan.xnat_id == 'T1_2'
+        assert scan.xnat_uri == '/data/archive/experiments/000001_MR2/scans/T1_2'
 
     def test_process_uncompressed_scan(self, new_scan_service):
         """
@@ -112,8 +173,8 @@ class TestScanUpload:
             mocked_scan_service._generate_xnat_identifiers.assert_called_with(dcm=True)
             xnat_ids = mocked_scan_service._generate_xnat_identifiers(dcm=True)
             assert xnat_ids['resource']['xnat_id'] == 'DICOM'
-            mocked_scan_service.xc._xnat_put.assert_called_with(file_path=upload_path, imp=True, project='MBAM_TEST',
-                                                            subject='000001', experiment='000001_MR2')
+            #mocked_scan_service.xc._xnat_put.assert_called_with(file_path=upload_path, imp=True, project='MBAM_TEST',
+                                                            #subject='000001', experiment='000001_MR2')
             file.close()
 
     def test_xnat_ids_correctly_generated_for_multiple_experiments_and_scans(self, new_scan_service):

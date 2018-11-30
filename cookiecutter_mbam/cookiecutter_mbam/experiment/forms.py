@@ -8,9 +8,7 @@ class ExperimentForm(FlaskForm):
 
     date = DateField('Date')
 
-    scanner = SelectField('Scanner', choices=[('ge', 'GE'), ('Siemens', 'Sie'), ('Phi', 'Phillips')])
-
-    num_scans = IntegerField('Number of scan')
+    scanner = SelectField('Scanner', choices=[('GE', 'GE'), ('Sie', 'Siemens'), ('Phi', 'Phillips')])
 
     def __init__(self, *args, **kwargs):
         """Create instance."""

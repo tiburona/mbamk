@@ -20,8 +20,7 @@ def add():
     """Add an experiment."""
     form = ExperimentForm(request.form)
     if form.validate_on_submit():
-        exp = ExperimentService().add(date=form.date.data, scanner=form.scanner.data, num_scans=form.num_scans.data,
-                                user=current_user)
+        exp = ExperimentService().add(date=form.date.data, scanner=form.scanner.data, user=current_user)
         flash('You successfully created a new experiment.', 'success')
         session['curr_experiment'] = exp.id
         return redirect(url_for('experiment.single_experiment', id=exp.id))

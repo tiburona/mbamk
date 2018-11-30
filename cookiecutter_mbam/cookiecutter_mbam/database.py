@@ -2,11 +2,14 @@
 """Database module, including the SQLAlchemy database object and DB-related utilities."""
 from .compat import basestring
 from .extensions import db
+from datetime import datetime
+
 
 # Alias common SQLAlchemy names
 Column = db.Column
 relationship = db.relationship
 Table = db.Table
+DateTime = db.DateTime
 
 
 class CRUDMixin(object):
@@ -36,8 +39,13 @@ class CRUDMixin(object):
         db.session.delete(self)
         return commit and db.session.commit()
 
+# From the flask-SQLAlchemy docs: http://flask-sqlalchemy.pocoo.org/2.2/customizing/
+class TimestampMixin(object):
+    """Mixin that adds created_at property"""
 
-class Model(CRUDMixin, db.Model):
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+class Model(CRUDMixin, TimestampMixin, db.Model):
     """Base model class that includes CRUD convenience methods."""
 
     __abstract__ = True
@@ -74,5 +82,7 @@ def reference_col(tablename, nullable=False, pk_name='id', **kwargs):
     return Column(
         db.ForeignKey('{0}.{1}'.format(tablename, pk_name)),
         nullable=nullable, **kwargs)
+
+
 
 

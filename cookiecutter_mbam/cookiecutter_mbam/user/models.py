@@ -4,22 +4,22 @@ import datetime as dt
 
 from flask_login import UserMixin
 
-from cookiecutter_mbam.database import Column, Model, Table, SurrogatePK, db
+from cookiecutter_mbam.database import Column, Model, Table, SurrogatePK, db, relationship
 from cookiecutter_mbam.extensions import bcrypt
 
 
 
 
-roles_users = Table(
-    'roles_users',
-    db.Column('user_id', db.Integer(), db.ForeignKey('users.id')),
-    db.Column('role_id', db.Integer(), db.ForeignKey('roles.id'))
+role_user = Table(
+    'role_user',
+    db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
+    db.Column('role_id', db.Integer(), db.ForeignKey('role.id'))
 )
 
 class Role(SurrogatePK, Model):
     """A role for a user."""
 
-    __tablename__ = 'roles'
+    __tablename__ = 'role'
     name = Column(db.String(80), unique=True, nullable=False)
     description = Column(db.String(255))
 
@@ -36,7 +36,7 @@ class Role(SurrogatePK, Model):
 class User(UserMixin, SurrogatePK, Model):
     """A user of the app."""
 
-    __tablename__ = 'users'
+    __tablename__ = 'user'
     username = Column(db.String(80), unique=True, nullable=False)
     email = Column(db.String(80), unique=True, nullable=False)
     #: The hashed password
@@ -50,9 +50,10 @@ class User(UserMixin, SurrogatePK, Model):
     num_experiments = Column(db.Integer(), default=0)
     roles = db.relationship(
         'Role',
-        secondary=roles_users,
-        backref=db.backref('users', lazy='dynamic')
+        secondary=role_user,
+        backref=db.backref('user', lazy='dynamic')
     )
+    experiments = relationship('Experiment', backref='user', lazy=True)
 
     def __init__(self, username, email, password=None, **kwargs):
         """Create instance."""

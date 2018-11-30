@@ -8,7 +8,7 @@ from cookiecutter_mbam.admin import UserAdmin, RoleAdmin
 from flask_security import SQLAlchemyUserDatastore
 from cookiecutter_mbam.extensions import admin, bcrypt, cache, csrf_protect, db, debug_toolbar, login_manager, migrate,\
     security, webpack
-from .hooks import create_test_users
+from .hooks import create_test_users, models_committed_hooks
 
 def create_app(config_object='cookiecutter_mbam.settings'):
     """An application factory, as explained here: http://flask.pocoo.org/docs/patterns/appfactories/.
@@ -18,6 +18,7 @@ def create_app(config_object='cookiecutter_mbam.settings'):
     app = Flask(__name__.split('.')[0])
     app.config.from_object(config_object)
     register_extensions(app)
+    register_hooks(app)
     register_blueprints(app)
     register_errorhandlers(app)
     register_shellcontext(app)
@@ -41,6 +42,9 @@ def register_extensions(app):
     admin.init_app(app, endpoint='admin')
     return None
 
+def register_hooks(app):
+    """Register hooks"""
+    models_committed_hooks(app)
 
 def register_blueprints(app):
     """Register Flask blueprints."""

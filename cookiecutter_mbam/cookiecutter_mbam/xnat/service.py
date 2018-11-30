@@ -6,6 +6,9 @@ from flask import current_app
 def debug():
     assert current_app.debug == False, "Don't panic! You're here by request of debug()"
 
+# todo: error handling around the put statement; do we want to log responses from xnat
+#
+
 class XNATConnection:
 
     def __init__(self, config):
@@ -27,6 +30,7 @@ class XNATConnection:
 
 
     # todo: wrap everything in a try/except again
+    # what do we want from the response object?  to log it?
     def _xnat_put(self, url='', file_path=None, imp=False, **kwargs):
         """ The method to create an XNAT object
 
@@ -41,7 +45,6 @@ class XNATConnection:
         with xnat.connect(self.server, self.user, self.password) as session:
             if imp:
                 session.services.import_(file_path, overwrite='delete', **kwargs)
-                return self._xnat_get_last_scan_uri(session)
             elif file_path:
                 session.upload(url, file_path)
             else:
@@ -49,18 +52,32 @@ class XNATConnection:
                     session.put(url)
                 except:
                     pass
-            return ''
+                    #xnat.exceptions.XNATResponseError as e:
+                    # error = e
+                    # if 'status 409' in error.args[0]: # this error is raised when you try to create a resource that exists
+                    #     pass
+                    # else:
+                    #     # error is unknown, handle it somehow
+                    #     pass
+            if file_path:
+                return self._xnat_get_uris(session)
+            else:
+                return ''
 
-    def _xnat_get_last_scan_uri(self, session, **kwargs):
+    def _xnat_get_uris(self, session):
         """
         :param session: the xnatpy XNAT connection object
         :return: the uri of the last created scan
         :rtype: str
         """
-        project = self.project
-        subject = self.xnat_ids['subject']['xnat_id']
-        experiment = self.xnat_ids['experiment']['xnat_id']
-        return session.projects[project].subjects[subject].experiments[experiment].scans[-1].uri
+        project_id = self.project
+        subject_id = self.xnat_ids['subject']['xnat_id']
+        experiment_id = self.xnat_ids['experiment']['xnat_id']
+        project = session.projects[project_id]
+        subject = session.subjects[subject_id]
+        experiment = project.experiments[experiment_id]
+        scan = session.projects[project_id].experiments[experiment_id].scans[-1]
+        return (subject.uri, experiment.uri, scan.uri)
 
     def xnat_delete(self, url):
         """ Delete an item from XNAT
@@ -114,17 +131,18 @@ class XNATConnection:
 
             try:
                 query = xnat_ids[level]['query_string']
-            except: #todo specify KeyError here?
+            except: # todo specify KeyError here?
                 query = ''
 
             if level == 'file':
-                self._xnat_put(url=uri + query, file_path=file_path)
+                fetched_uris = self._xnat_put(url=uri + query, file_path=file_path)
             else:
                 if not exists_already: self._xnat_put(url=uri + query)
 
-        if import_service:
-            uris['scan'] = self._xnat_put(file_path=file_path, imp=True, project=self.project,
-                                          subject = self.xnat_ids['subject']['xnat_id'],
-                                          experiment = self.xnat_ids['experiment']['xnat_id'])
+        kwargs = {'project': self.project, 'subject': self.xnat_ids['subject']['xnat_id'],
+                  'experiment': self.xnat_ids['experiment']['xnat_id']}
 
-        return (uris['subject'], uris['experiment'], uris['scan'])
+        if import_service:
+            fetched_uris = self._xnat_put(file_path=file_path, imp=True, **kwargs)
+
+        return fetched_uris
