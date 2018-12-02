@@ -111,22 +111,7 @@ class TestScanUpload:
         assert scan.xnat_id == 'T1_2'
         assert scan.xnat_uri == '/data/archive/experiments/000001_MR2/scans/T1_2'
 
-    def test_process_uncompressed_scan(self, new_scan_service):
-        """
-        Given that an uncompressed nii file is passed to the scan service upload method
-        When the upload method calls _process_file
-        gzip_file is also called with the local path to the file
-        _process_file returns a two-tuple: (the path gzip_file returned, False)
-        """
-        nii_path = self.copy_file_to_upload_dest(new_scan_service, 'structural.nii')
-        f = open(nii_path, 'rb')
-        file = FileStorage(f)
-        with patch('cookiecutter_mbam.scan.service.gzip_file') as mocked_gzip:
-            zipped_path = os.path.join(new_scan_service.upload_dest, 'structural.nii.gz')
-            mocked_gzip.return_value = (open(nii_path, 'rb'), zipped_path)
-            file_path, import_service = new_scan_service._process_file(file)
-            mocked_gzip.assert_called_with(os.path.join(new_scan_service.upload_dest, os.path.basename(nii_path)))
-            assert not import_service
+
 
 
     def test_gzip(self, new_scan_service):
