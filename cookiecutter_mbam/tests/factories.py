@@ -2,7 +2,10 @@
 """Factories to help in tests."""
 from factory import PostGenerationMethodCall, Sequence, Iterator
 from factory.alchemy import SQLAlchemyModelFactory
+from factory.fuzzy import FuzzyInteger
 import faker
+import factory
+from pytest_factoryboy import register
 
 from cookiecutter_mbam.database import db
 from cookiecutter_mbam.user.models import User
@@ -19,7 +22,7 @@ class BaseFactory(SQLAlchemyModelFactory):
         abstract = True
         sqlalchemy_session = db.session
 
-
+@register
 class UserFactory(BaseFactory):
     """User factory."""
 
@@ -33,16 +36,16 @@ class UserFactory(BaseFactory):
 
         model = User
 
+@register
 class ExperimentFactory(BaseFactory):
     """Experiment Factory."""
 
-
     date = fake.date_this_decade(before_today=True, after_today=False)
-
     scanner = Iterator(['GE', 'Sie', 'Phi'])
 
     class Meta:
         """Factory configuration."""
-
         model = Experiment
+
+    user = factory.SubFactory(UserFactory)
 
