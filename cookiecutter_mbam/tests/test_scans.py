@@ -162,6 +162,7 @@ class TestScanUpload:
                                                             #subject='000001', experiment='000001_MR2')
             file.close()
 
+
     def test_xnat_ids_correctly_generated_for_multiple_experiments_and_scans(self, new_scan_service):
         """
         Given a subject with more than one experiment, and an experiment with more than one scan

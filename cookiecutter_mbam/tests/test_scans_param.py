@@ -1,7 +1,6 @@
 import pytest
 import os
 from pytest_mock import mocker
-from datetime import datetime
 from werkzeug.datastructures import FileStorage
 from cookiecutter_mbam.scan import Scan
 from cookiecutter_mbam.scan.service import ScanService, gzip_file
@@ -20,8 +19,6 @@ def generate_upload_test_parameters(num_exp, num_scans):
             scan_uri = os.path.join(root_path, exp_id, 'scans', scan_id)
             test_data.append((i, j, exp_id, scan_id, exp_uri, scan_uri))
     return test_data
-
-parameters = generate_upload_test_parameters(2, 2)
 
 @pytest.fixture(scope='function')
 @pytest.mark.usefixtures('db')
@@ -46,9 +43,7 @@ def mocked_scan_service(db, mocker, request):
     ss.param = request.param
     return ss
 
-@pytest.mark.parametrize('mocked_scan_service', parameters, indirect=True)
-@pytest.mark.parametrize('filename', ['T1.nii.gz', 'structural.nii', 'DICOMS.zip'])
-class TestScanUpload:
+class ScanUploadSetup:
 
     def copy_file_to_upload_dest(self, instance_path, basename):
         src_path = os.path.join(instance_path, 'files', basename)
@@ -66,6 +61,18 @@ class TestScanUpload:
             scan_service.add(file)
             file.close()
         return scan_service
+
+    def open_file_storage_obj(self, scan_service, filename):
+        f = self.create_file_to_upload(scan_service, filename)
+        file = FileStorage(f)
+        return (scan_service, file)
+
+large_set_params = generate_upload_test_parameters(2, 2)
+small_set_params = generate_upload_test_parameters(1, 1)
+
+@pytest.mark.parametrize('mocked_scan_service', large_set_params, indirect=True)
+@pytest.mark.parametrize('filename', ['T1.nii.gz', 'structural.nii', 'DICOMS.zip'])
+class TestScanUpload(ScanUploadSetup):
 
     def setup_tests(self, scan_service, filename):
         scan_service = self.add_a_scan(scan_service, filename)
@@ -96,3 +103,46 @@ class TestScanUpload:
         assert scan.xnat_uri == scan_uri
 
 
+@pytest.mark.parametrize('filename,import_service,resource_type',
+                         [('T1.nii.gz', False, 'NIFTI'), ('structural.nii', False, 'NIFTI'),
+                          ('DICOMS.zip', True, 'DICOM')])
+class TestScanUploadPrivateMethods(ScanUploadSetup):
+
+    @pytest.mark.parametrize('mocked_scan_service', small_set_params, indirect=True)
+    def test_resource_named_according_to_file_type(self, mocked_scan_service, filename, import_service, resource_type):
+        scan_service = self.add_a_scan(mocked_scan_service, filename)
+        scan_service._generate_xnat_identifiers.assert_called_with(dcm=import_service)
+        xnat_ids = scan_service._generate_xnat_identifiers(dcm=import_service)
+        assert xnat_ids['resource']['xnat_id'] == resource_type
+
+    @pytest.mark.parametrize('mocked_scan_service', small_set_params, indirect=True)
+    def test_process_file(self, mocked_scan_service, filename, import_service, resource_type):
+        scan_service, file = self.open_file_storage_obj(mocked_scan_service, filename)
+        file_path, imp = mocked_scan_service._process_file(file)
+        assert imp == import_service
+        if filename == 'structural.nii':
+            filename = 'structural.nii.gz'
+        assert file_path == os.path.join(mocked_scan_service.upload_dest, filename)
+        file.close()
+
+    @pytest.mark.parametrize('mocked_scan_service', large_set_params, indirect=True)
+    def test_generate_xnat_ids(self, mocked_scan_service, filename, import_service, resource_type):
+        num_exp, num_scans, exp_id, scan_id, exp_uri, scan_uri = mocked_scan_service.param
+        xnat_ids = mocked_scan_service._generate_xnat_identifiers()
+        assert xnat_ids['experiment']['xnat_id'] == exp_id
+        assert xnat_ids['scan']['xnat_id'] == scan_id
+
+class TestScanUtils:
+
+    @pytest.mark.parametrize('mocked_scan_service', small_set_params, indirect=True)
+    def test_gzip(self, mocked_scan_service):
+        """
+        When the gzip utility function is called with a path to a file
+        It returns a gzipped file object and the path to that file on disk
+        And the file name of the new gzipped file is the old file name + the .gz extension
+        """
+        nii_path = os.path.join(mocked_scan_service.instance_path, 'files', 'structural.nii')
+        file_object, file_path = gzip_file(nii_path)
+        assert type(file_object).__name__ == 'GzipFile'
+        assert os.path.basename(file_path) == 'structural.nii.gz'
+        os.remove(file_path)
