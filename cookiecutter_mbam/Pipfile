@@ -47,6 +47,7 @@ pytest = "==3.8.0"
 pytest-mock = "==1.10.0"
 WebTest = "==2.0.30"
 factory-boy = "==2.11.*"
+pytest-factoryboy = "==2.0.2"
 # Lint and code style
 flake8 = "==3.5.0"
 flake8-blind-except = "==0.1.1"

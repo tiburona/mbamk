@@ -12,6 +12,8 @@ fact.
 
 Todo: Upload security for zip files?
 
+Todo: I need to make sure that if I catch an exception in XNAT connection I don't go ahead and create a scan in the database.
+
 """
 
 import os
@@ -95,7 +97,6 @@ class ScanService:
         :return: scan
         """
         scan = Scan.create(experiment_id=self.experiment.id)
-        # self.experiment.update(num_scans=self.experiment.num_scans + 1)
         return scan
     
     def _process_file(self, image_file):
