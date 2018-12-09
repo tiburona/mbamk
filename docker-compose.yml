@@ -6,12 +6,10 @@ services:
    build: ./cookiecutter_mbam
    environment:
      - "PYTHONUNBUFFERED=1"
-   env_file:
-     - ./cookiecutter_mbam/.env
    volumes:
      - user-data:/app/cookiecutter_mbam/static/files
      - assets-data:/app/cookiecutter_mbam/static/build
-   command: bash -c "sleep 20 && flask db upgrade && flask run"
+   command: bash -c "sleep 20 && flask db upgrade && npm run build && flask run"
    depends_on:
      - jatos
 

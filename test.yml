@@ -1,9 +1,6 @@
 version: '3'
- 
+
 services:
  sut:
    build: ./cookiecutter_mbam
-   env_file:
-     - ./cookiecutter_mbam/.env
-   command: bash -c "flask test" 
-  
+   command: bash -c "flask db upgrade && flask test"
