@@ -2,8 +2,8 @@ version: '3'
  
 services:
  sut:
-   build: ./web
+   build: ./cookiecutter_mbam
    env_file:
-     - app_config.env
-   command: bash -c "python manage.py cov" 
+     - ./cookiecutter_mbam/.env
+   command: bash -c "flask test" 
   
