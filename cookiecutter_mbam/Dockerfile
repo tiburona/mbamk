@@ -10,6 +10,6 @@ RUN apt-get install -y curl \
 && curl -L https://www.npmjs.com/install.sh | sh
 
 RUN ["pip","install","pipenv"]
-RUN ["pipenv","install","dev","--system","--deploy"] # install the app and dep
+RUN ["pipenv","install","--dev","--system","--deploy"] # install the app and dep
 RUN ["npm","install"] # install node modules
 RUN ["npm", "run","build"] # build assets with webpack
