@@ -21,9 +21,5 @@ DEBUG_TB_INTERCEPT_REDIRECTS = False
 CACHE_TYPE = 'simple'  # Can be "memcached", "redis", etc.
 SQLALCHEMY_TRACK_MODIFICATIONS = True
 
-#UPLOAD_FOLDER='/Users/Spiro/mbam/cookiecutter_mbam/cookiecutter_mbam/files'
-## NEED THIS? ###
-#UPLOAD_FOLDER='/Users/katie/test'
-
 WEBPACK_MANIFEST_PATH = 'webpack/manifest.json'
 SECURITY_PASSWORD_SALT = 'super-secret-random-salt' # erm, keep out of our repo in real prod version?
