@@ -6,9 +6,7 @@ from webtest import TestApp
 
 from cookiecutter_mbam.app import create_app
 from cookiecutter_mbam.database import db as _db
-
 from .factories import UserFactory
-
 
 @pytest.fixture
 def app():

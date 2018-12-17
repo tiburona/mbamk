@@ -59,12 +59,6 @@ cookiecutter_mbam/webpack/manifest.json
 # Development database
 *.db
 
-# scans for testing
-*.nii.gz
-*.nii
-*.zip
-DICOM*
-cookiecutter_mbam/static/files
 
 # Mac file browsing
 
