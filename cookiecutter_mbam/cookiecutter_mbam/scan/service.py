@@ -64,7 +64,6 @@ class ScanService:
         keywords = ['subject', 'experiment', 'scan']
         self._update_database_objects(keywords=keywords, objects=[self.user, self.experiment, scan],
                                       ids=[xnat_ids[kw]['xnat_id'] for kw in keywords], uris=uris)
-        os.remove(local_path)
 
     def delete(self, scan_id, delete_from_xnat=False):
         """ Delete a scan from the database
@@ -97,7 +96,7 @@ class ScanService:
         """
         scan = Scan.create(experiment_id=self.experiment.id)
         return scan
-    
+
     def _process_file(self, image_file):
         """
         :param image_file:
@@ -177,15 +176,3 @@ class ScanService:
             obj.update(xnat_uri=uri)
             obj.update(**{'xnat_{}_id'.format(kw): id})
             print(id)
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,9 +1,6 @@
 version: '3'
- 
+
 services:
  sut:
-   build: ./web
-   env_file:
-     - app_config.env
-   command: bash -c "python manage.py cov" 
-  
+   build: ./cookiecutter_mbam
+   command: bash -c "flask db upgrade && flask test"
