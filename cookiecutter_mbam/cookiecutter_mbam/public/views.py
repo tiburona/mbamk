@@ -11,7 +11,6 @@ from cookiecutter_mbam.utils import flash_errors
 
 blueprint = Blueprint('public', __name__, static_folder='../static')
 
-
 @login_manager.user_loader
 def load_user(user_id):
     """Load user by ID."""

@@ -15,7 +15,6 @@ fake = faker.Faker()
 
 class BaseFactory(SQLAlchemyModelFactory):
     """Base factory."""
-
     class Meta:
         """Factory configuration."""
 
@@ -25,21 +24,17 @@ class BaseFactory(SQLAlchemyModelFactory):
 @register
 class UserFactory(BaseFactory):
     """User factory."""
-
-    username = Sequence(lambda n: 'user{0}'.format(n))
     email = Sequence(lambda n: 'user{0}@example.com'.format(n))
     password = PostGenerationMethodCall('set_password', 'example')
     active = True
 
     class Meta:
         """Factory configuration."""
-
         model = User
 
 @register
 class ExperimentFactory(BaseFactory):
     """Experiment Factory."""
-
     date = fake.date_this_decade(before_today=True, after_today=False)
     scanner = Iterator(['GE', 'Sie', 'Phi'])
 
@@ -49,3 +44,11 @@ class ExperimentFactory(BaseFactory):
 
     user = factory.SubFactory(UserFactory)
 
+@register
+class ProfileFactory(UserFactory):
+    """Profile factory."""
+    first_name = Iterator(['Tom','John','Mary','Ellen'])
+    last_name = Iterator(['Smith','Johnson','Patterson','Stoner'])
+    sex = Iterator(['Male', 'Female'])
+    dob = fake.date_of_birth(tzinfo=None, minimum_age=13, maximum_age=115)
+    consent_provided = True
