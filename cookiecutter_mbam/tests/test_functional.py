@@ -19,7 +19,8 @@ class TestLoggingIn:
         res = testapp.get('/')
         # Fills out login form in navbar
         form = res.forms['loginForm']
-        form['username'] = user.username
+        #form['username'] = user.username
+        form['email'] = user.email
         form['password'] = 'myprecious'
         # Submits
         res = form.submit().follow()
@@ -30,7 +31,8 @@ class TestLoggingIn:
         res = testapp.get('/')
         # Fills out login form in navbar
         form = res.forms['loginForm']
-        form['username'] = user.username
+        #form['username'] = user.username
+        form['email'] = user.email
         form['password'] = 'myprecious'
         # Submits
         res = form.submit().follow()
@@ -44,7 +46,8 @@ class TestLoggingIn:
         res = testapp.get('/')
         # Fills out login form, password incorrect
         form = res.forms['loginForm']
-        form['username'] = user.username
+        #form['username'] = user.username
+        form['email'] = user.email
         form['password'] = 'wrong'
         # Submits
         res = form.submit()
@@ -57,12 +60,13 @@ class TestLoggingIn:
         res = testapp.get('/')
         # Fills out login form, password incorrect
         form = res.forms['loginForm']
-        form['username'] = 'unknown'
+        #form['username'] = 'unknown'
+        form['email'] = user.email
         form['password'] = 'myprecious'
         # Submits
         res = form.submit()
         # sees error
-        assert 'Unknown user' in res
+        assert 'Unknown user' in res.text
 
 
 class TestRegistering:
@@ -77,10 +81,10 @@ class TestRegistering:
         res = res.click('Create account')
         # Fills out the form
         form = res.forms['registerForm']
-        form['username'] = 'foobar'
+        #form['username'] = 'foobar'
         form['email'] = 'foo@bar.com'
         form['password'] = 'secret'
-        form['confirm'] = 'secret'
+        form['password_confirm'] = 'secret'
         # Submits
         res = form.submit().follow()
         assert res.status_code == 200
@@ -93,10 +97,10 @@ class TestRegistering:
         res = testapp.get(url_for('public.register'))
         # Fills out form, but passwords don't match
         form = res.forms['registerForm']
-        form['username'] = 'foobar'
+        #form['username'] = 'foobar'
         form['email'] = 'foo@bar.com'
         form['password'] = 'secret'
-        form['confirm'] = 'secrets'
+        form['password_confirm'] = 'secrets'
         # Submits
         res = form.submit()
         # sees error message
@@ -110,10 +114,10 @@ class TestRegistering:
         res = testapp.get(url_for('public.register'))
         # Fills out form, but username is already registered
         form = res.forms['registerForm']
-        form['username'] = user.username
+        #form['username'] = user.username
         form['email'] = 'foo@bar.com'
         form['password'] = 'secret'
-        form['confirm'] = 'secret'
+        form['password_confirm'] = 'secret'
         # Submits
         res = form.submit()
         # sees error

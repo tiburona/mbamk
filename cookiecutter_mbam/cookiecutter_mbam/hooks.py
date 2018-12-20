@@ -13,9 +13,9 @@ def create_test_users(app, user_datastore, db):
 
         encrypted_password = utils.hash_password('password')
         if not user_datastore.get_user('someone@example.com'):
-            user_datastore.create_user(username='someone', email='someone@example.com', password=encrypted_password)
+            user_datastore.create_user(email='someone@example.com', password=encrypted_password)
         if not user_datastore.get_user('admin@example.com'):
-            user_datastore.create_user(username='admin', email='admin@example.com', password=encrypted_password)
+            user_datastore.create_user(email='admin@example.com', password=encrypted_password)
 
         db.session.commit()
 

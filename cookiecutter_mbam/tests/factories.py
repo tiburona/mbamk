@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 """Factories to help in tests."""
+import faker, factory
 from factory import PostGenerationMethodCall, Sequence, Iterator
 from factory.alchemy import SQLAlchemyModelFactory
 from factory.fuzzy import FuzzyInteger
-import faker
-import factory
 from pytest_factoryboy import register
 
 from cookiecutter_mbam.database import db
