@@ -36,6 +36,7 @@ class TestLoginForm:
         """Unknown email."""
         form = LoginForm(email='unknown', password='example')
         assert form.validate() is False
+        # Based on messages in https://github.com/mattupstate/flask-security/blob/develop/flask_security/core.py
         assert 'Specified user does not exist' in form.email.errors
         assert form.user is None
 

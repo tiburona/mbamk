@@ -66,7 +66,8 @@ class TestLoggingIn:
         # Submits
         res = form.submit()
         # sees error
-        assert 'Unknown user' in res.text
+        assert 'Specified user does not exist' in res
+        #assert 'Unknown user' in res.text
 
 
 class TestRegistering:
