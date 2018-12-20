@@ -6,7 +6,7 @@ from webtest import TestApp
 
 from cookiecutter_mbam.app import create_app
 from cookiecutter_mbam.database import db as _db
-from .factories import UserFactory, ProfileFactory
+from .factories import UserFactory
 
 @pytest.fixture
 def app():
@@ -46,10 +46,3 @@ def user(db):
     user = UserFactory(password='myprecious')
     db.session.commit()
     return user
-
-@pytest.fixture
-def user_profile(db):
-    """A user with a completed profile for the tests."""
-    user_profile = ProfileFactory(password='myprecious')
-    db.session.commit()
-    return user_profile

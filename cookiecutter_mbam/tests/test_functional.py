@@ -31,7 +31,6 @@ class TestLoggingIn:
         res = testapp.get('/')
         # Fills out login form in navbar
         form = res.forms['loginForm']
-        #form['username'] = user.username
         form['email'] = user.email
         form['password'] = 'myprecious'
         # Submits
@@ -46,7 +45,6 @@ class TestLoggingIn:
         res = testapp.get('/')
         # Fills out login form, password incorrect
         form = res.forms['loginForm']
-        #form['username'] = user.username
         form['email'] = user.email
         form['password'] = 'wrong'
         # Submits
@@ -61,13 +59,12 @@ class TestLoggingIn:
         # Fills out login form, password incorrect
         form = res.forms['loginForm']
         #form['username'] = 'unknown'
-        form['email'] = user.email
+        form['email'] = 'unknown'
         form['password'] = 'myprecious'
         # Submits
         res = form.submit()
         # sees error
         assert 'Specified user does not exist' in res
-        #assert 'Unknown user' in res.text
 
 
 class TestRegistering:
@@ -98,14 +95,13 @@ class TestRegistering:
         res = testapp.get(url_for('public.register'))
         # Fills out form, but passwords don't match
         form = res.forms['registerForm']
-        #form['username'] = 'foobar'
         form['email'] = 'foo@bar.com'
         form['password'] = 'secret'
         form['password_confirm'] = 'secrets'
         # Submits
         res = form.submit()
         # sees error message
-        assert 'Passwords must match' in res
+        assert 'Passwords do not match' in res
 
     def test_sees_error_message_if_user_already_registered(self, user, testapp):
         """Show error if user already registered."""
@@ -115,11 +111,10 @@ class TestRegistering:
         res = testapp.get(url_for('public.register'))
         # Fills out form, but username is already registered
         form = res.forms['registerForm']
-        #form['username'] = user.username
-        form['email'] = 'foo@bar.com'
+        form['email'] = user.email
         form['password'] = 'secret'
         form['password_confirm'] = 'secret'
         # Submits
         res = form.submit()
         # sees error
-        assert 'Username already registered' in res
+        assert user.email + ' is already associated with an account.' in res

@@ -62,10 +62,9 @@ class TestLoginForm:
 class TestProfileForm:
     """Profile form."""
 
-    def test_validate_success(self, user_profile):
+    def test_validate_success(self, user):
         """Profile successful."""
-        form = ProfileForm(first_name=user_profile.first_name, last_name=user_profile.last_name,
-                             sex=user_profile.sex, dob=user_profile.dob, consent_provided=user_profile.consent_provided)
-        #form = ProfileForm()
-        #form.populate_obj(user_profile)
+        form = ProfileForm(first_name='foo', last_name='bar',
+                             sex='Male', dob='1980-05-12', consent_provided=True)
+
         assert form.validate() is True

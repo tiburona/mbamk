@@ -28,7 +28,6 @@ def create_app(config_object='cookiecutter_mbam.settings'):
 
 def register_extensions(app):
     """Register Flask extensions."""
-    #bcrypt.init_app(app)
     cache.init_app(app)
     db.init_app(app)
     csrf_protect.init_app(app)

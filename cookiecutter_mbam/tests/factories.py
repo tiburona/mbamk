@@ -42,12 +42,3 @@ class ExperimentFactory(BaseFactory):
         model = Experiment
 
     user = factory.SubFactory(UserFactory)
-
-@register
-class ProfileFactory(UserFactory):
-    """Profile factory."""
-    first_name = Iterator(['Tom','John','Mary','Ellen'])
-    last_name = Iterator(['Smith','Johnson','Patterson','Stoner'])
-    sex = Iterator(['Male', 'Female'])
-    dob = fake.date_of_birth(tzinfo=None, minimum_age=13, maximum_age=115)
-    consent_provided = True
