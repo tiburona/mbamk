@@ -38,6 +38,7 @@ environs = "==4.0.0"
 # Database communications
 xnat = "==0.3.11"
 pymysql = "==0.9.3"
+bcrypt = "*"
 
 [dev-packages]
 # Testing
