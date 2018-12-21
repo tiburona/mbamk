@@ -9,6 +9,7 @@ from flask_security import SQLAlchemyUserDatastore
 from cookiecutter_mbam.extensions import admin, cache, csrf_protect, db, debug_toolbar, migrate,\
     security, webpack, mail
 from .hooks import create_test_users, models_committed_hooks
+from cookiecutter_mbam.utils import user_context_processor
 
 def create_app(config_object='cookiecutter_mbam.settings'):
     """An application factory, as explained here: http://flask.pocoo.org/docs/patterns/appfactories/.
@@ -23,6 +24,7 @@ def create_app(config_object='cookiecutter_mbam.settings'):
     register_errorhandlers(app)
     register_shellcontext(app)
     register_commands(app)
+    register_processors(app)
     return app
 
 
@@ -86,6 +88,10 @@ def register_commands(app):
     app.cli.add_command(commands.urls)
 
 def register_admin_views():
-    """Register Flask admin views"""
+    """Register Flask admin views."""
     admin.add_view(UserAdmin(User, db.session))
     admin.add_view(RoleAdmin(Role, db.session))
+
+def register_processors(app):
+    """Register context processors."""
+    app.context_processor(user_context_processor)

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Experiment views."""
 from flask import Blueprint, render_template, request, flash, redirect, url_for, session
-from flask_login import current_user
+from flask_security import current_user
 from .models import Experiment
 from .forms import ExperimentForm
 from .service import ExperimentService
