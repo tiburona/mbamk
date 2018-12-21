@@ -13,3 +13,14 @@ WTF_CSRF_ENABLED = False  # Allows form testing
 PRESERVE_CONTEXT_ON_EXCEPTION = False
 SECURITY_PASSWORD_SALT = 'test'
 SECURITY_PASSWORD_HASH='bcrypt'
+SECURITY_EMAIL_SUBJECT_REGISTER = 'Welcome to MyBrainandMe!'
+
+# Flask-Mail Settings
+MAIL_USERNAME = 'mbaminfo@gmail.com'
+#MAIL_PASSWORD = os.getenv('MAIL_PASSWORD')
+MAIL_PASSWORD = 'vcncnzonsvblmjpb'
+MAIL_DEFAULT_SENDER = '"MyBrainandMe" <mbaminfo@gmail.com>'
+MAIL_SERVER = 'smtp.gmail.com'
+MAIL_PORT = 587
+MAIL_USE_SSL = False
+MAIL_USE_TLS = True

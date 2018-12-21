@@ -1,5 +1,4 @@
-import pytest
-import os
+import pytest, os
 from pytest_mock import mocker
 from werkzeug.datastructures import FileStorage
 from cookiecutter_mbam.scan import Scan

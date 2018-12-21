@@ -6,8 +6,8 @@ from cookiecutter_mbam import commands, public, user, experiment, scan
 from cookiecutter_mbam.user import User, Role
 from cookiecutter_mbam.admin import UserAdmin, RoleAdmin
 from flask_security import SQLAlchemyUserDatastore
-from cookiecutter_mbam.extensions import admin, cache, csrf_protect, db, debug_toolbar, login_manager, migrate,\
-    security, webpack
+from cookiecutter_mbam.extensions import admin, cache, csrf_protect, db, debug_toolbar, migrate,\
+    security, webpack, mail
 from .hooks import create_test_users, models_committed_hooks
 
 def create_app(config_object='cookiecutter_mbam.settings'):
@@ -34,11 +34,11 @@ def register_extensions(app):
     user_datastore = SQLAlchemyUserDatastore(db, User, Role)
     security.init_app(app, datastore=user_datastore)
     create_test_users(app, user_datastore, db)
-    login_manager.init_app(app)
     debug_toolbar.init_app(app)
     migrate.init_app(app, db)
     webpack.init_app(app)
     admin.init_app(app, endpoint='admin')
+    mail.init_app(app)
     return None
 
 def register_hooks(app):

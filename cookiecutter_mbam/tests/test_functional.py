@@ -19,7 +19,6 @@ class TestLoggingIn:
         res = testapp.get('/')
         # Fills out login form in navbar
         form = res.forms['loginForm']
-        #form['username'] = user.username
         form['email'] = user.email
         form['password'] = 'myprecious'
         # Submits
@@ -58,7 +57,6 @@ class TestLoggingIn:
         res = testapp.get('/')
         # Fills out login form, password incorrect
         form = res.forms['loginForm']
-        #form['username'] = 'unknown'
         form['email'] = 'unknown'
         form['password'] = 'myprecious'
         # Submits
@@ -79,7 +77,6 @@ class TestRegistering:
         res = res.click('Create account')
         # Fills out the form
         form = res.forms['registerForm']
-        #form['username'] = 'foobar'
         form['email'] = 'foo@bar.com'
         form['password'] = 'secret'
         form['password_confirm'] = 'secret'

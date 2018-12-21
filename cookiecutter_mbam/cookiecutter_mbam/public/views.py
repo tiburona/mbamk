@@ -3,19 +3,12 @@
 from flask import Blueprint, flash, redirect, render_template, request, url_for, session
 from flask_security import login_required, login_user, logout_user
 
-from cookiecutter_mbam.extensions import login_manager
 from cookiecutter_mbam.public.forms import LoginForm
 from cookiecutter_mbam.user.forms import RegisterForm
 from cookiecutter_mbam.user.models import User
 from cookiecutter_mbam.utils import flash_errors
 
 blueprint = Blueprint('public', __name__, static_folder='../static')
-
-@login_manager.user_loader
-def load_user(user_id):
-    """Load user by ID."""
-    return User.get_by_id(int(user_id))
-
 
 @blueprint.route('/', methods=['GET', 'POST'])
 def home():
