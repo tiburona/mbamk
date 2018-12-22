@@ -25,10 +25,14 @@ textarea {
   max-width: 700px;
 }
 
-/* Nav Bar */
+/* Nav Bar and Splash page*/
 .navbar-custom {
   /*background-color: #f59ddd fucia pink */
   background-color: #30f7ef
+}
+
+.navbar-brand {
+    padding-top: 25px;
 }
 
 .jumbotron {
@@ -40,12 +44,10 @@ textarea {
 }
 
 /* Forms */
-
 .navbar-form input[type="text"],
 .navbar-form input[type="password"] {
   width: 180px;
 }
-
 
 .form-register {
   width: 50%;
