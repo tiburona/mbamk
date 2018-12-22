@@ -25,6 +25,20 @@ textarea {
   max-width: 700px;
 }
 
+/* Nav Bar */
+.navbar-custom {
+  /*background-color: #f59ddd fucia pink */
+  background-color: #30f7ef
+}
+
+.jumbotron {
+  background-color: #30f7ef
+}
+
+.display-3 {
+  color: #8358ad
+}
+
 /* Forms */
 
 .navbar-form input[type="text"],
