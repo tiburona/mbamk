@@ -31,6 +31,15 @@ textarea {
   background-color: #30f7ef
 }
 
+/*
+.btn {
+  background-color: #8358ad; /* shade of purple can change 
+} */
+
+body {
+  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+
 .navbar-brand {
     padding-top: 25px;
 }
@@ -39,8 +48,11 @@ textarea {
   background-color: #30f7ef
 }
 
+/* Welcome to My Brain and Me */
 .display-3 {
-  color: #8358ad
+  /*color: #8358ad the nice purple */ 
+  color: black;
+  font-size: 48px;
 }
 
 /* Forms */

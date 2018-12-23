@@ -1,0 +1,50 @@
+{% extends "layout.html" %}
+
+{% block title %}User Login{% endblock %}
+
+{% block content %}
+
+<div class="container-narrow">
+
+    <br/>
+    <h3 class="mt-5">User Login</h3>
+
+    <form method="POST" class="form form-register" action="{{ url_for_security('login') }}" name="login_user_form">
+        {{ login_user_form.hidden_tag() }}
+        {{ login_user_form.csrf_token }}
+        <div class="form-group">
+          {{ login_user_form.email.label }}
+          {{ login_user_form.email(placeholder="Email", class='form-control') }}
+        </div>
+        <div class="form-group">
+          {{ login_user_form.password.label }}
+          {{ login_user_form.password(placeholder="Password", class='form-control') }}
+        </div>
+        <div class="form-group">
+          {{ login_user_form.remember.label }}
+          {{ login_user_form.remember }}
+        </div>
+        <div class="form-group">
+        {{ login_user_form.submit(class_='btn btn-primary') }}
+        </div>
+    </form>
+
+    <div class="panel panel-default">
+        <div class="panel-body">
+          <ul class="list-unstyled">
+          {% if security.registerable %}
+            <li><em>Don't have an account yet?</em> Click <a href="{{ url_for_security('register') }}">here</a> to create a new account<br /></li>
+          {% endif %}
+          {% if security.recoverable %}
+            <li><em>Forgot your password?</em> Click <a href="{{ url_for_security('forgot_password') }}">here</a> to reset your password<br /></li>
+          {% endif %}
+          {% if security.confirmable %}
+            <li><em>Didn't receive your confirmation email?</em> Click <a href="{{ url_for_security('send_confirmation') }}">here</a> to resend confirmation email</li>
+          {% endif %}
+          </ul>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
