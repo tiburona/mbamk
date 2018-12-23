@@ -14,6 +14,8 @@ SECURITY_PASSWORD_SALT = 'test'
 SECURITY_PASSWORD_HASH='bcrypt'
 SECURITY_EMAIL_SUBJECT_REGISTER = 'Welcome to MyBrainandMe!'
 SECURITY_EMAIL_SENDER = '"MyBrainandMe" <mbaminfo@gmail.com>'
+SECURITY_REGISTERABLE = True
+SECURITY_MSG_LOGOUT = 'You are logged out.'
 
 # Flask-Mail Settings
 MAIL_USERNAME = 'mbaminfo@gmail.com'
