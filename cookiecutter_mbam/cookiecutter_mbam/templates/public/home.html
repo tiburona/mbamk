@@ -6,13 +6,43 @@
     <div class="container">
 
       <h1 class="display-3 text-center">Welcome to My Brain and Me!</h1>
-      
-      <p class="lead text-center">Please register or login. Click <a href='/about'>here</a> for an introduction to the site.</p>
-            <hr class="my-4">
-            <p class="lead text-center">
-                <a class="btn btn-primary btn-large" href="{{ url_for('security.register') }}" role="button">Register</a>
-                <a class="btn btn-primary btn-large" href="{{ url_for('security.login') }}" role="button">Login</a>
-            </p>
+      {% if current_user.is_authenticated %}
+          {% if not current_user.has_role('end-user') %}
+              <p class="lead">If you would like to use the site to learn about your brain,
+                  please complete a brief user profile. If you would like to use the site for your
+                  own research, please fill out a short researcher application.</p>
+                  <hr class="my-4">
+                  <p class="lead text-center">
+                      <a class="btn btn-primary btn-large" href="" role="button">Complete Profile</a>
+                      <a class="btn btn-primary btn-large" href="" role="button">Apply</a>
+                  </p>
+          {% else %}
+              {% if not current_user.experiments.first().struct_subjectSpace %}
+                  <p class="lead">To get started, upload an MRI scan (if you already have one),
+                  or complete a survey or psychophysics study.</p>
+                  <hr class="my-4">
+                  <p class="lead text-center">
+                      <a class="btn btn-primary btn-large" href="" role="button">Upload Scan</a>
+                      <a class="btn btn-primary btn-large" href="" role="button">Conduct Study</a>
+                  </p>
+              {% else %}
+                  <p class="lead">View your raw or labeled MRI scan, or complete a survey or psychophysics study.</p>
+                  <hr class="my-4">
+                  <p class="lead text-center">
+                      <a class="btn btn-primary btn-large" href="" role="button">My Brain</a>
+                      <a class="btn btn-primary btn-large" href="" role="button">Conduct Study</a>
+                  </p>
+              {% endif %}
+          {% endif %}
+      {% else %}
+          <p class="lead text-center">Please register or login. Click <a href='/about'>here</a> for an introduction to the site.</p>
+          <hr class="my-4">
+          <p class="lead text-center">
+              <a class="btn btn-primary btn-large" href="{{ url_for('security.register') }}" role="button">Register</a>
+              <a class="btn btn-primary btn-large" href="{{ url_for('security.login') }}" role="button">Login</a>
+          </p>
+      {% endif %}
+
     </div>
 </div><!-- /.jumbotron -->
 

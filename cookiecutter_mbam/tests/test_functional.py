@@ -20,7 +20,7 @@ class TestLoggingIn:
         # Fills out login form in navbar
         form = res.forms['loginForm']
         form['email'] = user.email
-        form['password'] = 'myprecious'
+        form['password'] = 'example'
         # Submits
         res = form.submit().follow()
         assert res.status_code == 200
@@ -31,11 +31,10 @@ class TestLoggingIn:
         # Fills out login form in navbar
         form = res.forms['loginForm']
         form['email'] = user.email
-        form['password'] = 'myprecious'
+        form['password'] = 'example'
         # Submits
         res = form.submit().follow()
         res = testapp.get(url_for('security.logout')).follow()
-        print(res)
         # sees /login
         assert 'href="/login"' in res
 
@@ -59,7 +58,7 @@ class TestLoggingIn:
         # Fills out login form, password incorrect
         form = res.forms['loginForm']
         form['email'] = 'unknown'
-        form['password'] = 'myprecious'
+        form['password'] = 'example'
         # Submits
         res = form.submit()
         # sees error
@@ -116,3 +115,32 @@ class TestRegistering:
         res = form.submit()
         # sees error
         assert user.email + ' is already associated with an account.' in res
+
+    def test_can_register_logout_login(self, user, testapp):
+        """Register a new user, logout, then login."""
+        # Goes to homepage
+        res = testapp.get('/')
+        old_count = len(User.query.all())
+        # Clicks Create Account button
+        res = res.click('Create account')
+        # Fills out the form
+        form = res.forms['registerForm']
+        form['email'] = 'foo@bar.com'
+        form['password'] = 'secret'
+        form['password_confirm'] = 'secret'
+        # Submits
+        res = form.submit().follow()
+        assert res.status_code == 200
+        # A new user was created
+        assert len(User.query.all()) == old_count + 1
+        # logout user
+        res = testapp.get(url_for('security.logout')).follow()
+        # log back in
+        res = testapp.get('/')
+        # Fills out login form in navbar
+        form = res.forms['loginForm']
+        form['email'] = 'foo@bar.com'
+        form['password'] = 'secret'
+        # Submits
+        res = form.submit().follow()
+        assert res.status_code == 200

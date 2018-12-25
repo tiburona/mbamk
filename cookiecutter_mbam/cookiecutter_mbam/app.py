@@ -24,7 +24,7 @@ def create_app(config_object='cookiecutter_mbam.settings'):
     register_errorhandlers(app)
     register_shellcontext(app)
     register_commands(app)
-    register_processors(app)
+    #register_processors(app)
     return app
 
 
@@ -92,6 +92,6 @@ def register_admin_views():
     admin.add_view(UserAdmin(User, db.session))
     admin.add_view(RoleAdmin(Role, db.session))
 
-def register_processors(app):
-    """Register context processors."""
-    app.context_processor(user_context_processor)
+# def register_processors(app):
+#     """Register context processors."""
+#     app.context_processor(user_context_processor)

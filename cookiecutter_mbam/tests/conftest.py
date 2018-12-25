@@ -43,6 +43,6 @@ def db(app):
 @pytest.fixture
 def user(db):
     """A user for the tests."""
-    user = UserFactory(password='myprecious')
+    user = UserFactory()
     db.session.commit()
     return user
