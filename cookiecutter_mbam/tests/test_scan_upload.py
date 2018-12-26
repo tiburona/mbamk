@@ -248,40 +248,39 @@ class TestScanUtils:
 
 
 @pytest.mark.parametrize('scan_service', small_set_of_params, indirect=True)
-@pytest.mark.parametrize('filename', ['T1.nii.gz', 'structural.nii', 'DICOMS.zip'])
 class TestXNATUploads(ScanUploadSetup):
 
-    def test_scan_uploads_to_xnat(self, scan_service, filename):
-
+    def get_test_values(self, scan_service, filename, resource_name):
         scan_service, retrieved_scans, db_scan = self.setup_tests(scan_service, filename, mock=False)
         project, subject, experiment, xnat_scan = scan_service.xc.get_scan_info('000001', '000001_MR1')
-        assert db_scan.xnat_uri == xnat_scan.uri
-
-        # the following forces XNAT to update its metadata for uploaded files
         scan_service.xc.refresh_xnat_catalog(experiment.uri)
-
-        if filename == 'DICOMS.zip':
-            resource_name = 'DICOM'
-        else:
-            resource_name = 'NIFTI'
-
         url = os.path.join(xnat_scan.uri, 'resources', resource_name, 'files')
         response = scan_service.xc.xnat_get(url)
+        pytest.set_trace()
+        scan_service.xc.xnat_delete(experiment.uri)
         files = json.loads(response.content)
-        file_size = int(files['ResultSet']['Result'][0]['Size'])
+        first_file = files['ResultSet']['Result'][0]
+        file_size = int(first_file['Size'])
+        return (first_file, file_size, xnat_scan, db_scan)
+
+    def common_tests_for_dicom_and_nifti(self, file_size, db_scan, xnat_scan):
+        assert db_scan.xnat_uri == xnat_scan.uri
         assert file_size > 1000
 
-        if filename == 'DICOMS.zip':
-            file_format = files['ResultSet']['Result'][0]['file_format']
-            assert file_format == 'DICOM'
-        else:
-            file_name = files['ResultSet']['Result'][0]['Name']
-            assert file_name == 'T1.nii.gz'
-            assert 'T1_1' in xnat_scan.uri
+    @pytest.mark.parametrize('filename', ['T1.nii.gz', 'structural.nii'])
+    def test_nifti_uploads_to_xnat(self, scan_service, filename):
+        first_file, file_size, xnat_scan, db_scan = self.get_test_values(scan_service, filename, 'NIFTI')
+        self.common_tests_for_dicom_and_nifti(file_size, db_scan, xnat_scan)
+        assert first_file['Name'] == 'T1.nii.gz'
+        assert 'T1_1' in xnat_scan.uri
 
-        scan_service.xc.xnat_delete(experiment.uri)
+    def test_dicom_uploads_to_xnat(self, scan_service):
+        first_file, file_size, xnat_scan, db_scan = self.get_test_values(scan_service, 'DICOMS.zip', 'DICOM')
+        self.common_tests_for_dicom_and_nifti(file_size, db_scan, xnat_scan)
+        assert first_file['file_format'] == 'DICOM'
 
-        # Todo: for these scans I should create a special subject id?
+
+
 
 
 

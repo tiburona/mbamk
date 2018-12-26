@@ -67,3 +67,7 @@ cookiecutter_mbam/webpack/manifest.json
 .idea
 .idea/*
 
+# test files
+
+cookiecutter_mbam/static/files
+files/
