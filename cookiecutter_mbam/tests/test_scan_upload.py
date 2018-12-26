@@ -9,6 +9,8 @@ from cookiecutter_mbam.scan.service import ScanService, gzip_file
 from .factories import UserFactory
 from .factories import ExperimentFactory
 
+# todo: why aren't my files being deleted from static/files.  add a test to make sure they are?
+
 
 @pytest.fixture(scope='function')
 @pytest.mark.usefixtures('db', 'app')
@@ -252,35 +254,35 @@ class TestXNATUploads(ScanUploadSetup):
     def test_scan_uploads_to_xnat(self, scan_service, filename):
 
         scan_service, retrieved_scans, db_scan = self.setup_tests(scan_service, filename, mock=False)
-
         project, subject, experiment, xnat_scan = scan_service.xc.get_scan_info('000001', '000001_MR1')
+        assert db_scan.xnat_uri == xnat_scan.uri
 
-        if filename != 'DICOMS.zip':
-            scan_service.xc.refresh_xnat_catalog(experiment.uri)
-            assert 'T1_1' in xnat_scan.uri
-            url = os.path.join(xnat_scan.uri, 'resources', 'NIFTI', 'files')
-            response = scan_service.xc.xnat_get(url)
-            files = json.loads(response.content)
-            file_size = int(files['ResultSet']['Result'][0]['Size'])
-            file_name = files['ResultSet']['Result'][0]['Name']
-            assert file_size > 1000
-            assert file_name == 'T1.nii.gz'
-            assert db_scan.xnat_uri == xnat_scan.uri
+        # the following forces XNAT to update its metadata for uploaded files
+        scan_service.xc.refresh_xnat_catalog(experiment.uri)
 
+        if filename == 'DICOMS.zip':
+            resource_name = 'DICOM'
         else:
-            url = os.path.join(xnat_scan.uri, 'resources', 'DICOM', 'files')
-            response = scan_service.xc.xnat_get(url)
-            files = json.loads(response.content)
-            file_size = int(files['ResultSet']['Result'][0]['Size'])
+            resource_name = 'NIFTI'
+
+        url = os.path.join(xnat_scan.uri, 'resources', resource_name, 'files')
+        response = scan_service.xc.xnat_get(url)
+        files = json.loads(response.content)
+        file_size = int(files['ResultSet']['Result'][0]['Size'])
+        assert file_size > 1000
+
+        if filename == 'DICOMS.zip':
             file_format = files['ResultSet']['Result'][0]['file_format']
-            assert file_size > 1000
             assert file_format == 'DICOM'
-            assert db_scan.xnat_uri == xnat_scan.uri
+        else:
+            file_name = files['ResultSet']['Result'][0]['Name']
+            assert file_name == 'T1.nii.gz'
+            assert 'T1_1' in xnat_scan.uri
 
         scan_service.xc.xnat_delete(experiment.uri)
 
         # Todo: for these scans I should create a special subject id?
-        # show counts doesn't mean the scan isn't there, but why does that happen for tests and not for hitting the web site
+
 
 
 
