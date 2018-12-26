@@ -20,7 +20,7 @@ textarea {
   resize: vertical;
 }
 
-.container-narrow{
+.container-narrow {
   margin: 0 auto;
   max-width: 700px;
 }
@@ -28,12 +28,13 @@ textarea {
 /* Nav Bar and Splash page*/
 .navbar-custom {
   /*background-color: #f59ddd fucia pink */
-  background-color: #30f7ef
+  background-color: #30f7ef;
+  height: 80px;
 }
 
 /*
 .btn {
-  background-color: #8358ad; /* shade of purple can change 
+  background-color: #8358ad; /* shade of purple can change
 } */
 
 body {
@@ -50,16 +51,12 @@ body {
 
 /* Welcome to My Brain and Me */
 .display-3 {
-  /*color: #8358ad the nice purple */ 
+  /*color: #8358ad the nice purple */
   color: black;
   font-size: 48px;
 }
 
 /* Forms */
-.navbar-form input[type="text"],
-.navbar-form input[type="password"] {
-  width: 180px;
-}
 
 .form-register {
   width: 50%;
