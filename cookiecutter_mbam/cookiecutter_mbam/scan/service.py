@@ -30,16 +30,18 @@ def debug():
 
 class ScanService:
 
-    def __init__(self, user_id, exp_id):
+    def __init__(self, user_id, exp_id, config_dir=''):
         self.user_id = user_id
         self.user = User.get_by_id(self.user_id)
         self.experiment = Experiment.get_by_id(exp_id)
         self.instance_path = current_app.instance_path[:-8]
-        self._config_read()
+        if not len(config_dir):
+            config_dir = self.instance_path
+        self._config_read(os.path.join(config_dir, 'setup.cfg'))
 
-    def _config_read(self):
+    def _config_read(self, config_path):
         config = configparser.ConfigParser()
-        config.read(os.path.join(self.instance_path, 'setup.cfg'))
+        config.read(config_path)
         self.upload_dest = os.path.join(self.instance_path, config['uploads']['uploaded_scans_dest'])
         self.xc = XNATConnection(config=config['XNAT'])
 
@@ -57,13 +59,13 @@ class ScanService:
 
         """
         local_path, dcm = self._process_file(image_file)
-        xnat_ids = self._generate_xnat_identifiers(dcm=dcm)
-        existing_xnat_ids = self._check_for_existing_xnat_ids()
-        uris = self.xc.upload_scan(xnat_ids, existing_xnat_ids, local_path, import_service=dcm)
+        self.xnat_ids = self._generate_xnat_identifiers(dcm=dcm)
+        self.existing_xnat_ids = self._check_for_existing_xnat_ids()
+        uris = self.xc.upload_scan(self.xnat_ids, self.existing_xnat_ids, local_path, import_service=dcm)
         scan = self._add_scan_to_database() # todo: what should scan's string repr be?
         keywords = ['subject', 'experiment', 'scan']
         self._update_database_objects(keywords=keywords, objects=[self.user, self.experiment, scan],
-                                      ids=[xnat_ids[kw]['xnat_id'] for kw in keywords], uris=uris)
+                                      ids=[self.xnat_ids[kw]['xnat_id'] for kw in keywords], uris=uris)
 
     def delete(self, scan_id, delete_from_xnat=False):
         """ Delete a scan from the database
@@ -80,7 +82,6 @@ class ScanService:
             self.experiment.update(num_scans=self.experiment.num_scans - 1)
         scan.delete()
 
-    # TODO: Implement xnat_delete method in xnat connection
     def _delete_from_xnat(self, scan):
         """
         :param object scan: the database object corresponding to the scan to delete in xnat

@@ -1,6 +1,5 @@
 import os
 import xnat
-import configparser
 
 from flask import current_app
 def debug():
@@ -45,11 +44,14 @@ class XNATConnection:
         with xnat.connect(self.server, self.user, self.password) as session:
             if imp:
                 session.services.import_(file_path, overwrite='delete', **kwargs)
+                return self._get_uris()
             elif file_path:
                 session.upload(url, file_path)
+                return self._get_uris()
             else:
                 try:
-                    session.put(url)
+                    response = session.put(url)
+                    return response
                 except:
                     pass
                     #xnat.exceptions.XNATResponseError as e:
@@ -58,26 +60,35 @@ class XNATConnection:
                     #     pass
                     # else:
                     #     # error is unknown, handle it somehow
-                    #     pass
-            if file_path:
-                return self._xnat_get_uris(session)
-            else:
-                return ''
+            return ''
 
-    def _xnat_get_uris(self, session):
+    def xnat_get(self, url):
+        with xnat.connect(self.server, self.user, self.password) as session:
+            try:
+                response = session.get(url)
+            except:
+                pass
+            return response
+
+
+    def _get_uris(self):
         """
         :param session: the xnatpy XNAT connection object
         :return: the uri of the last created scan
         :rtype: str
         """
-        project_id = self.project
         subject_id = self.xnat_ids['subject']['xnat_id']
         experiment_id = self.xnat_ids['experiment']['xnat_id']
-        project = session.projects[project_id]
-        subject = session.subjects[subject_id]
-        experiment = project.experiments[experiment_id]
-        scan = session.projects[project_id].experiments[experiment_id].scans[-1]
+        _, subject, experiment, scan = self.get_scan_info(subject_id, experiment_id)
         return (subject.uri, experiment.uri, scan.uri)
+
+    def get_scan_info(self, subject_id, experiment_id):
+        with xnat.connect(self.server, self.user, self.password) as session:
+            project = session.projects[self.project]
+            subject = session.subjects[subject_id]
+            experiment = project.experiments[experiment_id]
+            scan = session.projects[self.project].experiments[experiment_id].scans[-1]
+        return (project, subject, experiment, scan)
 
     def xnat_delete(self, url):
         """ Delete an item from XNAT
@@ -93,6 +104,17 @@ class XNATConnection:
         except:
             # todo: handle errors!
             pass
+
+    def xnat_post(self, url):
+        with xnat.connect(self.server, self.user, self.password) as session:
+            response = session.post(url)
+            return response
+
+    def refresh_xnat_catalog(self, resource_url):
+        if resource_url[:5] == '/data':
+            resource_url = resource_url[5:]
+        refresh_url = '/data/services/refresh/catalog?resource=' + resource_url
+        return self.xnat_post(refresh_url)
 
     def upload_scan(self, xnat_ids, existing_xnat_ids, file_path, import_service=False):
         """The method to upload a scan to XNAT
@@ -146,3 +168,6 @@ class XNATConnection:
             fetched_uris = self._xnat_put(file_path=file_path, imp=True, **kwargs)
 
         return fetched_uris
+
+
+
