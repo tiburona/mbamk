@@ -249,6 +249,7 @@ class TestScanUtils:
 
 @pytest.mark.parametrize('scan_service', small_set_of_params, indirect=True)
 class TestXNATUploads(ScanUploadSetup):
+    """A class to test that scans can be uploaded to XNAT"""
 
     def get_test_values(self, scan_service, filename, resource_name):
         scan_service, retrieved_scans, db_scan = self.setup_tests(scan_service, filename, mock=False)
@@ -256,7 +257,6 @@ class TestXNATUploads(ScanUploadSetup):
         scan_service.xc.refresh_xnat_catalog(experiment.uri)
         url = os.path.join(xnat_scan.uri, 'resources', resource_name, 'files')
         response = scan_service.xc.xnat_get(url)
-        pytest.set_trace()
         scan_service.xc.xnat_delete(experiment.uri)
         files = json.loads(response.content)
         first_file = files['ResultSet']['Result'][0]

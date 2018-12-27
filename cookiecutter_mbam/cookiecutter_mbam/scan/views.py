@@ -19,9 +19,11 @@ def add():
     """Add a scan."""
     form = ScanForm()
     if form.validate_on_submit():
-        #f = form.scan_file.data
         user_id = str(current_user.get_id())
         exp_id = str(session['curr_experiment'])
+        if len(request.files.getlist('scan_file')) > 3:
+            flash('You can upload up to three files.', 'warning')
+            return redirect(url_for('scan.add'))
         for f in request.files.getlist('scan_file'):
             ScanService(user_id, exp_id).add(f)
         flash('You successfully added a new scan.', 'success')
