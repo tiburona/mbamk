@@ -32,6 +32,16 @@ textarea {
   height: 80px;
 }
 
+.btn-link {
+  text-align: left;
+  white-space:normal !important;
+  word-wrap: break-word;
+}
+
+.card-header {
+  background-color: rgba(48, 247, 239, .25)
+}
+
 /*
 .btn {
   background-color: #8358ad; /* shade of purple can change
