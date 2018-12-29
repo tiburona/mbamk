@@ -1,7 +1,7 @@
 """empty message
 
 Revision ID: 5a849d66ade5
-Revises: 
+Revises:
 Create Date: 2018-12-24 19:28:35.637490
 
 """
@@ -37,7 +37,7 @@ def upgrade():
     sa.Column('last_name', sa.String(length=30), nullable=True),
     sa.Column('sex', sa.String(length=30), nullable=True),
     sa.Column('dob', sa.DateTime(), nullable=True),
-    sa.Column('consent_provided', sa.Boolean(), nullable=True),
+    sa.Column('consented', sa.Boolean(), nullable=True),
     sa.Column('is_admin', sa.Boolean(), nullable=True),
     sa.Column('xnat_subject_id', sa.String(length=80), nullable=True),
     sa.Column('num_experiments', sa.Integer(), nullable=True),
