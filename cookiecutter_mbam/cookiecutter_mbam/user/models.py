@@ -46,7 +46,7 @@ class User(UserMixin, SurrogatePK, Model):
     last_name = Column(db.String(30), nullable=True)
     sex = Column(db.String(30), nullable=True)
     dob = Column(db.DateTime, nullable=True)
-    consent_provided = Column(db.Boolean(), default=False)
+    consented = Column(db.Boolean(), default=False)
 
     is_admin = Column(db.Boolean(), default=False)
     xnat_subject_id = Column(db.String(80), nullable=True)
