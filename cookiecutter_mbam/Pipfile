@@ -18,7 +18,6 @@ SQLAlchemy = "==1.2.12"
 # Migrations
 Flask-Migrate = "==2.2.0"
 # Forms
-Flask-WTF = "==0.14.2"
 WTForms = "==2.2.1"
 # Uploads
 Flask-Uploads = ">=0.2.1"
@@ -27,8 +26,6 @@ gunicorn = ">=19.1.1"
 # Webpack
 flask-webpack = "==0.1.0"
 # Auth
-Flask-Login = "==0.4.1"
-Flask-Bcrypt = "==0.7.1"
 Flask-Security = "==3.0.0"
 # Admin
 Flask-Admin = "==1.5.2"
@@ -38,8 +35,10 @@ Flask-Caching = ">=1.0.0"
 Flask-DebugToolbar = "==0.10.1"
 # Environment variable parsing
 environs = "==4.0.0"
-xnat = "*"
-pymysql = "*"
+# Database communications
+xnat = "==0.3.11"
+pymysql = "==0.9.3"
+bcrypt = "*"
 
 [dev-packages]
 # Testing

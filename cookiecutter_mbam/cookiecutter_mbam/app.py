@@ -6,9 +6,10 @@ from cookiecutter_mbam import commands, public, user, experiment, scan
 from cookiecutter_mbam.user import User, Role
 from cookiecutter_mbam.admin import UserAdmin, RoleAdmin
 from flask_security import SQLAlchemyUserDatastore
-from cookiecutter_mbam.extensions import admin, bcrypt, cache, csrf_protect, db, debug_toolbar, login_manager, migrate,\
-    security, webpack
+from cookiecutter_mbam.extensions import admin, cache, csrf_protect, db, debug_toolbar, migrate,\
+    security, webpack, mail
 from .hooks import create_test_users, models_committed_hooks
+from cookiecutter_mbam.utils import user_context_processor
 
 def create_app(config_object='cookiecutter_mbam.settings'):
     """An application factory, as explained here: http://flask.pocoo.org/docs/patterns/appfactories/.
@@ -23,23 +24,23 @@ def create_app(config_object='cookiecutter_mbam.settings'):
     register_errorhandlers(app)
     register_shellcontext(app)
     register_commands(app)
+    #register_processors(app)
     return app
 
 
 def register_extensions(app):
     """Register Flask extensions."""
-    bcrypt.init_app(app)
     cache.init_app(app)
     db.init_app(app)
     csrf_protect.init_app(app)
     user_datastore = SQLAlchemyUserDatastore(db, User, Role)
     security.init_app(app, datastore=user_datastore)
     create_test_users(app, user_datastore, db)
-    login_manager.init_app(app)
     debug_toolbar.init_app(app)
     migrate.init_app(app, db)
     webpack.init_app(app)
     admin.init_app(app, endpoint='admin')
+    mail.init_app(app)
     return None
 
 def register_hooks(app):
@@ -87,7 +88,10 @@ def register_commands(app):
     app.cli.add_command(commands.urls)
 
 def register_admin_views():
-    """Register Flask admin views"""
+    """Register Flask admin views."""
     admin.add_view(UserAdmin(User, db.session))
     admin.add_view(RoleAdmin(Role, db.session))
 
+# def register_processors(app):
+#     """Register context processors."""
+#     app.context_processor(user_context_processor)

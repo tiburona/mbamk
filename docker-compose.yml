@@ -9,7 +9,7 @@ services:
    volumes:
      - user-data:/app/cookiecutter_mbam/static/files
      - assets-data:/app/cookiecutter_mbam/static/build
-   command: bash -c "sleep 10 && cp .docker_env .env && flask db upgrade && npm run build && flask run"
+   command: bash -c "sleep 20 && cp .docker_env .env && npm run build && flask run"
    depends_on:
      - jatos
 
@@ -22,6 +22,7 @@ services:
     - jatos-data:/opt/docker
    env_file:
      - jatos_config.env
+
 
  nginx:
    restart: always

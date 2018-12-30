@@ -11,11 +11,10 @@ def create_test_users(app, user_datastore, db):
         user_datastore.find_or_create_role(name='admin', description='Administrator')
         user_datastore.find_or_create_role(name='end-user', description='End user')
 
-        encrypted_password = utils.hash_password('password')
         if not user_datastore.get_user('someone@example.com'):
-            user_datastore.create_user(username='someone', email='someone@example.com', password=encrypted_password)
+            user_datastore.create_user(email='someone@example.com', password='password')
         if not user_datastore.get_user('admin@example.com'):
-            user_datastore.create_user(username='admin', email='admin@example.com', password=encrypted_password)
+            user_datastore.create_user(email='admin@example.com', password='password')
 
         db.session.commit()
 

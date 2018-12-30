@@ -5,7 +5,6 @@ from flask_security import login_required
 
 blueprint = Blueprint('user', __name__, url_prefix='/users', static_folder='../static')
 
-
 @blueprint.route('/')
 @login_required
 def members():

@@ -1,3 +1,4 @@
+
 import pytest
 import os
 import json
@@ -246,7 +247,6 @@ class TestScanUtils:
         assert os.path.basename(file_path) == 'structural.nii.gz'
         os.remove(file_path)
 
-
 @pytest.mark.parametrize('scan_service', small_set_of_params, indirect=True)
 class TestXNATUploads(ScanUploadSetup):
     """A class to test that scans can be uploaded to XNAT"""
@@ -278,22 +278,4 @@ class TestXNATUploads(ScanUploadSetup):
         first_file, file_size, xnat_scan, db_scan = self.get_test_values(scan_service, 'DICOMS.zip', 'DICOM')
         self.common_tests_for_dicom_and_nifti(file_size, db_scan, xnat_scan)
         assert first_file['file_format'] == 'DICOM'
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

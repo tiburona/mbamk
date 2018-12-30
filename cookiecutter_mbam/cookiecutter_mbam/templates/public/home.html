@@ -4,11 +4,45 @@
 <!-- Main jumbotron for a primary marketing message or call to action -->
 <div class="jumbotron">
     <div class="container">
-    
-      <h1 class="display-3">Welcome to My Brain and Me</h1>
-    
-      <p>This is a starter Flask template. It includes Bootstrap 4, jQuery 3, Flask-SQLAlchemy, WTForms, and various testing utilities out of the box.</p>
-      <p><a href="https://github.com/sloria/cookiecutter-flask" class="btn btn-primary btn-large">Learn more &raquo;</a></p>
+
+      <h1 class="display-3 text-center">Welcome to My Brain and Me!</h1>
+      {% if current_user.is_authenticated %}
+          {% if not current_user.has_role('end-user') %}
+              <p class="lead">If you would like to use the site to learn about your brain,
+                  please complete a brief user profile. If you would like to use the site for your
+                  own research, please fill out a short researcher application.</p>
+                  <hr class="my-4">
+                  <p class="lead text-center">
+                      <a class="btn btn-primary btn-large" href="" role="button">Complete Profile</a>
+                      <a class="btn btn-primary btn-large" href="" role="button">Apply</a>
+                  </p>
+          {% else %}
+              {% if not current_user.experiments.first().struct_subjectSpace %}
+                  <p class="lead">To get started, upload an MRI scan (if you already have one),
+                  or complete a survey or psychophysics study.</p>
+                  <hr class="my-4">
+                  <p class="lead text-center">
+                      <a class="btn btn-primary btn-large" href="" role="button">Upload Scan</a>
+                      <a class="btn btn-primary btn-large" href="" role="button">Conduct Study</a>
+                  </p>
+              {% else %}
+                  <p class="lead">View your raw or labeled MRI scan, or complete a survey or psychophysics study.</p>
+                  <hr class="my-4">
+                  <p class="lead text-center">
+                      <a class="btn btn-primary btn-large" href="" role="button">My Brain</a>
+                      <a class="btn btn-primary btn-large" href="" role="button">Conduct Study</a>
+                  </p>
+              {% endif %}
+          {% endif %}
+      {% else %}
+          <p class="lead text-center">Please register or login. Click <a href="{{ url_for('public.about') }}">here</a> for an introduction to the site.</p>
+          <hr class="my-4">
+          <p class="lead text-center">
+              <a class="btn btn-primary btn-large" href="{{ url_for('security.register') }}" role="button">Create account</a>
+              <a class="btn btn-primary btn-large" href="{{ url_for('security.login') }}" role="button">Login</a>
+          </p>
+      {% endif %}
+
     </div>
 </div><!-- /.jumbotron -->
 
@@ -32,4 +66,3 @@
   </div><!-- /.row -->
 </div>
 {% endblock %}
-
