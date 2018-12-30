@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """Scan views."""
-from flask import Blueprint, render_template, flash, redirect, url_for, session
+from flask import Blueprint, render_template, flash, redirect, url_for, session, request
 from flask_login import current_user
 from .forms import ScanForm
 from .service import ScanService
@@ -19,10 +19,13 @@ def add():
     """Add a scan."""
     form = ScanForm()
     if form.validate_on_submit():
-        f = form.scan_file.data
         user_id = str(current_user.get_id())
         exp_id = str(session['curr_experiment'])
-        ScanService(user_id, exp_id).add(f)
+        if len(request.files.getlist('scan_file')) > 3:
+            flash('You can upload up to three files.', 'warning')
+            return redirect(url_for('scan.add'))
+        for f in request.files.getlist('scan_file'):
+            ScanService(user_id, exp_id).add(f)
         flash('You successfully added a new scan.', 'success')
         return redirect(url_for('experiment.experiments'))
     else:

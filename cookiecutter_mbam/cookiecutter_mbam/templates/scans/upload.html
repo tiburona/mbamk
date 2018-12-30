@@ -7,8 +7,12 @@
     {{ scan_form.csrf_token }}
 
     <!--<input type="file" name="scan_file">-->
-    {{scan_form.scan_file }}
-    <input class="btn btn-primary" type="submit" value="Submit">
+    {{ scan_form.hidden_tag() }}
+    {{ scan_form.scan_file(multiple="multiple") }}
+    {{ scan_form.submit }}
+
+
+</form>
 
 </form>
 

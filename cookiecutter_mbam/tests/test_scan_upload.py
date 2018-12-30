@@ -1,13 +1,132 @@
-import pytest, os
+
+import pytest
+import os
+import json
+from shutil import copy
 from pytest_mock import mocker
 from werkzeug.datastructures import FileStorage
 from cookiecutter_mbam.scan import Scan
 from cookiecutter_mbam.scan.service import ScanService, gzip_file
-from shutil import copy
 from .factories import UserFactory
 from .factories import ExperimentFactory
 
-def generate_upload_test_parameters(num_exp, num_scans):
+# todo: why aren't my files being deleted from static/files.  add a test to make sure they are?
+
+
+@pytest.fixture(scope='function')
+@pytest.mark.usefixtures('db', 'app')
+def scan_service(db, app, request, mocker):
+    """ Fixture to produce a ScanService object
+
+      Returns a function that will return an instance of ScanService, optionally with some mocks (of the xnat_connection
+      attribute) and spies (on the _generate_xnat_identifiers method). The returned scan service object also has a param
+      attribute not found on a real scan service object -- this is so the parameters that are used to parametrize the
+      fixture are also available inside the test.
+
+      :param db: the database fixture
+      :param app: the app fixture
+      :param mocker: pytest object with mocking methods
+      :param request: object that includes param attribute with test parameters
+      :return: function that takes a boolean, mock.  If True, this function returns a mocked scan service object. Else,
+      this function returns a scan service object with no attributes mocked.
+      :rtype: function
+      """
+    num_exp, num_scans, exp_id, scan_id, exp_uri, scan_uri = request.param
+
+    user = UserFactory(password='myprecious')
+
+    for i in range(num_exp):
+        experiment = ExperimentFactory(user_id=user.id, user=user)
+        db.session.add(experiment)
+    db.session.commit()
+
+    def _scan_service(mock):
+
+        config_dir = os.path.join(app.instance_path[:-8], 'tests')
+
+        ss = ScanService(experiment.user.id, experiment.id, config_dir=config_dir)
+
+        for i in range(num_scans):
+            ss._add_scan_to_database()
+
+        ss.param = request.param
+
+        if mock:
+            ss.xc.upload_scan = mocker.MagicMock()
+            ss.xc.upload_scan.return_value = ('/data/archive/subjects/000001', exp_uri, scan_uri)
+            mocker.spy(ss, '_generate_xnat_identifiers')
+
+        return ss
+
+    return _scan_service
+
+class ScanUploadSetup:
+    """A collection of setup methods relevant to multiple scan upload test classes"""
+
+    def copy_file_to_upload_dest(self, instance_path, filename):
+        """Copy file to upload
+
+        Copies a file to a staging location for testing (because local files are deleted after uploading)
+
+        :param instance_path: the instance path attribute on the scan service
+        :param filename: the name of the file to upload
+        :return: the path to the file which will be opened and uploaded
+        """
+        src_path = os.path.join(instance_path, 'files', filename)
+        dst_path = os.path.join(instance_path, 'files', 'test_files')
+        copy(src_path, dst_path)
+        return os.path.join(dst_path, filename)
+
+    def create_file_to_upload(self, scan_service, filename):
+        """Create file to upload
+
+        :param scan_service: a ScanService object
+        :param filename: the name of the file to upload
+        :return: file object
+        """
+        path = self.copy_file_to_upload_dest(scan_service.instance_path, filename)
+        return open(path, 'rb')
+
+    def add_a_scan(self, scan_service, filename):
+        """ Adds a scan via the scan service's add method
+        :param scan_service: a mocked ScanService object
+        :param filename: the name of the file to upload (from parameters)
+        :return: a mocked ScanService object
+        """
+        with self.create_file_to_upload(scan_service, filename) as f:
+            file = FileStorage(f)
+            scan_service.add(file)
+            file.close()
+        return scan_service
+
+    def open_file_storage_obj(self, scan_service, filename):
+        """ Creates a FileStorage object
+        :param scan_service: a ScanService object
+        :param filename: the name of the file to upload
+        :return: a two-tuple of a mocked ScanService object and the Werkzeug FileStorage object
+        :rtype: tuple
+        """
+        f = self.create_file_to_upload(scan_service, filename)
+        file = FileStorage(f)
+        return (scan_service, file)
+
+    def setup_tests(self, scan_service, filename, mock=True):
+        """
+        Kicks off creation of the ScanService object and scan upload
+        :param scan_service: a ScanService object
+        :param filename: the name of the file to upload
+        :param mock: if True, mock some attributes of the ScanService object.  If False, don't.
+        :return: a three-tuple of the ScanService object, all the scans for the current experiment, and the most
+        recently created scan
+        """
+        scan_service = scan_service(mock=mock)
+        scan_service = self.add_a_scan(scan_service, filename)
+        retrieved_scans = Scan.query.filter((Scan.experiment_id == scan_service.experiment.id))
+        scan = retrieved_scans.order_by(Scan.created_at.desc()).first()
+        return (scan_service, retrieved_scans, scan)
+
+
+def generate_upload_test_parameters(range_exp, range_scans):
     """ Function to generate upload test parameters
 
     :param num_exp: the top end of the range of number of experiments
@@ -19,9 +138,9 @@ def generate_upload_test_parameters(num_exp, num_scans):
         '/data/archive/experiments/000001_MR1/scans/T1_1')]
     """
     test_data = []
-    root_path  = '/data/archive/experiments/'
-    for i in range(1,num_exp+1):
-        for j in range(num_scans):
+    root_path = '/data/archive/experiments/'
+    for i in range(1, range_exp + 1):
+        for j in range(range_scans):
             exp_id = '000001_MR' + str(i)
             scan_id = 'T1_' + str(j + 1)
             exp_uri = os.path.join(root_path, exp_id)
@@ -29,99 +148,45 @@ def generate_upload_test_parameters(num_exp, num_scans):
             test_data.append((i, j, exp_id, scan_id, exp_uri, scan_uri))
     return test_data
 
-@pytest.fixture(scope='function')
-@pytest.mark.usefixtures('db')
-def mocked_scan_service(db, mocker, request):
-    """ Fixture to produce a ScanService object
+# Each set of parameters is a list of tuples. The parameters in the tuple are number of scans, number of experiments,
+# experiment id, scan id, experiment uri, and scan uri.  In the case where generate_upload_test_params is called with
+# 2, 2, the set of parameters is a list of four tuples -- the set of parameters that result from the cross of all levels
+# of the factors range_exp (the number of experiments) and range_scans (the number of scans)
+large_set_of_params = generate_upload_test_parameters(2, 2)
+small_set_of_params = generate_upload_test_parameters(1, 1)
 
-    Returns an instance of ScanService, but with some mocks (of the xnat_connection attribute) and spies
-    (on the _generate_xnat_identifiers method).
-
-    :param db: the database fixture
-    :param mocker: pytest object with mocking methods
-    :param request: object that includes param attribute with test parametres
-    :return: mocked ScanService object
-    """
-    num_exp, num_scans, exp_id, scan_id, exp_uri, scan_uri = request.param
-
-    user = UserFactory(password='myprecious')
-
-    for i in range(num_exp):
-        experiment = ExperimentFactory(user_id=user.id, user=user)
-        db.session.add(experiment)
-
-    db.session.commit()
-
-    ss = ScanService(experiment.user.id, experiment.id)
-    for i in range(num_scans):
-        ss._add_scan_to_database()
-
-    ss.xc.upload_scan = mocker.MagicMock()
-    ss.xc.upload_scan.return_value = ('/data/archive/subjects/000001', exp_uri, scan_uri)
-    mocker.spy(ss, '_generate_xnat_identifiers')
-    ss.param = request.param
-    return ss
-
-class ScanUploadSetup:
-    """A collection of setup methods relevant to multiple scan upload test classes"""
-
-    def copy_file_to_upload_dest(self, instance_path, basename):
-        src_path = os.path.join(instance_path, 'files', basename)
-        dst_path = os.path.join(instance_path, 'files', 'test_files')
-        copy(src_path, dst_path)
-        return os.path.join(dst_path, basename)
-
-    def create_file_to_upload(self, scan_service, filename):
-        path = self.copy_file_to_upload_dest(scan_service.instance_path, filename)
-        return open(path, 'rb')
-
-    def add_a_scan(self, scan_service, filename):
-        with self.create_file_to_upload(scan_service, filename) as f:
-            file = FileStorage(f)
-            scan_service.add(file)
-            file.close()
-        return scan_service
-
-    def open_file_storage_obj(self, scan_service, filename):
-        f = self.create_file_to_upload(scan_service, filename)
-        file = FileStorage(f)
-        return (scan_service, file)
-
-large_set_params = generate_upload_test_parameters(2, 2)
-small_set_params = generate_upload_test_parameters(1, 1)
-
-@pytest.mark.parametrize('mocked_scan_service', large_set_params, indirect=True)
+@pytest.mark.parametrize('scan_service', large_set_of_params, indirect=True)
 @pytest.mark.parametrize('filename', ['T1.nii.gz', 'structural.nii', 'DICOMS.zip'])
 class TestScanUpload(ScanUploadSetup):
     """A class to test the public add method
 
+    When parametrized with the three file types and a 2x2 matrix of number of scans x number of experiments,
+    produces 12 parameter sets per test.  With each of those sets, tests: that before file upload and experiment has no
+    XNAT attributes, that after file upload an experiment has added a scan, that after file upload xnat_experiment_id
+    and xnat_uri are attributes of experiment, and that after file upload xnat_scan_id and xnat_uri are attributes of
+    scan.
     """
 
-    def setup_tests(self, scan_service, filename):
-        scan_service = self.add_a_scan(scan_service, filename)
-        retrieved_scans = Scan.query.filter((Scan.experiment_id == scan_service.experiment.id))
-        scan = retrieved_scans.order_by(Scan.created_at.desc()).first()
-        return (scan_service, retrieved_scans, scan)
+    def test_before_file_upload_an_experiment_has_no_xnat_attributes(self, scan_service, filename):
+        scan_service = scan_service(mock=True)
+        assert scan_service.experiment.xnat_uri == None
+        assert scan_service.experiment.xnat_experiment_id == None
 
-    def test_before_file_upload_an_experiment_has_no_xnat_attributes(self, mocked_scan_service, filename):
-        assert mocked_scan_service.experiment.xnat_uri == None
-        assert mocked_scan_service.experiment.xnat_experiment_id == None
-
-    def test_after_file_upload_experiment_has_one_more_scan(self, mocked_scan_service, filename):
-        num_exp, num_scans, exp_id, scan_id, exp_uri, scan_uri = mocked_scan_service.param
-        scan_service, retrieved_scans, scan = self.setup_tests(mocked_scan_service, filename)
+    def test_after_file_upload_experiment_has_one_more_scan(self, scan_service, filename):
+        scan_service, retrieved_scans, scan = self.setup_tests(scan_service, filename)
+        num_exp, num_scans, exp_id, scan_id, exp_uri, scan_uri = scan_service.param
         assert retrieved_scans.count() == num_scans + 1
         assert scan_service.experiment.num_scans == num_scans + 1
 
-    def test_after_file_upload_experiment_attributes_are_set(self, mocked_scan_service, filename):
-        num_exp, num_scans, exp_id, scan_id, exp_uri, scan_uri = mocked_scan_service.param
-        scan_service, retrieved_scans, scan = self.setup_tests(mocked_scan_service, filename)
+    def test_after_file_upload_experiment_attributes_are_set(self, scan_service, filename):
+        scan_service, retrieved_scans, scan = self.setup_tests(scan_service, filename)
+        num_exp, num_scans, exp_id, scan_id, exp_uri, scan_uri = scan_service.param
         assert scan_service.experiment.xnat_uri == exp_uri
         assert scan_service.experiment.xnat_experiment_id == exp_id
 
-    def test_after_file_upload_scan_attributes_are_set(self, mocked_scan_service, filename):
-        num_exp, num_scans, exp_id, scan_id, exp_uri, scan_uri = mocked_scan_service.param
-        scan_service, retrieved_scans, scan = self.setup_tests(mocked_scan_service, filename)
+    def test_after_file_upload_scan_attributes_are_set(self, scan_service, filename):
+        scan_service, retrieved_scans, scan = self.setup_tests(scan_service, filename)
+        num_exp, num_scans, exp_id, scan_id, exp_uri, scan_uri = scan_service.param
         assert scan.xnat_scan_id == scan_id
         assert scan.xnat_uri == scan_uri
 
@@ -130,42 +195,87 @@ class TestScanUpload(ScanUploadSetup):
                          [('T1.nii.gz', False, 'NIFTI'), ('structural.nii', False, 'NIFTI'),
                           ('DICOMS.zip', True, 'DICOM')])
 class TestScanUploadPrivateMethods(ScanUploadSetup):
+    """A class to test selected private methods called by the public add method.
 
-    @pytest.mark.parametrize('mocked_scan_service', small_set_params, indirect=True)
-    def test_resource_named_according_to_file_type(self, mocked_scan_service, filename, import_service, resource_type):
-        scan_service = self.add_a_scan(mocked_scan_service, filename)
+    The class level parameters are the filename, a boolean indicating whether the import_service should be invoked,
+    i.e., the files are dicoms, and the resource label to be passed to XNAT.
+
+    The mocked_scan_service fixture is parametrized at the test level in this class.
+    """
+
+    @pytest.mark.parametrize('scan_service', small_set_of_params, indirect=True)
+    def test_resource_named_according_to_file_type(self, scan_service, filename, import_service, resource_type):
+        scan_service = scan_service(mock=True)
+        scan_service = self.add_a_scan(scan_service, filename)
         scan_service._generate_xnat_identifiers.assert_called_with(dcm=import_service)
         xnat_ids = scan_service._generate_xnat_identifiers(dcm=import_service)
         assert xnat_ids['resource']['xnat_id'] == resource_type
 
-    @pytest.mark.parametrize('mocked_scan_service', small_set_params, indirect=True)
-    def test_process_file(self, mocked_scan_service, filename, import_service, resource_type):
-        scan_service, file = self.open_file_storage_obj(mocked_scan_service, filename)
-        file_path, imp = mocked_scan_service._process_file(file)
+    @pytest.mark.parametrize('scan_service', small_set_of_params, indirect=True)
+    def test_process_file(self, scan_service, filename, import_service, resource_type):
+        scan_service = scan_service(mock=True)
+        scan_service, file = self.open_file_storage_obj(scan_service, filename)
+        file_path, imp = scan_service._process_file(file)
         assert imp == import_service
         if filename == 'structural.nii':
             filename = 'structural.nii.gz'
-        assert file_path == os.path.join(mocked_scan_service.upload_dest, filename)
+        assert file_path == os.path.join(scan_service.upload_dest, filename)
         file.close()
 
-    @pytest.mark.parametrize('mocked_scan_service', large_set_params, indirect=True)
-    def test_generate_xnat_ids(self, mocked_scan_service, filename, import_service, resource_type):
-        num_exp, num_scans, exp_id, scan_id, exp_uri, scan_uri = mocked_scan_service.param
-        xnat_ids = mocked_scan_service._generate_xnat_identifiers()
+    @pytest.mark.parametrize('scan_service', large_set_of_params, indirect=True)
+    def test_generate_xnat_ids(self, scan_service, filename, import_service, resource_type):
+        scan_service = scan_service(mock=True)
+        num_exp, num_scans, exp_id, scan_id, exp_uri, scan_uri = scan_service.param
+        xnat_ids = scan_service._generate_xnat_identifiers()
         assert xnat_ids['experiment']['xnat_id'] == exp_id
         assert xnat_ids['scan']['xnat_id'] == scan_id
 
 class TestScanUtils:
+    """A class to test utility functions called by the scan service"""
 
-    @pytest.mark.parametrize('mocked_scan_service', small_set_params, indirect=True)
-    def test_gzip(self, mocked_scan_service):
+    @pytest.mark.parametrize('scan_service', small_set_of_params, indirect=True)
+    def test_gzip(self, scan_service):
         """
         When the gzip utility function is called with a path to a file
         It returns a gzipped file object and the path to that file on disk
         And the file name of the new gzipped file is the old file name + the .gz extension
         """
-        nii_path = os.path.join(mocked_scan_service.instance_path, 'files', 'structural.nii')
+        scan_service = scan_service(mock=True)
+        nii_path = os.path.join(scan_service.instance_path, 'files', 'structural.nii')
         file_object, file_path = gzip_file(nii_path)
         assert type(file_object).__name__ == 'GzipFile'
         assert os.path.basename(file_path) == 'structural.nii.gz'
         os.remove(file_path)
+
+@pytest.mark.parametrize('scan_service', small_set_of_params, indirect=True)
+class TestXNATUploads(ScanUploadSetup):
+    """A class to test that scans can be uploaded to XNAT"""
+
+    def get_test_values(self, scan_service, filename, resource_name):
+        scan_service, retrieved_scans, db_scan = self.setup_tests(scan_service, filename, mock=False)
+        project, subject, experiment, xnat_scan = scan_service.xc.get_scan_info('000001', '000001_MR1')
+        scan_service.xc.refresh_xnat_catalog(experiment.uri)
+        url = os.path.join(xnat_scan.uri, 'resources', resource_name, 'files')
+        response = scan_service.xc.xnat_get(url)
+        scan_service.xc.xnat_delete(experiment.uri)
+        files = json.loads(response.content)
+        first_file = files['ResultSet']['Result'][0]
+        file_size = int(first_file['Size'])
+        return (first_file, file_size, xnat_scan, db_scan)
+
+    def common_tests_for_dicom_and_nifti(self, file_size, db_scan, xnat_scan):
+        assert db_scan.xnat_uri == xnat_scan.uri
+        assert file_size > 1000
+
+    @pytest.mark.parametrize('filename', ['T1.nii.gz', 'structural.nii'])
+    def test_nifti_uploads_to_xnat(self, scan_service, filename):
+        first_file, file_size, xnat_scan, db_scan = self.get_test_values(scan_service, filename, 'NIFTI')
+        self.common_tests_for_dicom_and_nifti(file_size, db_scan, xnat_scan)
+        assert first_file['Name'] == 'T1.nii.gz'
+        assert 'T1_1' in xnat_scan.uri
+
+    def test_dicom_uploads_to_xnat(self, scan_service):
+        first_file, file_size, xnat_scan, db_scan = self.get_test_values(scan_service, 'DICOMS.zip', 'DICOM')
+        self.common_tests_for_dicom_and_nifti(file_size, db_scan, xnat_scan)
+        assert first_file['file_format'] == 'DICOM'
+
