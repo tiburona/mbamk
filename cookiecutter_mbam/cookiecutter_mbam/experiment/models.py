@@ -16,6 +16,7 @@ class Experiment(SurrogatePK, Model):
     __tablename__ = 'experiment'
     date = Column(db.Date(), nullable=False)
     scanner = Column(db.String(80), nullable=True)
+    field_strength = Column(db.String(80), nullable=True)
     num_scans = Column(db.Integer(), nullable=True, default=0)
     xnat_experiment_id = Column(db.String(80), nullable=True)
     xnat_uri = Column(db.String(80), nullable=True)

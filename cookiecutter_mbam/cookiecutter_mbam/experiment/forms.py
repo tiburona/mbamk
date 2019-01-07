@@ -10,6 +10,8 @@ class ExperimentForm(FlaskForm):
 
     scanner = SelectField('Scanner', choices=[('GE', 'GE'), ('Sie', 'Siemens'), ('Phi', 'Phillips')])
 
+    field_strength = SelectField('FieldStrength', choices=[('1.5T', '1.5T'), ('3T', '3T'), ('7T', '7T')])
+
     def __init__(self, *args, **kwargs):
         """Create instance."""
         super(ExperimentForm, self).__init__(*args, **kwargs)
