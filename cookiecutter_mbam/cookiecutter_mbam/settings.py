@@ -41,3 +41,5 @@ MAIL_SERVER = 'smtp.gmail.com'
 MAIL_PORT = 587
 MAIL_USE_SSL = False
 MAIL_USE_TLS = True
+
+MAX_CONTENT_LENGTH = 30 * 1024 * 1024

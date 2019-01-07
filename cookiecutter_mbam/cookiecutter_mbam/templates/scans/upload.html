@@ -2,7 +2,9 @@
 
 {% block content %}
 
-
+<br>
+<br>
+<br>
 <form method="POST" action="{{ url_for('scan.add') }}" enctype="multipart/form-data">
     {{ scan_form.csrf_token }}
 
