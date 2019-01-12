@@ -16,3 +16,8 @@ def gzip_file(file_path):
     return (gzipped_file, file_path + '.gz')
 
 
+def crop(string, pattern):
+    index = string.find(pattern)
+    return string[index:]
+
+

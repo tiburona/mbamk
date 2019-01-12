@@ -190,7 +190,6 @@ class TestScanUpload(ScanUploadSetup):
         assert scan.xnat_scan_id == scan_id
         assert scan.xnat_uri == scan_uri
 
-
 @pytest.mark.parametrize('filename,import_service,resource_type',
                          [('T1.nii.gz', False, 'NIFTI'), ('structural.nii', False, 'NIFTI'),
                           ('DICOMS.zip', True, 'DICOM')])

@@ -105,10 +105,15 @@ class XNATConnection:
             # todo: handle errors!
             pass
 
-    def xnat_post(self, url):
+    def xnat_post(self, url, data=None):
         with xnat.connect(self.server, self.user, self.password) as session:
-            response = session.post(url)
+            response = session.post(url, data=data)
             return response
+
+    def launch_command(self, command_id, wrapper_id, data=None):
+
+        url =  '/xapi/projects/{}/commands/{}/wrappers/{}/launch'.format(self.project, command_id, wrapper_id)
+        return self.xnat_post(url, data)
 
     def refresh_xnat_catalog(self, resource_url):
         if resource_url[:5] == '/data':

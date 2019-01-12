@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Scan model."""
 
-from cookiecutter_mbam.database import Model, SurrogatePK, db, reference_col
+from cookiecutter_mbam.database import Model, SurrogatePK, db, reference_col, relationship
 from cookiecutter_mbam.experiment import Experiment
 from flask_sqlalchemy import event
 
@@ -16,6 +16,7 @@ class Scan(SurrogatePK, Model):
     xnat_uri = db.Column(db.String(255))
     xnat_scan_id = db.Column(db.String(80))
     experiment_id = reference_col('experiment', nullable=True)
+    derivations = relationship('Derivation', backref='scan')
 
     def __init__(self, experiment_id, **kwargs):
         """Create instance."""

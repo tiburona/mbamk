@@ -22,7 +22,8 @@ from cookiecutter_mbam.xnat import XNATConnection
 from cookiecutter_mbam.experiment import Experiment
 from cookiecutter_mbam.user import User
 from .models import Scan
-from .utils import gzip_file
+from cookiecutter_mbam.derivation import Derivation, DerivationService
+from .utils import gzip_file, crop
 
 from flask import current_app
 def debug():
@@ -66,6 +67,8 @@ class ScanService:
         keywords = ['subject', 'experiment', 'scan']
         self._update_database_objects(keywords=keywords, objects=[self.user, self.experiment, scan],
                                       ids=[self.xnat_ids[kw]['xnat_id'] for kw in keywords], uris=uris)
+        if dcm:
+            self._dicom_to_nifti(scan.id)
 
     def delete(self, scan_id, delete_from_xnat=False):
         """ Delete a scan from the database
@@ -176,4 +179,10 @@ class ScanService:
         for (obj, kw, uri, id) in attributes:
             obj.update(xnat_uri=uri)
             obj.update(**{'xnat_{}_id'.format(kw): id})
-            print(id)
+
+    def _dicom_to_nifti(self, scan_id):
+        scan = Scan.get_by_id(scan_id)
+        nifti = Derivation.create(scan_id=scan.id, process_name='dicom_to_nifti', status='unstarted')
+        ds = DerivationService(nifti.id, scan.id)
+        scan_data_locator = crop(scan.xnat_uri, '/experiments')
+        return ds.launch(data={'scan': scan_data_locator})
