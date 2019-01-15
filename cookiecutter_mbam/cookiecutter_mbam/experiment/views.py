@@ -9,6 +9,14 @@ from cookiecutter_mbam.utils import flash_errors
 
 blueprint = Blueprint('experiment', __name__, url_prefix='/experiments', static_folder='../static')
 
+def add_experiment(form):
+    """Add an experiment"""
+    exp = ExperimentService().add(date=form.date.data, scanner=form.scanner.data,
+                                  field_strength=form.field_strength.data, user=current_user)
+    flash('You successfully created a new experiment.', 'success')
+    session['curr_experiment'] = exp.id
+    return exp.id
+
 @blueprint.route('/')
 def experiments():
     """List experiments."""
@@ -17,14 +25,11 @@ def experiments():
 
 @blueprint.route('/add', methods=['GET', 'POST'])
 def add():
-    """Add an experiment."""
+    """Access the add an experiment route and form."""
     form = ExperimentForm(request.form)
     if form.validate_on_submit():
-        exp = ExperimentService().add(date=form.date.data, scanner=form.scanner.data,
-                                      field_strength=form.field_strength.data, user=current_user)
-        flash('You successfully created a new experiment.', 'success')
-        session['curr_experiment'] = exp.id
-        return redirect(url_for('experiment.single_experiment', id=exp.id))
+        exp_id = add_experiment(form)
+        return redirect(url_for('experiment.single_experiment', id=exp_id))
     else:
         flash_errors(form)
     return render_template('experiments/new_experiment.html',session_form=form)
