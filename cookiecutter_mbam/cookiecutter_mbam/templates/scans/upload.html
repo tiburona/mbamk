@@ -7,13 +7,13 @@
 <br>
 <br>
 <form method="POST" action="{{ url_for('scan.add') }}" enctype="multipart/form-data">
-    {{ scan_form.csrf_token }}
+    {{ form.csrf_token }}
 
-    {{ scan_form.hidden_tag()}}
-    {{ scan_form.scan_file(multiple="multiple") }}
+    {{ form.hidden_tag()}}
+    {{ form.scan_file(multiple="multiple") }}
     <br>
     <br>
-     {{ scan_form.submit }}
+    {{ form.submit }}
 
 </form>
     </div>

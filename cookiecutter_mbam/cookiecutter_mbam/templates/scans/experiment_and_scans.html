@@ -8,24 +8,23 @@
 <div class="container-narrow">
 <form method="POST" action="{{ url_for('scan.add_experiment_and_scans') }}" enctype="multipart/form-data">
 
-
    <div class="form-group">
-        {{experiment_and_scan_form.date.label}}
-        {{experiment_and_scan_form.date(placeholder="Date of session", class_="form-control")}}
+        {{form.date.label}}
+        {{form.date(placeholder="Date of session", class_="form-control")}}
     </div>
 
     <div class="form-group">
-        {{experiment_and_scan_form.scanner.label}}
-        {{experiment_and_scan_form.scanner(placeholder="Scanner", class_="form-control")}}
+        {{form.scanner.label}}
+        {{form.scanner(placeholder="Scanner", class_="form-control")}}
     </div>
     <div class="form-group">
-        {{experiment_and_scan_form.field_strength.label}}
-        {{experiment_and_scan_form.field_strength(placeholder="Field Strength", class_="form-control")}}
+        {{form.field_strength.label}}
+        {{form.field_strength(placeholder="Field Strength", class_="form-control")}}
     </div>
-    {{ experiment_and_scan_form.csrf_token }}
-    {{ experiment_and_scan_form.hidden_tag() }}
-    {{ experiment_and_scan_form.scan_file(multiple="multiple") }}
-    {{ experiment_and_scan_form.submit }}
+    {{ form.csrf_token }}
+    {{ form.hidden_tag() }}
+    {{ form.scan_file(multiple="multiple") }}
+    {{ form.submit }}
 </form>
 </div>
 
