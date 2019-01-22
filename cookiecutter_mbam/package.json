@@ -24,8 +24,12 @@
   "homepage": "https://github.com/tiburona/cookiecutter_mbam#readme",
   "dependencies": {
     "bootstrap": "^4.1.3",
+    "bootstrap-fileinput": "^4.5.1",
+    "daikon": "^1.2.36",
     "font-awesome": "^4.7.0",
+    "jpeg-lossless-decoder-js": "^2.0.4",
     "jquery": "^3.2.1",
+    "pako": "^1.0.8",
     "popper.js": "^1.14.3"
   },
   "devDependencies": {
@@ -34,7 +38,7 @@
     "babel-loader": "^7.0.0",
     "babel-preset-env": "^1.6.0",
     "concurrently": "^4.0.1",
-    "css-loader": "^1.0.0",
+    "css-loader": "^1.0.1",
     "eslint": "^5.3.0",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-import": "^2.3.0",
@@ -42,12 +46,12 @@
     "file-loader": "^2.0.0",
     "font-awesome-webpack": "0.0.5-beta.2",
     "less": "^3.8.0",
-    "less-loader": "^4.0.4",
+    "less-loader": "^2.2.3",
     "manifest-revision-webpack-plugin": "^0.4.0",
     "raw-loader": "^0.5.1",
     "style-loader": "^0.23.0",
     "sync-exec": "^0.6.2",
-    "url-loader": "^1.0.1",
+    "url-loader": "^1.1.2",
     "webpack": "^2.6.1",
     "webpack-cli": "^3.1.2",
     "webpack-dev-server": "2.9.1"
