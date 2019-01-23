@@ -52,14 +52,13 @@ class XNATConnection:
                 try:
                     response = session.put(url)
                     return response
-                except:
-                    pass
-                    #xnat.exceptions.XNATResponseError as e:
-                    # error = e
-                    # if 'status 409' in error.args[0]: # this error is raised when you try to create a resource that exists
-                    #     pass
-                    # else:
-                    #     # error is unknown, handle it somehow
+                except xnat.exceptions.XNATResponseError as e:
+                    error = e
+                    if 'status 409' in error.args[0]: # this error is raised when you try to create a resource that exists
+                        return 'You tried to create something that already exists.'
+                    else:
+                        pass
+                        # error is unknown, handle it somehow
             return ''
 
     def xnat_get(self, url):

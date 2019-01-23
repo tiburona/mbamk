@@ -1,337 +1,337 @@
 versions pytest-3.9.3, py-1.6.0, python-3.6.2.final.0
 cwd=/Users/katie/spiro/mbam/cookiecutter_mbam/tests
-args=['--debug', '-v', '-k', 'TestXNATUploads', 'test_scan_upload.py']
+args=['--debug', '-k', 'launch_response_is_set', 'test_scan_upload.py']
 
   pytest_cmdline_main [hook]
-      config: <_pytest.config.Config object at 0x101114b38>
+      config: <_pytest.config.Config object at 0x106373b00>
     pytest_plugin_registered [hook]
         plugin: <Session 'tests'>
-        manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+        manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
     finish pytest_plugin_registered --> [] [hook]
     pytest_configure [hook]
-        config: <_pytest.config.Config object at 0x101114b38>
+        config: <_pytest.config.Config object at 0x106373b00>
       pytest_plugin_registered [hook]
-          plugin: <_pytest.cacheprovider.LFPlugin object at 0x104738dd8>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          plugin: <_pytest.cacheprovider.LFPlugin object at 0x109997c18>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_plugin_registered [hook]
-          plugin: <_pytest.cacheprovider.NFPlugin object at 0x104738fd0>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          plugin: <_pytest.cacheprovider.NFPlugin object at 0x109997f60>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
     early skip of rewriting module: unittest.mock [assertion]
       pytest_plugin_registered [hook]
-          plugin: <_pytest.logging.LoggingPlugin object at 0x104759a58>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          plugin: <_pytest.logging.LoggingPlugin object at 0x1099bc978>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
     early skip of rewriting module: py._io [assertion]
     early skip of rewriting module: py._io.terminalwriter [assertion]
       pytest_plugin_registered [hook]
-          plugin: <_pytest.config.PytestPluginManager object at 0x100792dd8>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          plugin: <_pytest.config.PytestPluginManager object at 0x1059efd68>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_plugin_registered [hook]
-          plugin: <_pytest.config.Config object at 0x101114b38>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          plugin: <_pytest.config.Config object at 0x106373b00>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_plugin_registered [hook]
           plugin: <module '_pytest.mark' from '/Users/katie/anaconda/lib/python3.6/site-packages/_pytest/mark/__init__.py'>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_plugin_registered [hook]
           plugin: <module '_pytest.main' from '/Users/katie/anaconda/lib/python3.6/site-packages/_pytest/main.py'>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_plugin_registered [hook]
           plugin: <module '_pytest.terminal' from '/Users/katie/anaconda/lib/python3.6/site-packages/_pytest/terminal.py'>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_plugin_registered [hook]
           plugin: <module '_pytest.runner' from '/Users/katie/anaconda/lib/python3.6/site-packages/_pytest/runner.py'>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_plugin_registered [hook]
           plugin: <module '_pytest.python' from '/Users/katie/anaconda/lib/python3.6/site-packages/_pytest/python.py'>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_plugin_registered [hook]
           plugin: <module '_pytest.fixtures' from '/Users/katie/anaconda/lib/python3.6/site-packages/_pytest/fixtures.py'>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_plugin_registered [hook]
           plugin: <module '_pytest.debugging' from '/Users/katie/anaconda/lib/python3.6/site-packages/_pytest/debugging.py'>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_plugin_registered [hook]
           plugin: <module '_pytest.unittest' from '/Users/katie/anaconda/lib/python3.6/site-packages/_pytest/unittest.py'>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_plugin_registered [hook]
           plugin: <module '_pytest.capture' from '/Users/katie/anaconda/lib/python3.6/site-packages/_pytest/capture.py'>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_plugin_registered [hook]
           plugin: <module '_pytest.skipping' from '/Users/katie/anaconda/lib/python3.6/site-packages/_pytest/skipping.py'>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_plugin_registered [hook]
           plugin: <module '_pytest.tmpdir' from '/Users/katie/anaconda/lib/python3.6/site-packages/_pytest/tmpdir.py'>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_plugin_registered [hook]
           plugin: <module '_pytest.monkeypatch' from '/Users/katie/anaconda/lib/python3.6/site-packages/_pytest/monkeypatch.py'>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_plugin_registered [hook]
           plugin: <module '_pytest.recwarn' from '/Users/katie/anaconda/lib/python3.6/site-packages/_pytest/recwarn.py'>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_plugin_registered [hook]
           plugin: <module '_pytest.pastebin' from '/Users/katie/anaconda/lib/python3.6/site-packages/_pytest/pastebin.py'>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_plugin_registered [hook]
           plugin: <module '_pytest.helpconfig' from '/Users/katie/anaconda/lib/python3.6/site-packages/_pytest/helpconfig.py'>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_plugin_registered [hook]
           plugin: <module '_pytest.nose' from '/Users/katie/anaconda/lib/python3.6/site-packages/_pytest/nose.py'>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_plugin_registered [hook]
           plugin: <module '_pytest.assertion' from '/Users/katie/anaconda/lib/python3.6/site-packages/_pytest/assertion/__init__.py'>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_plugin_registered [hook]
           plugin: <module '_pytest.junitxml' from '/Users/katie/anaconda/lib/python3.6/site-packages/_pytest/junitxml.py'>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_plugin_registered [hook]
           plugin: <module '_pytest.resultlog' from '/Users/katie/anaconda/lib/python3.6/site-packages/_pytest/resultlog.py'>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_plugin_registered [hook]
           plugin: <module '_pytest.doctest' from '/Users/katie/anaconda/lib/python3.6/site-packages/_pytest/doctest.py'>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_plugin_registered [hook]
           plugin: <module '_pytest.cacheprovider' from '/Users/katie/anaconda/lib/python3.6/site-packages/_pytest/cacheprovider.py'>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_plugin_registered [hook]
           plugin: <module '_pytest.freeze_support' from '/Users/katie/anaconda/lib/python3.6/site-packages/_pytest/freeze_support.py'>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_plugin_registered [hook]
           plugin: <module '_pytest.setuponly' from '/Users/katie/anaconda/lib/python3.6/site-packages/_pytest/setuponly.py'>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_plugin_registered [hook]
           plugin: <module '_pytest.setupplan' from '/Users/katie/anaconda/lib/python3.6/site-packages/_pytest/setupplan.py'>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_plugin_registered [hook]
           plugin: <module '_pytest.warnings' from '/Users/katie/anaconda/lib/python3.6/site-packages/_pytest/warnings.py'>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_plugin_registered [hook]
           plugin: <module '_pytest.logging' from '/Users/katie/anaconda/lib/python3.6/site-packages/_pytest/logging.py'>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_plugin_registered [hook]
           plugin: <module 'pytest_mock' from '/Users/katie/anaconda/lib/python3.6/site-packages/pytest_mock.py'>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_plugin_registered [hook]
           plugin: <module 'pytest_factoryboy.plugin' from '/Users/katie/anaconda/lib/python3.6/site-packages/pytest_factoryboy/plugin.py'>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_plugin_registered [hook]
-          plugin: <_pytest.capture.CaptureManager object at 0x101d82e10>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          plugin: <_pytest.capture.CaptureManager object at 0x106fe7828>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_plugin_registered [hook]
           plugin: <module 'tests.conftest' from '/Users/katie/spiro/mbam/cookiecutter_mbam/tests/conftest.py'>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_plugin_registered [hook]
           plugin: <Session 'tests'>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_plugin_registered [hook]
-          plugin: <_pytest.cacheprovider.LFPlugin object at 0x104738dd8>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          plugin: <_pytest.cacheprovider.LFPlugin object at 0x109997c18>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_plugin_registered [hook]
-          plugin: <_pytest.cacheprovider.NFPlugin object at 0x104738fd0>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          plugin: <_pytest.cacheprovider.NFPlugin object at 0x109997f60>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_plugin_registered [hook]
-          plugin: <_pytest.logging.LoggingPlugin object at 0x104759a58>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          plugin: <_pytest.logging.LoggingPlugin object at 0x1099bc978>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_plugin_registered [hook]
-          plugin: <_pytest.terminal.TerminalReporter object at 0x10476e400>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          plugin: <_pytest.terminal.TerminalReporter object at 0x1099cf390>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
     finish pytest_configure --> [] [hook]
     pytest_sessionstart [hook]
         session: <Session 'tests'>
       pytest_plugin_registered [hook]
-          plugin: <_pytest.config.PytestPluginManager object at 0x100792dd8>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          plugin: <_pytest.config.PytestPluginManager object at 0x1059efd68>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_plugin_registered [hook]
-          plugin: <_pytest.config.Config object at 0x101114b38>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          plugin: <_pytest.config.Config object at 0x106373b00>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_plugin_registered [hook]
           plugin: <module '_pytest.mark' from '/Users/katie/anaconda/lib/python3.6/site-packages/_pytest/mark/__init__.py'>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_plugin_registered [hook]
           plugin: <module '_pytest.main' from '/Users/katie/anaconda/lib/python3.6/site-packages/_pytest/main.py'>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_plugin_registered [hook]
           plugin: <module '_pytest.terminal' from '/Users/katie/anaconda/lib/python3.6/site-packages/_pytest/terminal.py'>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_plugin_registered [hook]
           plugin: <module '_pytest.runner' from '/Users/katie/anaconda/lib/python3.6/site-packages/_pytest/runner.py'>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_plugin_registered [hook]
           plugin: <module '_pytest.python' from '/Users/katie/anaconda/lib/python3.6/site-packages/_pytest/python.py'>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_plugin_registered [hook]
           plugin: <module '_pytest.fixtures' from '/Users/katie/anaconda/lib/python3.6/site-packages/_pytest/fixtures.py'>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_plugin_registered [hook]
           plugin: <module '_pytest.debugging' from '/Users/katie/anaconda/lib/python3.6/site-packages/_pytest/debugging.py'>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_plugin_registered [hook]
           plugin: <module '_pytest.unittest' from '/Users/katie/anaconda/lib/python3.6/site-packages/_pytest/unittest.py'>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_plugin_registered [hook]
           plugin: <module '_pytest.capture' from '/Users/katie/anaconda/lib/python3.6/site-packages/_pytest/capture.py'>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_plugin_registered [hook]
           plugin: <module '_pytest.skipping' from '/Users/katie/anaconda/lib/python3.6/site-packages/_pytest/skipping.py'>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_plugin_registered [hook]
           plugin: <module '_pytest.tmpdir' from '/Users/katie/anaconda/lib/python3.6/site-packages/_pytest/tmpdir.py'>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_plugin_registered [hook]
           plugin: <module '_pytest.monkeypatch' from '/Users/katie/anaconda/lib/python3.6/site-packages/_pytest/monkeypatch.py'>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_plugin_registered [hook]
           plugin: <module '_pytest.recwarn' from '/Users/katie/anaconda/lib/python3.6/site-packages/_pytest/recwarn.py'>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_plugin_registered [hook]
           plugin: <module '_pytest.pastebin' from '/Users/katie/anaconda/lib/python3.6/site-packages/_pytest/pastebin.py'>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_plugin_registered [hook]
           plugin: <module '_pytest.helpconfig' from '/Users/katie/anaconda/lib/python3.6/site-packages/_pytest/helpconfig.py'>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_plugin_registered [hook]
           plugin: <module '_pytest.nose' from '/Users/katie/anaconda/lib/python3.6/site-packages/_pytest/nose.py'>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_plugin_registered [hook]
           plugin: <module '_pytest.assertion' from '/Users/katie/anaconda/lib/python3.6/site-packages/_pytest/assertion/__init__.py'>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_plugin_registered [hook]
           plugin: <module '_pytest.junitxml' from '/Users/katie/anaconda/lib/python3.6/site-packages/_pytest/junitxml.py'>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_plugin_registered [hook]
           plugin: <module '_pytest.resultlog' from '/Users/katie/anaconda/lib/python3.6/site-packages/_pytest/resultlog.py'>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_plugin_registered [hook]
           plugin: <module '_pytest.doctest' from '/Users/katie/anaconda/lib/python3.6/site-packages/_pytest/doctest.py'>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_plugin_registered [hook]
           plugin: <module '_pytest.cacheprovider' from '/Users/katie/anaconda/lib/python3.6/site-packages/_pytest/cacheprovider.py'>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_plugin_registered [hook]
           plugin: <module '_pytest.freeze_support' from '/Users/katie/anaconda/lib/python3.6/site-packages/_pytest/freeze_support.py'>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_plugin_registered [hook]
           plugin: <module '_pytest.setuponly' from '/Users/katie/anaconda/lib/python3.6/site-packages/_pytest/setuponly.py'>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_plugin_registered [hook]
           plugin: <module '_pytest.setupplan' from '/Users/katie/anaconda/lib/python3.6/site-packages/_pytest/setupplan.py'>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_plugin_registered [hook]
           plugin: <module '_pytest.warnings' from '/Users/katie/anaconda/lib/python3.6/site-packages/_pytest/warnings.py'>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_plugin_registered [hook]
           plugin: <module '_pytest.logging' from '/Users/katie/anaconda/lib/python3.6/site-packages/_pytest/logging.py'>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_plugin_registered [hook]
           plugin: <module 'pytest_mock' from '/Users/katie/anaconda/lib/python3.6/site-packages/pytest_mock.py'>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_plugin_registered [hook]
           plugin: <module 'pytest_factoryboy.plugin' from '/Users/katie/anaconda/lib/python3.6/site-packages/pytest_factoryboy/plugin.py'>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_plugin_registered [hook]
-          plugin: <_pytest.capture.CaptureManager object at 0x101d82e10>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          plugin: <_pytest.capture.CaptureManager object at 0x106fe7828>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_plugin_registered [hook]
           plugin: <module 'tests.conftest' from '/Users/katie/spiro/mbam/cookiecutter_mbam/tests/conftest.py'>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_plugin_registered [hook]
           plugin: <Session 'tests'>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_plugin_registered [hook]
-          plugin: <_pytest.cacheprovider.LFPlugin object at 0x104738dd8>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          plugin: <_pytest.cacheprovider.LFPlugin object at 0x109997c18>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_plugin_registered [hook]
-          plugin: <_pytest.cacheprovider.NFPlugin object at 0x104738fd0>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          plugin: <_pytest.cacheprovider.NFPlugin object at 0x109997f60>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_plugin_registered [hook]
-          plugin: <_pytest.logging.LoggingPlugin object at 0x104759a58>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          plugin: <_pytest.logging.LoggingPlugin object at 0x1099bc978>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_plugin_registered [hook]
-          plugin: <_pytest.terminal.TerminalReporter object at 0x10476e400>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          plugin: <_pytest.terminal.TerminalReporter object at 0x1099cf390>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_plugin_registered [hook]
-          plugin: <_pytest.fixtures.FixtureManager object at 0x10476ff28>
-          manager: <_pytest.config.PytestPluginManager object at 0x100792dd8>
+          plugin: <_pytest.fixtures.FixtureManager object at 0x1099d0d68>
+          manager: <_pytest.config.PytestPluginManager object at 0x1059efd68>
       finish pytest_plugin_registered --> [] [hook]
       pytest_report_header [hook]
-          config: <_pytest.config.Config object at 0x101114b38>
+          config: <_pytest.config.Config object at 0x106373b00>
           startdir: /Users/katie/spiro/mbam/cookiecutter_mbam/tests
-      finish pytest_report_header --> [['rootdir: /Users/katie/spiro/mbam/cookiecutter_mbam/tests, inifile:', 'plugins: mock-1.10.0, factoryboy-2.0.2'], 'cachedir: .pytest_cache', ['using: pytest-3.9.3 pylib-1.6.0', 'setuptools registered plugins:', '  pytest-mock-1.10.0 at /Users/katie/anaconda/lib/python3.6/site-packages/pytest_mock.py', '  pytest-factoryboy-2.0.2 at /Users/katie/anaconda/lib/python3.6/site-packages/pytest_factoryboy/plugin.py']] [hook]
+      finish pytest_report_header --> [['rootdir: /Users/katie/spiro/mbam/cookiecutter_mbam/tests, inifile:', 'plugins: mock-1.10.0, factoryboy-2.0.2'], ['using: pytest-3.9.3 pylib-1.6.0', 'setuptools registered plugins:', '  pytest-mock-1.10.0 at /Users/katie/anaconda/lib/python3.6/site-packages/pytest_mock.py', '  pytest-factoryboy-2.0.2 at /Users/katie/anaconda/lib/python3.6/site-packages/pytest_factoryboy/plugin.py']] [hook]
     finish pytest_sessionstart --> [] [hook]
     pytest_collection [hook]
         session: <Session 'tests'>
@@ -344,7 +344,7 @@ args=['--debug', '-v', '-k', 'TestXNATUploads', 'test_scan_upload.py']
         processing argument /Users/katie/spiro/mbam/cookiecutter_mbam/tests/test_scan_upload.py [collection]
             pytest_ignore_collect [hook]
                 path: /Users/katie/spiro/mbam/cookiecutter_mbam/tests/__init__.py
-                config: <_pytest.config.Config object at 0x101114b38>
+                config: <_pytest.config.Config object at 0x106373b00>
             finish pytest_ignore_collect --> False [hook]
             pytest_collect_file [hook]
                 path: /Users/katie/spiro/mbam/cookiecutter_mbam/tests/__init__.py
@@ -378,6 +378,10 @@ args=['--debug', '-v', '-k', 'TestXNATUploads', 'test_scan_upload.py']
       matched test file (was specified on cmdline): '/Users/katie/spiro/mbam/cookiecutter_mbam/tests/test_scan_upload.py' [assertion]
       _read_pyc(/Users/katie/spiro/mbam/cookiecutter_mbam/tests/test_scan_upload.py): invalid or out of date pyc [assertion]
       rewriting '/Users/katie/spiro/mbam/cookiecutter_mbam/tests/test_scan_upload.py' [assertion]
+      early skip of rewriting module: mock [assertion]
+      early skip of rewriting module: mock.mock [assertion]
+      early skip of rewriting module: pbr [assertion]
+      early skip of rewriting module: pbr.version [assertion]
         pytest_pycollect_makeitem [hook]
             collector: <Module 'test_scan_upload.py'>
             name: __name__
@@ -396,12 +400,12 @@ args=['--debug', '-v', '-k', 'TestXNATUploads', 'test_scan_upload.py']
         pytest_pycollect_makeitem [hook]
             collector: <Module 'test_scan_upload.py'>
             name: __loader__
-            obj: <_pytest.assertion.rewrite.AssertionRewritingHook object at 0x101219978>
+            obj: <_pytest.assertion.rewrite.AssertionRewritingHook object at 0x10647fac8>
         finish pytest_pycollect_makeitem --> None [hook]
         pytest_pycollect_makeitem [hook]
             collector: <Module 'test_scan_upload.py'>
             name: __spec__
-            obj: ModuleSpec(name='tests.test_scan_upload', loader=<_pytest.assertion.rewrite.AssertionRewritingHook object at 0x101219978>, origin='/Users/katie/spiro/mbam/cookiecutter_mbam/tests/test_scan_upload.py')
+            obj: ModuleSpec(name='tests.test_scan_upload', loader=<_pytest.assertion.rewrite.AssertionRewritingHook object at 0x10647fac8>, origin='/Users/katie/spiro/mbam/cookiecutter_mbam/tests/test_scan_upload.py')
         finish pytest_pycollect_makeitem --> None [hook]
         pytest_pycollect_makeitem [hook]
             collector: <Module 'test_scan_upload.py'>
@@ -456,13 +460,18 @@ All Rights Reserved., 'credits':     Thanks to CWI, CNRI, BeOpen.com, Zope Corpo
         finish pytest_pycollect_makeitem --> None [hook]
         pytest_pycollect_makeitem [hook]
             collector: <Module 'test_scan_upload.py'>
+            name: mock
+            obj: <module 'mock' from '/Users/katie/anaconda/lib/python3.6/site-packages/mock/__init__.py'>
+        finish pytest_pycollect_makeitem --> None [hook]
+        pytest_pycollect_makeitem [hook]
+            collector: <Module 'test_scan_upload.py'>
             name: copy
-            obj: <function copy at 0x1008e10d0>
+            obj: <function copy at 0x105b3d0d0>
         finish pytest_pycollect_makeitem --> None [hook]
         pytest_pycollect_makeitem [hook]
             collector: <Module 'test_scan_upload.py'>
             name: mocker
-            obj: <function mocker at 0x101663d08>
+            obj: <function mocker at 0x1068ced08>
         finish pytest_pycollect_makeitem --> None [hook]
         pytest_pycollect_makeitem [hook]
             collector: <Module 'test_scan_upload.py'>
@@ -482,7 +491,22 @@ All Rights Reserved., 'credits':     Thanks to CWI, CNRI, BeOpen.com, Zope Corpo
         pytest_pycollect_makeitem [hook]
             collector: <Module 'test_scan_upload.py'>
             name: gzip_file
-            obj: <function gzip_file at 0x1043cf510>
+            obj: <function gzip_file at 0x10962b048>
+        finish pytest_pycollect_makeitem --> None [hook]
+        pytest_pycollect_makeitem [hook]
+            collector: <Module 'test_scan_upload.py'>
+            name: crop
+            obj: <function crop at 0x10962b0d0>
+        finish pytest_pycollect_makeitem --> None [hook]
+        pytest_pycollect_makeitem [hook]
+            collector: <Module 'test_scan_upload.py'>
+            name: Derivation
+            obj: <class 'cookiecutter_mbam.derivation.models.Derivation'>
+        finish pytest_pycollect_makeitem --> None [hook]
+        pytest_pycollect_makeitem [hook]
+            collector: <Module 'test_scan_upload.py'>
+            name: DerivationService
+            obj: <class 'cookiecutter_mbam.derivation.service.DerivationService'>
         finish pytest_pycollect_makeitem --> None [hook]
         pytest_pycollect_makeitem [hook]
             collector: <Module 'test_scan_upload.py'>
@@ -496,8 +520,13 @@ All Rights Reserved., 'credits':     Thanks to CWI, CNRI, BeOpen.com, Zope Corpo
         finish pytest_pycollect_makeitem --> None [hook]
         pytest_pycollect_makeitem [hook]
             collector: <Module 'test_scan_upload.py'>
+            name: derivation_service
+            obj: <function derivation_service at 0x1099e0f28>
+        finish pytest_pycollect_makeitem --> None [hook]
+        pytest_pycollect_makeitem [hook]
+            collector: <Module 'test_scan_upload.py'>
             name: scan_service
-            obj: <function scan_service at 0x104815268>
+            obj: <function scan_service at 0x1099fcc80>
         finish pytest_pycollect_makeitem --> None [hook]
         pytest_pycollect_makeitem [hook]
             collector: <Module 'test_scan_upload.py'>
@@ -507,7 +536,7 @@ All Rights Reserved., 'credits':     Thanks to CWI, CNRI, BeOpen.com, Zope Corpo
         pytest_pycollect_makeitem [hook]
             collector: <Module 'test_scan_upload.py'>
             name: generate_upload_test_parameters
-            obj: <function generate_upload_test_parameters at 0x1048152f0>
+            obj: <function generate_upload_test_parameters at 0x1099fcea0>
         finish pytest_pycollect_makeitem --> None [hook]
         pytest_pycollect_makeitem [hook]
             collector: <Module 'test_scan_upload.py'>
@@ -536,9 +565,9 @@ All Rights Reserved., 'credits':     Thanks to CWI, CNRI, BeOpen.com, Zope Corpo
         finish pytest_pycollect_makeitem --> <Class 'TestScanUtils'> [hook]
         pytest_pycollect_makeitem [hook]
             collector: <Module 'test_scan_upload.py'>
-            name: TestXNATUploads
-            obj: <class 'tests.test_scan_upload.TestXNATUploads'>
-        finish pytest_pycollect_makeitem --> <Class 'TestXNATUploads'> [hook]
+            name: TestDicomConversion
+            obj: <class 'tests.test_scan_upload.TestDicomConversion'>
+        finish pytest_pycollect_makeitem --> <Class 'TestDicomConversion'> [hook]
         pytest_pycollect_makeitem [hook]
             collector: <Module 'test_scan_upload.py'>
             name: __repr__
@@ -567,7 +596,7 @@ All Rights Reserved., 'credits':     Thanks to CWI, CNRI, BeOpen.com, Zope Corpo
         pytest_pycollect_makeitem [hook]
             collector: <Module 'test_scan_upload.py'>
             name: __new__
-            obj: <built-in method __new__ of type object at 0x1002e6160>
+            obj: <built-in method __new__ of type object at 0x105544160>
         finish pytest_pycollect_makeitem --> None [hook]
         pytest_pycollect_makeitem [hook]
             collector: <Module 'test_scan_upload.py'>
@@ -688,43 +717,43 @@ All Rights Reserved., 'credits':     Thanks to CWI, CNRI, BeOpen.com, Zope Corpo
         pytest_pycollect_makeitem [hook]
             collector: <Instance '()'>
             name: test_before_file_upload_an_experiment_has_no_xnat_attributes
-            obj: <function TestScanUpload.test_before_file_upload_an_experiment_has_no_xnat_attributes at 0x104815048>
+            obj: <function TestScanUpload.test_before_file_upload_an_experiment_has_no_xnat_attributes at 0x109a027b8>
           pytest_generate_tests [hook]
-              metafunc: <_pytest.python.Metafunc object at 0x104835a90>
+              metafunc: <_pytest.python.Metafunc object at 0x109a11fd0>
           early skip of rewriting module: py._io.saferepr [assertion]
           early skip of rewriting module: repr [assertion]
             pytest_make_parametrize_id [hook]
-                config: <_pytest.config.Config object at 0x101114b38>
+                config: <_pytest.config.Config object at 0x106373b00>
                 val: T1.nii.gz
                 argname: filename
             finish pytest_make_parametrize_id --> None [hook]
             pytest_make_parametrize_id [hook]
-                config: <_pytest.config.Config object at 0x101114b38>
+                config: <_pytest.config.Config object at 0x106373b00>
                 val: structural.nii
                 argname: filename
             finish pytest_make_parametrize_id --> None [hook]
             pytest_make_parametrize_id [hook]
-                config: <_pytest.config.Config object at 0x101114b38>
+                config: <_pytest.config.Config object at 0x106373b00>
                 val: DICOMS.zip
                 argname: filename
             finish pytest_make_parametrize_id --> None [hook]
             pytest_make_parametrize_id [hook]
-                config: <_pytest.config.Config object at 0x101114b38>
+                config: <_pytest.config.Config object at 0x106373b00>
                 val: (1, 0, '000001_MR1', 'T1_1', '/data/archive/experiments/000001_MR1', '/data/archive/experiments/000001_MR1/scans/T1_1')
                 argname: scan_service
             finish pytest_make_parametrize_id --> None [hook]
             pytest_make_parametrize_id [hook]
-                config: <_pytest.config.Config object at 0x101114b38>
+                config: <_pytest.config.Config object at 0x106373b00>
                 val: (1, 1, '000001_MR1', 'T1_2', '/data/archive/experiments/000001_MR1', '/data/archive/experiments/000001_MR1/scans/T1_2')
                 argname: scan_service
             finish pytest_make_parametrize_id --> None [hook]
             pytest_make_parametrize_id [hook]
-                config: <_pytest.config.Config object at 0x101114b38>
+                config: <_pytest.config.Config object at 0x106373b00>
                 val: (2, 0, '000001_MR2', 'T1_1', '/data/archive/experiments/000001_MR2', '/data/archive/experiments/000001_MR2/scans/T1_1')
                 argname: scan_service
             finish pytest_make_parametrize_id --> None [hook]
             pytest_make_parametrize_id [hook]
-                config: <_pytest.config.Config object at 0x101114b38>
+                config: <_pytest.config.Config object at 0x106373b00>
                 val: (2, 1, '000001_MR2', 'T1_2', '/data/archive/experiments/000001_MR2', '/data/archive/experiments/000001_MR2/scans/T1_2')
                 argname: scan_service
             finish pytest_make_parametrize_id --> None [hook]
@@ -733,41 +762,41 @@ All Rights Reserved., 'credits':     Thanks to CWI, CNRI, BeOpen.com, Zope Corpo
         pytest_pycollect_makeitem [hook]
             collector: <Instance '()'>
             name: test_after_file_upload_experiment_has_one_more_scan
-            obj: <function TestScanUpload.test_after_file_upload_experiment_has_one_more_scan at 0x104815598>
+            obj: <function TestScanUpload.test_after_file_upload_experiment_has_one_more_scan at 0x109a026a8>
           pytest_generate_tests [hook]
-              metafunc: <_pytest.python.Metafunc object at 0x104822668>
+              metafunc: <_pytest.python.Metafunc object at 0x109aa0ac8>
             pytest_make_parametrize_id [hook]
-                config: <_pytest.config.Config object at 0x101114b38>
+                config: <_pytest.config.Config object at 0x106373b00>
                 val: T1.nii.gz
                 argname: filename
             finish pytest_make_parametrize_id --> None [hook]
             pytest_make_parametrize_id [hook]
-                config: <_pytest.config.Config object at 0x101114b38>
+                config: <_pytest.config.Config object at 0x106373b00>
                 val: structural.nii
                 argname: filename
             finish pytest_make_parametrize_id --> None [hook]
             pytest_make_parametrize_id [hook]
-                config: <_pytest.config.Config object at 0x101114b38>
+                config: <_pytest.config.Config object at 0x106373b00>
                 val: DICOMS.zip
                 argname: filename
             finish pytest_make_parametrize_id --> None [hook]
             pytest_make_parametrize_id [hook]
-                config: <_pytest.config.Config object at 0x101114b38>
+                config: <_pytest.config.Config object at 0x106373b00>
                 val: (1, 0, '000001_MR1', 'T1_1', '/data/archive/experiments/000001_MR1', '/data/archive/experiments/000001_MR1/scans/T1_1')
                 argname: scan_service
             finish pytest_make_parametrize_id --> None [hook]
             pytest_make_parametrize_id [hook]
-                config: <_pytest.config.Config object at 0x101114b38>
+                config: <_pytest.config.Config object at 0x106373b00>
                 val: (1, 1, '000001_MR1', 'T1_2', '/data/archive/experiments/000001_MR1', '/data/archive/experiments/000001_MR1/scans/T1_2')
                 argname: scan_service
             finish pytest_make_parametrize_id --> None [hook]
             pytest_make_parametrize_id [hook]
-                config: <_pytest.config.Config object at 0x101114b38>
+                config: <_pytest.config.Config object at 0x106373b00>
                 val: (2, 0, '000001_MR2', 'T1_1', '/data/archive/experiments/000001_MR2', '/data/archive/experiments/000001_MR2/scans/T1_1')
                 argname: scan_service
             finish pytest_make_parametrize_id --> None [hook]
             pytest_make_parametrize_id [hook]
-                config: <_pytest.config.Config object at 0x101114b38>
+                config: <_pytest.config.Config object at 0x106373b00>
                 val: (2, 1, '000001_MR2', 'T1_2', '/data/archive/experiments/000001_MR2', '/data/archive/experiments/000001_MR2/scans/T1_2')
                 argname: scan_service
             finish pytest_make_parametrize_id --> None [hook]
@@ -776,41 +805,41 @@ All Rights Reserved., 'credits':     Thanks to CWI, CNRI, BeOpen.com, Zope Corpo
         pytest_pycollect_makeitem [hook]
             collector: <Instance '()'>
             name: test_after_file_upload_experiment_attributes_are_set
-            obj: <function TestScanUpload.test_after_file_upload_experiment_attributes_are_set at 0x104815510>
+            obj: <function TestScanUpload.test_after_file_upload_experiment_attributes_are_set at 0x109a02400>
           pytest_generate_tests [hook]
-              metafunc: <_pytest.python.Metafunc object at 0x104824ac8>
+              metafunc: <_pytest.python.Metafunc object at 0x109a9d668>
             pytest_make_parametrize_id [hook]
-                config: <_pytest.config.Config object at 0x101114b38>
+                config: <_pytest.config.Config object at 0x106373b00>
                 val: T1.nii.gz
                 argname: filename
             finish pytest_make_parametrize_id --> None [hook]
             pytest_make_parametrize_id [hook]
-                config: <_pytest.config.Config object at 0x101114b38>
+                config: <_pytest.config.Config object at 0x106373b00>
                 val: structural.nii
                 argname: filename
             finish pytest_make_parametrize_id --> None [hook]
             pytest_make_parametrize_id [hook]
-                config: <_pytest.config.Config object at 0x101114b38>
+                config: <_pytest.config.Config object at 0x106373b00>
                 val: DICOMS.zip
                 argname: filename
             finish pytest_make_parametrize_id --> None [hook]
             pytest_make_parametrize_id [hook]
-                config: <_pytest.config.Config object at 0x101114b38>
+                config: <_pytest.config.Config object at 0x106373b00>
                 val: (1, 0, '000001_MR1', 'T1_1', '/data/archive/experiments/000001_MR1', '/data/archive/experiments/000001_MR1/scans/T1_1')
                 argname: scan_service
             finish pytest_make_parametrize_id --> None [hook]
             pytest_make_parametrize_id [hook]
-                config: <_pytest.config.Config object at 0x101114b38>
+                config: <_pytest.config.Config object at 0x106373b00>
                 val: (1, 1, '000001_MR1', 'T1_2', '/data/archive/experiments/000001_MR1', '/data/archive/experiments/000001_MR1/scans/T1_2')
                 argname: scan_service
             finish pytest_make_parametrize_id --> None [hook]
             pytest_make_parametrize_id [hook]
-                config: <_pytest.config.Config object at 0x101114b38>
+                config: <_pytest.config.Config object at 0x106373b00>
                 val: (2, 0, '000001_MR2', 'T1_1', '/data/archive/experiments/000001_MR2', '/data/archive/experiments/000001_MR2/scans/T1_1')
                 argname: scan_service
             finish pytest_make_parametrize_id --> None [hook]
             pytest_make_parametrize_id [hook]
-                config: <_pytest.config.Config object at 0x101114b38>
+                config: <_pytest.config.Config object at 0x106373b00>
                 val: (2, 1, '000001_MR2', 'T1_2', '/data/archive/experiments/000001_MR2', '/data/archive/experiments/000001_MR2/scans/T1_2')
                 argname: scan_service
             finish pytest_make_parametrize_id --> None [hook]
@@ -819,41 +848,41 @@ All Rights Reserved., 'credits':     Thanks to CWI, CNRI, BeOpen.com, Zope Corpo
         pytest_pycollect_makeitem [hook]
             collector: <Instance '()'>
             name: test_after_file_upload_scan_attributes_are_set
-            obj: <function TestScanUpload.test_after_file_upload_scan_attributes_are_set at 0x104815488>
+            obj: <function TestScanUpload.test_after_file_upload_scan_attributes_are_set at 0x109a02730>
           pytest_generate_tests [hook]
-              metafunc: <_pytest.python.Metafunc object at 0x1047eca58>
+              metafunc: <_pytest.python.Metafunc object at 0x109a89080>
             pytest_make_parametrize_id [hook]
-                config: <_pytest.config.Config object at 0x101114b38>
+                config: <_pytest.config.Config object at 0x106373b00>
                 val: T1.nii.gz
                 argname: filename
             finish pytest_make_parametrize_id --> None [hook]
             pytest_make_parametrize_id [hook]
-                config: <_pytest.config.Config object at 0x101114b38>
+                config: <_pytest.config.Config object at 0x106373b00>
                 val: structural.nii
                 argname: filename
             finish pytest_make_parametrize_id --> None [hook]
             pytest_make_parametrize_id [hook]
-                config: <_pytest.config.Config object at 0x101114b38>
+                config: <_pytest.config.Config object at 0x106373b00>
                 val: DICOMS.zip
                 argname: filename
             finish pytest_make_parametrize_id --> None [hook]
             pytest_make_parametrize_id [hook]
-                config: <_pytest.config.Config object at 0x101114b38>
+                config: <_pytest.config.Config object at 0x106373b00>
                 val: (1, 0, '000001_MR1', 'T1_1', '/data/archive/experiments/000001_MR1', '/data/archive/experiments/000001_MR1/scans/T1_1')
                 argname: scan_service
             finish pytest_make_parametrize_id --> None [hook]
             pytest_make_parametrize_id [hook]
-                config: <_pytest.config.Config object at 0x101114b38>
+                config: <_pytest.config.Config object at 0x106373b00>
                 val: (1, 1, '000001_MR1', 'T1_2', '/data/archive/experiments/000001_MR1', '/data/archive/experiments/000001_MR1/scans/T1_2')
                 argname: scan_service
             finish pytest_make_parametrize_id --> None [hook]
             pytest_make_parametrize_id [hook]
-                config: <_pytest.config.Config object at 0x101114b38>
+                config: <_pytest.config.Config object at 0x106373b00>
                 val: (2, 0, '000001_MR2', 'T1_1', '/data/archive/experiments/000001_MR2', '/data/archive/experiments/000001_MR2/scans/T1_1')
                 argname: scan_service
             finish pytest_make_parametrize_id --> None [hook]
             pytest_make_parametrize_id [hook]
-                config: <_pytest.config.Config object at 0x101114b38>
+                config: <_pytest.config.Config object at 0x106373b00>
                 val: (2, 1, '000001_MR2', 'T1_2', '/data/archive/experiments/000001_MR2', '/data/archive/experiments/000001_MR2/scans/T1_2')
                 argname: scan_service
             finish pytest_make_parametrize_id --> None [hook]
@@ -867,27 +896,27 @@ All Rights Reserved., 'credits':     Thanks to CWI, CNRI, BeOpen.com, Zope Corpo
         pytest_pycollect_makeitem [hook]
             collector: <Instance '()'>
             name: copy_file_to_upload_dest
-            obj: <function ScanUploadSetup.copy_file_to_upload_dest at 0x1048158c8>
+            obj: <function ScanUploadSetup.copy_file_to_upload_dest at 0x1099fcf28>
         finish pytest_pycollect_makeitem --> None [hook]
         pytest_pycollect_makeitem [hook]
             collector: <Instance '()'>
             name: create_file_to_upload
-            obj: <function ScanUploadSetup.create_file_to_upload at 0x104815158>
+            obj: <function ScanUploadSetup.create_file_to_upload at 0x109a02048>
         finish pytest_pycollect_makeitem --> None [hook]
         pytest_pycollect_makeitem [hook]
             collector: <Instance '()'>
             name: add_a_scan
-            obj: <function ScanUploadSetup.add_a_scan at 0x1048150d0>
+            obj: <function ScanUploadSetup.add_a_scan at 0x109a020d0>
         finish pytest_pycollect_makeitem --> None [hook]
         pytest_pycollect_makeitem [hook]
             collector: <Instance '()'>
             name: open_file_storage_obj
-            obj: <function ScanUploadSetup.open_file_storage_obj at 0x1048157b8>
+            obj: <function ScanUploadSetup.open_file_storage_obj at 0x109a02158>
         finish pytest_pycollect_makeitem --> None [hook]
         pytest_pycollect_makeitem [hook]
             collector: <Instance '()'>
             name: setup_tests
-            obj: <function ScanUploadSetup.setup_tests at 0x1048156a8>
+            obj: <function ScanUploadSetup.setup_tests at 0x109a022f0>
         finish pytest_pycollect_makeitem --> None [hook]
         pytest_pycollect_makeitem [hook]
             collector: <Instance '()'>
@@ -967,7 +996,7 @@ All Rights Reserved., 'credits':     Thanks to CWI, CNRI, BeOpen.com, Zope Corpo
         pytest_pycollect_makeitem [hook]
             collector: <Instance '()'>
             name: __new__
-            obj: <built-in method __new__ of type object at 0x1002ea4d0>
+            obj: <built-in method __new__ of type object at 0x1055484d0>
         finish pytest_pycollect_makeitem --> None [hook]
         pytest_pycollect_makeitem [hook]
             collector: <Instance '()'>
@@ -1239,115 +1268,115 @@ All Rights Reserved., 'credits':     Thanks to CWI, CNRI, BeOpen.com, Zope Corpo
         finish pytest_pycollect_makeitem --> None [hook]
         pytest_pycollect_makeitem [hook]
             collector: <Instance '()'>
-            name: test_resource_named_according_to_file_type
-            obj: <function TestScanUploadPrivateMethods.test_resource_named_according_to_file_type at 0x104815400>
+            name: test_resource_name_accords_to_file_type
+            obj: <function TestScanUploadPrivateMethods.test_resource_name_accords_to_file_type at 0x109a029d8>
           pytest_generate_tests [hook]
-              metafunc: <_pytest.python.Metafunc object at 0x1047bd550>
+              metafunc: <_pytest.python.Metafunc object at 0x109a15e48>
             pytest_make_parametrize_id [hook]
-                config: <_pytest.config.Config object at 0x101114b38>
+                config: <_pytest.config.Config object at 0x106373b00>
                 val: (1, 0, '000001_MR1', 'T1_1', '/data/archive/experiments/000001_MR1', '/data/archive/experiments/000001_MR1/scans/T1_1')
                 argname: scan_service
             finish pytest_make_parametrize_id --> None [hook]
             pytest_make_parametrize_id [hook]
-                config: <_pytest.config.Config object at 0x101114b38>
+                config: <_pytest.config.Config object at 0x106373b00>
                 val: T1.nii.gz
                 argname: filename
             finish pytest_make_parametrize_id --> None [hook]
             pytest_make_parametrize_id [hook]
-                config: <_pytest.config.Config object at 0x101114b38>
+                config: <_pytest.config.Config object at 0x106373b00>
                 val: False
                 argname: import_service
             finish pytest_make_parametrize_id --> None [hook]
             pytest_make_parametrize_id [hook]
-                config: <_pytest.config.Config object at 0x101114b38>
+                config: <_pytest.config.Config object at 0x106373b00>
                 val: NIFTI
                 argname: resource_type
             finish pytest_make_parametrize_id --> None [hook]
             pytest_make_parametrize_id [hook]
-                config: <_pytest.config.Config object at 0x101114b38>
+                config: <_pytest.config.Config object at 0x106373b00>
                 val: structural.nii
                 argname: filename
             finish pytest_make_parametrize_id --> None [hook]
             pytest_make_parametrize_id [hook]
-                config: <_pytest.config.Config object at 0x101114b38>
+                config: <_pytest.config.Config object at 0x106373b00>
                 val: False
                 argname: import_service
             finish pytest_make_parametrize_id --> None [hook]
             pytest_make_parametrize_id [hook]
-                config: <_pytest.config.Config object at 0x101114b38>
+                config: <_pytest.config.Config object at 0x106373b00>
                 val: NIFTI
                 argname: resource_type
             finish pytest_make_parametrize_id --> None [hook]
             pytest_make_parametrize_id [hook]
-                config: <_pytest.config.Config object at 0x101114b38>
+                config: <_pytest.config.Config object at 0x106373b00>
                 val: DICOMS.zip
                 argname: filename
             finish pytest_make_parametrize_id --> None [hook]
             pytest_make_parametrize_id [hook]
-                config: <_pytest.config.Config object at 0x101114b38>
+                config: <_pytest.config.Config object at 0x106373b00>
                 val: True
                 argname: import_service
             finish pytest_make_parametrize_id --> None [hook]
             pytest_make_parametrize_id [hook]
-                config: <_pytest.config.Config object at 0x101114b38>
+                config: <_pytest.config.Config object at 0x106373b00>
                 val: DICOM
                 argname: resource_type
             finish pytest_make_parametrize_id --> None [hook]
           finish pytest_generate_tests --> [] [hook]
-        finish pytest_pycollect_makeitem --> [<Function 'test_resource_named_according_to_file_type[scan_service0-T1.nii.gz-False-NIFTI]'>, <Function 'test_resource_named_according_to_file_type[scan_service0-structural.nii-False-NIFTI]'>, <Function 'test_resource_named_according_to_file_type[scan_service0-DICOMS.zip-True-DICOM]'>] [hook]
+        finish pytest_pycollect_makeitem --> [<Function 'test_resource_name_accords_to_file_type[scan_service0-T1.nii.gz-False-NIFTI]'>, <Function 'test_resource_name_accords_to_file_type[scan_service0-structural.nii-False-NIFTI]'>, <Function 'test_resource_name_accords_to_file_type[scan_service0-DICOMS.zip-True-DICOM]'>] [hook]
         pytest_pycollect_makeitem [hook]
             collector: <Instance '()'>
             name: test_process_file
-            obj: <function TestScanUploadPrivateMethods.test_process_file at 0x104815c80>
+            obj: <function TestScanUploadPrivateMethods.test_process_file at 0x109a02a60>
           pytest_generate_tests [hook]
-              metafunc: <_pytest.python.Metafunc object at 0x1047c7f60>
+              metafunc: <_pytest.python.Metafunc object at 0x1099f8a20>
             pytest_make_parametrize_id [hook]
-                config: <_pytest.config.Config object at 0x101114b38>
+                config: <_pytest.config.Config object at 0x106373b00>
                 val: (1, 0, '000001_MR1', 'T1_1', '/data/archive/experiments/000001_MR1', '/data/archive/experiments/000001_MR1/scans/T1_1')
                 argname: scan_service
             finish pytest_make_parametrize_id --> None [hook]
             pytest_make_parametrize_id [hook]
-                config: <_pytest.config.Config object at 0x101114b38>
+                config: <_pytest.config.Config object at 0x106373b00>
                 val: T1.nii.gz
                 argname: filename
             finish pytest_make_parametrize_id --> None [hook]
             pytest_make_parametrize_id [hook]
-                config: <_pytest.config.Config object at 0x101114b38>
+                config: <_pytest.config.Config object at 0x106373b00>
                 val: False
                 argname: import_service
             finish pytest_make_parametrize_id --> None [hook]
             pytest_make_parametrize_id [hook]
-                config: <_pytest.config.Config object at 0x101114b38>
+                config: <_pytest.config.Config object at 0x106373b00>
                 val: NIFTI
                 argname: resource_type
             finish pytest_make_parametrize_id --> None [hook]
             pytest_make_parametrize_id [hook]
-                config: <_pytest.config.Config object at 0x101114b38>
+                config: <_pytest.config.Config object at 0x106373b00>
                 val: structural.nii
                 argname: filename
             finish pytest_make_parametrize_id --> None [hook]
             pytest_make_parametrize_id [hook]
-                config: <_pytest.config.Config object at 0x101114b38>
+                config: <_pytest.config.Config object at 0x106373b00>
                 val: False
                 argname: import_service
             finish pytest_make_parametrize_id --> None [hook]
             pytest_make_parametrize_id [hook]
-                config: <_pytest.config.Config object at 0x101114b38>
+                config: <_pytest.config.Config object at 0x106373b00>
                 val: NIFTI
                 argname: resource_type
             finish pytest_make_parametrize_id --> None [hook]
             pytest_make_parametrize_id [hook]
-                config: <_pytest.config.Config object at 0x101114b38>
+                config: <_pytest.config.Config object at 0x106373b00>
                 val: DICOMS.zip
                 argname: filename
             finish pytest_make_parametrize_id --> None [hook]
             pytest_make_parametrize_id [hook]
-                config: <_pytest.config.Config object at 0x101114b38>
+                config: <_pytest.config.Config object at 0x106373b00>
                 val: True
                 argname: import_service
             finish pytest_make_parametrize_id --> None [hook]
             pytest_make_parametrize_id [hook]
-                config: <_pytest.config.Config object at 0x101114b38>
+                config: <_pytest.config.Config object at 0x106373b00>
                 val: DICOM
                 argname: resource_type
             finish pytest_make_parametrize_id --> None [hook]
@@ -1356,71 +1385,71 @@ All Rights Reserved., 'credits':     Thanks to CWI, CNRI, BeOpen.com, Zope Corpo
         pytest_pycollect_makeitem [hook]
             collector: <Instance '()'>
             name: test_generate_xnat_ids
-            obj: <function TestScanUploadPrivateMethods.test_generate_xnat_ids at 0x104815d08>
+            obj: <function TestScanUploadPrivateMethods.test_generate_xnat_ids at 0x109a02ae8>
           pytest_generate_tests [hook]
-              metafunc: <_pytest.python.Metafunc object at 0x1047c77f0>
+              metafunc: <_pytest.python.Metafunc object at 0x1099f8780>
             pytest_make_parametrize_id [hook]
-                config: <_pytest.config.Config object at 0x101114b38>
+                config: <_pytest.config.Config object at 0x106373b00>
                 val: (1, 0, '000001_MR1', 'T1_1', '/data/archive/experiments/000001_MR1', '/data/archive/experiments/000001_MR1/scans/T1_1')
                 argname: scan_service
             finish pytest_make_parametrize_id --> None [hook]
             pytest_make_parametrize_id [hook]
-                config: <_pytest.config.Config object at 0x101114b38>
+                config: <_pytest.config.Config object at 0x106373b00>
                 val: (1, 1, '000001_MR1', 'T1_2', '/data/archive/experiments/000001_MR1', '/data/archive/experiments/000001_MR1/scans/T1_2')
                 argname: scan_service
             finish pytest_make_parametrize_id --> None [hook]
             pytest_make_parametrize_id [hook]
-                config: <_pytest.config.Config object at 0x101114b38>
+                config: <_pytest.config.Config object at 0x106373b00>
                 val: (2, 0, '000001_MR2', 'T1_1', '/data/archive/experiments/000001_MR2', '/data/archive/experiments/000001_MR2/scans/T1_1')
                 argname: scan_service
             finish pytest_make_parametrize_id --> None [hook]
             pytest_make_parametrize_id [hook]
-                config: <_pytest.config.Config object at 0x101114b38>
+                config: <_pytest.config.Config object at 0x106373b00>
                 val: (2, 1, '000001_MR2', 'T1_2', '/data/archive/experiments/000001_MR2', '/data/archive/experiments/000001_MR2/scans/T1_2')
                 argname: scan_service
             finish pytest_make_parametrize_id --> None [hook]
             pytest_make_parametrize_id [hook]
-                config: <_pytest.config.Config object at 0x101114b38>
+                config: <_pytest.config.Config object at 0x106373b00>
                 val: T1.nii.gz
                 argname: filename
             finish pytest_make_parametrize_id --> None [hook]
             pytest_make_parametrize_id [hook]
-                config: <_pytest.config.Config object at 0x101114b38>
+                config: <_pytest.config.Config object at 0x106373b00>
                 val: False
                 argname: import_service
             finish pytest_make_parametrize_id --> None [hook]
             pytest_make_parametrize_id [hook]
-                config: <_pytest.config.Config object at 0x101114b38>
+                config: <_pytest.config.Config object at 0x106373b00>
                 val: NIFTI
                 argname: resource_type
             finish pytest_make_parametrize_id --> None [hook]
             pytest_make_parametrize_id [hook]
-                config: <_pytest.config.Config object at 0x101114b38>
+                config: <_pytest.config.Config object at 0x106373b00>
                 val: structural.nii
                 argname: filename
             finish pytest_make_parametrize_id --> None [hook]
             pytest_make_parametrize_id [hook]
-                config: <_pytest.config.Config object at 0x101114b38>
+                config: <_pytest.config.Config object at 0x106373b00>
                 val: False
                 argname: import_service
             finish pytest_make_parametrize_id --> None [hook]
             pytest_make_parametrize_id [hook]
-                config: <_pytest.config.Config object at 0x101114b38>
+                config: <_pytest.config.Config object at 0x106373b00>
                 val: NIFTI
                 argname: resource_type
             finish pytest_make_parametrize_id --> None [hook]
             pytest_make_parametrize_id [hook]
-                config: <_pytest.config.Config object at 0x101114b38>
+                config: <_pytest.config.Config object at 0x106373b00>
                 val: DICOMS.zip
                 argname: filename
             finish pytest_make_parametrize_id --> None [hook]
             pytest_make_parametrize_id [hook]
-                config: <_pytest.config.Config object at 0x101114b38>
+                config: <_pytest.config.Config object at 0x106373b00>
                 val: True
                 argname: import_service
             finish pytest_make_parametrize_id --> None [hook]
             pytest_make_parametrize_id [hook]
-                config: <_pytest.config.Config object at 0x101114b38>
+                config: <_pytest.config.Config object at 0x106373b00>
                 val: DICOM
                 argname: resource_type
             finish pytest_make_parametrize_id --> None [hook]
@@ -1434,27 +1463,27 @@ All Rights Reserved., 'credits':     Thanks to CWI, CNRI, BeOpen.com, Zope Corpo
         pytest_pycollect_makeitem [hook]
             collector: <Instance '()'>
             name: copy_file_to_upload_dest
-            obj: <function ScanUploadSetup.copy_file_to_upload_dest at 0x1048158c8>
+            obj: <function ScanUploadSetup.copy_file_to_upload_dest at 0x1099fcf28>
         finish pytest_pycollect_makeitem --> None [hook]
         pytest_pycollect_makeitem [hook]
             collector: <Instance '()'>
             name: create_file_to_upload
-            obj: <function ScanUploadSetup.create_file_to_upload at 0x104815158>
+            obj: <function ScanUploadSetup.create_file_to_upload at 0x109a02048>
         finish pytest_pycollect_makeitem --> None [hook]
         pytest_pycollect_makeitem [hook]
             collector: <Instance '()'>
             name: add_a_scan
-            obj: <function ScanUploadSetup.add_a_scan at 0x1048150d0>
+            obj: <function ScanUploadSetup.add_a_scan at 0x109a020d0>
         finish pytest_pycollect_makeitem --> None [hook]
         pytest_pycollect_makeitem [hook]
             collector: <Instance '()'>
             name: open_file_storage_obj
-            obj: <function ScanUploadSetup.open_file_storage_obj at 0x1048157b8>
+            obj: <function ScanUploadSetup.open_file_storage_obj at 0x109a02158>
         finish pytest_pycollect_makeitem --> None [hook]
         pytest_pycollect_makeitem [hook]
             collector: <Instance '()'>
             name: setup_tests
-            obj: <function ScanUploadSetup.setup_tests at 0x1048156a8>
+            obj: <function ScanUploadSetup.setup_tests at 0x109a022f0>
         finish pytest_pycollect_makeitem --> None [hook]
         pytest_pycollect_makeitem [hook]
             collector: <Instance '()'>
@@ -1534,7 +1563,7 @@ All Rights Reserved., 'credits':     Thanks to CWI, CNRI, BeOpen.com, Zope Corpo
         pytest_pycollect_makeitem [hook]
             collector: <Instance '()'>
             name: __new__
-            obj: <built-in method __new__ of type object at 0x1002ea4d0>
+            obj: <built-in method __new__ of type object at 0x1055484d0>
         finish pytest_pycollect_makeitem --> None [hook]
         pytest_pycollect_makeitem [hook]
             collector: <Instance '()'>
@@ -1577,17 +1606,17 @@ All Rights Reserved., 'credits':     Thanks to CWI, CNRI, BeOpen.com, Zope Corpo
             obj: <attribute '__class__' of 'object' objects>
         finish pytest_pycollect_makeitem --> None [hook]
       finish pytest_make_collect_report --> <CollectReport 'test_scan_upload.py::TestScanUploadPrivateMethods::()' lenresult=18 outcome='passed'> [hook]
-    genitems <Function 'test_resource_named_according_to_file_type[scan_service0-T1.nii.gz-False-NIFTI]'> [collection]
+    genitems <Function 'test_resource_name_accords_to_file_type[scan_service0-T1.nii.gz-False-NIFTI]'> [collection]
       pytest_itemcollected [hook]
-          item: <Function 'test_resource_named_according_to_file_type[scan_service0-T1.nii.gz-False-NIFTI]'>
+          item: <Function 'test_resource_name_accords_to_file_type[scan_service0-T1.nii.gz-False-NIFTI]'>
       finish pytest_itemcollected --> [] [hook]
-    genitems <Function 'test_resource_named_according_to_file_type[scan_service0-structural.nii-False-NIFTI]'> [collection]
+    genitems <Function 'test_resource_name_accords_to_file_type[scan_service0-structural.nii-False-NIFTI]'> [collection]
       pytest_itemcollected [hook]
-          item: <Function 'test_resource_named_according_to_file_type[scan_service0-structural.nii-False-NIFTI]'>
+          item: <Function 'test_resource_name_accords_to_file_type[scan_service0-structural.nii-False-NIFTI]'>
       finish pytest_itemcollected --> [] [hook]
-    genitems <Function 'test_resource_named_according_to_file_type[scan_service0-DICOMS.zip-True-DICOM]'> [collection]
+    genitems <Function 'test_resource_name_accords_to_file_type[scan_service0-DICOMS.zip-True-DICOM]'> [collection]
       pytest_itemcollected [hook]
-          item: <Function 'test_resource_named_according_to_file_type[scan_service0-DICOMS.zip-True-DICOM]'>
+          item: <Function 'test_resource_name_accords_to_file_type[scan_service0-DICOMS.zip-True-DICOM]'>
       finish pytest_itemcollected --> [] [hook]
     genitems <Function 'test_process_file[scan_service0-T1.nii.gz-False-NIFTI]'> [collection]
       pytest_itemcollected [hook]
@@ -1681,11 +1710,11 @@ All Rights Reserved., 'credits':     Thanks to CWI, CNRI, BeOpen.com, Zope Corpo
         pytest_pycollect_makeitem [hook]
             collector: <Instance '()'>
             name: test_gzip
-            obj: <function TestScanUtils.test_gzip at 0x104815d90>
+            obj: <function TestScanUtils.test_gzip at 0x109a02b70>
           pytest_generate_tests [hook]
-              metafunc: <_pytest.python.Metafunc object at 0x1047c9160>
+              metafunc: <_pytest.python.Metafunc object at 0x109a797b8>
             pytest_make_parametrize_id [hook]
-                config: <_pytest.config.Config object at 0x101114b38>
+                config: <_pytest.config.Config object at 0x106373b00>
                 val: (1, 0, '000001_MR1', 'T1_1', '/data/archive/experiments/000001_MR1', '/data/archive/experiments/000001_MR1/scans/T1_1')
                 argname: scan_service
             finish pytest_make_parametrize_id --> None [hook]
@@ -1769,7 +1798,7 @@ All Rights Reserved., 'credits':     Thanks to CWI, CNRI, BeOpen.com, Zope Corpo
         pytest_pycollect_makeitem [hook]
             collector: <Instance '()'>
             name: __new__
-            obj: <built-in method __new__ of type object at 0x1002ea4d0>
+            obj: <built-in method __new__ of type object at 0x1055484d0>
         finish pytest_pycollect_makeitem --> None [hook]
         pytest_pycollect_makeitem [hook]
             collector: <Instance '()'>
@@ -1822,13 +1851,13 @@ All Rights Reserved., 'credits':     Thanks to CWI, CNRI, BeOpen.com, Zope Corpo
       pytest_collectreport [hook]
           report: <CollectReport 'test_scan_upload.py::TestScanUtils' lenresult=1 outcome='passed'>
       finish pytest_collectreport --> [] [hook]
-    genitems <Class 'TestXNATUploads'> [collection]
+    genitems <Class 'TestDicomConversion'> [collection]
       pytest_collectstart [hook]
-          collector: <Class 'TestXNATUploads'>
+          collector: <Class 'TestDicomConversion'>
       finish pytest_collectstart --> [] [hook]
       pytest_make_collect_report [hook]
-          collector: <Class 'TestXNATUploads'>
-      finish pytest_make_collect_report --> <CollectReport 'test_scan_upload.py::TestXNATUploads' lenresult=1 outcome='passed'> [hook]
+          collector: <Class 'TestDicomConversion'>
+      finish pytest_make_collect_report --> <CollectReport 'test_scan_upload.py::TestDicomConversion' lenresult=1 outcome='passed'> [hook]
     genitems <Instance '()'> [collection]
       pytest_collectstart [hook]
           collector: <Instance '()'>
@@ -1842,50 +1871,35 @@ All Rights Reserved., 'credits':     Thanks to CWI, CNRI, BeOpen.com, Zope Corpo
         finish pytest_pycollect_makeitem --> None [hook]
         pytest_pycollect_makeitem [hook]
             collector: <Instance '()'>
-            name: get_test_values
-            obj: <function TestXNATUploads.get_test_values at 0x104815e18>
+            name: mock_DS_class
+            obj: <function TestDicomConversion.mock_DS_class at 0x109a02bf8>
         finish pytest_pycollect_makeitem --> None [hook]
         pytest_pycollect_makeitem [hook]
             collector: <Instance '()'>
-            name: common_tests_for_dicom_and_nifti
-            obj: <function TestXNATUploads.common_tests_for_dicom_and_nifti at 0x104815ea0>
-        finish pytest_pycollect_makeitem --> None [hook]
-        pytest_pycollect_makeitem [hook]
-            collector: <Instance '()'>
-            name: test_nifti_uploads_to_xnat
-            obj: <function TestXNATUploads.test_nifti_uploads_to_xnat at 0x104815f28>
+            name: test_when_nifti_file_passed_to_scan_service_launch_response_is_not_set
+            obj: <function TestDicomConversion.test_when_nifti_file_passed_to_scan_service_launch_response_is_not_set at 0x109a02c80>
           pytest_generate_tests [hook]
-              metafunc: <_pytest.python.Metafunc object at 0x1047c94e0>
+              metafunc: <_pytest.python.Metafunc object at 0x109a6c160>
             pytest_make_parametrize_id [hook]
-                config: <_pytest.config.Config object at 0x101114b38>
-                val: T1.nii.gz
-                argname: filename
-            finish pytest_make_parametrize_id --> None [hook]
-            pytest_make_parametrize_id [hook]
-                config: <_pytest.config.Config object at 0x101114b38>
-                val: structural.nii
-                argname: filename
-            finish pytest_make_parametrize_id --> None [hook]
-            pytest_make_parametrize_id [hook]
-                config: <_pytest.config.Config object at 0x101114b38>
+                config: <_pytest.config.Config object at 0x106373b00>
                 val: (1, 0, '000001_MR1', 'T1_1', '/data/archive/experiments/000001_MR1', '/data/archive/experiments/000001_MR1/scans/T1_1')
                 argname: scan_service
             finish pytest_make_parametrize_id --> None [hook]
           finish pytest_generate_tests --> [] [hook]
-        finish pytest_pycollect_makeitem --> [<Function 'test_nifti_uploads_to_xnat[T1.nii.gz-scan_service0]'>, <Function 'test_nifti_uploads_to_xnat[structural.nii-scan_service0]'>] [hook]
+        finish pytest_pycollect_makeitem --> [<Function 'test_when_nifti_file_passed_to_scan_service_launch_response_is_not_set[scan_service0]'>] [hook]
         pytest_pycollect_makeitem [hook]
             collector: <Instance '()'>
-            name: test_dicom_uploads_to_xnat
-            obj: <function TestXNATUploads.test_dicom_uploads_to_xnat at 0x104799048>
+            name: test_when_dicoms_are_passed_to_scan_service_launch_response_is_set
+            obj: <function TestDicomConversion.test_when_dicoms_are_passed_to_scan_service_launch_response_is_set at 0x109a02d08>
           pytest_generate_tests [hook]
-              metafunc: <_pytest.python.Metafunc object at 0x1047bb1d0>
+              metafunc: <_pytest.python.Metafunc object at 0x109a6c630>
             pytest_make_parametrize_id [hook]
-                config: <_pytest.config.Config object at 0x101114b38>
+                config: <_pytest.config.Config object at 0x106373b00>
                 val: (1, 0, '000001_MR1', 'T1_1', '/data/archive/experiments/000001_MR1', '/data/archive/experiments/000001_MR1/scans/T1_1')
                 argname: scan_service
             finish pytest_make_parametrize_id --> None [hook]
           finish pytest_generate_tests --> [] [hook]
-        finish pytest_pycollect_makeitem --> [<Function 'test_dicom_uploads_to_xnat[scan_service0]'>] [hook]
+        finish pytest_pycollect_makeitem --> [<Function 'test_when_dicoms_are_passed_to_scan_service_launch_response_is_set[scan_service0]'>] [hook]
         pytest_pycollect_makeitem [hook]
             collector: <Instance '()'>
             name: __doc__
@@ -1893,33 +1907,28 @@ All Rights Reserved., 'credits':     Thanks to CWI, CNRI, BeOpen.com, Zope Corpo
         finish pytest_pycollect_makeitem --> None [hook]
         pytest_pycollect_makeitem [hook]
             collector: <Instance '()'>
-            name: pytestmark
-            obj: [Mark(name='parametrize', args=('scan_service', [(1, 0, '000001_MR1', 'T1_1', '/data/archive/experiments/000001_MR1', '/data/archive/experiments/000001_MR1/scans/T1_1')]), kwargs={'indirect': True})]
-        finish pytest_pycollect_makeitem --> None [hook]
-        pytest_pycollect_makeitem [hook]
-            collector: <Instance '()'>
             name: copy_file_to_upload_dest
-            obj: <function ScanUploadSetup.copy_file_to_upload_dest at 0x1048158c8>
+            obj: <function ScanUploadSetup.copy_file_to_upload_dest at 0x1099fcf28>
         finish pytest_pycollect_makeitem --> None [hook]
         pytest_pycollect_makeitem [hook]
             collector: <Instance '()'>
             name: create_file_to_upload
-            obj: <function ScanUploadSetup.create_file_to_upload at 0x104815158>
+            obj: <function ScanUploadSetup.create_file_to_upload at 0x109a02048>
         finish pytest_pycollect_makeitem --> None [hook]
         pytest_pycollect_makeitem [hook]
             collector: <Instance '()'>
             name: add_a_scan
-            obj: <function ScanUploadSetup.add_a_scan at 0x1048150d0>
+            obj: <function ScanUploadSetup.add_a_scan at 0x109a020d0>
         finish pytest_pycollect_makeitem --> None [hook]
         pytest_pycollect_makeitem [hook]
             collector: <Instance '()'>
             name: open_file_storage_obj
-            obj: <function ScanUploadSetup.open_file_storage_obj at 0x1048157b8>
+            obj: <function ScanUploadSetup.open_file_storage_obj at 0x109a02158>
         finish pytest_pycollect_makeitem --> None [hook]
         pytest_pycollect_makeitem [hook]
             collector: <Instance '()'>
             name: setup_tests
-            obj: <function ScanUploadSetup.setup_tests at 0x1048156a8>
+            obj: <function ScanUploadSetup.setup_tests at 0x109a022f0>
         finish pytest_pycollect_makeitem --> None [hook]
         pytest_pycollect_makeitem [hook]
             collector: <Instance '()'>
@@ -1999,7 +2008,7 @@ All Rights Reserved., 'credits':     Thanks to CWI, CNRI, BeOpen.com, Zope Corpo
         pytest_pycollect_makeitem [hook]
             collector: <Instance '()'>
             name: __new__
-            obj: <built-in method __new__ of type object at 0x1002ea4d0>
+            obj: <built-in method __new__ of type object at 0x1055484d0>
         finish pytest_pycollect_makeitem --> None [hook]
         pytest_pycollect_makeitem [hook]
             collector: <Instance '()'>
@@ -2041,64 +2050,60 @@ All Rights Reserved., 'credits':     Thanks to CWI, CNRI, BeOpen.com, Zope Corpo
             name: __class__
             obj: <attribute '__class__' of 'object' objects>
         finish pytest_pycollect_makeitem --> None [hook]
-      finish pytest_make_collect_report --> <CollectReport 'test_scan_upload.py::TestXNATUploads::()' lenresult=3 outcome='passed'> [hook]
-    genitems <Function 'test_nifti_uploads_to_xnat[T1.nii.gz-scan_service0]'> [collection]
+      finish pytest_make_collect_report --> <CollectReport 'test_scan_upload.py::TestDicomConversion::()' lenresult=2 outcome='passed'> [hook]
+    genitems <Function 'test_when_nifti_file_passed_to_scan_service_launch_response_is_not_set[scan_service0]'> [collection]
       pytest_itemcollected [hook]
-          item: <Function 'test_nifti_uploads_to_xnat[T1.nii.gz-scan_service0]'>
+          item: <Function 'test_when_nifti_file_passed_to_scan_service_launch_response_is_not_set[scan_service0]'>
       finish pytest_itemcollected --> [] [hook]
-    genitems <Function 'test_nifti_uploads_to_xnat[structural.nii-scan_service0]'> [collection]
+    genitems <Function 'test_when_dicoms_are_passed_to_scan_service_launch_response_is_set[scan_service0]'> [collection]
       pytest_itemcollected [hook]
-          item: <Function 'test_nifti_uploads_to_xnat[structural.nii-scan_service0]'>
-      finish pytest_itemcollected --> [] [hook]
-    genitems <Function 'test_dicom_uploads_to_xnat[scan_service0]'> [collection]
-      pytest_itemcollected [hook]
-          item: <Function 'test_dicom_uploads_to_xnat[scan_service0]'>
+          item: <Function 'test_when_dicoms_are_passed_to_scan_service_launch_response_is_set[scan_service0]'>
       finish pytest_itemcollected --> [] [hook]
       pytest_collectreport [hook]
-          report: <CollectReport 'test_scan_upload.py::TestXNATUploads::()' lenresult=3 outcome='passed'>
+          report: <CollectReport 'test_scan_upload.py::TestDicomConversion::()' lenresult=2 outcome='passed'>
       finish pytest_collectreport --> [] [hook]
       pytest_collectreport [hook]
-          report: <CollectReport 'test_scan_upload.py::TestXNATUploads' lenresult=1 outcome='passed'>
+          report: <CollectReport 'test_scan_upload.py::TestDicomConversion' lenresult=1 outcome='passed'>
       finish pytest_collectreport --> [] [hook]
       pytest_collectreport [hook]
           report: <CollectReport 'test_scan_upload.py' lenresult=4 outcome='passed'>
       finish pytest_collectreport --> [] [hook]
       pytest_collection_modifyitems [hook]
           session: <Session 'tests'>
-          config: <_pytest.config.Config object at 0x101114b38>
-          items: [<Function 'test_before_file_upload_an_experiment_has_no_xnat_attributes[T1.nii.gz-scan_service0]'>, <Function 'test_before_file_upload_an_experiment_has_no_xnat_attributes[T1.nii.gz-scan_service1]'>, <Function 'test_before_file_upload_an_experiment_has_no_xnat_attributes[T1.nii.gz-scan_service2]'>, <Function 'test_before_file_upload_an_experiment_has_no_xnat_attributes[T1.nii.gz-scan_service3]'>, <Function 'test_before_file_upload_an_experiment_has_no_xnat_attributes[structural.nii-scan_service0]'>, <Function 'test_before_file_upload_an_experiment_has_no_xnat_attributes[structural.nii-scan_service1]'>, <Function 'test_before_file_upload_an_experiment_has_no_xnat_attributes[structural.nii-scan_service2]'>, <Function 'test_before_file_upload_an_experiment_has_no_xnat_attributes[structural.nii-scan_service3]'>, <Function 'test_before_file_upload_an_experiment_has_no_xnat_attributes[DICOMS.zip-scan_service0]'>, <Function 'test_before_file_upload_an_experiment_has_no_xnat_attributes[DICOMS.zip-scan_service1]'>, <Function 'test_before_file_upload_an_experiment_has_no_xnat_attributes[DICOMS.zip-scan_service2]'>, <Function 'test_before_file_upload_an_experiment_has_no_xnat_attributes[DICOMS.zip-scan_service3]'>, <Function 'test_after_file_upload_experiment_has_one_more_scan[T1.nii.gz-scan_service0]'>, <Function 'test_after_file_upload_experiment_has_one_more_scan[T1.nii.gz-scan_service1]'>, <Function 'test_after_file_upload_experiment_has_one_more_scan[T1.nii.gz-scan_service2]'>, <Function 'test_after_file_upload_experiment_has_one_more_scan[T1.nii.gz-scan_service3]'>, <Function 'test_after_file_upload_experiment_has_one_more_scan[structural.nii-scan_service0]'>, <Function 'test_after_file_upload_experiment_has_one_more_scan[structural.nii-scan_service1]'>, <Function 'test_after_file_upload_experiment_has_one_more_scan[structural.nii-scan_service2]'>, <Function 'test_after_file_upload_experiment_has_one_more_scan[structural.nii-scan_service3]'>, <Function 'test_after_file_upload_experiment_has_one_more_scan[DICOMS.zip-scan_service0]'>, <Function 'test_after_file_upload_experiment_has_one_more_scan[DICOMS.zip-scan_service1]'>, <Function 'test_after_file_upload_experiment_has_one_more_scan[DICOMS.zip-scan_service2]'>, <Function 'test_after_file_upload_experiment_has_one_more_scan[DICOMS.zip-scan_service3]'>, <Function 'test_after_file_upload_experiment_attributes_are_set[T1.nii.gz-scan_service0]'>, <Function 'test_after_file_upload_experiment_attributes_are_set[T1.nii.gz-scan_service1]'>, <Function 'test_after_file_upload_experiment_attributes_are_set[T1.nii.gz-scan_service2]'>, <Function 'test_after_file_upload_experiment_attributes_are_set[T1.nii.gz-scan_service3]'>, <Function 'test_after_file_upload_experiment_attributes_are_set[structural.nii-scan_service0]'>, <Function 'test_after_file_upload_experiment_attributes_are_set[structural.nii-scan_service1]'>, <Function 'test_after_file_upload_experiment_attributes_are_set[structural.nii-scan_service2]'>, <Function 'test_after_file_upload_experiment_attributes_are_set[structural.nii-scan_service3]'>, <Function 'test_after_file_upload_experiment_attributes_are_set[DICOMS.zip-scan_service0]'>, <Function 'test_after_file_upload_experiment_attributes_are_set[DICOMS.zip-scan_service1]'>, <Function 'test_after_file_upload_experiment_attributes_are_set[DICOMS.zip-scan_service2]'>, <Function 'test_after_file_upload_experiment_attributes_are_set[DICOMS.zip-scan_service3]'>, <Function 'test_after_file_upload_scan_attributes_are_set[T1.nii.gz-scan_service0]'>, <Function 'test_after_file_upload_scan_attributes_are_set[T1.nii.gz-scan_service1]'>, <Function 'test_after_file_upload_scan_attributes_are_set[T1.nii.gz-scan_service2]'>, <Function 'test_after_file_upload_scan_attributes_are_set[T1.nii.gz-scan_service3]'>, <Function 'test_after_file_upload_scan_attributes_are_set[structural.nii-scan_service0]'>, <Function 'test_after_file_upload_scan_attributes_are_set[structural.nii-scan_service1]'>, <Function 'test_after_file_upload_scan_attributes_are_set[structural.nii-scan_service2]'>, <Function 'test_after_file_upload_scan_attributes_are_set[structural.nii-scan_service3]'>, <Function 'test_after_file_upload_scan_attributes_are_set[DICOMS.zip-scan_service0]'>, <Function 'test_after_file_upload_scan_attributes_are_set[DICOMS.zip-scan_service1]'>, <Function 'test_after_file_upload_scan_attributes_are_set[DICOMS.zip-scan_service2]'>, <Function 'test_after_file_upload_scan_attributes_are_set[DICOMS.zip-scan_service3]'>, <Function 'test_resource_named_according_to_file_type[scan_service0-T1.nii.gz-False-NIFTI]'>, <Function 'test_resource_named_according_to_file_type[scan_service0-structural.nii-False-NIFTI]'>, <Function 'test_resource_named_according_to_file_type[scan_service0-DICOMS.zip-True-DICOM]'>, <Function 'test_process_file[scan_service0-T1.nii.gz-False-NIFTI]'>, <Function 'test_process_file[scan_service0-structural.nii-False-NIFTI]'>, <Function 'test_process_file[scan_service0-DICOMS.zip-True-DICOM]'>, <Function 'test_generate_xnat_ids[scan_service0-T1.nii.gz-False-NIFTI]'>, <Function 'test_generate_xnat_ids[scan_service0-structural.nii-False-NIFTI]'>, <Function 'test_generate_xnat_ids[scan_service0-DICOMS.zip-True-DICOM]'>, <Function 'test_generate_xnat_ids[scan_service1-T1.nii.gz-False-NIFTI]'>, <Function 'test_generate_xnat_ids[scan_service1-structural.nii-False-NIFTI]'>, <Function 'test_generate_xnat_ids[scan_service1-DICOMS.zip-True-DICOM]'>, <Function 'test_generate_xnat_ids[scan_service2-T1.nii.gz-False-NIFTI]'>, <Function 'test_generate_xnat_ids[scan_service2-structural.nii-False-NIFTI]'>, <Function 'test_generate_xnat_ids[scan_service2-DICOMS.zip-True-DICOM]'>, <Function 'test_generate_xnat_ids[scan_service3-T1.nii.gz-False-NIFTI]'>, <Function 'test_generate_xnat_ids[scan_service3-structural.nii-False-NIFTI]'>, <Function 'test_generate_xnat_ids[scan_service3-DICOMS.zip-True-DICOM]'>, <Function 'test_gzip[scan_service0]'>, <Function 'test_nifti_uploads_to_xnat[T1.nii.gz-scan_service0]'>, <Function 'test_nifti_uploads_to_xnat[structural.nii-scan_service0]'>, <Function 'test_dicom_uploads_to_xnat[scan_service0]'>]
+          config: <_pytest.config.Config object at 0x106373b00>
+          items: [<Function 'test_before_file_upload_an_experiment_has_no_xnat_attributes[T1.nii.gz-scan_service0]'>, <Function 'test_before_file_upload_an_experiment_has_no_xnat_attributes[T1.nii.gz-scan_service1]'>, <Function 'test_before_file_upload_an_experiment_has_no_xnat_attributes[T1.nii.gz-scan_service2]'>, <Function 'test_before_file_upload_an_experiment_has_no_xnat_attributes[T1.nii.gz-scan_service3]'>, <Function 'test_before_file_upload_an_experiment_has_no_xnat_attributes[structural.nii-scan_service0]'>, <Function 'test_before_file_upload_an_experiment_has_no_xnat_attributes[structural.nii-scan_service1]'>, <Function 'test_before_file_upload_an_experiment_has_no_xnat_attributes[structural.nii-scan_service2]'>, <Function 'test_before_file_upload_an_experiment_has_no_xnat_attributes[structural.nii-scan_service3]'>, <Function 'test_before_file_upload_an_experiment_has_no_xnat_attributes[DICOMS.zip-scan_service0]'>, <Function 'test_before_file_upload_an_experiment_has_no_xnat_attributes[DICOMS.zip-scan_service1]'>, <Function 'test_before_file_upload_an_experiment_has_no_xnat_attributes[DICOMS.zip-scan_service2]'>, <Function 'test_before_file_upload_an_experiment_has_no_xnat_attributes[DICOMS.zip-scan_service3]'>, <Function 'test_after_file_upload_experiment_has_one_more_scan[T1.nii.gz-scan_service0]'>, <Function 'test_after_file_upload_experiment_has_one_more_scan[T1.nii.gz-scan_service1]'>, <Function 'test_after_file_upload_experiment_has_one_more_scan[T1.nii.gz-scan_service2]'>, <Function 'test_after_file_upload_experiment_has_one_more_scan[T1.nii.gz-scan_service3]'>, <Function 'test_after_file_upload_experiment_has_one_more_scan[structural.nii-scan_service0]'>, <Function 'test_after_file_upload_experiment_has_one_more_scan[structural.nii-scan_service1]'>, <Function 'test_after_file_upload_experiment_has_one_more_scan[structural.nii-scan_service2]'>, <Function 'test_after_file_upload_experiment_has_one_more_scan[structural.nii-scan_service3]'>, <Function 'test_after_file_upload_experiment_has_one_more_scan[DICOMS.zip-scan_service0]'>, <Function 'test_after_file_upload_experiment_has_one_more_scan[DICOMS.zip-scan_service1]'>, <Function 'test_after_file_upload_experiment_has_one_more_scan[DICOMS.zip-scan_service2]'>, <Function 'test_after_file_upload_experiment_has_one_more_scan[DICOMS.zip-scan_service3]'>, <Function 'test_after_file_upload_experiment_attributes_are_set[T1.nii.gz-scan_service0]'>, <Function 'test_after_file_upload_experiment_attributes_are_set[T1.nii.gz-scan_service1]'>, <Function 'test_after_file_upload_experiment_attributes_are_set[T1.nii.gz-scan_service2]'>, <Function 'test_after_file_upload_experiment_attributes_are_set[T1.nii.gz-scan_service3]'>, <Function 'test_after_file_upload_experiment_attributes_are_set[structural.nii-scan_service0]'>, <Function 'test_after_file_upload_experiment_attributes_are_set[structural.nii-scan_service1]'>, <Function 'test_after_file_upload_experiment_attributes_are_set[structural.nii-scan_service2]'>, <Function 'test_after_file_upload_experiment_attributes_are_set[structural.nii-scan_service3]'>, <Function 'test_after_file_upload_experiment_attributes_are_set[DICOMS.zip-scan_service0]'>, <Function 'test_after_file_upload_experiment_attributes_are_set[DICOMS.zip-scan_service1]'>, <Function 'test_after_file_upload_experiment_attributes_are_set[DICOMS.zip-scan_service2]'>, <Function 'test_after_file_upload_experiment_attributes_are_set[DICOMS.zip-scan_service3]'>, <Function 'test_after_file_upload_scan_attributes_are_set[T1.nii.gz-scan_service0]'>, <Function 'test_after_file_upload_scan_attributes_are_set[T1.nii.gz-scan_service1]'>, <Function 'test_after_file_upload_scan_attributes_are_set[T1.nii.gz-scan_service2]'>, <Function 'test_after_file_upload_scan_attributes_are_set[T1.nii.gz-scan_service3]'>, <Function 'test_after_file_upload_scan_attributes_are_set[structural.nii-scan_service0]'>, <Function 'test_after_file_upload_scan_attributes_are_set[structural.nii-scan_service1]'>, <Function 'test_after_file_upload_scan_attributes_are_set[structural.nii-scan_service2]'>, <Function 'test_after_file_upload_scan_attributes_are_set[structural.nii-scan_service3]'>, <Function 'test_after_file_upload_scan_attributes_are_set[DICOMS.zip-scan_service0]'>, <Function 'test_after_file_upload_scan_attributes_are_set[DICOMS.zip-scan_service1]'>, <Function 'test_after_file_upload_scan_attributes_are_set[DICOMS.zip-scan_service2]'>, <Function 'test_after_file_upload_scan_attributes_are_set[DICOMS.zip-scan_service3]'>, <Function 'test_resource_name_accords_to_file_type[scan_service0-T1.nii.gz-False-NIFTI]'>, <Function 'test_resource_name_accords_to_file_type[scan_service0-structural.nii-False-NIFTI]'>, <Function 'test_resource_name_accords_to_file_type[scan_service0-DICOMS.zip-True-DICOM]'>, <Function 'test_process_file[scan_service0-T1.nii.gz-False-NIFTI]'>, <Function 'test_process_file[scan_service0-structural.nii-False-NIFTI]'>, <Function 'test_process_file[scan_service0-DICOMS.zip-True-DICOM]'>, <Function 'test_generate_xnat_ids[scan_service0-T1.nii.gz-False-NIFTI]'>, <Function 'test_generate_xnat_ids[scan_service0-structural.nii-False-NIFTI]'>, <Function 'test_generate_xnat_ids[scan_service0-DICOMS.zip-True-DICOM]'>, <Function 'test_generate_xnat_ids[scan_service1-T1.nii.gz-False-NIFTI]'>, <Function 'test_generate_xnat_ids[scan_service1-structural.nii-False-NIFTI]'>, <Function 'test_generate_xnat_ids[scan_service1-DICOMS.zip-True-DICOM]'>, <Function 'test_generate_xnat_ids[scan_service2-T1.nii.gz-False-NIFTI]'>, <Function 'test_generate_xnat_ids[scan_service2-structural.nii-False-NIFTI]'>, <Function 'test_generate_xnat_ids[scan_service2-DICOMS.zip-True-DICOM]'>, <Function 'test_generate_xnat_ids[scan_service3-T1.nii.gz-False-NIFTI]'>, <Function 'test_generate_xnat_ids[scan_service3-structural.nii-False-NIFTI]'>, <Function 'test_generate_xnat_ids[scan_service3-DICOMS.zip-True-DICOM]'>, <Function 'test_gzip[scan_service0]'>, <Function 'test_when_nifti_file_passed_to_scan_service_launch_response_is_not_set[scan_service0]'>, <Function 'test_when_dicoms_are_passed_to_scan_service_launch_response_is_set[scan_service0]'>]
         pytest_deselected [hook]
-            items: [<Function 'test_before_file_upload_an_experiment_has_no_xnat_attributes[T1.nii.gz-scan_service0]'>, <Function 'test_before_file_upload_an_experiment_has_no_xnat_attributes[T1.nii.gz-scan_service1]'>, <Function 'test_before_file_upload_an_experiment_has_no_xnat_attributes[T1.nii.gz-scan_service2]'>, <Function 'test_before_file_upload_an_experiment_has_no_xnat_attributes[T1.nii.gz-scan_service3]'>, <Function 'test_before_file_upload_an_experiment_has_no_xnat_attributes[structural.nii-scan_service0]'>, <Function 'test_before_file_upload_an_experiment_has_no_xnat_attributes[structural.nii-scan_service1]'>, <Function 'test_before_file_upload_an_experiment_has_no_xnat_attributes[structural.nii-scan_service2]'>, <Function 'test_before_file_upload_an_experiment_has_no_xnat_attributes[structural.nii-scan_service3]'>, <Function 'test_before_file_upload_an_experiment_has_no_xnat_attributes[DICOMS.zip-scan_service0]'>, <Function 'test_before_file_upload_an_experiment_has_no_xnat_attributes[DICOMS.zip-scan_service1]'>, <Function 'test_before_file_upload_an_experiment_has_no_xnat_attributes[DICOMS.zip-scan_service2]'>, <Function 'test_before_file_upload_an_experiment_has_no_xnat_attributes[DICOMS.zip-scan_service3]'>, <Function 'test_after_file_upload_experiment_has_one_more_scan[T1.nii.gz-scan_service0]'>, <Function 'test_after_file_upload_experiment_has_one_more_scan[T1.nii.gz-scan_service1]'>, <Function 'test_after_file_upload_experiment_has_one_more_scan[T1.nii.gz-scan_service2]'>, <Function 'test_after_file_upload_experiment_has_one_more_scan[T1.nii.gz-scan_service3]'>, <Function 'test_after_file_upload_experiment_has_one_more_scan[structural.nii-scan_service0]'>, <Function 'test_after_file_upload_experiment_has_one_more_scan[structural.nii-scan_service1]'>, <Function 'test_after_file_upload_experiment_has_one_more_scan[structural.nii-scan_service2]'>, <Function 'test_after_file_upload_experiment_has_one_more_scan[structural.nii-scan_service3]'>, <Function 'test_after_file_upload_experiment_has_one_more_scan[DICOMS.zip-scan_service0]'>, <Function 'test_after_file_upload_experiment_has_one_more_scan[DICOMS.zip-scan_service1]'>, <Function 'test_after_file_upload_experiment_has_one_more_scan[DICOMS.zip-scan_service2]'>, <Function 'test_after_file_upload_experiment_has_one_more_scan[DICOMS.zip-scan_service3]'>, <Function 'test_after_file_upload_experiment_attributes_are_set[T1.nii.gz-scan_service0]'>, <Function 'test_after_file_upload_experiment_attributes_are_set[T1.nii.gz-scan_service1]'>, <Function 'test_after_file_upload_experiment_attributes_are_set[T1.nii.gz-scan_service2]'>, <Function 'test_after_file_upload_experiment_attributes_are_set[T1.nii.gz-scan_service3]'>, <Function 'test_after_file_upload_experiment_attributes_are_set[structural.nii-scan_service0]'>, <Function 'test_after_file_upload_experiment_attributes_are_set[structural.nii-scan_service1]'>, <Function 'test_after_file_upload_experiment_attributes_are_set[structural.nii-scan_service2]'>, <Function 'test_after_file_upload_experiment_attributes_are_set[structural.nii-scan_service3]'>, <Function 'test_after_file_upload_experiment_attributes_are_set[DICOMS.zip-scan_service0]'>, <Function 'test_after_file_upload_experiment_attributes_are_set[DICOMS.zip-scan_service1]'>, <Function 'test_after_file_upload_experiment_attributes_are_set[DICOMS.zip-scan_service2]'>, <Function 'test_after_file_upload_experiment_attributes_are_set[DICOMS.zip-scan_service3]'>, <Function 'test_after_file_upload_scan_attributes_are_set[T1.nii.gz-scan_service0]'>, <Function 'test_after_file_upload_scan_attributes_are_set[T1.nii.gz-scan_service1]'>, <Function 'test_after_file_upload_scan_attributes_are_set[T1.nii.gz-scan_service2]'>, <Function 'test_after_file_upload_scan_attributes_are_set[T1.nii.gz-scan_service3]'>, <Function 'test_after_file_upload_scan_attributes_are_set[structural.nii-scan_service0]'>, <Function 'test_after_file_upload_scan_attributes_are_set[structural.nii-scan_service1]'>, <Function 'test_after_file_upload_scan_attributes_are_set[structural.nii-scan_service2]'>, <Function 'test_after_file_upload_scan_attributes_are_set[structural.nii-scan_service3]'>, <Function 'test_after_file_upload_scan_attributes_are_set[DICOMS.zip-scan_service0]'>, <Function 'test_after_file_upload_scan_attributes_are_set[DICOMS.zip-scan_service1]'>, <Function 'test_after_file_upload_scan_attributes_are_set[DICOMS.zip-scan_service2]'>, <Function 'test_after_file_upload_scan_attributes_are_set[DICOMS.zip-scan_service3]'>, <Function 'test_resource_named_according_to_file_type[scan_service0-T1.nii.gz-False-NIFTI]'>, <Function 'test_resource_named_according_to_file_type[scan_service0-structural.nii-False-NIFTI]'>, <Function 'test_resource_named_according_to_file_type[scan_service0-DICOMS.zip-True-DICOM]'>, <Function 'test_process_file[scan_service0-T1.nii.gz-False-NIFTI]'>, <Function 'test_process_file[scan_service0-structural.nii-False-NIFTI]'>, <Function 'test_process_file[scan_service0-DICOMS.zip-True-DICOM]'>, <Function 'test_generate_xnat_ids[scan_service0-T1.nii.gz-False-NIFTI]'>, <Function 'test_generate_xnat_ids[scan_service0-structural.nii-False-NIFTI]'>, <Function 'test_generate_xnat_ids[scan_service0-DICOMS.zip-True-DICOM]'>, <Function 'test_generate_xnat_ids[scan_service1-T1.nii.gz-False-NIFTI]'>, <Function 'test_generate_xnat_ids[scan_service1-structural.nii-False-NIFTI]'>, <Function 'test_generate_xnat_ids[scan_service1-DICOMS.zip-True-DICOM]'>, <Function 'test_generate_xnat_ids[scan_service2-T1.nii.gz-False-NIFTI]'>, <Function 'test_generate_xnat_ids[scan_service2-structural.nii-False-NIFTI]'>, <Function 'test_generate_xnat_ids[scan_service2-DICOMS.zip-True-DICOM]'>, <Function 'test_generate_xnat_ids[scan_service3-T1.nii.gz-False-NIFTI]'>, <Function 'test_generate_xnat_ids[scan_service3-structural.nii-False-NIFTI]'>, <Function 'test_generate_xnat_ids[scan_service3-DICOMS.zip-True-DICOM]'>, <Function 'test_gzip[scan_service0]'>]
+            items: [<Function 'test_before_file_upload_an_experiment_has_no_xnat_attributes[T1.nii.gz-scan_service0]'>, <Function 'test_before_file_upload_an_experiment_has_no_xnat_attributes[T1.nii.gz-scan_service1]'>, <Function 'test_before_file_upload_an_experiment_has_no_xnat_attributes[T1.nii.gz-scan_service2]'>, <Function 'test_before_file_upload_an_experiment_has_no_xnat_attributes[T1.nii.gz-scan_service3]'>, <Function 'test_before_file_upload_an_experiment_has_no_xnat_attributes[structural.nii-scan_service0]'>, <Function 'test_before_file_upload_an_experiment_has_no_xnat_attributes[structural.nii-scan_service1]'>, <Function 'test_before_file_upload_an_experiment_has_no_xnat_attributes[structural.nii-scan_service2]'>, <Function 'test_before_file_upload_an_experiment_has_no_xnat_attributes[structural.nii-scan_service3]'>, <Function 'test_before_file_upload_an_experiment_has_no_xnat_attributes[DICOMS.zip-scan_service0]'>, <Function 'test_before_file_upload_an_experiment_has_no_xnat_attributes[DICOMS.zip-scan_service1]'>, <Function 'test_before_file_upload_an_experiment_has_no_xnat_attributes[DICOMS.zip-scan_service2]'>, <Function 'test_before_file_upload_an_experiment_has_no_xnat_attributes[DICOMS.zip-scan_service3]'>, <Function 'test_after_file_upload_experiment_has_one_more_scan[T1.nii.gz-scan_service0]'>, <Function 'test_after_file_upload_experiment_has_one_more_scan[T1.nii.gz-scan_service1]'>, <Function 'test_after_file_upload_experiment_has_one_more_scan[T1.nii.gz-scan_service2]'>, <Function 'test_after_file_upload_experiment_has_one_more_scan[T1.nii.gz-scan_service3]'>, <Function 'test_after_file_upload_experiment_has_one_more_scan[structural.nii-scan_service0]'>, <Function 'test_after_file_upload_experiment_has_one_more_scan[structural.nii-scan_service1]'>, <Function 'test_after_file_upload_experiment_has_one_more_scan[structural.nii-scan_service2]'>, <Function 'test_after_file_upload_experiment_has_one_more_scan[structural.nii-scan_service3]'>, <Function 'test_after_file_upload_experiment_has_one_more_scan[DICOMS.zip-scan_service0]'>, <Function 'test_after_file_upload_experiment_has_one_more_scan[DICOMS.zip-scan_service1]'>, <Function 'test_after_file_upload_experiment_has_one_more_scan[DICOMS.zip-scan_service2]'>, <Function 'test_after_file_upload_experiment_has_one_more_scan[DICOMS.zip-scan_service3]'>, <Function 'test_after_file_upload_experiment_attributes_are_set[T1.nii.gz-scan_service0]'>, <Function 'test_after_file_upload_experiment_attributes_are_set[T1.nii.gz-scan_service1]'>, <Function 'test_after_file_upload_experiment_attributes_are_set[T1.nii.gz-scan_service2]'>, <Function 'test_after_file_upload_experiment_attributes_are_set[T1.nii.gz-scan_service3]'>, <Function 'test_after_file_upload_experiment_attributes_are_set[structural.nii-scan_service0]'>, <Function 'test_after_file_upload_experiment_attributes_are_set[structural.nii-scan_service1]'>, <Function 'test_after_file_upload_experiment_attributes_are_set[structural.nii-scan_service2]'>, <Function 'test_after_file_upload_experiment_attributes_are_set[structural.nii-scan_service3]'>, <Function 'test_after_file_upload_experiment_attributes_are_set[DICOMS.zip-scan_service0]'>, <Function 'test_after_file_upload_experiment_attributes_are_set[DICOMS.zip-scan_service1]'>, <Function 'test_after_file_upload_experiment_attributes_are_set[DICOMS.zip-scan_service2]'>, <Function 'test_after_file_upload_experiment_attributes_are_set[DICOMS.zip-scan_service3]'>, <Function 'test_after_file_upload_scan_attributes_are_set[T1.nii.gz-scan_service0]'>, <Function 'test_after_file_upload_scan_attributes_are_set[T1.nii.gz-scan_service1]'>, <Function 'test_after_file_upload_scan_attributes_are_set[T1.nii.gz-scan_service2]'>, <Function 'test_after_file_upload_scan_attributes_are_set[T1.nii.gz-scan_service3]'>, <Function 'test_after_file_upload_scan_attributes_are_set[structural.nii-scan_service0]'>, <Function 'test_after_file_upload_scan_attributes_are_set[structural.nii-scan_service1]'>, <Function 'test_after_file_upload_scan_attributes_are_set[structural.nii-scan_service2]'>, <Function 'test_after_file_upload_scan_attributes_are_set[structural.nii-scan_service3]'>, <Function 'test_after_file_upload_scan_attributes_are_set[DICOMS.zip-scan_service0]'>, <Function 'test_after_file_upload_scan_attributes_are_set[DICOMS.zip-scan_service1]'>, <Function 'test_after_file_upload_scan_attributes_are_set[DICOMS.zip-scan_service2]'>, <Function 'test_after_file_upload_scan_attributes_are_set[DICOMS.zip-scan_service3]'>, <Function 'test_resource_name_accords_to_file_type[scan_service0-T1.nii.gz-False-NIFTI]'>, <Function 'test_resource_name_accords_to_file_type[scan_service0-structural.nii-False-NIFTI]'>, <Function 'test_resource_name_accords_to_file_type[scan_service0-DICOMS.zip-True-DICOM]'>, <Function 'test_process_file[scan_service0-T1.nii.gz-False-NIFTI]'>, <Function 'test_process_file[scan_service0-structural.nii-False-NIFTI]'>, <Function 'test_process_file[scan_service0-DICOMS.zip-True-DICOM]'>, <Function 'test_generate_xnat_ids[scan_service0-T1.nii.gz-False-NIFTI]'>, <Function 'test_generate_xnat_ids[scan_service0-structural.nii-False-NIFTI]'>, <Function 'test_generate_xnat_ids[scan_service0-DICOMS.zip-True-DICOM]'>, <Function 'test_generate_xnat_ids[scan_service1-T1.nii.gz-False-NIFTI]'>, <Function 'test_generate_xnat_ids[scan_service1-structural.nii-False-NIFTI]'>, <Function 'test_generate_xnat_ids[scan_service1-DICOMS.zip-True-DICOM]'>, <Function 'test_generate_xnat_ids[scan_service2-T1.nii.gz-False-NIFTI]'>, <Function 'test_generate_xnat_ids[scan_service2-structural.nii-False-NIFTI]'>, <Function 'test_generate_xnat_ids[scan_service2-DICOMS.zip-True-DICOM]'>, <Function 'test_generate_xnat_ids[scan_service3-T1.nii.gz-False-NIFTI]'>, <Function 'test_generate_xnat_ids[scan_service3-structural.nii-False-NIFTI]'>, <Function 'test_generate_xnat_ids[scan_service3-DICOMS.zip-True-DICOM]'>, <Function 'test_gzip[scan_service0]'>, <Function 'test_when_nifti_file_passed_to_scan_service_launch_response_is_not_set[scan_service0]'>]
         finish pytest_deselected --> [] [hook]
       finish pytest_collection_modifyitems --> [] [hook]
       pytest_collection_finish [hook]
           session: <Session 'tests'>
         pytest_report_collectionfinish [hook]
-            config: <_pytest.config.Config object at 0x101114b38>
+            config: <_pytest.config.Config object at 0x106373b00>
             startdir: /Users/katie/spiro/mbam/cookiecutter_mbam/tests
-            items: [<Function 'test_nifti_uploads_to_xnat[T1.nii.gz-scan_service0]'>, <Function 'test_nifti_uploads_to_xnat[structural.nii-scan_service0]'>, <Function 'test_dicom_uploads_to_xnat[scan_service0]'>]
+            items: [<Function 'test_when_dicoms_are_passed_to_scan_service_launch_response_is_set[scan_service0]'>]
         finish pytest_report_collectionfinish --> [] [hook]
       finish pytest_collection_finish --> [] [hook]
-    finish pytest_collection --> [<Function 'test_nifti_uploads_to_xnat[T1.nii.gz-scan_service0]'>, <Function 'test_nifti_uploads_to_xnat[structural.nii-scan_service0]'>, <Function 'test_dicom_uploads_to_xnat[scan_service0]'>] [hook]
+    finish pytest_collection --> [<Function 'test_when_dicoms_are_passed_to_scan_service_launch_response_is_set[scan_service0]'>] [hook]
     pytest_runtestloop [hook]
         session: <Session 'tests'>
       pytest_runtest_protocol [hook]
-          item: <Function 'test_nifti_uploads_to_xnat[T1.nii.gz-scan_service0]'>
-          nextitem: <Function 'test_nifti_uploads_to_xnat[structural.nii-scan_service0]'>
+          item: <Function 'test_when_dicoms_are_passed_to_scan_service_launch_response_is_set[scan_service0]'>
+          nextitem: None
         pytest_runtest_logstart [hook]
-            nodeid: test_scan_upload.py::TestXNATUploads::()::test_nifti_uploads_to_xnat[T1.nii.gz-scan_service0]
-            location: ('test_scan_upload.py', 269, 'TestXNATUploads.test_nifti_uploads_to_xnat[T1.nii.gz-scan_service0]')
+            nodeid: test_scan_upload.py::TestDicomConversion::()::test_when_dicoms_are_passed_to_scan_service_launch_response_is_set[scan_service0]
+            location: ('test_scan_upload.py', 294, 'TestDicomConversion.test_when_dicoms_are_passed_to_scan_service_launch_response_is_set[scan_service0]')
         early skip of rewriting module: py._io.capture [assertion]
         finish pytest_runtest_logstart --> [] [hook]
         pytest_runtest_setup [hook]
-            item: <Function 'test_nifti_uploads_to_xnat[T1.nii.gz-scan_service0]'>
+            item: <Function 'test_when_dicoms_are_passed_to_scan_service_launch_response_is_set[scan_service0]'>
           pytest_fixture_setup [hook]
               fixturedef: <FixtureDef name='pytestconfig' scope='session' baseid=''>
-              request: <SubRequest 'pytestconfig' for <Function 'test_nifti_uploads_to_xnat[T1.nii.gz-scan_service0]'>>
-          finish pytest_fixture_setup --> <_pytest.config.Config object at 0x101114b38> [hook]
+              request: <SubRequest 'pytestconfig' for <Function 'test_when_dicoms_are_passed_to_scan_service_launch_response_is_set[scan_service0]'>>
+          finish pytest_fixture_setup --> <_pytest.config.Config object at 0x106373b00> [hook]
           pytest_fixture_setup [hook]
               fixturedef: <FixtureDef name='app' scope='function' baseid=''>
-              request: <SubRequest 'app' for <Function 'test_nifti_uploads_to_xnat[T1.nii.gz-scan_service0]'>>
+              request: <SubRequest 'app' for <Function 'test_when_dicoms_are_passed_to_scan_service_launch_response_is_set[scan_service0]'>>
           early skip of rewriting module: tests.settings [assertion]
           early skip of rewriting module: flask_caching.jinja2ext [assertion]
           early skip of rewriting module: flask_caching.backends [assertion]
@@ -2127,7 +2132,7 @@ All Rights Reserved., 'credits':     Thanks to CWI, CNRI, BeOpen.com, Zope Corpo
           finish pytest_fixture_setup --> <Flask 'cookiecutter_mbam'> [hook]
           pytest_fixture_setup [hook]
               fixturedef: <FixtureDef name='db' scope='function' baseid=''>
-              request: <SubRequest 'db' for <Function 'test_nifti_uploads_to_xnat[T1.nii.gz-scan_service0]'>>
+              request: <SubRequest 'db' for <Function 'test_when_dicoms_are_passed_to_scan_service_launch_response_is_set[scan_service0]'>>
           early skip of rewriting module: sqlalchemy.dialects.sqlite [assertion]
           early skip of rewriting module: sqlalchemy.dialects.sqlite.base [assertion]
           early skip of rewriting module: sqlalchemy.dialects.sqlite.pysqlite [assertion]
@@ -2139,406 +2144,123 @@ All Rights Reserved., 'credits':     Thanks to CWI, CNRI, BeOpen.com, Zope Corpo
           finish pytest_fixture_setup --> <SQLAlchemy engine=sqlite://> [hook]
           pytest_fixture_setup [hook]
               fixturedef: <FixtureDef name='mocker' scope='function' baseid='test_scan_upload.py'>
-              request: <SubRequest 'mocker' for <Function 'test_nifti_uploads_to_xnat[T1.nii.gz-scan_service0]'>>
-          finish pytest_fixture_setup --> <pytest_mock.MockFixture object at 0x1048e92e8> [hook]
+              request: <SubRequest 'mocker' for <Function 'test_when_dicoms_are_passed_to_scan_service_launch_response_is_set[scan_service0]'>>
+          finish pytest_fixture_setup --> <pytest_mock.MockFixture object at 0x109ac8080> [hook]
           pytest_fixture_setup [hook]
               fixturedef: <FixtureDef name='scan_service' scope='function' baseid='test_scan_upload.py'>
-              request: <SubRequest 'scan_service' for <Function 'test_nifti_uploads_to_xnat[T1.nii.gz-scan_service0]'>>
-          finish pytest_fixture_setup --> <function scan_service.<locals>._scan_service at 0x104accbf8> [hook]
-          pytest_fixture_setup [hook]
-              fixturedef: <FixtureDef name='filename' scope='function' baseid=''>
-              request: <SubRequest 'filename' for <Function 'test_nifti_uploads_to_xnat[T1.nii.gz-scan_service0]'>>
-          finish pytest_fixture_setup --> T1.nii.gz [hook]
+              request: <SubRequest 'scan_service' for <Function 'test_when_dicoms_are_passed_to_scan_service_launch_response_is_set[scan_service0]'>>
+          finish pytest_fixture_setup --> <function scan_service.<locals>._scan_service at 0x109d4d620> [hook]
         finish pytest_runtest_setup --> [] [hook]
         pytest_runtest_makereport [hook]
-            item: <Function 'test_nifti_uploads_to_xnat[T1.nii.gz-scan_service0]'>
+            item: <Function 'test_when_dicoms_are_passed_to_scan_service_launch_response_is_set[scan_service0]'>
             call: <CallInfo when='setup' result: []>
-        finish pytest_runtest_makereport --> <TestReport 'test_scan_upload.py::TestXNATUploads::()::test_nifti_uploads_to_xnat[T1.nii.gz-scan_service0]' when='setup' outcome='passed'> [hook]
+        finish pytest_runtest_makereport --> <TestReport 'test_scan_upload.py::TestDicomConversion::()::test_when_dicoms_are_passed_to_scan_service_launch_response_is_set[scan_service0]' when='setup' outcome='passed'> [hook]
         pytest_runtest_logreport [hook]
-            report: <TestReport 'test_scan_upload.py::TestXNATUploads::()::test_nifti_uploads_to_xnat[T1.nii.gz-scan_service0]' when='setup' outcome='passed'>
+            report: <TestReport 'test_scan_upload.py::TestDicomConversion::()::test_when_dicoms_are_passed_to_scan_service_launch_response_is_set[scan_service0]' when='setup' outcome='passed'>
           pytest_report_teststatus [hook]
-              report: <TestReport 'test_scan_upload.py::TestXNATUploads::()::test_nifti_uploads_to_xnat[T1.nii.gz-scan_service0]' when='setup' outcome='passed'>
+              report: <TestReport 'test_scan_upload.py::TestDicomConversion::()::test_when_dicoms_are_passed_to_scan_service_launch_response_is_set[scan_service0]' when='setup' outcome='passed'>
           finish pytest_report_teststatus --> ('', '', '') [hook]
         finish pytest_runtest_logreport --> [] [hook]
         pytest_runtest_call [hook]
-            item: <Function 'test_nifti_uploads_to_xnat[T1.nii.gz-scan_service0]'>
+            item: <Function 'test_when_dicoms_are_passed_to_scan_service_launch_response_is_set[scan_service0]'>
           pytest_fixture_setup [hook]
               fixturedef: <FixtureDef name='factoryboy_request' scope='function' baseid=''>
-              request: <SubRequest 'factoryboy_request' for <Function 'test_nifti_uploads_to_xnat[T1.nii.gz-scan_service0]'>>
-          finish pytest_fixture_setup --> <pytest_factoryboy.plugin.Request object at 0x104adbf28> [hook]
+              request: <SubRequest 'factoryboy_request' for <Function 'test_when_dicoms_are_passed_to_scan_service_launch_response_is_set[scan_service0]'>>
+          finish pytest_fixture_setup --> <pytest_factoryboy.plugin.Request object at 0x109d81da0> [hook]
           pytest_factoryboy_done [hook]
-              request: <FixtureRequest for <Function 'test_nifti_uploads_to_xnat[T1.nii.gz-scan_service0]'>>
+              request: <FixtureRequest for <Function 'test_when_dicoms_are_passed_to_scan_service_launch_response_is_set[scan_service0]'>>
           finish pytest_factoryboy_done --> [] [hook]
           pytest_pyfunc_call [hook]
-              pyfuncitem: <Function 'test_nifti_uploads_to_xnat[T1.nii.gz-scan_service0]'>
-          early skip of rewriting module: xnat.search [assertion]
+              pyfuncitem: <Function 'test_when_dicoms_are_passed_to_scan_service_launch_response_is_set[scan_service0]'>
             pytest_enter_pdb [hook]
-                config: <_pytest.config.Config object at 0x101114b38>
+                config: <_pytest.config.Config object at 0x106373b00>
             finish pytest_enter_pdb --> [] [hook]
           early skip of rewriting module: readline [assertion]
-          finish pytest_pyfunc_call --> True [hook]
-        finish pytest_runtest_call --> [] [hook]
-        pytest_runtest_makereport [hook]
-            item: <Function 'test_nifti_uploads_to_xnat[T1.nii.gz-scan_service0]'>
-            call: <CallInfo when='call' result: []>
-        finish pytest_runtest_makereport --> <TestReport 'test_scan_upload.py::TestXNATUploads::()::test_nifti_uploads_to_xnat[T1.nii.gz-scan_service0]' when='call' outcome='passed'> [hook]
-        pytest_runtest_logreport [hook]
-            report: <TestReport 'test_scan_upload.py::TestXNATUploads::()::test_nifti_uploads_to_xnat[T1.nii.gz-scan_service0]' when='call' outcome='passed'>
-          pytest_report_teststatus [hook]
-              report: <TestReport 'test_scan_upload.py::TestXNATUploads::()::test_nifti_uploads_to_xnat[T1.nii.gz-scan_service0]' when='call' outcome='passed'>
-          finish pytest_report_teststatus --> ('passed', '.', 'PASSED') [hook]
-        finish pytest_runtest_logreport --> [] [hook]
-        pytest_runtest_teardown [hook]
-            item: <Function 'test_nifti_uploads_to_xnat[T1.nii.gz-scan_service0]'>
-            nextitem: <Function 'test_nifti_uploads_to_xnat[structural.nii-scan_service0]'>
-          pytest_fixture_post_finalizer [hook]
-              fixturedef: <FixtureDef name='factoryboy_request' scope='function' baseid=''>
-              request: <SubRequest 'factoryboy_request' for <Function 'test_nifti_uploads_to_xnat[T1.nii.gz-scan_service0]'>>
-          finish pytest_fixture_post_finalizer --> [] [hook]
-          pytest_fixture_post_finalizer [hook]
-              fixturedef: <FixtureDef name='filename' scope='function' baseid=''>
-              request: <SubRequest 'filename' for <Function 'test_nifti_uploads_to_xnat[T1.nii.gz-scan_service0]'>>
-          finish pytest_fixture_post_finalizer --> [] [hook]
-          pytest_fixture_post_finalizer [hook]
-              fixturedef: <FixtureDef name='scan_service' scope='function' baseid='test_scan_upload.py'>
-              request: <SubRequest 'scan_service' for <Function 'test_nifti_uploads_to_xnat[T1.nii.gz-scan_service0]'>>
-          finish pytest_fixture_post_finalizer --> [] [hook]
-          pytest_fixture_post_finalizer [hook]
-              fixturedef: <FixtureDef name='scan_service' scope='function' baseid='test_scan_upload.py'>
-              request: <SubRequest 'scan_service' for <Function 'test_nifti_uploads_to_xnat[T1.nii.gz-scan_service0]'>>
-          finish pytest_fixture_post_finalizer --> [] [hook]
-          pytest_fixture_post_finalizer [hook]
-              fixturedef: <FixtureDef name='mocker' scope='function' baseid='test_scan_upload.py'>
-              request: <SubRequest 'mocker' for <Function 'test_nifti_uploads_to_xnat[T1.nii.gz-scan_service0]'>>
-          finish pytest_fixture_post_finalizer --> [] [hook]
-          pytest_fixture_post_finalizer [hook]
-              fixturedef: <FixtureDef name='scan_service' scope='function' baseid='test_scan_upload.py'>
-              request: <SubRequest 'scan_service' for <Function 'test_nifti_uploads_to_xnat[T1.nii.gz-scan_service0]'>>
-          finish pytest_fixture_post_finalizer --> [] [hook]
-          pytest_fixture_post_finalizer [hook]
-              fixturedef: <FixtureDef name='db' scope='function' baseid=''>
-              request: <SubRequest 'db' for <Function 'test_nifti_uploads_to_xnat[T1.nii.gz-scan_service0]'>>
-          finish pytest_fixture_post_finalizer --> [] [hook]
-          pytest_fixture_post_finalizer [hook]
-              fixturedef: <FixtureDef name='scan_service' scope='function' baseid='test_scan_upload.py'>
-              request: <SubRequest 'scan_service' for <Function 'test_nifti_uploads_to_xnat[T1.nii.gz-scan_service0]'>>
-          finish pytest_fixture_post_finalizer --> [] [hook]
-          pytest_fixture_post_finalizer [hook]
-              fixturedef: <FixtureDef name='db' scope='function' baseid=''>
-              request: <SubRequest 'db' for <Function 'test_nifti_uploads_to_xnat[T1.nii.gz-scan_service0]'>>
-          finish pytest_fixture_post_finalizer --> [] [hook]
-          pytest_fixture_post_finalizer [hook]
-              fixturedef: <FixtureDef name='app' scope='function' baseid=''>
-              request: <SubRequest 'app' for <Function 'test_nifti_uploads_to_xnat[T1.nii.gz-scan_service0]'>>
-          finish pytest_fixture_post_finalizer --> [] [hook]
-        finish pytest_runtest_teardown --> [] [hook]
-        pytest_runtest_makereport [hook]
-            item: <Function 'test_nifti_uploads_to_xnat[T1.nii.gz-scan_service0]'>
-            call: <CallInfo when='teardown' result: []>
-        finish pytest_runtest_makereport --> <TestReport 'test_scan_upload.py::TestXNATUploads::()::test_nifti_uploads_to_xnat[T1.nii.gz-scan_service0]' when='teardown' outcome='passed'> [hook]
-        pytest_runtest_logreport [hook]
-            report: <TestReport 'test_scan_upload.py::TestXNATUploads::()::test_nifti_uploads_to_xnat[T1.nii.gz-scan_service0]' when='teardown' outcome='passed'>
-          pytest_report_teststatus [hook]
-              report: <TestReport 'test_scan_upload.py::TestXNATUploads::()::test_nifti_uploads_to_xnat[T1.nii.gz-scan_service0]' when='teardown' outcome='passed'>
-          finish pytest_report_teststatus --> ('', '', '') [hook]
-        finish pytest_runtest_logreport --> [] [hook]
-        pytest_runtest_logfinish [hook]
-            nodeid: test_scan_upload.py::TestXNATUploads::()::test_nifti_uploads_to_xnat[T1.nii.gz-scan_service0]
-            location: ('test_scan_upload.py', 269, 'TestXNATUploads.test_nifti_uploads_to_xnat[T1.nii.gz-scan_service0]')
-        finish pytest_runtest_logfinish --> [] [hook]
-        pytest_warning_captured [hook]
-            warning_message: {message : SADeprecationWarning('The Binary type has been renamed to LargeBinary.',), category : 'SADeprecationWarning', filename : '/Users/katie/anaconda/lib/python3.6/site-packages/sqlalchemy/util/langhelpers.py', lineno : 1045, line : None}
-            when: runtest
-            item: <Function 'test_nifti_uploads_to_xnat[T1.nii.gz-scan_service0]'>
-        finish pytest_warning_captured --> [] [hook]
-      finish pytest_runtest_protocol --> True [hook]
-      pytest_runtest_protocol [hook]
-          item: <Function 'test_nifti_uploads_to_xnat[structural.nii-scan_service0]'>
-          nextitem: <Function 'test_dicom_uploads_to_xnat[scan_service0]'>
-        pytest_runtest_logstart [hook]
-            nodeid: test_scan_upload.py::TestXNATUploads::()::test_nifti_uploads_to_xnat[structural.nii-scan_service0]
-            location: ('test_scan_upload.py', 269, 'TestXNATUploads.test_nifti_uploads_to_xnat[structural.nii-scan_service0]')
-        finish pytest_runtest_logstart --> [] [hook]
-        pytest_runtest_setup [hook]
-            item: <Function 'test_nifti_uploads_to_xnat[structural.nii-scan_service0]'>
-          pytest_fixture_setup [hook]
-              fixturedef: <FixtureDef name='app' scope='function' baseid=''>
-              request: <SubRequest 'app' for <Function 'test_nifti_uploads_to_xnat[structural.nii-scan_service0]'>>
-          finish pytest_fixture_setup --> <Flask 'cookiecutter_mbam'> [hook]
-          pytest_fixture_setup [hook]
-              fixturedef: <FixtureDef name='db' scope='function' baseid=''>
-              request: <SubRequest 'db' for <Function 'test_nifti_uploads_to_xnat[structural.nii-scan_service0]'>>
-          early skip of rewriting module: pysqlite2 [assertion]
-          finish pytest_fixture_setup --> <SQLAlchemy engine=sqlite://> [hook]
-          pytest_fixture_setup [hook]
-              fixturedef: <FixtureDef name='mocker' scope='function' baseid='test_scan_upload.py'>
-              request: <SubRequest 'mocker' for <Function 'test_nifti_uploads_to_xnat[structural.nii-scan_service0]'>>
-          finish pytest_fixture_setup --> <pytest_mock.MockFixture object at 0x10801e5c0> [hook]
-          pytest_fixture_setup [hook]
-              fixturedef: <FixtureDef name='scan_service' scope='function' baseid='test_scan_upload.py'>
-              request: <SubRequest 'scan_service' for <Function 'test_nifti_uploads_to_xnat[structural.nii-scan_service0]'>>
-          finish pytest_fixture_setup --> <function scan_service.<locals>._scan_service at 0x1077eaea0> [hook]
-          pytest_fixture_setup [hook]
-              fixturedef: <FixtureDef name='filename' scope='function' baseid=''>
-              request: <SubRequest 'filename' for <Function 'test_nifti_uploads_to_xnat[structural.nii-scan_service0]'>>
-          finish pytest_fixture_setup --> structural.nii [hook]
-        finish pytest_runtest_setup --> [] [hook]
-        pytest_runtest_makereport [hook]
-            item: <Function 'test_nifti_uploads_to_xnat[structural.nii-scan_service0]'>
-            call: <CallInfo when='setup' result: []>
-        finish pytest_runtest_makereport --> <TestReport 'test_scan_upload.py::TestXNATUploads::()::test_nifti_uploads_to_xnat[structural.nii-scan_service0]' when='setup' outcome='passed'> [hook]
-        pytest_runtest_logreport [hook]
-            report: <TestReport 'test_scan_upload.py::TestXNATUploads::()::test_nifti_uploads_to_xnat[structural.nii-scan_service0]' when='setup' outcome='passed'>
-          pytest_report_teststatus [hook]
-              report: <TestReport 'test_scan_upload.py::TestXNATUploads::()::test_nifti_uploads_to_xnat[structural.nii-scan_service0]' when='setup' outcome='passed'>
-          finish pytest_report_teststatus --> ('', '', '') [hook]
-        finish pytest_runtest_logreport --> [] [hook]
-        pytest_runtest_call [hook]
-            item: <Function 'test_nifti_uploads_to_xnat[structural.nii-scan_service0]'>
-          pytest_fixture_setup [hook]
-              fixturedef: <FixtureDef name='factoryboy_request' scope='function' baseid=''>
-              request: <SubRequest 'factoryboy_request' for <Function 'test_nifti_uploads_to_xnat[structural.nii-scan_service0]'>>
-          finish pytest_fixture_setup --> <pytest_factoryboy.plugin.Request object at 0x1077d1eb8> [hook]
-          pytest_factoryboy_done [hook]
-              request: <FixtureRequest for <Function 'test_nifti_uploads_to_xnat[structural.nii-scan_service0]'>>
-          finish pytest_factoryboy_done --> [] [hook]
-          pytest_pyfunc_call [hook]
-              pyfuncitem: <Function 'test_nifti_uploads_to_xnat[structural.nii-scan_service0]'>
             pytest_enter_pdb [hook]
-                config: <_pytest.config.Config object at 0x101114b38>
+                config: <_pytest.config.Config object at 0x106373b00>
             finish pytest_enter_pdb --> [] [hook]
-          finish pytest_pyfunc_call --> True [hook]
-        finish pytest_runtest_call --> [] [hook]
         pytest_runtest_makereport [hook]
-            item: <Function 'test_nifti_uploads_to_xnat[structural.nii-scan_service0]'>
-            call: <CallInfo when='call' result: []>
-        finish pytest_runtest_makereport --> <TestReport 'test_scan_upload.py::TestXNATUploads::()::test_nifti_uploads_to_xnat[structural.nii-scan_service0]' when='call' outcome='passed'> [hook]
+            item: <Function 'test_when_dicoms_are_passed_to_scan_service_launch_response_is_set[scan_service0]'>
+            call: <CallInfo when='call' exception: >
+        finish pytest_runtest_makereport --> <TestReport 'test_scan_upload.py::TestDicomConversion::()::test_when_dicoms_are_passed_to_scan_service_launch_response_is_set[scan_service0]' when='call' outcome='failed'> [hook]
         pytest_runtest_logreport [hook]
-            report: <TestReport 'test_scan_upload.py::TestXNATUploads::()::test_nifti_uploads_to_xnat[structural.nii-scan_service0]' when='call' outcome='passed'>
+            report: <TestReport 'test_scan_upload.py::TestDicomConversion::()::test_when_dicoms_are_passed_to_scan_service_launch_response_is_set[scan_service0]' when='call' outcome='failed'>
           pytest_report_teststatus [hook]
-              report: <TestReport 'test_scan_upload.py::TestXNATUploads::()::test_nifti_uploads_to_xnat[structural.nii-scan_service0]' when='call' outcome='passed'>
-          finish pytest_report_teststatus --> ('passed', '.', 'PASSED') [hook]
+              report: <TestReport 'test_scan_upload.py::TestDicomConversion::()::test_when_dicoms_are_passed_to_scan_service_launch_response_is_set[scan_service0]' when='call' outcome='failed'>
+          finish pytest_report_teststatus --> ('failed', 'F', 'FAILED') [hook]
         finish pytest_runtest_logreport --> [] [hook]
         pytest_runtest_teardown [hook]
-            item: <Function 'test_nifti_uploads_to_xnat[structural.nii-scan_service0]'>
-            nextitem: <Function 'test_dicom_uploads_to_xnat[scan_service0]'>
-          pytest_fixture_post_finalizer [hook]
-              fixturedef: <FixtureDef name='factoryboy_request' scope='function' baseid=''>
-              request: <SubRequest 'factoryboy_request' for <Function 'test_nifti_uploads_to_xnat[structural.nii-scan_service0]'>>
-          finish pytest_fixture_post_finalizer --> [] [hook]
-          pytest_fixture_post_finalizer [hook]
-              fixturedef: <FixtureDef name='filename' scope='function' baseid=''>
-              request: <SubRequest 'filename' for <Function 'test_nifti_uploads_to_xnat[structural.nii-scan_service0]'>>
-          finish pytest_fixture_post_finalizer --> [] [hook]
-          pytest_fixture_post_finalizer [hook]
-              fixturedef: <FixtureDef name='scan_service' scope='function' baseid='test_scan_upload.py'>
-              request: <SubRequest 'scan_service' for <Function 'test_nifti_uploads_to_xnat[structural.nii-scan_service0]'>>
-          finish pytest_fixture_post_finalizer --> [] [hook]
-          pytest_fixture_post_finalizer [hook]
-              fixturedef: <FixtureDef name='scan_service' scope='function' baseid='test_scan_upload.py'>
-              request: <SubRequest 'scan_service' for <Function 'test_nifti_uploads_to_xnat[structural.nii-scan_service0]'>>
-          finish pytest_fixture_post_finalizer --> [] [hook]
-          pytest_fixture_post_finalizer [hook]
-              fixturedef: <FixtureDef name='mocker' scope='function' baseid='test_scan_upload.py'>
-              request: <SubRequest 'mocker' for <Function 'test_nifti_uploads_to_xnat[structural.nii-scan_service0]'>>
-          finish pytest_fixture_post_finalizer --> [] [hook]
-          pytest_fixture_post_finalizer [hook]
-              fixturedef: <FixtureDef name='scan_service' scope='function' baseid='test_scan_upload.py'>
-              request: <SubRequest 'scan_service' for <Function 'test_nifti_uploads_to_xnat[structural.nii-scan_service0]'>>
-          finish pytest_fixture_post_finalizer --> [] [hook]
-          pytest_fixture_post_finalizer [hook]
-              fixturedef: <FixtureDef name='db' scope='function' baseid=''>
-              request: <SubRequest 'db' for <Function 'test_nifti_uploads_to_xnat[structural.nii-scan_service0]'>>
-          finish pytest_fixture_post_finalizer --> [] [hook]
-          pytest_fixture_post_finalizer [hook]
-              fixturedef: <FixtureDef name='scan_service' scope='function' baseid='test_scan_upload.py'>
-              request: <SubRequest 'scan_service' for <Function 'test_nifti_uploads_to_xnat[structural.nii-scan_service0]'>>
-          finish pytest_fixture_post_finalizer --> [] [hook]
-          pytest_fixture_post_finalizer [hook]
-              fixturedef: <FixtureDef name='db' scope='function' baseid=''>
-              request: <SubRequest 'db' for <Function 'test_nifti_uploads_to_xnat[structural.nii-scan_service0]'>>
-          finish pytest_fixture_post_finalizer --> [] [hook]
-          pytest_fixture_post_finalizer [hook]
-              fixturedef: <FixtureDef name='app' scope='function' baseid=''>
-              request: <SubRequest 'app' for <Function 'test_nifti_uploads_to_xnat[structural.nii-scan_service0]'>>
-          finish pytest_fixture_post_finalizer --> [] [hook]
-        finish pytest_runtest_teardown --> [] [hook]
-        pytest_runtest_makereport [hook]
-            item: <Function 'test_nifti_uploads_to_xnat[structural.nii-scan_service0]'>
-            call: <CallInfo when='teardown' result: []>
-        finish pytest_runtest_makereport --> <TestReport 'test_scan_upload.py::TestXNATUploads::()::test_nifti_uploads_to_xnat[structural.nii-scan_service0]' when='teardown' outcome='passed'> [hook]
-        pytest_runtest_logreport [hook]
-            report: <TestReport 'test_scan_upload.py::TestXNATUploads::()::test_nifti_uploads_to_xnat[structural.nii-scan_service0]' when='teardown' outcome='passed'>
-          pytest_report_teststatus [hook]
-              report: <TestReport 'test_scan_upload.py::TestXNATUploads::()::test_nifti_uploads_to_xnat[structural.nii-scan_service0]' when='teardown' outcome='passed'>
-          finish pytest_report_teststatus --> ('', '', '') [hook]
-        finish pytest_runtest_logreport --> [] [hook]
-        pytest_runtest_logfinish [hook]
-            nodeid: test_scan_upload.py::TestXNATUploads::()::test_nifti_uploads_to_xnat[structural.nii-scan_service0]
-            location: ('test_scan_upload.py', 269, 'TestXNATUploads.test_nifti_uploads_to_xnat[structural.nii-scan_service0]')
-        finish pytest_runtest_logfinish --> [] [hook]
-        pytest_warning_captured [hook]
-            warning_message: {message : SADeprecationWarning('The Binary type has been renamed to LargeBinary.',), category : 'SADeprecationWarning', filename : '/Users/katie/anaconda/lib/python3.6/site-packages/sqlalchemy/util/langhelpers.py', lineno : 1045, line : None}
-            when: runtest
-            item: <Function 'test_nifti_uploads_to_xnat[structural.nii-scan_service0]'>
-        finish pytest_warning_captured --> [] [hook]
-      finish pytest_runtest_protocol --> True [hook]
-      pytest_runtest_protocol [hook]
-          item: <Function 'test_dicom_uploads_to_xnat[scan_service0]'>
-          nextitem: None
-        pytest_runtest_logstart [hook]
-            nodeid: test_scan_upload.py::TestXNATUploads::()::test_dicom_uploads_to_xnat[scan_service0]
-            location: ('test_scan_upload.py', 276, 'TestXNATUploads.test_dicom_uploads_to_xnat[scan_service0]')
-        finish pytest_runtest_logstart --> [] [hook]
-        pytest_runtest_setup [hook]
-            item: <Function 'test_dicom_uploads_to_xnat[scan_service0]'>
-          pytest_fixture_setup [hook]
-              fixturedef: <FixtureDef name='app' scope='function' baseid=''>
-              request: <SubRequest 'app' for <Function 'test_dicom_uploads_to_xnat[scan_service0]'>>
-          finish pytest_fixture_setup --> <Flask 'cookiecutter_mbam'> [hook]
-          pytest_fixture_setup [hook]
-              fixturedef: <FixtureDef name='db' scope='function' baseid=''>
-              request: <SubRequest 'db' for <Function 'test_dicom_uploads_to_xnat[scan_service0]'>>
-          early skip of rewriting module: pysqlite2 [assertion]
-          finish pytest_fixture_setup --> <SQLAlchemy engine=sqlite://> [hook]
-          pytest_fixture_setup [hook]
-              fixturedef: <FixtureDef name='mocker' scope='function' baseid='test_scan_upload.py'>
-              request: <SubRequest 'mocker' for <Function 'test_dicom_uploads_to_xnat[scan_service0]'>>
-          finish pytest_fixture_setup --> <pytest_mock.MockFixture object at 0x10b0a5898> [hook]
-          pytest_fixture_setup [hook]
-              fixturedef: <FixtureDef name='scan_service' scope='function' baseid='test_scan_upload.py'>
-              request: <SubRequest 'scan_service' for <Function 'test_dicom_uploads_to_xnat[scan_service0]'>>
-          finish pytest_fixture_setup --> <function scan_service.<locals>._scan_service at 0x109e4ae18> [hook]
-        finish pytest_runtest_setup --> [] [hook]
-        pytest_runtest_makereport [hook]
-            item: <Function 'test_dicom_uploads_to_xnat[scan_service0]'>
-            call: <CallInfo when='setup' result: []>
-        finish pytest_runtest_makereport --> <TestReport 'test_scan_upload.py::TestXNATUploads::()::test_dicom_uploads_to_xnat[scan_service0]' when='setup' outcome='passed'> [hook]
-        pytest_runtest_logreport [hook]
-            report: <TestReport 'test_scan_upload.py::TestXNATUploads::()::test_dicom_uploads_to_xnat[scan_service0]' when='setup' outcome='passed'>
-          pytest_report_teststatus [hook]
-              report: <TestReport 'test_scan_upload.py::TestXNATUploads::()::test_dicom_uploads_to_xnat[scan_service0]' when='setup' outcome='passed'>
-          finish pytest_report_teststatus --> ('', '', '') [hook]
-        finish pytest_runtest_logreport --> [] [hook]
-        pytest_runtest_call [hook]
-            item: <Function 'test_dicom_uploads_to_xnat[scan_service0]'>
-          pytest_fixture_setup [hook]
-              fixturedef: <FixtureDef name='factoryboy_request' scope='function' baseid=''>
-              request: <SubRequest 'factoryboy_request' for <Function 'test_dicom_uploads_to_xnat[scan_service0]'>>
-          finish pytest_fixture_setup --> <pytest_factoryboy.plugin.Request object at 0x10a495668> [hook]
-          pytest_factoryboy_done [hook]
-              request: <FixtureRequest for <Function 'test_dicom_uploads_to_xnat[scan_service0]'>>
-          finish pytest_factoryboy_done --> [] [hook]
-          pytest_pyfunc_call [hook]
-              pyfuncitem: <Function 'test_dicom_uploads_to_xnat[scan_service0]'>
-            pytest_enter_pdb [hook]
-                config: <_pytest.config.Config object at 0x101114b38>
-            finish pytest_enter_pdb --> [] [hook]
-          finish pytest_pyfunc_call --> True [hook]
-        finish pytest_runtest_call --> [] [hook]
-        pytest_runtest_makereport [hook]
-            item: <Function 'test_dicom_uploads_to_xnat[scan_service0]'>
-            call: <CallInfo when='call' result: []>
-        finish pytest_runtest_makereport --> <TestReport 'test_scan_upload.py::TestXNATUploads::()::test_dicom_uploads_to_xnat[scan_service0]' when='call' outcome='passed'> [hook]
-        pytest_runtest_logreport [hook]
-            report: <TestReport 'test_scan_upload.py::TestXNATUploads::()::test_dicom_uploads_to_xnat[scan_service0]' when='call' outcome='passed'>
-          pytest_report_teststatus [hook]
-              report: <TestReport 'test_scan_upload.py::TestXNATUploads::()::test_dicom_uploads_to_xnat[scan_service0]' when='call' outcome='passed'>
-          finish pytest_report_teststatus --> ('passed', '.', 'PASSED') [hook]
-        finish pytest_runtest_logreport --> [] [hook]
-        pytest_runtest_teardown [hook]
-            item: <Function 'test_dicom_uploads_to_xnat[scan_service0]'>
+            item: <Function 'test_when_dicoms_are_passed_to_scan_service_launch_response_is_set[scan_service0]'>
             nextitem: None
           pytest_fixture_post_finalizer [hook]
               fixturedef: <FixtureDef name='factoryboy_request' scope='function' baseid=''>
-              request: <SubRequest 'factoryboy_request' for <Function 'test_dicom_uploads_to_xnat[scan_service0]'>>
+              request: <SubRequest 'factoryboy_request' for <Function 'test_when_dicoms_are_passed_to_scan_service_launch_response_is_set[scan_service0]'>>
           finish pytest_fixture_post_finalizer --> [] [hook]
           pytest_fixture_post_finalizer [hook]
               fixturedef: <FixtureDef name='scan_service' scope='function' baseid='test_scan_upload.py'>
-              request: <SubRequest 'scan_service' for <Function 'test_dicom_uploads_to_xnat[scan_service0]'>>
+              request: <SubRequest 'scan_service' for <Function 'test_when_dicoms_are_passed_to_scan_service_launch_response_is_set[scan_service0]'>>
           finish pytest_fixture_post_finalizer --> [] [hook]
           pytest_fixture_post_finalizer [hook]
               fixturedef: <FixtureDef name='scan_service' scope='function' baseid='test_scan_upload.py'>
-              request: <SubRequest 'scan_service' for <Function 'test_dicom_uploads_to_xnat[scan_service0]'>>
+              request: <SubRequest 'scan_service' for <Function 'test_when_dicoms_are_passed_to_scan_service_launch_response_is_set[scan_service0]'>>
           finish pytest_fixture_post_finalizer --> [] [hook]
           pytest_fixture_post_finalizer [hook]
               fixturedef: <FixtureDef name='mocker' scope='function' baseid='test_scan_upload.py'>
-              request: <SubRequest 'mocker' for <Function 'test_dicom_uploads_to_xnat[scan_service0]'>>
+              request: <SubRequest 'mocker' for <Function 'test_when_dicoms_are_passed_to_scan_service_launch_response_is_set[scan_service0]'>>
           finish pytest_fixture_post_finalizer --> [] [hook]
           pytest_fixture_post_finalizer [hook]
               fixturedef: <FixtureDef name='scan_service' scope='function' baseid='test_scan_upload.py'>
-              request: <SubRequest 'scan_service' for <Function 'test_dicom_uploads_to_xnat[scan_service0]'>>
+              request: <SubRequest 'scan_service' for <Function 'test_when_dicoms_are_passed_to_scan_service_launch_response_is_set[scan_service0]'>>
           finish pytest_fixture_post_finalizer --> [] [hook]
           pytest_fixture_post_finalizer [hook]
               fixturedef: <FixtureDef name='db' scope='function' baseid=''>
-              request: <SubRequest 'db' for <Function 'test_dicom_uploads_to_xnat[scan_service0]'>>
+              request: <SubRequest 'db' for <Function 'test_when_dicoms_are_passed_to_scan_service_launch_response_is_set[scan_service0]'>>
           finish pytest_fixture_post_finalizer --> [] [hook]
           pytest_fixture_post_finalizer [hook]
               fixturedef: <FixtureDef name='scan_service' scope='function' baseid='test_scan_upload.py'>
-              request: <SubRequest 'scan_service' for <Function 'test_dicom_uploads_to_xnat[scan_service0]'>>
+              request: <SubRequest 'scan_service' for <Function 'test_when_dicoms_are_passed_to_scan_service_launch_response_is_set[scan_service0]'>>
           finish pytest_fixture_post_finalizer --> [] [hook]
           pytest_fixture_post_finalizer [hook]
               fixturedef: <FixtureDef name='db' scope='function' baseid=''>
-              request: <SubRequest 'db' for <Function 'test_dicom_uploads_to_xnat[scan_service0]'>>
+              request: <SubRequest 'db' for <Function 'test_when_dicoms_are_passed_to_scan_service_launch_response_is_set[scan_service0]'>>
           finish pytest_fixture_post_finalizer --> [] [hook]
           pytest_fixture_post_finalizer [hook]
               fixturedef: <FixtureDef name='app' scope='function' baseid=''>
-              request: <SubRequest 'app' for <Function 'test_dicom_uploads_to_xnat[scan_service0]'>>
+              request: <SubRequest 'app' for <Function 'test_when_dicoms_are_passed_to_scan_service_launch_response_is_set[scan_service0]'>>
           finish pytest_fixture_post_finalizer --> [] [hook]
           pytest_fixture_post_finalizer [hook]
               fixturedef: <FixtureDef name='mocker' scope='function' baseid='test_scan_upload.py'>
-              request: <SubRequest 'mocker' for <Function 'test_dicom_uploads_to_xnat[scan_service0]'>>
-          finish pytest_fixture_post_finalizer --> [] [hook]
-          pytest_fixture_post_finalizer [hook]
-              fixturedef: <FixtureDef name='mocker' scope='function' baseid='test_scan_upload.py'>
-              request: <SubRequest 'mocker' for <Function 'test_nifti_uploads_to_xnat[structural.nii-scan_service0]'>>
-          finish pytest_fixture_post_finalizer --> [] [hook]
-          pytest_fixture_post_finalizer [hook]
-              fixturedef: <FixtureDef name='mocker' scope='function' baseid='test_scan_upload.py'>
-              request: <SubRequest 'mocker' for <Function 'test_nifti_uploads_to_xnat[T1.nii.gz-scan_service0]'>>
+              request: <SubRequest 'mocker' for <Function 'test_when_dicoms_are_passed_to_scan_service_launch_response_is_set[scan_service0]'>>
           finish pytest_fixture_post_finalizer --> [] [hook]
           pytest_fixture_post_finalizer [hook]
               fixturedef: <FixtureDef name='pytestconfig' scope='session' baseid=''>
-              request: <SubRequest 'pytestconfig' for <Function 'test_dicom_uploads_to_xnat[scan_service0]'>>
-          finish pytest_fixture_post_finalizer --> [] [hook]
-          pytest_fixture_post_finalizer [hook]
-              fixturedef: <FixtureDef name='pytestconfig' scope='session' baseid=''>
-              request: <SubRequest 'pytestconfig' for <Function 'test_nifti_uploads_to_xnat[structural.nii-scan_service0]'>>
-          finish pytest_fixture_post_finalizer --> [] [hook]
-          pytest_fixture_post_finalizer [hook]
-              fixturedef: <FixtureDef name='pytestconfig' scope='session' baseid=''>
-              request: <SubRequest 'pytestconfig' for <Function 'test_nifti_uploads_to_xnat[T1.nii.gz-scan_service0]'>>
+              request: <SubRequest 'pytestconfig' for <Function 'test_when_dicoms_are_passed_to_scan_service_launch_response_is_set[scan_service0]'>>
           finish pytest_fixture_post_finalizer --> [] [hook]
         finish pytest_runtest_teardown --> [] [hook]
         pytest_runtest_makereport [hook]
-            item: <Function 'test_dicom_uploads_to_xnat[scan_service0]'>
+            item: <Function 'test_when_dicoms_are_passed_to_scan_service_launch_response_is_set[scan_service0]'>
             call: <CallInfo when='teardown' result: []>
-        finish pytest_runtest_makereport --> <TestReport 'test_scan_upload.py::TestXNATUploads::()::test_dicom_uploads_to_xnat[scan_service0]' when='teardown' outcome='passed'> [hook]
+        finish pytest_runtest_makereport --> <TestReport 'test_scan_upload.py::TestDicomConversion::()::test_when_dicoms_are_passed_to_scan_service_launch_response_is_set[scan_service0]' when='teardown' outcome='passed'> [hook]
         pytest_runtest_logreport [hook]
-            report: <TestReport 'test_scan_upload.py::TestXNATUploads::()::test_dicom_uploads_to_xnat[scan_service0]' when='teardown' outcome='passed'>
+            report: <TestReport 'test_scan_upload.py::TestDicomConversion::()::test_when_dicoms_are_passed_to_scan_service_launch_response_is_set[scan_service0]' when='teardown' outcome='passed'>
           pytest_report_teststatus [hook]
-              report: <TestReport 'test_scan_upload.py::TestXNATUploads::()::test_dicom_uploads_to_xnat[scan_service0]' when='teardown' outcome='passed'>
+              report: <TestReport 'test_scan_upload.py::TestDicomConversion::()::test_when_dicoms_are_passed_to_scan_service_launch_response_is_set[scan_service0]' when='teardown' outcome='passed'>
           finish pytest_report_teststatus --> ('', '', '') [hook]
         finish pytest_runtest_logreport --> [] [hook]
         pytest_runtest_logfinish [hook]
-            nodeid: test_scan_upload.py::TestXNATUploads::()::test_dicom_uploads_to_xnat[scan_service0]
-            location: ('test_scan_upload.py', 276, 'TestXNATUploads.test_dicom_uploads_to_xnat[scan_service0]')
+            nodeid: test_scan_upload.py::TestDicomConversion::()::test_when_dicoms_are_passed_to_scan_service_launch_response_is_set[scan_service0]
+            location: ('test_scan_upload.py', 294, 'TestDicomConversion.test_when_dicoms_are_passed_to_scan_service_launch_response_is_set[scan_service0]')
         finish pytest_runtest_logfinish --> [] [hook]
-        pytest_warning_captured [hook]
-            warning_message: {message : SADeprecationWarning('The Binary type has been renamed to LargeBinary.',), category : 'SADeprecationWarning', filename : '/Users/katie/anaconda/lib/python3.6/site-packages/sqlalchemy/util/langhelpers.py', lineno : 1045, line : None}
-            when: runtest
-            item: <Function 'test_dicom_uploads_to_xnat[scan_service0]'>
-        finish pytest_warning_captured --> [] [hook]
       finish pytest_runtest_protocol --> True [hook]
     finish pytest_runtestloop --> True [hook]
     pytest_sessionfinish [hook]
         session: <Session 'tests'>
-        exitstatus: 0
+        exitstatus: 1
       pytest_terminal_summary [hook]
-          terminalreporter: <_pytest.terminal.TerminalReporter object at 0x10476e400>
-          exitstatus: 0
+          terminalreporter: <_pytest.terminal.TerminalReporter object at 0x1099cf390>
+          exitstatus: 1
       finish pytest_terminal_summary --> [] [hook]
     finish pytest_sessionfinish --> [] [hook]
     pytest_unconfigure [hook]
-        config: <_pytest.config.Config object at 0x101114b38>
+        config: <_pytest.config.Config object at 0x106373b00>
     finish pytest_unconfigure --> [] [hook]

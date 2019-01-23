@@ -68,7 +68,7 @@ class ScanService:
         self._update_database_objects(keywords=keywords, objects=[self.user, self.experiment, scan],
                                       ids=[self.xnat_ids[kw]['xnat_id'] for kw in keywords], uris=uris)
         if dcm:
-            self._dicom_to_nifti(scan.id)
+            self.launch_response = self._dicom_to_nifti(scan.id)
 
     def delete(self, scan_id, delete_from_xnat=False):
         """ Delete a scan from the database
@@ -185,4 +185,6 @@ class ScanService:
         nifti = Derivation.create(scan_id=scan.id, process_name='dicom_to_nifti', status='unstarted')
         ds = DerivationService(nifti.id, scan.id)
         scan_data_locator = crop(scan.xnat_uri, '/experiments')
-        return ds.launch(data={'scan': scan_data_locator})
+        rv = ds.launch(data={'scan': scan_data_locator})
+        return rv
+

@@ -32,5 +32,5 @@ class DerivationService:
         command_id = self.command_config[self.process_name+ '_command_id']
         wrapper_id = self.command_config[self.process_name + '_wrapper_id']
         self.derivation.status = 'started'
-        self.xc.launch_command(command_id, wrapper_id, data)
+        return self.xc.launch_command(command_id, wrapper_id, data)
 
