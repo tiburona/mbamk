@@ -7,7 +7,7 @@ from cookiecutter_mbam.user import User, Role
 from cookiecutter_mbam.admin import UserAdmin, RoleAdmin
 from flask_security import SQLAlchemyUserDatastore
 from cookiecutter_mbam.extensions import admin, cache, csrf_protect, db, debug_toolbar, migrate,\
-    security, webpack, mail
+    security, webpack, mail, jsglue
 from .hooks import create_test_users, models_committed_hooks
 from cookiecutter_mbam.utils import user_context_processor
 
@@ -41,6 +41,7 @@ def register_extensions(app):
     webpack.init_app(app)
     admin.init_app(app, endpoint='admin')
     mail.init_app(app)
+    jsglue.init_app(app)
     return None
 
 def register_hooks(app):

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Scan views."""
 from flask import Blueprint, render_template, flash, redirect, url_for, session, request
-from flask_login import current_user
+from flask_security import current_user, login_required
 from .forms import ScanForm, ExperimentAndScanForm
 from .service import ScanService
 from cookiecutter_mbam.experiment.views import add_experiment
@@ -49,7 +49,7 @@ def scan_number_validation(request, add_exp):
             return "A session can only have three scans.  You already have {}.".format(num2words[num_scans])
     return ''
 
-def meta_add(form, request, redirect_route, template, add_exp = False, action="new"):
+def meta_add(form, request, redirect_route, template, add_exp = False):
     """Validate form, initiate adding experiments and/or scans, display messages to user and redirect"""
     if form.validate_on_submit():
         scan_number_error = scan_number_validation(request, add_exp)
@@ -63,15 +63,18 @@ def meta_add(form, request, redirect_route, template, add_exp = False, action="n
         return add_scans(request, exp_id)
     else:
         flash_errors(form)
-    return render_template(template, form=form, action=action)
+    return render_template(template, form=form)
 
 @blueprint.route('/add', methods=['GET', 'POST'])
+@login_required
 def add():
     """Access the add scan route and form."""
     return meta_add(ScanForm(request.form), request, 'scan.add', 'scans/upload.html')
 
+
 @blueprint.route('/add_experiment_and_scans', methods=['GET', 'POST'])
+@login_required
 def add_experiment_and_scans():
     """Access the add_experiment_and_scans route and form"""
     return meta_add(ExperimentAndScanForm(request.form), request, 'scan.add_experiment_and_scans',
-                    'scans/experiment_and_scans.html', add_exp=True, action="new")
+                    'scans/experiment_and_scans.html', add_exp=True)

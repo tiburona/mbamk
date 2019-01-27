@@ -9,6 +9,7 @@ from flask_webpack import Webpack
 from flask_wtf.csrf import CSRFProtect
 from flask_admin import Admin
 from flask_mail import Mail
+from flask_jsglue import JSGlue
 
 admin = Admin()
 csrf_protect = CSRFProtect()
@@ -19,3 +20,4 @@ cache = Cache()
 debug_toolbar = DebugToolbarExtension()
 webpack = Webpack()
 mail = Mail()
+jsglue = JSGlue()

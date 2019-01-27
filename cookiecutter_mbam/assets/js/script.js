@@ -1,2 +1,5 @@
 // App initialization code goes here
-var test=1;
+//$("#test").on("click",function() {
+//    console.log("ok clicked")
+//})
+var spiro=1;
