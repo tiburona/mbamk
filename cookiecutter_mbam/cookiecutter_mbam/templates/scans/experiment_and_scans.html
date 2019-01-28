@@ -2,11 +2,9 @@
 
 {% block content %}
 
-<br>
-<br>
-<br>
-
 <div class="container-narrow">
+    <br>
+    <br>
     {% if request.args.get('action') != "old" and request.args.get('action') != "edit" %}
           <h3>New Scan Upload</h3>
           <p>For the best experience use Chrome or Opera browser. Firefox is also supported. Internet Explorer and Safari are not.</p>
@@ -75,29 +73,28 @@
     <!-- Below is the final submit form where CD folder and file input options converge -->
     {% if request.args.get('action') != "old" %}
         <div class="modal fade" id="finalSubmitDialog" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-            <div class="modal-dialog" style="overflow-y: scroll; max-height:85%;  margin-top: 50px; margin-bottom:50px;">
+            <div class="modal-dialog" role="document">
                 <div class="modal-content">
-                    <div class="modal-header">
-                        <h3>New Scan Upload</h3>
-                        <h5>If it's not already filled in, please provide the date of the scan before clicking the upload button. You also have the option to provide the model and
-                        field strength of the scanner if you know them.</h5>
-                        <div class="modal-body">
-                            <!-- below was copied from the old upload form -->
-                            {% from "security/_macros.html" import render_field, render_field_with_errors %}
-                            <form method="POST" action="{{ url_for('scan.add_experiment_and_scans') }}" enctype="multipart/form-data" role="form" id="uploadForm">
-                            {{ form.hidden_tag() }}
-                            {{ render_field(form.date, class='form-control') }}
-                            {{ render_field(form.scanner, class='form-control') }}
-                            {{ render_field(form.field_strength, class='form-control') }}
-                            <div style="display: none;">
-                                {{ render_field(form.scan_file, class='form-control') }}
-                            </div>
-                            <button type="submit" class="btn btn-success submit-button" id="upload-toggle">Upload</button>
-                            <button id="go-back" class="btn btn-primary" onclick="return false;">Go Back</button>
-                            <button type="button" class="btn btn-primary start-over" onclick="return false;">Cancel</button>
-                            </form>
-                        </div>
-                    </div>
+                  <div class="modal-header">
+                      <h5 class="modal-title">New Scan Upload</h5>
+                  </div>
+                  <div class="modal-body">
+                      <p>If it's not already filled in, please provide the date of the scan before clicking the upload button. You also have the option to provide the model and
+                      field strength of the scanner if you know them.</p>
+                      <form method="POST" action="{{ url_for('scan.add_experiment_and_scans') }}" enctype="multipart/form-data" role="form" id="uploadForm">
+                      {% from "security/_macros.html" import render_field, render_field_with_errors %}
+                      {{ form.hidden_tag() }}
+                      {{ render_field_with_errors(form.date, class='form-control') }}
+                      {{ render_field_with_errors(form.scanner, class='form-control') }}
+                      {{ render_field_with_errors(form.field_strength, class='form-control') }}
+                      <div style="display: none;">
+                          {{ render_field(form.scan_file, class='form-control') }}
+                      </div>
+                      <button type="submit" class="btn btn-success submit-button" id="upload-toggle">Upload</button>
+                      <button id="go-back" class="btn btn-primary" onclick="return false;">Go Back</button>
+                      <button type="button" class="btn btn-primary start-over" onclick="return false;">Cancel</button>
+                      </form>
+                  </div>
                 </div>
             </div>
         </div>
@@ -107,28 +104,27 @@
             <form method="POST" action="{{ url_for('edit', scan_number=current_user.scans.first().scan_number) }}" enctype="multipart/form-data" role="form">
             {% from "security/_macros.html" import render_field, render_field_with_errors %}
             {{ form.hidden_tag() }}
-            {{ render_field(form.date, class='form-control') }}
-            {{ render_field(form.scanner, class='form-control') }}
-            {{ render_field(form.field_strength, class='form-control') }}
+            {{ render_field_with_errors(form.date, class='form-control') }}
+            {{ render_field_with_errors(form.scanner, class='form-control') }}
+            {{ render_field_with_errors(form.field_strength, class='form-control') }}
             <div style="display: none;">
                 {{ render_field(form.scan_file, class='form-control') }}
             </div>
             <button type="submit" class="btn btn-success custom-width">Update</button>
-            <a href="{{ url_for('volume_view', session_number=current_user.sessions.first().session_number, viewType='struct_subjectSpace') }}" class="btn btn-primary">Cancel</a>
+            <a href="{{ url_for('experiment') }}" class="btn btn-primary">Cancel</a>
             </form>
         </div>
     <!-- below form without modals for "legacy" upload form -->
     {% elif request.args.get('action') == "old" %}
         <div>
             <h3>New Scan Upload</h3>
-            <form method="POST" action="{{ url_for('scan.add_experiment_and_scans', action=['old']) }}"" enctype="multipart/form-data" role="form" id="uploadForm">
+            <form method="POST" action="{{ url_for('scan.add_experiment_and_scans', action=['old']) }}" enctype="multipart/form-data" role="form" id="uploadForm">
             {% from "security/_macros.html" import render_field, render_field_with_errors %}
             {{ form.hidden_tag() }}
             {{ render_field_with_errors(form.date, class='form-control') }}
             {{ render_field_with_errors(form.scanner, class='form-control') }}
             {{ render_field_with_errors(form.field_strength, class='form-control') }}
             {{ render_field_with_errors(form.scan_file, class='form-control') }}
-            {{ render_field(form.submit, class_="btn btn-primary custom-width", id_="upload-toggle") }}
             <button type="submit" class="btn btn-success custom-width" id="upload-toggle">Upload</button>
             <a href="{{ url_for('public.home') }}" class="btn btn-primary">Cancel</a>
             </form>

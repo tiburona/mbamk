@@ -7,12 +7,14 @@
 // JavaScript modules
 window.$ = window.jQuery = require('jquery');
 require('jquery');
+require('jquery-validation');
 require('font-awesome-webpack');
 require('popper.js');
 require('bootstrap');
 require('bootstrap-fileinput');
-window.daikon = require('daikon');
-
+require('bootstrap-fileinput/themes/fa/theme');
+require('daikon');
+require('file-saver');
 
 // Your own code
 require('./plugins.js');
