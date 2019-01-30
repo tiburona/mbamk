@@ -121,3 +121,65 @@ footer .footer-nav {
   margin-right: 25px;
   list-style: none;
 }
+
+/* Upload-progress whell */
+
+@keyframes spin {
+	to {
+	    transform: rotate(1turn);
+	}
+}
+
+.upload-progress {
+	position: relative;
+	display: inline-block;
+	width: 5em;
+	height: 5em;
+	margin: 0 .5em;
+	font-size: 24px;
+	text-indent: 999em;
+	overflow: hidden;
+	animation: spin 1s infinite steps(8);
+}
+
+.upload-progress:before,
+.upload-progress:after,
+.upload-progress > div:before,
+.upload-progress > div:after {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 2.25em; /* (container width - part width)/2  */
+	width: .5em;
+	height: 1.5em;
+	border-radius: .2em;
+	background: #eee;
+	box-shadow: 0 3.5em #eee; /* container height - part height */
+	transform-origin: 50% 2.5em; /* container height / 2 */
+}
+
+.upload-progress:before {
+	background: #555;
+}
+
+.upload-progress:after {
+	transform: rotate(-45deg);
+	background: #777;
+}
+
+.upload-progress > div:before {
+	transform: rotate(-90deg);
+	background: #999;
+}
+
+.upload-progress > div:after {
+	transform: rotate(-135deg);
+	background: #bbb;
+}
+
+@media (min-width: 768px) {
+  .modal-xl {
+   width: 90%;
+   max-width: 900px;
+  }
+}

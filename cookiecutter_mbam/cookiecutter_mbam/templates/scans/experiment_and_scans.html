@@ -3,10 +3,8 @@
 {% block content %}
 
 <div class="container-narrow">
-    <br>
-    <br>
     {% if request.args.get('action') != "old" and request.args.get('action') != "edit" %}
-          <h3>New Scan Upload</h3>
+          <h4 class="mt-5">New Scan Upload</h4>
           <p>For the best experience use Chrome or Opera browser. Firefox is also supported. Internet Explorer and Safari are not.</p>
           <br>
           <label for="input-cd-step1">If you have your scan on a CD, please insert it and select the drive using the "Browse" button. You may also select a folder with dicom files.</label>
@@ -98,22 +96,6 @@
                 </div>
             </div>
         </div>
-    {% elif request.args.get('action') == "edit" %}
-        <div>
-            <h3>Edit Scan Metadata</h3>
-            <form method="POST" action="{{ url_for('edit', scan_number=current_user.scans.first().scan_number) }}" enctype="multipart/form-data" role="form">
-            {% from "security/_macros.html" import render_field, render_field_with_errors %}
-            {{ form.hidden_tag() }}
-            {{ render_field_with_errors(form.date, class='form-control') }}
-            {{ render_field_with_errors(form.scanner, class='form-control') }}
-            {{ render_field_with_errors(form.field_strength, class='form-control') }}
-            <div style="display: none;">
-                {{ render_field(form.scan_file, class='form-control') }}
-            </div>
-            <button type="submit" class="btn btn-success custom-width">Update</button>
-            <a href="{{ url_for('experiment') }}" class="btn btn-primary">Cancel</a>
-            </form>
-        </div>
     <!-- below form without modals for "legacy" upload form -->
     {% elif request.args.get('action') == "old" %}
         <div>
@@ -135,20 +117,22 @@
     <div class="modal fade" id="uploadWaitDialog" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h2 class="text-center">Uploading...</h2>
-                    <h4>We appreciate your patience as your MRI scan is being uploaded and archived. This may take several minutes. If successful,
-                    you will be directed to a page where you can view your MRI scan in the browser.</h4>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="center-block" style="width:150px;">
-                            <div class="upload-progress">
-                                <div>Loading...</div>
-                            </div>
-                        <div>
-                    </div>
-                </div>
+              <div class="modal-header">
+                  <h5 class="modal-title text-center">Uploading...</h5>
+              </div>
+              <div class="modal-body">
+                <p>We appreciate your patience as your MRI scan is being uploaded and archived. This may take several minutes. If successful,
+                you will be directed to a page where you can view your MRI scan in the browser.</p>
+              </div>
+              <div class="row">
+                  <div class="mx-auto" style="width:150px;">
+                      <div class="upload-progress">
+                          <div>Loading...</div>
+                      </div>
+                      <br>
+                  <div>
+              </div>
+              <div class="modal-footer"></div>
             </div>
         </div>
     </div>

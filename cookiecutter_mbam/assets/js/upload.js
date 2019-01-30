@@ -303,7 +303,7 @@ $("#input-cd-step1").fileinput( inputCDStep1Config ).on('change', function(event
     window.filename_list=[];
 
    // Reset global pb variable
-    pb = 0;
+    window.pb = 0;
     // below to time how long it takes to scan the files
     console.time('time_to_scan');
 
