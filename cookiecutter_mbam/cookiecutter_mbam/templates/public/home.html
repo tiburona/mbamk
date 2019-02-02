@@ -8,13 +8,13 @@
       <h1 class="display-3 text-center">Welcome to My Brain and Me!</h1>
       {% if current_user.is_authenticated %}
           {% if not current_user.has_role('end-user') %}
-              <p class="lead">If you would like to use the site to learn about your brain,
-                  please complete a brief user profile. If you would like to use the site for your
-                  own research, please fill out a short researcher application.</p>
+              <p class="lead text-center">Click below to upload or view your brain scans. If you are
+                  new to the site, we will ask you to first read and agree to our consent form for participation
+                  in research and then complete a basic user profile.</p>
                   <hr class="my-4">
                   <p class="lead text-center">
-                      <a class="btn btn-primary btn-large" href="" role="button">Complete Profile</a>
-                      <a class="btn btn-primary btn-large" href="" role="button">Apply</a>
+                      <a class="btn btn-primary btn-large" href="" role="button">Upload my scan</a>
+                      <a class="btn btn-primary btn-large" href="" role="button">View my scans</a>
                   </p>
           {% else %}
               {% if not current_user.experiments.first().struct_subjectSpace %}
@@ -49,20 +49,19 @@
 <div class="container">
   <div class="row">
     <div class="col-lg-4">
-      <h2><i class="fa fa-code"></i> Bootstrap 4</h2>
-      <p>Sleek, intuitive, and powerful mobile-first front-end framework for faster and easier web development.</p>
-      <p><a class="btn btn-outline-secondary" href="" >Official website &raquo;</a></p>
-      <button class="btn btn-primary" id="test">Test</button>
+      <h4><i class="fa fa-wpexplorer"></i> Explore your brain</h4>
+      <p>Visualize and access your brain scan in a web browser and more!</p>
+      <p><a class="btn btn-outline-secondary" href="" >Learn more &raquo;</a></p>
     </div>
     <div class="col-lg-4">
-      <h2><i class="fa fa-flask"></i> SQLAlchemy</h2>
-      <p>SQLAlchemy is the Python SQL toolkit and Object Relational Mapper that gives application developers the full power and flexibility of SQL.</p>
-      <p><a href="" class="btn btn-outline-secondary">Official website &raquo;</a></p>
+      <h4><i class="fa fa-users"></i> Contribute towards research</h4>
+      <p>Participate in studies that further our understanding of neuropsychology and mental health and illness.</p>
+      <p><a href="" class="btn btn-outline-secondary">Learn more &raquo;</a></p>
    </div>
     <div class="col-lg-4">
-      <h2><i class="fa fa-edit"></i> WTForms</h2>
-      <p>WTForms is a flexible forms validation and rendering library for python web development.</p>
-      <p><a href="http://wtforms.simplecodes.com/" class="btn btn-outline-secondary">Official website &raquo;</a></p>
+      <h4><i class="fa fa-external-link-square"></i> Additional Resources</h4>
+      <p>Learn how to acquire a brain scan as part of study near you.</p>
+      <p><a href="http://wtforms.simplecodes.com/" class="btn btn-outline-secondary">Learn more &raquo;</a></p>
     </div>
   </div><!-- /.row -->
 </div>

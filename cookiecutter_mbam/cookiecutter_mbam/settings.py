@@ -29,6 +29,7 @@ SECURITY_RECOVERABLE = True
 SECURITY_SEND_REGISTER_EMAIL = False
 SECURITY_EMAIL_SENDER = '"My Brain and Me" <mbaminfo@gmail.com>'
 SECURITY_REGISTERABLE = True
+SECURITY_CHANGEABLE = True
 
 # Flask-Mail Settings
 MAIL_USERNAME = 'mbaminfo@gmail.com'
