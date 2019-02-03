@@ -24,14 +24,13 @@ def celery_upload(server, user, password, url, file_path):
     files = {'file': ('T1.nii.gz', open(file_path, 'rb'), 'application/octet-stream')}
     s = init_session(user, password)
     r = s.put(server + url, files=files)
-    debug()
     return r
 
 @celery.task
-def celery_import(server, user, password, file_path, url, overwrite='delete'):
+def celery_import(server, user, password, file_path, url):
     files = {'file': ('DICOMS.zip', open(file_path, 'rb'), 'application/octet-stream')}
     s = init_session(user, password)
-    r = s.post(server + '/data/services/import', files=files, dest=url, overwrite='delete')
+    r = s.post(server + '/data/services/import', files=files, data={'dest': url, 'overwrite':'delete'})
     return r
 
 class XNATConnection:
@@ -69,7 +68,6 @@ class XNATConnection:
     # todo: what do we want from the response object?  to log it?
     def _upload_file(self, url, file_path):
         if self.celery_upload:
-            # url = url[:url.find('files')]
             result = celery_upload(self.server, self.user, self.password, url, file_path)
         else:
             with xnat.connect(self.server, self.user, self.password) as session:
