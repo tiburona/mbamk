@@ -1,7 +1,7 @@
 {
   "name": "cookiecutter_mbam",
   "version": "1.0.0",
-  "description": "Cookiecutter MBAB",
+  "description": "Cookiecutter MBAM",
   "scripts": {
     "build": "NODE_ENV=production webpack --progress --colors -p",
     "start": "concurrently -n \"WEBPACK,FLASK\" -c \"bgBlue.bold,bgMagenta.bold\" \"npm run webpack-dev-server\" \"npm run flask-server\"",

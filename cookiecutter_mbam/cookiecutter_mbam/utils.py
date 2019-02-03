@@ -4,6 +4,7 @@ from flask import flash, current_app
 from threading import Thread
 from flask_mail import Message
 from flask_security import current_user
+from celery import Celery
 
 def flash_errors(form, category='warning'):
     """Flash all errors for a form."""
@@ -36,3 +37,4 @@ def send_email(subject, sender, recipients, text_body, html_body):
     msg.html = html_body
     Thread(target=send_async_email,
            args=(current_app._get_current_object(), msg)).start()
+

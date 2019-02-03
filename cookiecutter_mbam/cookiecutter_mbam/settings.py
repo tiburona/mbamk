@@ -42,4 +42,6 @@ MAIL_PORT = 587
 MAIL_USE_SSL = False
 MAIL_USE_TLS = True
 
+# File upload settings
 MAX_CONTENT_LENGTH = 30 * 1024 * 1024
+

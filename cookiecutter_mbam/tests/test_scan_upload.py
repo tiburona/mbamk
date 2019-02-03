@@ -1,31 +1,16 @@
 
 import pytest
 import os
-import json
 import mock
 from shutil import copy
 from pytest_mock import mocker
 from werkzeug.datastructures import FileStorage
 from cookiecutter_mbam.scan import Scan
 from cookiecutter_mbam.scan.service import ScanService, gzip_file, crop
-from cookiecutter_mbam.derivation.service import Derivation, DerivationService
 from .factories import UserFactory
 from .factories import ExperimentFactory
 
 # todo: why aren't my files being deleted from static/files.  add a test to make sure they are?
-
-
-@pytest.fixture(scope='function')
-@pytest.mark.usefixtures('db', 'app')
-def derivation_service(db, app):
-    def _derivation_service(derivation_id, scan_id, config_dir = ''):
-        ds = DerivationService(derivation_id, scan_id, config_dir)
-        ds.xc.launch_command = mock.MagicMock()
-        ds.xc.launch_command.return_value = {}
-        print("I EXECUTED")
-    return _derivation_service
-
-
 
 @pytest.fixture(scope='function')
 @pytest.mark.usefixtures('db', 'app')

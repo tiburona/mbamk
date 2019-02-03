@@ -1,12 +1,38 @@
 import os
 import xnat
+from flask import Flask
+import requests
+from cookiecutter_mbam.tasks import make_celery, get_celery_worker_status
+
 
 from flask import current_app
 def debug():
     assert current_app.debug == False, "Don't panic! You're here by request of debug()"
 
+flask_app = Flask(__name__)
+celery = make_celery(flask_app)
+
 # todo: error handling around the put statement; do we want to log responses from xnat
-#
+
+def init_session(user, password):
+    s = requests.Session()
+    s.auth = (user, password)
+    return s
+
+@celery.task
+def celery_upload(server, user, password, url, file_path):
+    files = {'file': ('T1.nii.gz', open(file_path, 'rb'), 'application/octet-stream')}
+    s = init_session(user, password)
+    r = s.put(server + url, files=files)
+    debug()
+    return r
+
+@celery.task
+def celery_import(server, user, password, file_path, url, overwrite='delete'):
+    files = {'file': ('DICOMS.zip', open(file_path, 'rb'), 'application/octet-stream')}
+    s = init_session(user, password)
+    r = s.post(server + '/data/services/import', files=files, dest=url, overwrite='delete')
+    return r
 
 class XNATConnection:
 
@@ -14,6 +40,7 @@ class XNATConnection:
         self.xnat_config = config
         self._set_attributes()
         self.xnat_hierarchy = ['subject', 'experiment', 'scan', 'resource', 'file']
+        self._get_celery_status()
 
     def _set_attributes(self):
         """ Set attributes on self
@@ -27,38 +54,49 @@ class XNATConnection:
         for dest in ['archive', 'prearchive']:
             setattr(self, dest + '_prefix', '/data/{}/projects/{}'.format(dest, self.project))
 
+    # Todo: This will almost certainly need to change in a production environment.
+    # It's hard to say exactly how without seeing exactly what is returned from worker inspection in a prod env.
+    def _get_celery_status(self):
+        celery_status = get_celery_worker_status(celery)
+        registered_tasks = celery_status['registered_tasks']
+        for key in registered_tasks:
+            for task in registered_tasks[key]:
+                if 'celery_import' in task:
+                    self.celery_import = True
+                if 'celery_upload' in task:
+                    self.celery_upload = True
 
-    # todo: wrap everything in a try/except again
-    # what do we want from the response object?  to log it?
-    def _xnat_put(self, url='', file_path=None, imp=False, **kwargs):
-        """ The method to create an XNAT object
+    # todo: what do we want from the response object?  to log it?
+    def _upload_file(self, url, file_path):
+        if self.celery_upload:
+            # url = url[:url.find('files')]
+            result = celery_upload(self.server, self.user, self.password, url, file_path)
+        else:
+            with xnat.connect(self.server, self.user, self.password) as session:
+                result = session.upload(url, file_path)
+        return result
 
-        Uses the xnatpy session.put, session.upload, or session.services.import_ method to add an object to XNAT.
+    def _import_file(self, file_path, url, **kwargs):
+        if self.celery_import:
+            url = url[url.find('/archive'):]
+            result = celery_import(self.server, self.user, self.password, file_path, url, overwrite='delete')
+        else:
+            with xnat.connect(self.server, self.user, self.password) as session:
+                result = session.services.import_(file_path, overwrite='delete', **kwargs)
+        return result
 
-        :param str url: a put route in the XNAT API
-        :param str file_path: path to a file to upload
-        :param bool imp: whether to use the import service (True if file is zip of dicoms, otherwise False)
-        :param kwargs kwargs: arguments to pass to the import service (project, subject, and experiment)
-        :return: str the XNAT URI of the created scan, if the import service was invoked, or else an empty string
-        """
+    def xnat_put(self, url):
         with xnat.connect(self.server, self.user, self.password) as session:
-            if imp:
-                session.services.import_(file_path, overwrite='delete', **kwargs)
-                return self._get_uris()
-            elif file_path:
-                session.upload(url, file_path)
-                return self._get_uris()
-            else:
-                try:
-                    response = session.put(url)
-                    return response
-                except xnat.exceptions.XNATResponseError as e:
-                    error = e
-                    if 'status 409' in error.args[0]: # this error is raised when you try to create a resource that exists
-                        return 'You tried to create something that already exists.'
-                    else:
-                        pass
-                        # error is unknown, handle it somehow
+            try:
+                response = session.put(url)
+                return response
+            except xnat.exceptions.XNATResponseError as e:
+                error = e
+                if 'status 409' in error.args[0]:  # this error is raised when you try to create a resource that exists
+                    return 'You tried to create something that already exists.'
+                else:
+                    pass
+                    # error is unknown, handle it somehow
             return ''
 
     def xnat_get(self, url):
@@ -69,8 +107,7 @@ class XNATConnection:
                 pass
             return response
 
-
-    def _get_uris(self):
+    def _fetch_uris(self):
         """
         :param session: the xnatpy XNAT connection object
         :return: the uri of the last created scan
@@ -110,7 +147,6 @@ class XNATConnection:
             return response
 
     def launch_command(self, command_id, wrapper_id, data=None):
-
         url =  '/xapi/projects/{}/commands/{}/wrappers/{}/launch'.format(self.project, command_id, wrapper_id)
         return self.xnat_post(url, data)
 
@@ -161,17 +197,17 @@ class XNATConnection:
                 query = ''
 
             if level == 'file':
-                fetched_uris = self._xnat_put(url=uri + query, file_path=file_path)
+                result = self._upload_file(url=uri+query, file_path=file_path)
             else:
-                if not exists_already: self._xnat_put(url=uri + query)
+                if not exists_already: self.xnat_put(url=uri + query)
 
         kwargs = {'project': self.project, 'subject': self.xnat_ids['subject']['xnat_id'],
                   'experiment': self.xnat_ids['experiment']['xnat_id']}
 
         if import_service:
-            fetched_uris = self._xnat_put(file_path=file_path, imp=True, **kwargs)
+            result = self._import_file(file_path, uri, **kwargs)
 
-        return fetched_uris
+        return self._fetch_uris()
 
 
 

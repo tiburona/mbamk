@@ -62,6 +62,7 @@ class ScanService:
         local_path, dcm = self._process_file(image_file)
         self.xnat_ids = self._generate_xnat_identifiers(dcm=dcm)
         self.existing_xnat_ids = self._check_for_existing_xnat_ids()
+        # is this a place for async code?
         uris = self.xc.upload_scan(self.xnat_ids, self.existing_xnat_ids, local_path, import_service=dcm)
         scan = self._add_scan_to_database() # todo: what should scan's string repr be?
         keywords = ['subject', 'experiment', 'scan']
@@ -102,9 +103,9 @@ class ScanService:
         return scan
 
     def _process_file(self, image_file):
-        """
+        """Prepare file for upload to XNAT and cloud storage
         :param image_file:
-        :return:
+        :return: two-tuple of the path to the file on local disk and a boolean indicating if the file is a zip file
         """
         name, ext = os.path.splitext(image_file.filename)
         local_path = os.path.join(self.upload_dest, os.path.basename(image_file.filename))
@@ -181,6 +182,15 @@ class ScanService:
             obj.update(**{'xnat_{}_id'.format(kw): id})
 
     def _dicom_to_nifti(self, scan_id):
+        """Convert dicom files to nifti
+
+        When dicom files are uploaded to the container service, create a new derivation object and use the derivation
+        service to launch dicom to nifti conversion.
+
+        :param int scan_id: the id of the scan whose dicom files will be converted
+        :return: a dictionary representing the json response from the XNAT container service
+        :rtype dict
+        """
         scan = Scan.get_by_id(scan_id)
         nifti = Derivation.create(scan_id=scan.id, process_name='dicom_to_nifti', status='unstarted')
         ds = DerivationService(nifti.id, scan.id)
