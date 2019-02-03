@@ -11,17 +11,6 @@ def flash_errors(form, category='warning'):
         for error in errors:
             flash('{0} - {1}'.format(getattr(form, field).label.text, error), category)
 
-def user_context_processor():
-    """This will automatically inject user object to routes and templates.
-    See http://slides.skien.cc/flask-hacks-and-best-practices/#21."""
-    if current_user.is_authenticated:
-        user = current_user._get_current_object()
-    else:
-        user = None
-    return {
-        'user': user,
-    }
-
 def send_async_email(app, msg):
     """Helper function to send async email.
     See https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-xi-email-support"""

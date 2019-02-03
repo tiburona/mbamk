@@ -9,7 +9,7 @@ from flask_security import SQLAlchemyUserDatastore
 from cookiecutter_mbam.extensions import admin, cache, csrf_protect, db, debug_toolbar, migrate,\
     security, webpack, mail, jsglue
 from .hooks import create_test_users, models_committed_hooks
-from cookiecutter_mbam.utils import user_context_processor
+#from cookiecutter_mbam.utils import user_context_processor
 
 def create_app(config_object='cookiecutter_mbam.settings'):
     """An application factory, as explained here: http://flask.pocoo.org/docs/patterns/appfactories/.

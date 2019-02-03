@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Scan views."""
 from flask import Blueprint, render_template, flash, redirect, url_for, session, request
-from flask_security import current_user, login_required
+from flask_security import current_user, login_required, roles_required
 from .forms import ScanForm, ExperimentAndScanForm
 from .service import ScanService
 from cookiecutter_mbam.experiment.views import add_experiment
@@ -76,5 +76,9 @@ def add():
 @login_required
 def add_experiment_and_scans():
     """Access the add_experiment_and_scans route and form"""
+    # Check first whether user has completed basic user profile and provided consent
+    if not current_user.consented:
+        return redirect(url_for('user.profile'))
+
     return meta_add(ExperimentAndScanForm(request.form), request, 'scan.add_experiment_and_scans',
                     'scans/experiment_and_scans.html', add_exp=True)

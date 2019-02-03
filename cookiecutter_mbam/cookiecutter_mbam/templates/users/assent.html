@@ -1,0 +1,90 @@
+{% extends "layout.html" %}
+
+{% block title %}Consent Form{% endblock %}
+
+{% block content %}
+
+
+
+
+
+<div class="container-narrow">
+    <h3 class="mt-5">MyBrainandMe.Org: An online resource for user-driven data sharing of structural MRI brain imaging and behavioral data.</h3>
+    <h5>Why is this study being done?</h5>
+    <p class="text-justify">Thanks for your interest in MyBrainandMe.org. Before you upload your brain scan, we would
+      like to inform you about what this research involves. We will also inform you of any potential risks and/or
+      benefits of your participation.</p>
+    <p class="text-justify">MyBrainandMe.org is a website where you can learn more about neuroscience and
+      your brain. You will also help scientists to make new discoveries about how the brain works. The site is
+      not-for-profit and directed by Dr. Pantazatos in the Brain Imaging Lab in the Molecular Imaging and Neuropathology
+      Division at the New York State Psychiatric Institute.</p>
+    <p class="text-justify">If you previously had a structural MRI brain scan for research
+      or clinical purposes, you can upload it to MyBrainandMe.org. Your data will contribute to a growing neuroscience
+      resource. This resource may be made available to scientific researchers around the world. You will also have an
+      opportunity to learn neuroanatomy using your own brain. There are no direct benefits from participating in this study.</p>
+    <h5>Do I have to be in the study?</h5>
+    <p class="text-justify">Participation in this research study is voluntary.  You are free to withdraw consent and stop
+      participating at any time.</p>
+    <h5>What will happen to me if I’m in the study?</h5>
+    <p class="text-justify">You will complete a brief personal profile and upload a digital copy of your MRI. You will
+      also be asked to complete brief surveys or tasks in your web browser. These surveys and tasks take about 30 minutes
+      to complete in total. You can take a break in between each survey or task. Some tasks measure things like your
+      reaction time in response to pictures. Other tasks ask you questions about your emotions, feelings, life experiences,
+      and habits. We may contact you in the future to ask if you are interested in completing additional tasks.</p>
+    <p class="text-justify">After uploading your MRI scan, you will have the opportunity to view it in a web-browser.
+      Our site will label each brain region so that you can learn brain anatomy on your own brain.</p>
+    <h5>Will anything bad happen to me?</h5>
+    <p class="text-justify">There are no physical health risks associated with this study. If we learn of any reasons
+      why you might change your mind about being in the study, we will tell you.</p>
+    <p class="text-justify">The study requires you to upload data and provide information. There is some risk to your
+      personal identifying information. We will to the best of our ability protect your data from any security breaches.
+      However, we cannot guarantee against any breach. We believe that the security threat to your personal identifying
+      information is low.</p>
+    <h5>Can this study help me?</h5>
+    <p class="text-justify">By participating in this study, you will learn more about neuroscience and neuroanatomy
+      using your own brain. You will not learn anything about your brain specifically through participating in this study.
+      Rather, you may learn about the names of different parts of the brain, displayed on your own brain scan. You will
+      also contribute to our understanding of how the brain works. You will not benefit medically by participating in
+      this study.</p>
+    <h5>Will people know that I am in the study?</h5>
+    <p class="text-justify">Your data will be kept in a secure database. It will be shared with other researchers.
+      However, your privacy is protected because shared data will not include any identifying information about you.</p>
+    <p class="text-justify">This research is covered by a Certificate of Confidentiality from the Department of Health
+      and Human Services. This means we will not share your information with anyone else without your permission.
+      An exception is if there is a law that requires us to share your information. Some examples are laws that may
+      require us to report child abuse, plans to harm yourself or others, or contagious diseases. However, this exception
+      does not apply to any legal proceedings. This exception does not apply if you give your permission to share your data.
+      This exception does not apply if your data is used for other scientific research. This is allowed by federal
+      regulations protecting research subjects.</p>
+    <p class="text-justify">A Certificate of Confidentiality does not prevent you or a family member from sharing your
+      data with others. If you give written permission, then we may share your data with others. We may share your data
+      if it is requested by groups that are funding this research. These funders include people from state or federal
+      agencies. Your data may also be shared if it is needed by the federal Food and Drug Administration (FDA). Your
+      information will be available to research staff. Your data will also be available to people from state and regulatory
+      institutions. These people may review your data as part of routine audits.</p>
+    <h5>Will I get anything if I decide to be in the study?</h5>
+    <p class="text-justify">You will not be paid for your participation in this study.</p>
+    <h5>Is there anything else that I should know about the study?</h5>
+
+    <p class="text-justify">See our <a href="{{ url_for('public.FAQ') }}">FAQ</a> if you have any questions.
+      Dr. Spiro Pantazatos oversees the study. Dr. Jeffrey Miller assists with the study.
+      The research team will try to answer any questions you have. If you have questions, you may contact us at 646-774-8710.
+      You may also write an email to spiro.pantazatos@nyspi.columbia.edu.</p>
+    <hr>
+    <h5>Documentation of Assent</h5>
+    <p class="text-justify">Do you have questions about our research study? Check our <a href="{{ url_for('public.FAQ') }}">FAQ</a>
+      or ask us <a href="{{ url_for('public.contact') }}">here </a>before moving forward! By checking the box below, you
+      indicate that you agree with the following statements.</p>
+    <p class="text-justify">“I am age thirteen (13) years or older. I understand the above study procedures. I have had any
+      questions answered. I voluntarily agree to participate in the research study described above.”</p>
+      {% from "security/_macros.html" import render_field %}
+      <form method="POST" action="{{ url_for( 'user.assent' ) }}" role="form">
+          {{ form.hidden_tag() }}
+          {{ render_field(form.assented) }}
+          <button type="submit" class="btn btn-primary">Submit</button>
+          <a href="{{ url_for('public.home') }}" class="btn btn-primary">Cancel</a>
+      </form>
+
+</div>
+
+{% endblock %}

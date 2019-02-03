@@ -65,7 +65,7 @@ class TestProfileForm:
     def test_validate_success(self, user):
         """Profile successful."""
         form = ProfileForm(first_name='foo', last_name='bar',
-                             sex='Male', dob='1980-05-12', consent_provided=True)
+                             sex='Male', dob='1980-05-12')
 
         assert form.validate() is True
 
@@ -92,5 +92,5 @@ class TestResetPasswordForm:
         """ Enter different email """
         form = ResetPasswordForm(password='example123',password_confirm='example124')
         assert form.validate() is False
-        
+
         assert 'Passwords do not match' in form.password_confirm.errors
