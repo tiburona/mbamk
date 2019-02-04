@@ -39,6 +39,7 @@ environs = "==4.0.0"
 xnat = "==0.3.11"
 pymysql = "==0.9.3"
 bcrypt = "*"
+boto3 = "==1.9.86"
 # Async
 celery = "==4.2.1"
 

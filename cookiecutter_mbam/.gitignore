@@ -53,6 +53,7 @@ cookiecutter_mbam/static/build/
 cookiecutter_mbam/webpack/manifest.json
 
 # Configuration
+setup.cfg
 
 #.env
 

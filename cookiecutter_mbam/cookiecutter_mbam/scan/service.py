@@ -19,6 +19,7 @@ Todo: I need to make sure that if I catch an exception in XNAT connection I don'
 import os
 import configparser
 from cookiecutter_mbam.xnat import XNATConnection
+from cookiecutter_mbam.storage import CloudStorageConnection
 from cookiecutter_mbam.experiment import Experiment
 from cookiecutter_mbam.user import User
 from .models import Scan
@@ -45,9 +46,8 @@ class ScanService:
         config.read(config_path)
         self.upload_dest = os.path.join(self.instance_path, config['uploads']['uploaded_scans_dest'])
         self.xc = XNATConnection(config=config['XNAT'])
+        self.csx = CloudStorageConnection(config=config['AWS'])
 
-    # todo: what is the actual URI of the experiment I've created?  Why does it have the XNAT prefix?
-    # maybe that's the accessor?  Is the accessor in the URI?
     def add(self, image_file):
         """The top level public method for adding a scan
 
@@ -63,6 +63,13 @@ class ScanService:
         self.xnat_ids = self._generate_xnat_identifiers(dcm=dcm)
         self.existing_xnat_ids = self._check_for_existing_xnat_ids()
         # is this a place for async code?
+        result = self.csx.upload_scan(
+            user_id=self.user_id,
+            experiment_id=self.experiment.id,
+            scan_id=self.xnat_ids['scan']['xnat_id'],
+            file_path=local_path,
+            filename=image_file.filename
+        )
         uris = self.xc.upload_scan(self.xnat_ids, self.existing_xnat_ids, local_path, import_service=dcm)
         scan = self._add_scan_to_database() # todo: what should scan's string repr be?
         keywords = ['subject', 'experiment', 'scan']

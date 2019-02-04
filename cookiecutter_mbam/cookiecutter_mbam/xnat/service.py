@@ -39,7 +39,13 @@ class XNATConnection:
         self.xnat_config = config
         self._set_attributes()
         self.xnat_hierarchy = ['subject', 'experiment', 'scan', 'resource', 'file']
-        self._get_celery_status()
+        self.celery_upload = False
+        self.celery_import = False
+        try:
+            self._get_celery_status()
+        except:
+            # log the exception
+            pass
 
     def _set_attributes(self):
         """ Set attributes on self
