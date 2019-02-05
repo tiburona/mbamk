@@ -7,8 +7,8 @@
 
       <h1 class="display-3 text-center">Welcome to My Brain and Me!</h1>
       {% if current_user.is_authenticated %}
-          {% if not current_user.consented %}
-              <p class="lead text-center">Click below to upload your brain scan. We will ask you to complete a basic user profile
+          {% if not current_user.experiments.scans %}
+              <p class="lead text-center">Click below to upload your brain scan. If this is your first visit we will ask you to complete a basic user profile
               and read and agree to our consent form for participation in research.</p>
               <hr class="my-4">
               <p class="lead text-center">
