@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Test forms."""
 from flask import url_for
-from cookiecutter_mbam.public.forms import LoginForm
+from cookiecutter_mbam.public.forms import LoginForm, ContactForm
 from cookiecutter_mbam.user.forms import RegisterForm, ProfileForm, ForgotPasswordForm, ResetPasswordForm
 
 class TestRegisterForm:
@@ -66,7 +66,15 @@ class TestProfileForm:
         """Profile successful."""
         form = ProfileForm(first_name='foo', last_name='bar',
                              sex='Male', dob='1980-05-12')
+        assert form.validate() is True
 
+class TestContactForm:
+    """Contact form."""
+
+    def test_validate_success(self, user):
+        """Contact form successful."""
+        form = ContactForm(fullname='foobar', email=user.email,
+                             subject='Other', message='This site is great!')
         assert form.validate() is True
 
 class TestForgotPasswordForm:

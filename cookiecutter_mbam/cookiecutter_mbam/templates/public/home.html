@@ -7,7 +7,7 @@
 
       <h1 class="display-3 text-center">Welcome to My Brain and Me!</h1>
       {% if current_user.is_authenticated %}
-          {% if not current_user.has_role('end-user') %}
+          {% if not current_user.consented %}
               <p class="lead text-center">Click below to upload your brain scan. We will ask you to complete a basic user profile
               and read and agree to our consent form for participation in research.</p>
               <hr class="my-4">
@@ -18,8 +18,8 @@
               <p class="lead text-center">Click below to view your scans or complete a survey.</p>
               <hr class="my-4">
               <p class="lead text-center">
-                  <a class="btn btn-primary btn-large" href="" role="button"><i class="fa fa-eye" aria-hidden="true"></i>My scans</a>
-                  <a class="btn btn-primary btn-large" href="" role="button"><i class="fa fa-pencil-square" aria-hidden="true"></i>My surveys</a>
+                  <a class="btn btn-primary btn-large" href="" role="button"><i class="fa fa-eye" aria-hidden="true"></i> My scans</a>
+                  <a class="btn btn-primary btn-large" href="" role="button"><i class="fa fa-pencil-square" aria-hidden="true"></i> My surveys</a>
               </p>
           {% endif %}
       {% else %}

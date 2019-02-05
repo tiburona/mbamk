@@ -9,7 +9,7 @@ html {
 }
 
 body {
-  padding-top: 60px;
+  /*padding-top: 60px;*/
 }
 
 section {
@@ -29,7 +29,7 @@ textarea {
 .navbar-custom {
   /*background-color: #f59ddd fucia pink */
   background-color: #30f7ef;
-  height: 80px;
+  /*height: 80px;*/
 }
 
 .btn-link {

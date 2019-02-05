@@ -9,7 +9,6 @@ from cookiecutter_mbam.user.models import User
 
 from .factories import UserFactory
 
-
 class TestLoggingIn:
     """Login."""
 
@@ -144,3 +143,28 @@ class TestRegistering:
         # Submits
         res = form.submit().follow()
         assert res.status_code == 200
+
+class TestUpdateUserModel:
+    """ Updating User model. """
+
+    def test_add_profile(self, user, testapp):
+        """ Login and add basic demo info """
+        res = testapp.get(url_for('security.login'))
+        # Fills out login form
+        form = res.forms['loginForm']
+        form['email'] = user.email
+        form['password'] = 'example'
+        # Submits
+        res = form.submit().follow()
+        # grab profile form
+        res = testapp.get(url_for('user.profile'))
+        form = res.forms['profileForm']
+        form['first_name'] = 'foo'
+        form['last_name'] = 'bar'
+        form['dob'] = '2002-02-02'
+        form['sex'] = 'Female'
+        res = form.submit().follow()
+        # sees flash message and can retrieve user with new attributes
+        assert 'User profile saved' in res
+        usr = User.get_by_id(user.id)
+        assert usr.sex == 'Female'

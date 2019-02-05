@@ -40,7 +40,7 @@ def consent():
             return redirect(url_for('scan.add_experiment_and_scans'))
         else:
             flash('Consent for participation in research NOT provided','alert')
-            return redirect(url_for('pubic.home'))
+            return redirect(url_for('public.home'))
 
     return render_template('users/consent.html',form=form)
 
@@ -50,13 +50,13 @@ def assent():
     """ Assent form for participation in research."""
     form = AssentForm()
     if form.validate_on_submit():
-        current_user.update(assented=form.assented.data)
+        current_user.update(assented=form.assented.data, parent_email=form.email.data)
         if current_user.assented:
-            flash('Assent for participation in research provided','success')
-            return redirect(url_for('scan.add_experiment_and_scans'))
+            flash('Assent provided. Please have your parent or legal guardian consent.','success')
+            return redirect(url_for('public.home'))
         else:
-            flash('Assent for participation in research NOT provided','alert')
-            return redirect(url_for('pubic.home'))
+            flash('Assent NOT provided','alert')
+            return redirect(url_for('public.home'))
 
     return render_template('users/assent.html',form=form)
 
@@ -66,12 +66,13 @@ def parent_permission():
     """ Parent permission form for participation in research."""
     form = ConsentForm()
     if form.validate_on_submit():
-        current_user.update(consented=form.consented.data)
+        # Come back and add code here to find children of parent and call the object
+        # minor
         if current_user.consented:
-            flash('Consent for participation in research provided','success')
+            flash('Parent permission provided','success')
             return redirect(url_for('scan.add_experiment_and_scans'))
         else:
-            flash('Consent for participation in research NOT provided','alert')
+            flash('Parent permission NOT provided','alert')
             return redirect(url_for('pubic.home'))
 
     return render_template('users/parent_permission.html',form=form)

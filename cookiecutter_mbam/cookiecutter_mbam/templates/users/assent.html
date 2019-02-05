@@ -4,10 +4,6 @@
 
 {% block content %}
 
-
-
-
-
 <div class="container-narrow">
     <h3 class="mt-5">MyBrainandMe.Org: An online resource for user-driven data sharing of structural MRI brain imaging and behavioral data.</h3>
     <h5>Why is this study being done?</h5>
@@ -74,13 +70,15 @@
     <h5>Documentation of Assent</h5>
     <p class="text-justify">Do you have questions about our research study? Check our <a href="{{ url_for('public.FAQ') }}">FAQ</a>
       or ask us <a href="{{ url_for('public.contact') }}">here </a>before moving forward! By checking the box below, you
-      indicate that you agree with the following statements.</p>
+      indicate that you agree with the following statements. You must also provide your parent or legal guardian’s email address.
+      Your parent must first grant permission before you can proceed with the study.</p>
     <p class="text-justify">“I am age thirteen (13) years or older. I understand the above study procedures. I have had any
       questions answered. I voluntarily agree to participate in the research study described above.”</p>
-      {% from "security/_macros.html" import render_field %}
+      {% from "security/_macros.html" import render_field, render_field_with_errors %}
       <form method="POST" action="{{ url_for( 'user.assent' ) }}" role="form">
           {{ form.hidden_tag() }}
           {{ render_field(form.assented) }}
+          {{ render_field_with_errors(form.email, class='form-control') }}
           <button type="submit" class="btn btn-primary">Submit</button>
           <a href="{{ url_for('public.home') }}" class="btn btn-primary">Cancel</a>
       </form>

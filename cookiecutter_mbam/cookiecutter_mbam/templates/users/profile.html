@@ -9,7 +9,7 @@
     <h3 class="mt-5">User Profile</h3>
 
     {% from "security/_macros.html" import render_field, render_field_with_errors %}
-    <form method="POST" action="{{ url_for( 'user.profile' ) }}" role="form">
+    <form id="profileForm" method="POST" action="{{ url_for( 'user.profile' ) }}" role="form">
         {{ form.hidden_tag() }}
         {{ render_field_with_errors(form.first_name, class_='form-control') }}
         {{ render_field_with_errors(form.last_name, class_='form-control') }}
