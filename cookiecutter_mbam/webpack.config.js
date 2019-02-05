@@ -10,7 +10,7 @@ const ManifestRevisionPlugin = require('manifest-revision-webpack-plugin');
 // take debug mode from the environment
 const debug = (process.env.NODE_ENV !== 'production');
 
-// Development asset host (webpack dev server). PUBLIC_HOST needs to be defined as env variable if developing i.e. on C9 IDE. 
+// Development asset host (webpack dev server). PUBLIC_HOST needs to be defined as env variable if developing i.e. on C9 IDE.
 // In this case start both servers with 'PUBLIC=$PUBLIC npm start' instead of just 'npm start'
 const tmp_host = process.env.PUBLIC_HOST ? process.env.PUBLIC_HOST : 'http://localhost'
 const publicHost = debug ? tmp_host + ":8081" : '';
@@ -25,6 +25,7 @@ module.exports = {
     main_css: [
       path.join(__dirname, 'node_modules', 'font-awesome', 'css', 'font-awesome.css'),
       path.join(__dirname, 'node_modules', 'bootstrap', 'dist', 'css', 'bootstrap.css'),
+      path.join(__dirname, 'node_modules', 'bootstrap-fileinput', 'css', 'fileinput.min.css'),
       path.join(__dirname, 'assets', 'css', 'style.css'),
     ],
   },
@@ -40,6 +41,9 @@ module.exports = {
   devtool: 'source-map',
   devServer: {
     headers: { 'Access-Control-Allow-Origin': '*' },
+  },
+  node: {
+    fs: "empty"
   },
   module: {
     loaders: [

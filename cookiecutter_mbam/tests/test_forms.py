@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """Test forms."""
-
-from cookiecutter_mbam.public.forms import LoginForm
-from cookiecutter_mbam.user.forms import RegisterForm, ProfileForm
+from flask import url_for
+from cookiecutter_mbam.public.forms import LoginForm, ContactForm
+from cookiecutter_mbam.user.forms import RegisterForm, ProfileForm, ForgotPasswordForm, ResetPasswordForm
 
 class TestRegisterForm:
     """Register form."""
@@ -65,6 +65,40 @@ class TestProfileForm:
     def test_validate_success(self, user):
         """Profile successful."""
         form = ProfileForm(first_name='foo', last_name='bar',
-                             sex='Male', dob='1980-05-12', consent_provided=True)
+                             sex='Male', dob='1980-05-12')
+        assert form.validate() is True
+
+class TestContactForm:
+    """Contact form."""
+
+    def test_validate_success(self, user):
+        """Contact form successful."""
+        form = ContactForm(fullname='foobar', email=user.email,
+                             subject='Other', message='This site is great!')
+        assert form.validate() is True
+
+class TestForgotPasswordForm:
+    """Send reset password form."""
+
+    def test_validate_success(self, user):
+        """Send reset instructions successful."""
+        form = ForgotPasswordForm(email=user.email)
 
         assert form.validate() is True
+        assert form.user == user
+
+class TestResetPasswordForm:
+    """Send reset password form."""
+
+    def test_validate_success(self, user):
+        """Reset password successful."""
+        form = ResetPasswordForm(password='example123',password_confirm='example123')
+        assert form.validate() is True
+
+
+    def test_validate_invalid_password_reset(self, user):
+        """ Enter different email """
+        form = ResetPasswordForm(password='example123',password_confirm='example124')
+        assert form.validate() is False
+
+        assert 'Passwords do not match' in form.password_confirm.errors

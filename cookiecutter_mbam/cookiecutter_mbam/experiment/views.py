@@ -38,3 +38,19 @@ def add():
 def single_experiment(id):
     """Display a single experiment"""
     return render_template('experiments/experiment.html', id=id)
+
+@blueprint.route('/<id>/edit', methods=['GET', 'POST'])
+def edit_experiment(id):
+    """Access and edit experiment metadata."""
+    exp = Experiment.query.filter(Experiment.id==id).first_or_404()
+    form = ExperimentForm(obj=exp)
+
+    if form.validate_on_submit():
+        form.populate_obj(exp); # update whatever has been changed in the form
+        exp.save()
+        flash("Experiment metadata updated","success")
+        return redirect(url_for('experiment.single_experiment', id=exp.id))
+    else:
+        flash_errors(form)
+
+    return render_template('experiments/edit_experiment.html',session_form=form, experiment=exp)

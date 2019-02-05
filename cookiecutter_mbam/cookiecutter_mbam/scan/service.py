@@ -174,7 +174,7 @@ class ScanService:
     def _update_database_objects(self, objects=[], keywords=[], uris=[], ids=[],):
         """Update database objects
 
-        After uploading a scan, ensures that user, experient, and scan are updated in the database with their xnat uri
+        After uploading a scan, ensures that user, experiment, and scan are updated in the database with their xnat uri
         and xnat id.
 
         :param list objects: user, experiment, and scan

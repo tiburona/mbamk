@@ -33,6 +33,8 @@ Flask-Admin = "==1.5.2"
 Flask-Caching = ">=1.0.0"
 # Debug toolbar
 Flask-DebugToolbar = "==0.10.1"
+# Flask-JSGlue 
+Flask-JSGlue = "==0.3.1"
 # Environment variable parsing
 environs = "==4.0.0"
 # Database communications
@@ -42,6 +44,7 @@ bcrypt = "*"
 boto3 = "==1.9.86"
 # Async
 celery = "==4.2.1"
+redis = "*"
 
 [dev-packages]
 # Testing

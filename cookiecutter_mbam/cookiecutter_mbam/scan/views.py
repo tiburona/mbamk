@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Scan views."""
 from flask import Blueprint, render_template, flash, redirect, url_for, session, request
-from flask_login import current_user
+from flask_security import current_user, login_required, roles_required
 from .forms import ScanForm, ExperimentAndScanForm
 from .service import ScanService
 from cookiecutter_mbam.experiment.views import add_experiment
@@ -66,12 +66,19 @@ def meta_add(form, request, redirect_route, template, add_exp = False):
     return render_template(template, form=form)
 
 @blueprint.route('/add', methods=['GET', 'POST'])
+@login_required
 def add():
     """Access the add scan route and form."""
     return meta_add(ScanForm(request.form), request, 'scan.add', 'scans/upload.html')
 
+
 @blueprint.route('/add_experiment_and_scans', methods=['GET', 'POST'])
+@login_required
 def add_experiment_and_scans():
-    """Acess the add_experiment_and_scans route and form"""
+    """Access the add_experiment_and_scans route and form"""
+    # Check first whether user has completed basic user profile and provided consent
+    if not current_user.consented:
+        return redirect(url_for('user.profile'))
+
     return meta_add(ExperimentAndScanForm(request.form), request, 'scan.add_experiment_and_scans',
                     'scans/experiment_and_scans.html', add_exp=True)
