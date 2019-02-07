@@ -15,6 +15,7 @@ class Scan(SurrogatePK, Model):
     __tablename__ = 'scan'
     xnat_uri = db.Column(db.String(255))
     xnat_scan_id = db.Column(db.String(80))
+    aws_key = db.Column(db.String(255))
     experiment_id = reference_col('experiment', nullable=True)
     derivations = relationship('Derivation', backref='scan')
 

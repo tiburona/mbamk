@@ -52,8 +52,9 @@ class ScanService:
         """The top level public method for adding a scan
 
         Calls methods to infer file type and further process the file, generate xnat identifiers and query strings,
-        check what XNAT identifiers objects have, upload the scan to XNAT, add the scan to the database, and update
-        user, experiment, and scan database objects with their XNAT-related attributes.
+        checks what XNAT identifiers objects have, uploads the scan to cloud storage, uploads the scan to XNAT, adds the
+        scan to the database, updates user, experiment, and scan database objects with their XNAT-related attributes,
+        and finally, if the uploaded file was zipped file of dicoms, starts the process of conversion to nifti.
 
         :param file object image_file: the file object
         :return: None
@@ -62,8 +63,7 @@ class ScanService:
         local_path, dcm = self._process_file(image_file)
         self.xnat_ids = self._generate_xnat_identifiers(dcm=dcm)
         self.existing_xnat_ids = self._check_for_existing_xnat_ids()
-        # is this a place for async code?
-        result = self.csx.upload_scan(
+        key, result = self.csx.upload_scan(
             user_id=self.user_id,
             experiment_id=self.experiment.id,
             scan_id=self.xnat_ids['scan']['xnat_id'],
@@ -71,7 +71,7 @@ class ScanService:
             filename=image_file.filename
         )
         uris = self.xc.upload_scan(self.xnat_ids, self.existing_xnat_ids, local_path, import_service=dcm)
-        scan = self._add_scan_to_database() # todo: what should scan's string repr be?
+        scan = self._add_scan_to_database(aws_key=key) # todo: what should scan's string repr be?
         keywords = ['subject', 'experiment', 'scan']
         self._update_database_objects(keywords=keywords, objects=[self.user, self.experiment, scan],
                                       ids=[self.xnat_ids[kw]['xnat_id'] for kw in keywords], uris=uris)
@@ -96,17 +96,18 @@ class ScanService:
     def _delete_from_xnat(self, scan):
         """
         :param object scan: the database object corresponding to the scan to delete in xnat
-        :return:
+        :return: None
         """
         self.xc.xnat_delete(scan.xnat_uri)
 
-    def _add_scan_to_database(self):
+    def _add_scan_to_database(self, aws_key):
         """Add a scan to the database
 
         Creates the scan object, adds it to the database, and increments the parent experiment's scan count
         :return: scan
         """
         scan = Scan.create(experiment_id=self.experiment.id)
+        scan.update(aws_key=aws_key)
         return scan
 
     def _process_file(self, image_file):

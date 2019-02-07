@@ -30,7 +30,7 @@ def scan_service(db, app, request, mocker):
       this function returns a scan service object with no attributes mocked.
       :rtype: function
       """
-    num_exp, num_scans, exp_id, scan_id, exp_uri, scan_uri = request.param
+    num_exp, num_scans, exp_id, scan_id, exp_uri, scan_uri, s3_directory_key = request.param
 
     user = UserFactory(password='myprecious')
 
@@ -39,14 +39,14 @@ def scan_service(db, app, request, mocker):
         db.session.add(experiment)
     db.session.commit()
 
-    def _scan_service(do_mock):
+    def _scan_service(do_mock, filename):
 
         config_dir = os.path.join(app.instance_path[:-8], 'tests')
 
         ss = ScanService(experiment.user.id, experiment.id, config_dir=config_dir)
 
         for i in range(num_scans):
-            ss._add_scan_to_database()
+            ss._add_scan_to_database(aws_key='')
 
         ss.param = request.param
 
@@ -54,6 +54,8 @@ def scan_service(db, app, request, mocker):
             ss.xc.upload_scan = mocker.MagicMock()
             ss.xc.upload_scan.return_value = ('/data/archive/subjects/000001', exp_uri, scan_uri)
             mocker.spy(ss, '_generate_xnat_identifiers')
+            ss.csx.upload_scan = mocker.MagicMock()
+            ss.csx.upload_scan.return_value = (os.path.join(s3_directory_key, filename), None)
 
         return ss
 
@@ -118,7 +120,7 @@ class ScanUploadSetup:
         :return: a three-tuple of the ScanService object, all the scans for the current experiment, and the most
         recently created scan
         """
-        scan_service = scan_service(do_mock=do_mock)
+        scan_service = scan_service(do_mock=do_mock, filename=filename)
         scan_service = self.add_a_scan(scan_service, filename)
         retrieved_scans = Scan.query.filter((Scan.experiment_id == scan_service.experiment.id))
         scan = retrieved_scans.order_by(Scan.created_at.desc()).first()
@@ -146,7 +148,8 @@ def generate_upload_test_parameters(range_exp, range_scans):
             scan_id = 'T1_' + str(j + 1)
             exp_uri = os.path.join(root_path, exp_id)
             scan_uri = os.path.join(root_path, exp_id, 'scans', scan_id)
-            test_data.append((i, j, exp_id, scan_id, exp_uri, scan_uri))
+            s3_directory_key = os.path.join('user', '000001', 'experiment', str(i), 'scan', scan_id)
+            test_data.append((i, j, exp_id, scan_id, exp_uri, scan_uri, s3_directory_key))
     return test_data
 
 # Each set of parameters is a list of tuples. The parameters in the tuple are number of scans, number of experiments,
@@ -170,27 +173,28 @@ class TestScanUpload(ScanUploadSetup):
     """
 
     def test_before_file_upload_an_experiment_has_no_xnat_attributes(self, mock_DS, scan_service, filename):
-        scan_service = scan_service(do_mock=True)
+        scan_service = scan_service(do_mock=True, filename=filename)
         assert scan_service.experiment.xnat_uri == None
         assert scan_service.experiment.xnat_experiment_id == None
 
     def test_after_file_upload_experiment_has_one_more_scan(self, mock_DS, scan_service, filename):
         scan_service, retrieved_scans, scan = self.setup_tests(scan_service, filename)
-        num_exp, num_scans, exp_id, scan_id, exp_uri, scan_uri = scan_service.param
+        num_exp, num_scans, exp_id, scan_id, exp_uri, scan_uri, s3_directory_key = scan_service.param
         assert retrieved_scans.count() == num_scans + 1
         assert scan_service.experiment.num_scans == num_scans + 1
 
     def test_after_file_upload_experiment_attributes_are_set(self, mock_DS, scan_service, filename):
         scan_service, retrieved_scans, scan = self.setup_tests(scan_service, filename)
-        num_exp, num_scans, exp_id, scan_id, exp_uri, scan_uri = scan_service.param
+        num_exp, num_scans, exp_id, scan_id, exp_uri, scan_uri, s3_directory_key = scan_service.param
         assert scan_service.experiment.xnat_uri == exp_uri
         assert scan_service.experiment.xnat_experiment_id == exp_id
 
     def test_after_file_upload_scan_attributes_are_set(self, mock_DS, scan_service, filename):
         scan_service, retrieved_scans, scan = self.setup_tests(scan_service, filename)
-        num_exp, num_scans, exp_id, scan_id, exp_uri, scan_uri = scan_service.param
+        num_exp, num_scans, exp_id, scan_id, exp_uri, scan_uri, s3_directory_key = scan_service.param
         assert scan.xnat_scan_id == scan_id
         assert scan.xnat_uri == scan_uri
+        assert scan.aws_key == os.path.join(s3_directory_key, filename)
 
 @pytest.mark.parametrize('filename,import_service,resource_type',
                          [('T1.nii.gz', False, 'NIFTI'), ('structural.nii', False, 'NIFTI'),
@@ -207,7 +211,7 @@ class TestScanUploadPrivateMethods(ScanUploadSetup):
     @pytest.mark.parametrize('scan_service', small_set_of_params, indirect=True)
     @mock.patch('cookiecutter_mbam.scan.service.DerivationService')
     def test_resource_name_accords_to_file_type(self, mock_DS, scan_service, filename, import_service, resource_type):
-        scan_service = scan_service(do_mock=True)
+        scan_service = scan_service(do_mock=True, filename=filename)
         scan_service = self.add_a_scan(scan_service, filename)
         scan_service._generate_xnat_identifiers.assert_called_with(dcm=import_service)
         xnat_ids = scan_service._generate_xnat_identifiers(dcm=import_service)
@@ -215,7 +219,7 @@ class TestScanUploadPrivateMethods(ScanUploadSetup):
 
     @pytest.mark.parametrize('scan_service', small_set_of_params, indirect=True)
     def test_process_file(self, scan_service, filename, import_service, resource_type):
-        scan_service = scan_service(do_mock=True)
+        scan_service = scan_service(do_mock=True, filename=filename)
         scan_service, file = self.open_file_storage_obj(scan_service, filename)
         file_path, imp = scan_service._process_file(file)
         assert imp == import_service
@@ -226,8 +230,8 @@ class TestScanUploadPrivateMethods(ScanUploadSetup):
 
     @pytest.mark.parametrize('scan_service', large_set_of_params, indirect=True)
     def test_generate_xnat_ids(self, scan_service, filename, import_service, resource_type):
-        scan_service = scan_service(do_mock=True)
-        num_exp, num_scans, exp_id, scan_id, exp_uri, scan_uri = scan_service.param
+        scan_service = scan_service(do_mock=True, filename=filename)
+        num_exp, num_scans, exp_id, scan_id, exp_uri, scan_uri, s3_directory_key = scan_service.param
         xnat_ids = scan_service._generate_xnat_identifiers()
         assert xnat_ids['experiment']['xnat_id'] == exp_id
         assert xnat_ids['scan']['xnat_id'] == scan_id
@@ -242,7 +246,7 @@ class TestScanUtils:
         It returns a gzipped file object and the path to that file on disk
         And the file name of the new gzipped file is the old file name + the .gz extension
         """
-        scan_service = scan_service(do_mock=True)
+        scan_service = scan_service(do_mock=True, filename='structural.nii.gz')
         nii_path = os.path.join(scan_service.instance_path, 'files', 'structural.nii')
         file_object, file_path = gzip_file(nii_path)
         assert type(file_object).__name__ == 'GzipFile'
