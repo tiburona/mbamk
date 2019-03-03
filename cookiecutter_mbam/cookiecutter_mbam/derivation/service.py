@@ -8,6 +8,8 @@ process_to_command = {
     'dicom_to_nifti':'dcm2niix'
 }
 
+
+
 class DerivationService:
 
     def __init__(self, derivation_id, scan_id, config_dir = ''):
@@ -33,4 +35,6 @@ class DerivationService:
         wrapper_id = self.command_config[self.process_name + '_wrapper_id']
         self.derivation.status = 'started'
         return self.xc.launch_command(command_id, wrapper_id, data)
+
+
 

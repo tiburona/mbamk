@@ -1,15 +1,22 @@
 # -*- coding: utf-8 -*-
 """The app module, containing the app factory function."""
 from flask import Flask, render_template
+from flask_security import SQLAlchemyUserDatastore
+from celery import Celery
+from cookiecutter_mbam import celery
+from cookiecutter_mbam.utility.celery_utils import init_celery
+
 
 from cookiecutter_mbam import commands, public, user, experiment, scan
-from cookiecutter_mbam.user import User, Role
 from cookiecutter_mbam.admin import UserAdmin, RoleAdmin
-from flask_security import SQLAlchemyUserDatastore
-from cookiecutter_mbam.extensions import admin, cache, csrf_protect, db, debug_toolbar, migrate,\
+from cookiecutter_mbam.extensions import admin, cache, csrf_protect, db, debug_toolbar, migrate, \
     security, webpack, mail, jsglue
+from cookiecutter_mbam.user import User, Role
 from .hooks import create_test_users, models_committed_hooks
+
+
 #from cookiecutter_mbam.utils import user_context_processor
+
 
 def create_app(config_object='cookiecutter_mbam.settings'):
     """An application factory, as explained here: http://flask.pocoo.org/docs/patterns/appfactories/.
@@ -18,6 +25,7 @@ def create_app(config_object='cookiecutter_mbam.settings'):
     """
     app = Flask(__name__.split('.')[0])
     app.config.from_object(config_object)
+    init_celery(app, celery=celery)
     register_extensions(app)
     register_hooks(app)
     register_blueprints(app)
@@ -56,7 +64,6 @@ def register_blueprints(app):
     app.register_blueprint(scan.views.blueprint)
     return None
 
-
 def register_errorhandlers(app):
     """Register error handlers."""
     def render_error(error):
@@ -92,6 +99,23 @@ def register_admin_views():
     """Register Flask admin views."""
     admin.add_view(UserAdmin(User, db.session))
     admin.add_view(RoleAdmin(Role, db.session))
+
+def make_celery(app=None):
+    app = app or create_app(config='cookicutter_mbam.settings')
+    celery = Celery(__name__, broker='redis://localhost:6379')
+    celery.conf.update(app.config)
+    TaskBase = celery.Task
+
+    class ContextTask(TaskBase):
+        abstract = True
+
+        def __call__(self, *args, **kwargs):
+            with app.app_context():
+                return TaskBase.__call__(self, *args, **kwargs)
+
+    celery.Task = ContextTask
+    return celery
+
 
 # def register_processors(app):
 #     """Register context processors."""

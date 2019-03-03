@@ -76,7 +76,6 @@ def add():
 @login_required
 def add_experiment_and_scans():
     """Access the add_experiment_and_scans route and form"""
-    # Check first whether user has completed basic user profile and provided consent
     if not current_user.consented:
         return redirect(url_for('user.profile'))
 

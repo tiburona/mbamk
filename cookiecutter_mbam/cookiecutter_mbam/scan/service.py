@@ -19,19 +19,23 @@ Todo: I need to make sure that if I catch an exception in XNAT connection I don'
 import os
 import configparser
 from cookiecutter_mbam.xnat import XNATConnection
+from cookiecutter_mbam.xnat.tasks import *
 from cookiecutter_mbam.storage import CloudStorageConnection
 from cookiecutter_mbam.experiment import Experiment
 from cookiecutter_mbam.user import User
 from .models import Scan
-from cookiecutter_mbam.derivation import Derivation, DerivationService
+from cookiecutter_mbam.derivation import Derivation, DerivationService, update_status_on_derivation_model
 from .utils import gzip_file, crop
+from cookiecutter_mbam.storage.tasks import upload_scan
 
 from flask import current_app
+
+
 def debug():
     assert current_app.debug == False, "Don't panic! You're here by request of debug()"
 
-class ScanService:
 
+class ScanService:
     def __init__(self, user_id, exp_id, config_dir=''):
         self.user_id = user_id
         self.user = User.get_by_id(self.user_id)
@@ -46,37 +50,66 @@ class ScanService:
         config.read(config_path)
         self.upload_dest = os.path.join(self.instance_path, config['uploads']['uploaded_scans_dest'])
         self.xc = XNATConnection(config=config['XNAT'])
-        self.csx = CloudStorageConnection(config=config['AWS'])
+        self.csc = CloudStorageConnection(config=config['AWS'])
 
     def add(self, image_file):
         """The top level public method for adding a scan
 
         Calls methods to infer file type and further process the file, generate xnat identifiers and query strings,
-        checks what XNAT identifiers objects have, uploads the scan to cloud storage, uploads the scan to XNAT, adds the
-        scan to the database, updates user, experiment, and scan database objects with their XNAT-related attributes,
+        check what XNAT identifiers objects have, upload the scan to cloud storage, upload the scan to XNAT, add the
+        scan to the database, update user, experiment, and scan database objects with their XNAT-related attributes,
         and finally, if the uploaded file was zipped file of dicoms, starts the process of conversion to nifti.
 
         :param file object image_file: the file object
         :return: None
 
         """
-        local_path, dcm = self._process_file(image_file)
+        local_path, filename, dcm = self._process_file(image_file)
+
         self.xnat_ids = self._generate_xnat_identifiers(dcm=dcm)
         self.existing_xnat_ids = self._check_for_existing_xnat_ids()
-        key, result = self.csx.upload_scan(
+
+        # upload scan to cloud storage
+        key = self.csc.upload_scan(
             user_id=self.user_id,
             experiment_id=self.experiment.id,
             scan_id=self.xnat_ids['scan']['xnat_id'],
-            file_path=local_path,
-            filename=image_file.filename
+            file=local_path,
+            filename=filename,
+            file_obj=False
         )
+
+        # upload scan to XNAT
         uris = self.xc.upload_scan(self.xnat_ids, self.existing_xnat_ids, local_path, import_service=dcm)
-        scan = self._add_scan_to_database(aws_key=key) # todo: what should scan's string repr be?
+
+        scan = self._add_scan_to_database(orig_aws_key=key, dcm=dcm)  # todo: what should scan's string repr be?
+
         keywords = ['subject', 'experiment', 'scan']
-        self._update_database_objects(keywords=keywords, objects=[self.user, self.experiment, scan],
-                                      ids=[self.xnat_ids[kw]['xnat_id'] for kw in keywords], uris=uris)
-        if dcm:
-            self.launch_response = self._dicom_to_nifti(scan.id)
+        self._update_database_objects(
+            keywords=keywords,
+            objects=[self.user, self.experiment, scan],
+            ids=[self.xnat_ids[kw]['xnat_id'] for kw in keywords],
+            uris=uris
+        )
+
+        if dcm: self._dicom_conversion(scan)
+
+    def _dicom_conversion(self, scan):
+        container_id, nifti, derivation_service = self._dicom_to_nifti(scan.id)
+        self.dicom2nifti_container_id = container_id
+        self.await_dicom_conversion(container_id=container_id, scan=scan, derivation=nifti)
+
+    def await_dicom_conversion(self, container_id, scan, derivation):
+
+        xnat_credentials = (self.xc.server, self.xc.user, self.xc.password)
+        scan_info = (self.user_id, scan.experiment_id, scan.id)
+        chain = poll_cs.s(xnat_credentials, container_id) | \
+                update_status_on_derivation_model.s(derivation.id) | \
+                dl_file_from_xnat.s(xnat_credentials, self.xc.nifti_files_url(scan), self.upload_dest) | \
+                upload_scan.s(self.csc.bucket_name, self.upload_dest, self.csc.auth, scan_info)
+        # todo: should add another function to the key that writes the name of the key to the derivation object
+        # todo: this also means that cloud storage key should be an attribute of Derivation
+        chain()
 
     def delete(self, scan_id, delete_from_xnat=False):
         """ Delete a scan from the database
@@ -94,20 +127,24 @@ class ScanService:
         scan.delete()
 
     def _delete_from_xnat(self, scan):
+        # todo: consider whether this really needs to be its own method or should just folded into delete
         """
         :param object scan: the database object corresponding to the scan to delete in xnat
         :return: None
         """
         self.xc.xnat_delete(scan.xnat_uri)
 
-    def _add_scan_to_database(self, aws_key):
+    def _add_scan_to_database(self, orig_aws_key, dcm):
         """Add a scan to the database
 
         Creates the scan object, adds it to the database, and increments the parent experiment's scan count
         :return: scan
         """
         scan = Scan.create(experiment_id=self.experiment.id)
-        scan.update(aws_key=aws_key)
+        if dcm:
+            scan = scan.update(orig_aws_key=orig_aws_key)
+        else:
+            scan = scan.update(orig_aws_key=orig_aws_key, nifti_aws_key=orig_aws_key)
         return scan
 
     def _process_file(self, image_file):
@@ -116,7 +153,8 @@ class ScanService:
         :return: two-tuple of the path to the file on local disk and a boolean indicating if the file is a zip file
         """
         name, ext = os.path.splitext(image_file.filename)
-        local_path = os.path.join(self.upload_dest, os.path.basename(image_file.filename))
+        filename = os.path.basename(image_file.filename)
+        local_path = os.path.join(self.upload_dest, filename)
         image_file.save(local_path)
         if ext == '.nii':
             image_file, gz_path = gzip_file(local_path)
@@ -124,7 +162,7 @@ class ScanService:
             local_path = gz_path
         image_file.close()
         dcm = ext == '.zip'
-        return (local_path, dcm)
+        return (local_path, filename, dcm)
 
     def _generate_xnat_identifiers(self, dcm=False):
         """Generate object ids for use in XNAT
@@ -143,11 +181,12 @@ class ScanService:
 
         xnat_exp_id = '{}_MR{}'.format(xnat_ids['subject']['xnat_id'], self.user.num_experiments)
         exp_date = self.experiment.date.strftime('%m/%d/%Y')
-        xnat_ids['experiment'] = {'xnat_id': xnat_exp_id, 'query_string':'?xnat:mrSessionData/date={}'.format(exp_date)}
+        xnat_ids['experiment'] = {'xnat_id': xnat_exp_id,
+                                  'query_string': '?xnat:mrSessionData/date={}'.format(exp_date)}
 
         scan_number = self.experiment.num_scans + 1
         xnat_scan_id = 'T1_{}'.format(scan_number)
-        xnat_ids['scan'] = {'xnat_id':xnat_scan_id, 'query_string':'?xsiType=xnat:mrScanData'}
+        xnat_ids['scan'] = {'xnat_id': xnat_scan_id, 'query_string': '?xsiType=xnat:mrScanData'}
 
         if dcm:
             resource = 'DICOM'
@@ -155,7 +194,7 @@ class ScanService:
             resource = 'NIFTI'
         xnat_ids['resource'] = {'xnat_id': resource}
 
-        xnat_ids['file'] = {'xnat_id':'T1.nii.gz', 'query_string':'?xsi:type=xnat:mrScanData'}
+        xnat_ids['file'] = {'xnat_id': 'T1.nii.gz', 'query_string': '?xsi:type=xnat:mrScanData'}
 
         return xnat_ids
 
@@ -163,8 +202,7 @@ class ScanService:
         """Check for existing attributes on the user and experiment
 
         Generates a dictionary with current xnat_subject_id for the user, xnat_experiment_id for the experiment as
-        values if they exist (empty string if they do not exist). A private method not designed to be accessed by other
-        classes.
+        values if they exist (empty string if they do not exist).
 
         :return: a dictionary with two keys with the xnat subject id and xnat experiment id.
         :rtype: dict
@@ -172,7 +210,7 @@ class ScanService:
         return {k: getattr(v, k) if getattr(v, k) else '' for k, v in {'xnat_subject_id': self.user,
                                                                        'xnat_experiment_id': self.experiment}.items()}
 
-    def _update_database_objects(self, objects=[], keywords=[], uris=[], ids=[],):
+    def _update_database_objects(self, objects=[], keywords=[], uris=[], ids=[], ):
         """Update database objects
 
         After uploading a scan, ensures that user, experiment, and scan are updated in the database with their xnat uri
@@ -192,17 +230,26 @@ class ScanService:
     def _dicom_to_nifti(self, scan_id):
         """Convert dicom files to nifti
 
-        When dicom files are uploaded to the container service, create a new derivation object and use the derivation
+        When dicom files are uploaded to the container service, creates a new derivation object and use the derivation
         service to launch dicom to nifti conversion.
 
         :param int scan_id: the id of the scan whose dicom files will be converted
-        :return: a dictionary representing the json response from the XNAT container service
-        :rtype dict
+        :return: the id of the container running the process
+        :rtype string
         """
         scan = Scan.get_by_id(scan_id)
         nifti = Derivation.create(scan_id=scan.id, process_name='dicom_to_nifti', status='unstarted')
         ds = DerivationService(nifti.id, scan.id)
         scan_data_locator = crop(scan.xnat_uri, '/experiments')
         rv = ds.launch(data={'scan': scan_data_locator})
-        return rv
+        container_id = json.loads(rv.text)['container-id']
+        nifti.update(status='started')
+        # todo: container_id should probably also be a field on derivation, derivation service, or both.
+        # Think about this.
+        return (container_id, nifti, ds)
 
+    def _on_nifti_conversion(self, scan):
+        # todo: consider changing name of upload_dest if we also use it for downloads
+        file_obj = self.xc.download_file(scan.xnat_uri, resource_type='NIFTI')
+        key = self.csc.upload_scan(self.user_id, self.experiment.id, scan.id, file_obj, file_obj.name, file_obj=True)
+        return scan.update(nifti_aws_key=key)

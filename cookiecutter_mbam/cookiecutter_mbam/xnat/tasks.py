@@ -2,32 +2,24 @@ import requests
 import time
 import json
 import os
-from celery.contrib import rdb
-# from cookiecutter_mbam.app import make_celery
-# celery = make_celery()
-
+from cookiecutter_mbam.utility.request_utils import init_session
 from cookiecutter_mbam import celery
-
-def init_session(user, password):
-    s = requests.Session()
-    s.auth = (user, password)
-    return s
-
 
 @celery.task
 def celery_upload(server, user, password, url, file_path):
     files = {'file': ('T1.nii.gz', open(file_path, 'rb'), 'application/octet-stream')}
     with init_session(user, password) as s:
-        r = s.put(server + url, files=files)
-        return r
+        s.put(server + url, files=files)
 
 @celery.task
 def celery_import(server, user, password, file_path, url):
     files = {'file': ('DICOMS.zip', open(file_path, 'rb'), 'application/octet-stream')}
     with init_session(user, password) as s:
         r = s.post(server + '/data/services/import', files=files, data={'dest': url, 'overwrite':'delete'})
-        # return r # the error is here
+        # todo: if response has good info about whether the file uploaded, should use that
+        # to send a message back to user about success of upload.
 
+# todo: figure out how to specify action to take if celery times out.
 @celery.task(time_limit=10000)
 def poll_cs(xnat_credentials, container_id):
     server, user, password = xnat_credentials

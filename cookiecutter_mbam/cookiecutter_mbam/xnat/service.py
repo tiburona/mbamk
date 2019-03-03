@@ -1,37 +1,21 @@
 import os
+
 import xnat
-from flask import Flask
-import requests
-from cookiecutter_mbam.tasks import make_celery, get_celery_worker_status
-
-
 from flask import current_app
+
+from cookiecutter_mbam.utility.celery_utils import get_celery_worker_status
+from .tasks import *
+
+
+#
+# celery questions: how do I get these tasks sent to two different workers
+# i.e. how to I make sure they're distributed
 def debug():
     assert current_app.debug == False, "Don't panic! You're here by request of debug()"
 
-flask_app = Flask(__name__)
-celery = make_celery(flask_app)
 
 # todo: error handling around the put statement; do we want to log responses from xnat
 
-def init_session(user, password):
-    s = requests.Session()
-    s.auth = (user, password)
-    return s
-
-@celery.task
-def celery_upload(server, user, password, url, file_path):
-    files = {'file': ('T1.nii.gz', open(file_path, 'rb'), 'application/octet-stream')}
-    s = init_session(user, password)
-    r = s.put(server + url, files=files)
-    return r
-
-@celery.task
-def celery_import(server, user, password, file_path, url):
-    files = {'file': ('DICOMS.zip', open(file_path, 'rb'), 'application/octet-stream')}
-    s = init_session(user, password)
-    r = s.post(server + '/data/services/import', files=files, data={'dest': url, 'overwrite':'delete'})
-    return r
 
 class XNATConnection:
 
@@ -58,6 +42,7 @@ class XNATConnection:
         [setattr(self, k, v) for k, v in self.xnat_config.items()]
         for dest in ['archive', 'prearchive']:
             setattr(self, dest + '_prefix', '/data/{}/projects/{}'.format(dest, self.project))
+        self.auth = (self.server, self.user, self.password)
 
     # Todo: This will almost certainly need to change in a production environment.
     # It's hard to say exactly how without seeing exactly what is returned from worker inspection in a prod env.
@@ -74,7 +59,8 @@ class XNATConnection:
     # todo: what do we want from the response object?  to log it?
     def _upload_file(self, url, file_path):
         if self.celery_upload:
-            result = celery_upload(self.server, self.user, self.password, url, file_path)
+            result = celery_upload.delay(self.server, self.user, self.password, url, file_path)
+            result.wait()
         else:
             with xnat.connect(self.server, self.user, self.password) as session:
                 result = session.upload(url, file_path)
@@ -83,11 +69,13 @@ class XNATConnection:
     def _import_file(self, file_path, url, **kwargs):
         if self.celery_import:
             url = url[url.find('/archive'):]
-            result = celery_import(self.server, self.user, self.password, file_path, url, overwrite='delete')
+            result = celery_import.delay(self.server, self.user, self.password, file_path, url)
+            result.wait()
         else:
             with xnat.connect(self.server, self.user, self.password) as session:
                 result = session.services.import_(file_path, overwrite='delete', **kwargs)
         return result
+
 
     def xnat_put(self, url):
         with xnat.connect(self.server, self.user, self.password) as session:
@@ -104,31 +92,52 @@ class XNATConnection:
             return ''
 
     def xnat_get(self, url):
-        with xnat.connect(self.server, self.user, self.password) as session:
-            try:
-                response = session.get(url)
-            except:
-                pass
-            return response
+        with init_session(self.user, self.password) as session:
+            return session.get(self.server + url)
+
+    def nifti_files_url(self, scan):
+        return self.server + os.path.join(scan.xnat_uri, 'resources', 'NIFTI', 'files')
+
+    def download_file(self, scan_uri, resource_type, file_obj=True, file_path='', file_name=''):
+        response = self.xnat_get(os.path.join(scan_uri, 'resources', resource_type, 'files'))
+        if response.ok:
+            result =  json.loads(response.text)['ResultSet']['Result'][0]
+            response = self.xnat_get(result['URI'])
+            if response.ok:
+                if file_obj:
+                    f_o = BytesIO(response.content)
+                    f_o.name = result['Name']
+                    return f_o
+                with open(os.path.join(file_path, file_name), 'wb') as f:
+                    f.write(response.content)
+        return response
 
     def _fetch_uris(self):
         """
         :param session: the xnatpy XNAT connection object
-        :return: the uri of the last created scan
-        :rtype: str
+        :return: the uris of the subject, experiment, and last created scan
+        :rtype: tuple
         """
-        subject_id = self.xnat_ids['subject']['xnat_id']
-        experiment_id = self.xnat_ids['experiment']['xnat_id']
-        _, subject, experiment, scan = self.get_scan_info(subject_id, experiment_id)
+        _, subject, experiment, scan = self.get_scan_info()
         return (subject.uri, experiment.uri, scan.uri)
 
-    def get_scan_info(self, subject_id, experiment_id):
+    def get_scan_info(self, scan_id='latest'):
+        subject_id = self.xnat_ids['subject']['xnat_id']
+        experiment_id = self.xnat_ids['experiment']['xnat_id']
         with xnat.connect(self.server, self.user, self.password) as session:
             project = session.projects[self.project]
             subject = session.subjects[subject_id]
             experiment = project.experiments[experiment_id]
-            scan = session.projects[self.project].experiments[experiment_id].scans[-1]
+            if scan_id == 'latest':
+                scan = session.projects[self.project].experiments[experiment_id].scans[-1]
+            else:
+                scan = experiment.scans[scan_id]
         return (project, subject, experiment, scan)
+
+    def get_files(self, scan_id='latest'):
+        project, subject, experiment, scan = self.get_scan_info(scan_id=scan_id)
+        files = scan.files.values()
+        return files
 
     def xnat_delete(self, url):
         """ Delete an item from XNAT
