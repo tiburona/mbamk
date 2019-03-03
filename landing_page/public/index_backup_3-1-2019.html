@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!--
+    Document Title
+    =============================================
+    -->
+    <title>SPROUT - Preview page</title>
+    <!--
+    Favicons
+    =============================================
+    -->
+    <link rel="apple-touch-icon" sizes="57x57" href="assets/images/favicons/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="assets/images/favicons/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="assets/images/favicons/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="assets/images/favicons/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="assets/images/favicons/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="assets/images/favicons/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="assets/images/favicons/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="assets/images/favicons/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/images/favicons/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="assets/images/favicons/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="assets/images/favicons/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/images/favicons/favicon-16x16.png">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="assets/images/favicons/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+    <!--
+    Stylesheets
+    =============================================
+
+    -->
+    <!-- Default stylesheets-->
+    <link href="assets/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Template specific stylesheets-->
+    <link href="assets/lib/owl.carousel/dist/assets/owl.carousel.css" rel="stylesheet">
+    <!-- Main stylesheet and color file-->
+    <link href="assets/css/style.css" rel="stylesheet">
+    <link id="color-scheme" href="assets/css/colors/default.css" rel="stylesheet">
+  </head>
+  <body data-spy="scroll" data-target=".onpage-navigation" data-offset="60">
+    <main>
+      <section class="top-part"><img id="image-background" src="assets/images/grey_neuron_background.jpg">
+        <div class="container">
+          <div class="row">
+            <div class="col-xs-12 col-xs-offset-0 col-sm-10 col-sm-offset-1 col-lg-8 col-lg-offset-2">
+                <p>Do you have an interest in brain science and wonder how it applies to you? Would you
+                like to see inside your own brain, or learn more about your psychology?
+                Have you participated in neuroimaging research study or had a clinical brain and
+                always wanted to do more with your brain scan data?</p>
+                <p>We are developing a platform that enables people to learn about their brain and
+                their  psychology for recreation, education and self-improvement. Our core mission
+                is to integrate brain science with self-exploration to accelerate discovery in
+                neuroscience and mental health research. We also want to inspire people to make
+                a difference by participating in research studies, online or in person.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="alert-banner">
+      <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSeoagz_MA8ddxF6kx9RS_DVNvIYCup001mT-35kEMowngAWkg/viewform?embedded=true" width="100%" height="1280" frameborder="0" marginheight="0" marginwidth="0">Loading...</iframe>
+      <!--
+        <form class="form-inline d-flex">
+          <input type="email" class="form-control flex-fill mr-0 mr-sm-2 mb-3 mb-sm-0" id="inputEmail" value="Enter email address..." onfocus="if(this.value==this.defaultValue)this.value='';" onblur="if(this.value=='')this.value=this.defaultValue;">
+          <button type="submit" class="btn btn-primary mx-auto">Subscribe for updates</button>
+          <br>
+          <br>
+          <p>Optional: </p>
+          <input type="radio" class="form-control mr-0 mr-sm-2 mb-3 mb-sm-0" name="feature1" value="Volve"> <span>Volvo</span><br>
+          <input type="radio" class="form-control mr-0 mr-sm-2 mb-3 mb-sm-0" name="feature2" value="Chevy"> <span>Chevy</span><br>
+        </form>-->
+      </section>
+      <footer id="footer"><span class="copyright">Affiliated with New York State Psychiatric Institute, Columbia University Vagelos College of Physicians and Surgeons, and NYC MediaLab</a><br><a href="https://twitter.com/mybrainandmeorg" title="twitter" target="_blank">Follow us on Twitter</a></span></footer>
+    </main>
+    <!--
+    JavaScripts
+    =============================================
+    -->
+    <script src="https://www.gstatic.com/firebasejs/5.8.3/firebase.js"></script>
+    <script>
+      // Initialize Firebase
+      var config = {
+        apiKey: "AIzaSyADO1Hwljz12mxUARkeks8Oz7s5xJX2zFs",
+        authDomain: "mbam-project.firebaseapp.com",
+        databaseURL: "https://mbam-project.firebaseio.com",
+        projectId: "mbam-project",
+        storageBucket: "mbam-project.appspot.com",
+        messagingSenderId: "308177551143"
+      };
+      firebase.initializeApp(config);
+    </script>
+
+    <script src="assets/lib/jquery/dist/jquery.js"></script>
+    <script src="assets/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="assets/lib/owl.carousel/dist/owl.carousel.js"></script>
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/firebase.js"></script>
+
+
+  </body>
+</html>

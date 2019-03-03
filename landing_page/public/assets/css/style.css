@@ -1,0 +1,122 @@
+@import url("https://fonts.googleapis.com/css?family=Open+Sans:400,700");
+body {
+  color: #232323;
+  font-family: "Open sans", "sans-serif";
+  font-size: 15pt;
+  line-height: 1.25;
+  text-align: center;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body #image-background {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  min-width: 100%;
+  min-height: 100%;
+  width: 100%;
+  height: auto;
+  -webkit-transform: translateX(-50%) translateY(-50%);
+  -ms-transform: translateX(-50%) translateY(-50%);
+  transform: translateX(-50%) translateY(-50%);
+}
+
+.spinning-brain {
+  /* background-image: url('../images/standard_brain_cutaway.gif'); /* The image used */ */
+  background-color: None; /* Used if the image is unavailable */
+  height: 650px; /* You must set a specified height */
+  background-position: center; /* Center the image */
+  background-repeat: no-repeat; /* Do not repeat the image */
+  background-size: cover; /* Resize the background image to cover the entire container */
+}
+
+h1 {
+  color: #fff;
+  font-weight: 100;
+  font-size: 52px;
+}
+
+h2 {
+  color: #fff;
+  font-weight: 100;
+  font-size: 36px;
+}
+
+p {
+  text-align: justify;
+  color: #fff;
+  font-size: 18px;
+}
+
+.main {
+  background-size: cover;
+  display: table;
+  height: 100vh;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  z-index: 1;
+  overflow-x: hidden;
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.content {
+  display: table-cell;
+  text-align: center;
+  vertical-align: middle;
+}
+
+a:hover {
+  color: #00c8aa;
+  text-decoration: none;
+  outline: none;
+}
+
+a {
+  transition: all 0.2s cubic-bezier(0.42, 0, 0.58, 1);
+  cursor: pointer;
+  color: #000000;
+}
+
+#footer {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  padding: 1rem;
+  background-color: #efefef;
+  text-align: center;
+  border:1px solid black;
+}
+
+footer span.affiliations {
+  /* color: #000000; */
+  margin-top: 0;
+  margin-bottom: 0;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  line-height: 19px;
+  font-weight: 400;
+}
+
+footer span.affiliations a:active, footer span.affiliations a:focus {
+  color: #FFFFFF;
+}
+
+::-webkit-input-placeholder {
+  color: #fff !important;
+}
+
+::-moz-placeholder {
+  color: #fff !important;
+}
+
+:-moz-placeholder {
+  color: #fff !important;
+}
+
+:-ms-input-placeholder {
+  color: #fff !important;
+}
