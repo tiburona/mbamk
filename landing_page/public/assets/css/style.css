@@ -22,8 +22,8 @@ body #image-background {
   transform: translateX(-50%) translateY(-50%);
 }
 
-.spinning-brain {
-  /* background-image: url('../images/standard_brain_cutaway.gif'); /* The image used */ */
+.hero-brain {
+  /* background-image: url('../images/standard_brain_cutaway.gif'); /* The image used */
   background-color: None; /* Used if the image is unavailable */
   height: 650px; /* You must set a specified height */
   background-position: center; /* Center the image */
@@ -32,6 +32,7 @@ body #image-background {
 }
 
 h1 {
+  padding-top: 125px;
   color: #fff;
   font-weight: 100;
   font-size: 52px;
@@ -40,13 +41,20 @@ h1 {
 h2 {
   color: #fff;
   font-weight: 100;
+  font-size: 42px;
+}
+
+h3 {
+  text-align: left;
+  color: #fff;
+  font-weight: 100;
   font-size: 36px;
 }
 
 p {
-  text-align: justify;
+  text-align: center;
   color: #fff;
-  font-size: 18px;
+  font-size: 20px;
 }
 
 .main {
@@ -58,7 +66,7 @@ p {
   top: 0;
   z-index: 1;
   overflow-x: hidden;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.2);
 }
 
 .content {
