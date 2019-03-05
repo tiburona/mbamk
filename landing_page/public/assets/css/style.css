@@ -72,6 +72,10 @@ p {
   font-size: 20px;
 }
 
+.welcome {
+  padding-top: 125px;
+}
+
 @media (max-width: 600px) {
   h1 {
      padding-top: 10px;
@@ -93,9 +97,12 @@ p {
   p {
     font-size: 18px
   }
+
+  .welcome {
+    padding-top: 5px;
+  }
+
 }
-
-
 
 .main {
   background-size: cover;
@@ -144,7 +151,7 @@ footer span.affiliations {
   margin-bottom: 0;
   font-size: 12px;
   text-transform: uppercase;
-  letter-spacing: 2px;
+  letter-spacing: 1px;
   line-height: 19px;
   font-weight: 400;
 }
