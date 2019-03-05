@@ -75,20 +75,8 @@ body {
 }
 
 #media {
-  font-size: 2.1rem;
+  font-size: 2.05rem;
 }
-
-/* .navbar-nav>li>a:hover {
-  color:#ffb366;
-}
-
-.navbar-inverse>li>a:hover {
-  color:#ffb366;
-}
-
-.navbar-brand>li>a:hover {
-  color:#ffb366;
-} */
 
 .brain-background {
   background-image: url('../images/405_transparent_fuzz10.gif');
@@ -145,7 +133,7 @@ h3 {
   margin-bottom: 5rem;
   border-radius: 10px;
   overflow: hidden;
-  width: 510px;
+  width: 710px;
 }
 
 #iframe {
@@ -276,7 +264,7 @@ h3 {
 
 @media screen and (min-width: 551px) {
   iframe {
-    width: 520px;
+    width: 720px;
   }
 }
 
