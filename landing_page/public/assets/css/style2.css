@@ -35,19 +35,23 @@ body {
   border-radius: 0;
 }
 
-.navbar-inverse .navbar-brand {
+.navbar-inverse {
   color: rgb(0,0,0,.6)
 }
 
 .navbar-brand {
   font-size: 2rem;
   font-weight: 800 !important;
-  color: rgba(255, 179, 102, .6) !important;
+  color: rgba(255, 179, 102, .6);
   padding-top: 1.4rem;
 }
 
 .navbar-inverse .navbar-nav>li>a {
-  color:rgb(0,0,0,.6)
+  color:rgba(0,0,0,.6)
+}
+
+.navbar-link a {
+  color:rgba(0,0,0,.6)
 }
 
 .nav>li>a {
@@ -87,7 +91,7 @@ body {
 } */
 
 .brain-background {
-  background-image: url('../images/810_transparent.gif');
+  background-image: url('../images/405_transparent_fuzz10.gif');
   background-repeat: no-repeat;
   position: relative;
   background-size:45em;
