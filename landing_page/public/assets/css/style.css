@@ -10,6 +10,7 @@ body {
 }
 
 body #image-background {
+  /*background-image: url('../images/405_transparent_fuzz10.gif');*/
   position: fixed;
   top: 50%;
   left: 50%;
@@ -22,10 +23,24 @@ body #image-background {
   transform: translateX(-50%) translateY(-50%);
 }
 
+body #brain-background {
+  /*background-image: url('../images/405_transparent_fuzz10.gif');*/
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  min-width: 100%;
+  min-height: 100%;
+  width: auto;
+  height: auto;
+  -webkit-transform: translateX(-50%) translateY(-50%);
+  -ms-transform: translateX(-50%) translateY(-50%);
+  transform: translateX(-50%) translateY(-50%);
+}
+
 .hero-brain {
-  /* background-image: url('../images/standard_brain_cutaway.gif'); /* The image used */
+  /* background-image: url('../images/405_transparent_fuzz10.gif'); /* The image used */ */
   background-color: None; /* Used if the image is unavailable */
-  height: 650px; /* You must set a specified height */
+  height: 750px; /* You must set a specified height */
   background-position: center; /* Center the image */
   background-repeat: no-repeat; /* Do not repeat the image */
   background-size: cover; /* Resize the background image to cover the entire container */
@@ -56,6 +71,31 @@ p {
   color: #fff;
   font-size: 20px;
 }
+
+@media (max-width: 600px) {
+  h1 {
+     padding-top: 10px;
+     font-size: 36px;
+  }
+
+  h2 {
+    font-size: 28px;
+  }
+
+  h2 strong {
+    font-size: 28px;
+  }
+
+  h3 {
+    font-size: 24px;
+  }
+
+  p {
+    font-size: 18px
+  }
+}
+
+
 
 .main {
   background-size: cover;
