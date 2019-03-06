@@ -35,6 +35,8 @@ body #brain-background {
   -webkit-transform: translateX(-50%) translateY(-50%);
   -ms-transform: translateX(-50%) translateY(-50%);
   transform: translateX(-50%) translateY(-50%);
+  background: rgba(0, 0, 0, 0.3);
+  filter: brightness(150%);
 }
 
 .hero-brain {
@@ -113,7 +115,7 @@ p {
   top: 0;
   z-index: 1;
   overflow-x: hidden;
-  background: rgba(0, 0, 0, 0.2);
+  /* background: rgba(0, 0, 0, 0.2); */
 }
 
 .content {
