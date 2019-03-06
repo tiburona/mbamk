@@ -6,25 +6,14 @@ body {
   text-align: center;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
 }
-
-html,body
-{
-    width: 100%;
-    height: 100%;
-    margin: 0px;
-    padding: 0px;
-    overflow-x: hidden;
-}
-
 
 .content {
   display: table-cell;
   text-align: center;
   vertical-align: left;
 }
-
-
 
 .neurons {
   background:
@@ -69,6 +58,10 @@ html,body
 
 .navbar-header>button {
   z-index: 9999999;
+}
+
+#myNavbar {
+  border-top: 0px;
 }
 
 #brain-icon {
@@ -161,6 +154,13 @@ div.transbox p {
   margin-bottom: -1rem;
 }
 
+.partners>img {
+  width: 30%;
+  height: 30%;
+  padding-top: 2rem;
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
 
 #nyspi {
   padding-top: .9rem;
@@ -266,6 +266,13 @@ div.transbox p {
   #nyspi {
     margin-top: .5rem;
   }
+
+  /* .partners>img {
+    width: 25%;
+    height: 40%;
+    padding-left: .1rem;
+    padding-right:.1rem;
+  } */
 }
 
 @media screen and (max-width: 550px) {
@@ -283,6 +290,8 @@ div.transbox p {
     margin-left: 3rem;
     margin-right: 2rem;
   }
+
+
 }
 
 @media screen and (min-width: 551px) {
@@ -353,13 +362,7 @@ div.transbox {
   max-height: auto;
 }
 
-.partners>img {
-  width: 30%;
-  height: 30%;
-  padding-top: 2rem;
-  padding-left: 2rem;
-  padding-right: 2rem;
-}
+
 
 .partner-text {
   text-transform: uppercase;
