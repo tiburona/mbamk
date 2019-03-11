@@ -4,7 +4,8 @@ from cookiecutter_mbam import celery
 
 
 @celery.task
-def update_derivation_model(model_id, **args):
+def update_derivation_model(val, model_id, ):
     derivation = Derivation.get_by_id(model_id)
+    args = {key: val}
     derivation.update(**args)
-    return args.values()[0]
+    return val

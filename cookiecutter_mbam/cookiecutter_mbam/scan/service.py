@@ -24,7 +24,7 @@ from cookiecutter_mbam.storage import CloudStorageConnection
 from cookiecutter_mbam.experiment import Experiment
 from cookiecutter_mbam.user import User
 from .models import Scan
-from cookiecutter_mbam.derivation import Derivation, DerivationService, update_status_on_derivation_model
+from cookiecutter_mbam.derivation import Derivation, DerivationService, update_derivation_model
 from .utils import gzip_file, crop
 from cookiecutter_mbam.storage.tasks import upload_scan
 
@@ -46,8 +46,13 @@ class ScanService:
         self._config_read(os.path.join(config_dir, 'setup.cfg'))
 
     def _config_read(self, config_path):
+        """
+        :param config_path:
+        :return:
+        """
         config = configparser.ConfigParser()
         config.read(config_path)
+        # todo: consider changing name of upload_dest if we also use it for downloads
         self.upload_dest = os.path.join(self.instance_path, config['uploads']['uploaded_scans_dest'])
         self.xc = XNATConnection(config=config['XNAT'])
         self.csc = CloudStorageConnection(config=config['AWS'])
@@ -95,20 +100,37 @@ class ScanService:
         if dcm: self._dicom_conversion(scan)
 
     def _dicom_conversion(self, scan):
+        """Kick off conversion of dicom file to nifti
+
+        Starts remote dicom conversion via the container service and calls the method that checks for completion
+
+        :param Scan scan: the scan object
+        :return: None
+        """
         container_id, nifti, derivation_service = self._dicom_to_nifti(scan.id)
         self.dicom2nifti_container_id = container_id
         self.await_dicom_conversion(container_id=container_id, scan=scan, derivation=nifti)
 
     def await_dicom_conversion(self, container_id, scan, derivation):
+        """ Check for and respond to completed dicom conversion
+
+        Polls the container service to check for completed dicom converstion, and on completion updates the derivation
+        model with the new derivation status, downloads the completed nifti file from XNAT, uploads it to the cloud
+        storage, and updates the derivation model with the new cloud storage key.
+
+        :param str container_id: the id of the launched container
+        :param Scan scan: the scan object
+        :param Derivation derivation: the derivation object
+        :return: None
+        """
 
         xnat_credentials = (self.xc.server, self.xc.user, self.xc.password)
         scan_info = (self.user_id, scan.experiment_id, scan.id)
         chain = poll_cs.s(xnat_credentials, container_id) | \
-                update_status_on_derivation_model.s(derivation.id) | \
+                update_derivation_model.s(derivation.id, 'status') | \
                 dl_file_from_xnat.s(xnat_credentials, self.xc.nifti_files_url(scan), self.upload_dest) | \
-                upload_scan.s(self.csc.bucket_name, self.upload_dest, self.csc.auth, scan_info)
-        # todo: should add another function to the key that writes the name of the key to the derivation object
-        # todo: this also means that cloud storage key should be an attribute of Derivation
+                upload_scan.s(self.csc.bucket_name, self.upload_dest, self.csc.auth, scan_info) | \
+                update_derivation_model.s(derivation.id, 'cloud_storage_key')
         chain()
 
     def delete(self, scan_id, delete_from_xnat=False):
@@ -248,8 +270,5 @@ class ScanService:
         # Think about this.
         return (container_id, nifti, ds)
 
-    def _on_nifti_conversion(self, scan):
-        # todo: consider changing name of upload_dest if we also use it for downloads
-        file_obj = self.xc.download_file(scan.xnat_uri, resource_type='NIFTI')
-        key = self.csc.upload_scan(self.user_id, self.experiment.id, scan.id, file_obj, file_obj.name, file_obj=True)
-        return scan.update(nifti_aws_key=key)
+
+
