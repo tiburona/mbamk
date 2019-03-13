@@ -26,7 +26,7 @@ def add_scans(request, exp_id):
     for f in request.files.getlist('scan_file'):
         ScanService(user_id, exp_id).add(f)
     num_scans = len(request.files.getlist('scan_file'))
-    flash('You successfully added {}.'.format(num2words[num_scans]), 'success')
+    flash('You successfully started the process of adding {}.'.format(num2words[num_scans]), 'success')
     return redirect(url_for('experiment.experiments'))
 
 def scan_number_validation(request, add_exp):

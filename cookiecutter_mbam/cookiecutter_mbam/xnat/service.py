@@ -49,12 +49,13 @@ class XNATConnection:
     def _get_celery_status(self):
         celery_status = get_celery_worker_status(celery)
         registered_tasks = celery_status['registered_tasks']
-        for key in registered_tasks:
-            for task in registered_tasks[key]:
-                if 'celery_import' in task:
-                    self.celery_import = True
-                if 'celery_upload' in task:
-                    self.celery_upload = True
+        if registered_tasks:
+            for key in registered_tasks:
+                for task in registered_tasks[key]:
+                    if 'celery_import' in task:
+                        self.celery_import = True
+                    if 'celery_upload' in task:
+                        self.celery_upload = True
 
     # todo: what do we want from the response object?  to log it?
     def _upload_file(self, url, file_path):
@@ -97,20 +98,6 @@ class XNATConnection:
 
     def nifti_files_url(self, scan):
         return self.server + os.path.join(scan.xnat_uri, 'resources', 'NIFTI', 'files')
-
-    def download_file(self, scan_uri, resource_type, file_obj=True, file_path='', file_name=''):
-        response = self.xnat_get(os.path.join(scan_uri, 'resources', resource_type, 'files'))
-        if response.ok:
-            result =  json.loads(response.text)['ResultSet']['Result'][0]
-            response = self.xnat_get(result['URI'])
-            if response.ok:
-                if file_obj:
-                    f_o = BytesIO(response.content)
-                    f_o.name = result['Name']
-                    return f_o
-                with open(os.path.join(file_path, file_name), 'wb') as f:
-                    f.write(response.content)
-        return response
 
     def _fetch_uris(self):
         """

@@ -4,6 +4,7 @@ import os
 
 from cookiecutter_mbam import celery
 
+
 @celery.task
 def upload_scan(filename, bucket_name, dir, auth, scan_info):
     user_id, experiment_id, scan_id = scan_info

@@ -16,7 +16,6 @@ Todo: I need to make sure that if I catch an exception in XNAT connection I don'
 
 """
 
-import os
 import configparser
 from cookiecutter_mbam.xnat import XNATConnection
 from cookiecutter_mbam.xnat.tasks import *
@@ -77,11 +76,9 @@ class ScanService:
         self.existing_xnat_ids = self._check_for_existing_xnat_ids()
 
         # upload scan to cloud storage
-        key = upload_scan(
+        key = self.csc.upload_scan(
             filename=filename,
-            bucket_name=self.csc.bucket_name,
             dir = self.upload_dest,
-            auth = self.csc.auth,
             scan_info = (self.user_id, self.experiment.id, self.xnat_ids['scan']['xnat_id'])
         )
 
