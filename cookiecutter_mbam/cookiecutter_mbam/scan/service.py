@@ -46,9 +46,11 @@ class ScanService:
         self._config_read(os.path.join(config_dir, 'setup.cfg'))
 
     def _config_read(self, config_path):
-        """
+        """Scan service configuratino
+        Reads the config file passed on scan service object creation, and sets the upload path and creates XNAT
+        Connection and a Cloud Storage Connection instance and attaches them to the scan service object.
         :param config_path:
-        :return:
+        :return: None
         """
         config = configparser.ConfigParser()
         config.read(config_path)
@@ -75,13 +77,12 @@ class ScanService:
         self.existing_xnat_ids = self._check_for_existing_xnat_ids()
 
         # upload scan to cloud storage
-        key = self.csc.upload_scan(
-            user_id=self.user_id,
-            experiment_id=self.experiment.id,
-            scan_id=self.xnat_ids['scan']['xnat_id'],
-            file=local_path,
+        key = upload_scan(
             filename=filename,
-            file_obj=False
+            bucket_name=self.csc.bucket_name,
+            dir = self.upload_dest,
+            auth = self.csc.auth,
+            scan_info = (self.user_id, self.experiment.id, self.xnat_ids['scan']['xnat_id'])
         )
 
         # upload scan to XNAT
@@ -266,8 +267,6 @@ class ScanService:
         rv = ds.launch(data={'scan': scan_data_locator})
         container_id = json.loads(rv.text)['container-id']
         nifti.update(status='started')
-        # todo: container_id should probably also be a field on derivation, derivation service, or both.
-        # Think about this.
         return (container_id, nifti, ds)
 
 
