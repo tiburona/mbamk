@@ -107,9 +107,9 @@ class ScanService:
         """
         container_id, nifti, derivation_service = self._dicom_to_nifti(scan.id)
         self.dicom2nifti_container_id = container_id
-        self.await_dicom_conversion(container_id=container_id, scan=scan, derivation=nifti)
+        self._await_dicom_conversion(container_id=container_id, scan=scan, derivation=nifti)
 
-    def await_dicom_conversion(self, container_id, scan, derivation):
+    def _await_dicom_conversion(self, container_id, scan, derivation):
         """ Check for and respond to completed dicom conversion
 
         Polls the container service to check for completed dicom converstion, and on completion updates the derivation
@@ -157,7 +157,7 @@ class ScanService:
     def _add_scan_to_database(self, orig_aws_key, dcm):
         """Add a scan to the database
 
-        Creates the scan object, adds it to the database, and increments the parent experiment's scan count
+        Creates the scan object, adds it to the database, and sets the AWS key
         :return: scan
         """
         scan = Scan.create(experiment_id=self.experiment.id)
@@ -261,8 +261,7 @@ class ScanService:
         nifti = Derivation.create(scan_id=scan.id, process_name='dicom_to_nifti', status='unstarted')
         ds = DerivationService(nifti.id, scan.id)
         scan_data_locator = crop(scan.xnat_uri, '/experiments')
-        rv = ds.launch(data={'scan': scan_data_locator})
-        container_id = json.loads(rv.text)['container-id']
+        container_id = ds.launch(data={'scan': scan_data_locator})
         nifti.update(status='started')
         return (container_id, nifti, ds)
 

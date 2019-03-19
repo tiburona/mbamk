@@ -43,3 +43,16 @@ def after_insert_listener(mapper, connection, target):
         .where(user_table.c.id == target.user_id)
         .values(num_experiments=num_experiments)
     )
+
+
+@event.listens_for(Experiment, "after_delete")
+def after_insert_listener(mapper, connection, target):
+    user = User.get_by_id(target.user_id)
+    num_experiments = user.num_experiments - 1
+    user_table = User.__table__
+    connection.execute(
+        user_table
+        .update()
+        .where(user_table.c.id == target.user_id)
+        .values(num_experiments=num_experiments)
+    )
