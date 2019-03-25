@@ -2,8 +2,6 @@
 """Derivation model."""
 
 from cookiecutter_mbam.database import Model, SurrogatePK, db, reference_col
-from cookiecutter_mbam.experiment import Experiment
-from flask_sqlalchemy import event
 
 from flask import current_app
 def debug():
@@ -14,7 +12,9 @@ class Derivation(SurrogatePK, Model):
 
     __tablename__ = 'derivation'
     process_name = db.Column(db.String(255), nullable=False)
+    xnat_container_id = db.Column(db.String(80), nullable=True)
     xnat_uri = db.Column(db.String(255), nullable=True, unique=True)
+    cloud_storage_key = db.Column(db.String(255), nullable=True, unique=True)
     scan_id = reference_col('scan', nullable=True)
     status = db.Column(db.String(255), nullable=False)
     # __table_args__ = (
@@ -28,3 +28,4 @@ class Derivation(SurrogatePK, Model):
     def __repr__(self):
         """Represent instance as a unique string."""
         return '<Derivation({uri})>'.format(uri=self.xnat_uri)
+

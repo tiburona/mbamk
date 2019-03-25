@@ -2,11 +2,9 @@ from cookiecutter_mbam.xnat import XNATConnection
 from .models import Derivation
 import configparser
 import os
+import json
 from flask import current_app
 
-process_to_command = {
-    'dicom_to_nifti':'dcm2niix'
-}
 
 class DerivationService:
 
@@ -19,7 +17,6 @@ class DerivationService:
         if not len(config_dir):
             config_dir = self.instance_path
         self._config_read(os.path.join(config_dir, 'setup.cfg'))
-        self.process_to_command = process_to_command
 
     def _config_read(self, config_path):
         config = configparser.ConfigParser()
@@ -27,10 +24,20 @@ class DerivationService:
         self.xc = XNATConnection(config=config['XNAT'])
         self.command_config = config['commands']
 
-    # Does the translation of command name to ids belong here or in the XNAT service?
+    # A note about this method and this entire class: right now it arguably looks like like unnecessary wrapping.  Its functions
+    # could be wrapped into Scan Service.  I think it will make sense with time.
     def launch(self, data=None):
+        """Launch a command
+        Generates command id and wrapper id strings to pass to XNAT, sets the derivation status to indicate the process
+        is launched, and calls the XNAT Connection method to launch the command.
+        :param data:
+        :return:
+        """
         command_id = self.command_config[self.process_name+ '_command_id']
         wrapper_id = self.command_config[self.process_name + '_wrapper_id']
         self.derivation.status = 'started'
-        return self.xc.launch_command(command_id, wrapper_id, data)
+        rv = self.xc.launch_command(command_id, wrapper_id, data)
+        return json.loads(rv.text)['container-id']
+
+
 

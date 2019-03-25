@@ -7,6 +7,7 @@ from pytest_mock import mocker
 from werkzeug.datastructures import FileStorage
 from cookiecutter_mbam.scan import Scan
 from cookiecutter_mbam.scan.service import ScanService, gzip_file, crop
+from cookiecutter_mbam.derivation.service import DerivationService
 from .factories import UserFactory
 from .factories import ExperimentFactory
 
@@ -46,7 +47,7 @@ def scan_service(db, app, request, mocker):
         ss = ScanService(experiment.user.id, experiment.id, config_dir=config_dir)
 
         for i in range(num_scans):
-            ss._add_scan_to_database(aws_key='')
+            ss._add_scan_to_database(orig_aws_key='', dcm=True)
 
         ss.param = request.param
 
@@ -54,12 +55,25 @@ def scan_service(db, app, request, mocker):
             ss.xc.upload_scan = mocker.MagicMock()
             ss.xc.upload_scan.return_value = ('/data/archive/subjects/000001', exp_uri, scan_uri)
             mocker.spy(ss, '_generate_xnat_identifiers')
-            ss.csx.upload_scan = mocker.MagicMock()
-            ss.csx.upload_scan.return_value = (os.path.join(s3_directory_key, filename), None)
+            ss.csc.upload_scan = mocker.MagicMock()
+            ss.csc.upload_scan.return_value = os.path.join(s3_directory_key, filename)
+            ss._await_dicom_conversion = mocker.MagicMock()
 
         return ss
 
     return _scan_service
+
+
+@pytest.fixture(scope='function')
+@pytest.mark.usefixtures('db', 'app')
+def derivation_service(db, app, mocker):
+    def _derivation_service(derivation_id, scan_id):
+        config_dir = os.path.join(app.instance_path[:-8], 'tests')
+        ds = DerivationService(derivation_id, scan_id, config_dir=config_dir)
+        ds.launch = mocker.MagicMock()
+        ds.launch.rv = 'my_container_random_string'
+        return ds
+    return _derivation_service
 
 class ScanUploadSetup:
     """A collection of setup methods relevant to multiple scan upload test classes"""
@@ -94,6 +108,7 @@ class ScanUploadSetup:
         :param filename: the name of the file to upload (from parameters)
         :return: a mocked ScanService object
         """
+
         with self.create_file_to_upload(scan_service, filename) as f:
             file = FileStorage(f)
             scan_service.add(file)
@@ -194,7 +209,7 @@ class TestScanUpload(ScanUploadSetup):
         num_exp, num_scans, exp_id, scan_id, exp_uri, scan_uri, s3_directory_key = scan_service.param
         assert scan.xnat_scan_id == scan_id
         assert scan.xnat_uri == scan_uri
-        assert scan.aws_key == os.path.join(s3_directory_key, filename)
+        assert scan.orig_aws_key == os.path.join(s3_directory_key, filename)
 
 @pytest.mark.parametrize('filename,import_service,resource_type',
                          [('T1.nii.gz', False, 'NIFTI'), ('structural.nii', False, 'NIFTI'),
@@ -221,11 +236,11 @@ class TestScanUploadPrivateMethods(ScanUploadSetup):
     def test_process_file(self, scan_service, filename, import_service, resource_type):
         scan_service = scan_service(do_mock=True, filename=filename)
         scan_service, file = self.open_file_storage_obj(scan_service, filename)
-        file_path, imp = scan_service._process_file(file)
-        assert imp == import_service
+        local_path, filename, dcm = scan_service._process_file(file)
+        assert dcm == import_service
         if filename == 'structural.nii':
             filename = 'structural.nii.gz'
-        assert file_path == os.path.join(scan_service.upload_dest, filename)
+        assert local_path == os.path.join(scan_service.upload_dest, filename)
         file.close()
 
     @pytest.mark.parametrize('scan_service', large_set_of_params, indirect=True)
@@ -256,19 +271,19 @@ class TestScanUtils:
 @pytest.mark.parametrize('scan_service', small_set_of_params, indirect=True)
 class TestDicomConversion(ScanUploadSetup):
 
-    def test_when_nifti_file_passed_to_scan_service_launch_response_is_not_set(self, scan_service):
+    def test_when_nifti_file_passed_to_scan_service_container_id_is_not_set(self, scan_service):
         scan_service, retrieved_scans, scan = self.setup_tests(scan_service, 'T1.nii.gz')
-        assert not hasattr(scan_service, 'launch_response')
+        assert not hasattr(scan_service, 'dicom2nifti_container_id')
 
-    @mock.patch('cookiecutter_mbam.derivation.service.XNATConnection')
-    def test_when_dicoms_are_passed_to_scan_service_launch_response_is_set(self, test_xc_class, scan_service):
+    @mock.patch('cookiecutter_mbam.scan.service.DerivationService')
+    def test_when_dicoms_are_passed_to_scan_service_container_id_is_set(self, mock_ds_class, scan_service):
         url = crop(small_set_of_params[0][-1], '/experiment')
-        rv = {'command_id': 28, 'status': 'success', 'type': 'container', 'params': {'scan': url}}
-        mock_xc = mock.MagicMock()
-        mock_xc.launch_command.return_value = rv
-        test_xc_class.return_value = mock_xc
+        rv = 'my_container_id'
+        mock_ds = mock.MagicMock()
+        mock_ds.launch.return_value = rv
+        mock_ds_class.return_value = mock_ds
         scan_service, retrieved_scans, scan = self.setup_tests(scan_service, 'DICOMS.zip')
-        assert scan_service.launch_response == rv
+        assert scan_service.dicom2nifti_container_id == rv
 
 
 

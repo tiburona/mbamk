@@ -106,3 +106,13 @@ should cache all your assets forever by including the following line
 in your ``settings.py``::
 
     SEND_FILE_MAX_AGE_DEFAULT = 31556926  # one year
+
+Celery
+------
+
+In order to have the site's asynchronous functions operate with Celery you must `install Redis <https://redis.io/topics/quickstart>`_
+and invoke it with the command ``redis-server``.
+
+You also must invoke a Celery worker in a different process.  In the current development environment, this the command to do so:
+
+``celery -A cookiecutter_mbam.run_celery:celery worker --loglevel info``

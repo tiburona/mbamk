@@ -65,6 +65,7 @@ setup.cfg
 
 .DS_Store
 
+
 .idea
 .idea/*
 
@@ -72,3 +73,7 @@ setup.cfg
 
 cookiecutter_mbam/static/files
 files/
+
+# landing page
+
+../landing_page/*
