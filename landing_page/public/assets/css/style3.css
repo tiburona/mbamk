@@ -27,9 +27,9 @@ body {
 }
 
 .navbar {
-  background-color: #ffffff;
+  background-color:#28657f;
   height: 6rem;
-  padding-top: 0.5rem;
+  padding-top: 2rem;
   border-width: 0;
   border-radius: 0;
   font-size: 1.59rem;
@@ -40,12 +40,13 @@ body {
 }
 
 .navbar-inverse .navbar-nav>li>a {
-  color:#000
+  color:#fff;
+  font-weight: 500;
 }
 
 
 .navbar-nav>li>a:hover {
-  color: #535353 !important;
+  color: #ccc !important;
 }
 
 .navbar-link a {
@@ -54,6 +55,11 @@ body {
 
 .navbar-brand {
   margin-left: 0!important;
+  padding: 0 3rem;
+}
+
+.navbar-brand>img {
+  width: 32%;
 }
 
  #mbam-logo {
@@ -97,7 +103,7 @@ body {
   text-align: left;
   color: #fff;
   font-weight: 100;
-  padding: 4rem 10rem 10rem 16rem;
+  padding: 8rem 10rem 10rem 16rem;
   grid-area: 1 / 1 /span 1 / span 2;
   z-index: 9999999;
 }
@@ -146,7 +152,7 @@ h2 {
 h3 {
   font-size: 1em;
     margin-top: 0;
-    margin-bottom: 4rem;
+    margin-bottom: 3rem;
 
 }
 
@@ -610,7 +616,7 @@ div.transbox p {
 .partners {
   display: flex;
   justify-content: space-between;
-  padding: 2rem 1rem 3rem 1rem;
+  padding: 2rem 1rem 3rem 6rem;
 }
 
 .footer-image {

@@ -20,12 +20,12 @@ $(".navbar-toggle").click(function() {
 $("#find-out-more").click(function(){
   $("#welcome-text-container").css("display", "block")
   $(".google-form").css("display", "block")
-  $(".learn-more").css("display", "none")
+  // $(".learn-more").css("display", "none")
 
 })
 
 $("#survey").click(function(){
   $("#welcome-text-container").css("display", "block")
   $(".google-form").css("display", "block")
-  $(".learn-more").css("display", "none")
+  // $(".learn-more").css("display", "none")
 })
