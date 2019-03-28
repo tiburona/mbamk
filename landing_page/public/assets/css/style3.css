@@ -1,0 +1,700 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat:400,400i,500,600,700,800,900');
+
+body {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 15pt;
+  line-height: 1.25;
+  text-align: center;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+.content {
+  display: table-cell;
+  text-align: center;
+  vertical-align: left;
+}
+
+.neurons {
+  background: #26657F;
+ /* background:
+        linear-gradient(
+          rgba(0, 0, 0, 0.7),
+          rgba(0, 0, 0, 0.7)
+        ),
+         url('../images/grey_neuron_background.jpg')*/
+}
+
+.navbar {
+  background-color: #ffffff;
+  height: 6rem;
+  padding-top: 0.5rem;
+  border-width: 0;
+  border-radius: 0;
+  font-size: 1.59rem;
+}
+
+.navbar-inverse {
+  color: rgb(0,0,0,.6)
+}
+
+.navbar-inverse .navbar-nav>li>a {
+  color:#000
+}
+
+
+.navbar-nav>li>a:hover {
+  color: #535353 !important;
+}
+
+.navbar-link a {
+  color:rgba(0,0,0,.6)
+}
+
+.navbar-brand {
+  margin-left: 0!important;
+}
+
+ #mbam-logo {
+  padding-top: 0px;
+}
+
+.nav>li>a {
+  z-index: 9999999;
+}
+
+.navbar-header>button {
+  z-index: 9999999;
+}
+
+#myNavbar {
+  border-top: 0px;
+}
+/*
+#brain-icon {
+  height: 25px;
+  width: auto;
+  display: inline;
+  padding-left: .5rem;
+  padding-right: .5rem;
+}*/
+
+.brand-container {
+  display: flex;
+}
+
+.brain-background {
+  display: grid;
+  width: 100%;
+  grid-template-rows: 1fr;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  height: 65vh;
+}
+
+
+.header-text {
+  text-align: left;
+  color: #fff;
+  font-weight: 100;
+  padding: 4rem 10rem 10rem 16rem;
+  grid-area: 1 / 1 /span 1 / span 2;
+  z-index: 9999999;
+}
+
+.spinning-brain {
+  grid-area: 1 / 3 / span 1/ span 2;
+
+  z-index: 9999;
+  margin-right:0rem;
+  position: absolute;
+  padding-top: 5rem;
+  right: 2rem;
+}
+
+
+
+#brain-gif {
+  height: auto;
+  /*width: 80%;*/
+  opacity: 1;
+}
+
+
+h1 {
+    font-size: 2.4rem;
+    margin-bottom: 5px;
+    line-height: 3rem;
+    font-weight: 600;
+    color: #f8ba48;
+    margin-top: 3rem;
+}
+
+/* h1>p {
+  line-height: 6rem;
+} */
+
+h2 {
+  font-size: 4.3rem;
+    margin-top: 1rem;
+    color: #fff;
+    font-weight: 700;
+    line-height: 1.3;
+
+}
+
+h3 {
+  font-size: 1em;
+    margin-top: 0;
+    margin-bottom: 4rem;
+
+}
+
+hr {
+  width: 80%;
+}
+
+
+div.transbox {
+    /*border-color: rgba(77, 213, 255, .6);
+    background-color: rgba(77, 213, 255, .5);*/
+    background: #ffffff;
+    padding-top: 5rem;
+    padding-bottom: 1rem;
+    padding-right: 1rem;
+    text-align: left;
+}
+
+div.value-props {
+  display:flex;
+  justify-content: center;
+  padding-left: 12rem;
+  padding-right: 10rem;
+  padding-bottom: 3rem;
+  font-size: 2.3rem;
+}
+
+.survey-button {
+  background-color: #F3B131 !important;
+  color: #3c2a08;
+  font-weight: 600;
+  margin-top: 4rem;
+  border: none;
+  padding: 0rem 2.3rem;;
+}
+
+.verb {
+  color: rgba(255, 179, 102, .8);
+}
+
+.value-props i {
+  margin-right: .7rem;
+}
+
+.column {
+    width: 33.33%;
+    text-align: center;
+}
+
+/* Clear floats after the columns */
+.value-props:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+  margin-right: 2rem;
+}
+
+.value-prop>li span {
+  margin-left: .5rem;
+  font-size: 2.2rem;
+}
+
+.value-prop>li p{
+      line-height: 3em;
+    font-size: 2rem;
+    margin: 0!important;
+}
+
+.value-prop li:before {
+  z-index: 9999;
+  display: inline-block;
+  margin-left: -3rem; /* same as padding-left set on li */
+  width: 2.2rem; /* same as padding-left set on li */
+  opacity: .6;
+}
+
+.value-props-stacked {
+  display:none;
+  margin-left: 5rem;
+  margin-bottom: 5rem;
+
+}
+
+#stacked {
+  display:none;
+  margin-left: 5rem;
+  margin-bottom: 3rem;
+}
+
+ul#see li:before {
+  content: url('../images/microscope-solid.svg');
+}
+
+ul#participate li:before {
+  content: url('../images/brain-solid.svg');
+}
+
+ul#learn li:before {
+  content: url('../images/search-solid.svg');
+}
+
+ul#see-col li:before {
+  content: url('../images/microscope-solid.svg'); /* FontAwesome Unicode */
+}
+
+ul#participate-col li:before {
+  content: url('../images/brain-solid.svg'); /* FontAwesome Unicode */
+}
+
+ul#learn-col li:before {
+  content: url('../images/search-solid.svg'); /* FontAwesome Unicode */
+}
+
+
+#welcome-text-container {
+  display: none;
+  padding-top: 1rem;
+  padding-bottom: 3rem;
+}
+
+#welcome-text {
+  padding: 0 10rem 0 10rem;
+}
+
+#welcome-text p{
+      font-size: 1.6rem;
+    line-height: 2;
+}
+
+.welcome-link {
+  visibility: hidden;
+  padding: 0;
+  margin-top: -5rem;
+}
+
+
+div.transbox p {
+  margin-left: 6rem;
+  margin-right: 6rem;
+  margin-top: 2rem;
+  line-height: 1.5em;
+
+}
+
+.learn-more {
+  display:flex;
+  justify-content: center;
+  margin-top: 3rem;
+  margin-bottom: 3rem;
+}
+
+.btn {
+  padding-top: 1.5rem;
+  padding-bottom:1.5rem;
+  font-size: 2rem;
+  background-color: #286090;
+  margin-bottom: 1rem;
+}
+
+/* .welcome-link {
+  padding: 2rem;
+} */
+
+
+
+
+.google-form {
+  margin-top: 8rem;
+  margin-bottom: 5rem;
+  border-radius: 10px;
+  overflow: hidden;
+  width: 710px;
+  display:none;
+}
+
+#iframe {
+  /* width: 520px; */
+  margin-left: -2.5rem;
+  margin-bottom: -1rem;
+}
+
+.partners>img {
+  width: 30%;
+  height: 30%;
+  padding-top: 2rem;
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+#nyspi {
+  padding-top: .9rem;
+}
+
+@media screen and (max-width: 770px) {
+  #brain-gif {
+    width: 100%;
+
+  }
+
+  .spinning-brain {
+    margin-top: -2rem;
+  }
+
+  .brain-background {
+    grid-template-rows: 1fr;
+    grid-template-columns: 1fr;
+  }
+
+  .header-text {
+    margin-left: 0rem;
+    padding-top: 1rem;
+  }
+
+  h1 {
+    font-size: 2.5rem;
+  }
+
+  h2 {
+    font-size: 2rem;
+  }
+
+  h3 {
+    font-size: 1.5rem;
+  }
+
+  .btn {
+    font-size: 1.5rem;
+  }
+
+  div.value-props {
+    font-size: 1.8rem;
+  }
+
+  #welcome-text {
+    font-size: 1.8rem;
+  }
+
+  div.welcome-link {
+    padding-top: 4rem;
+  }
+
+  .learn-more {
+    margin-top: 0rem;
+  }
+
+  iframe {
+    width: 100%;
+    position: relative; left: 50%;
+    transform: translateX(-47%);
+  }
+
+  .google-form {
+    width: auto;
+  }
+}
+
+@media screen and (max-width: 685px) {
+  #brain-gif {
+    width: 110%;
+    opacity: .8;
+  }
+
+  .spinning-brain {
+    margin-top:-7rem;
+  }
+}
+
+
+@media screen and (max-width: 596px) {
+  #brain-gif {
+    width: 120%;
+    opacity: .8;
+  }
+
+  .brain-background {
+    margin-left: 1rem;
+  }
+
+  div.value-props {
+    display: none;
+  }
+
+  #stacked {
+    display: block;
+  }
+}
+
+@media screen and (max-width: 596px) {
+  h1 {
+    margin-top: 1rem;
+  }
+
+  h3 {
+    margin-top: 0rem;
+  }
+
+  #welcome-text p {
+    margin-left: 3.5rem;
+    margin-right: 2rem;
+  }
+}
+
+@media screen and (max-width: 430px) {
+  .spinning-brain {
+    margin-top:0;
+  }
+}
+
+@media screen and (min-width: 720px) {
+  iframe {
+    width: 720px;
+  }
+}
+
+/* @media screen and (max-width: 840px) {
+
+
+  #nyspi {
+    margin-top: .2rem;
+  }
+}
+
+@media screen and (max-width: 775px) {
+
+  h1 {
+    font-size: 4rem;
+    line-height: 3rem;
+  }
+  h2 {
+    font-size: 3rem;
+    margin-top: 2rem;
+  }
+  h3 {
+    font-size: 2.5rem;
+  }
+
+}
+
+@media screen and (min-width: 768px) {
+  .navbar {
+    padding-bottom: 0rem;
+  }
+}
+
+@media screen and (max-width: 733px) {
+  .navbar-toggle {
+    float: right;
+  }
+  .navbar-brand {
+    float: left;
+  }
+  .navbar-flex {
+    display: flex;
+    justify-content: flex-start;
+  }
+  h3 {
+    font-size: 2rem;
+  }
+}
+
+@media screen and (max-width: 700px) {
+
+  #nyspi {
+    margin-top: .4rem;
+  }
+}
+
+@media screen and (max-width: 650px) {
+
+
+  .header-text {
+    padding-top: 4.5rem;
+  }
+
+  .transbox {
+    font-size: 1.7rem;
+  }
+
+  .btn {
+    font-size: 1.5rem;
+  }
+
+  div.google-form {
+    margin-top: 1rem;
+  }
+
+  #nyspi {
+    margin-top: .5rem;
+  }
+
+}
+
+@media screen and (max-width: 550px) {
+  iframe {
+    width: 100%;
+    position: relative; left: 50%;
+    transform: translateX(-47%);
+  }
+
+  .google-form {
+    width: auto;
+  }
+
+  #welcome-text p {
+    margin-left: 3rem;
+    margin-right: 2rem;
+  }
+
+
+}
+
+
+
+@media screen and (max-width: 430px) {
+  h1 {
+    font-size: 3.5rem;
+    line-height: 4rem;
+    margin: -.5rem;
+  }
+
+}
+ */
+
+ /* @media screen and (min-width: 551px) {
+   iframe {
+     width: 720px;
+   }
+ }
+
+ @media screen and (max-width: 550px) {
+   iframe {
+     width: 100%;
+     position: relative; left: 50%;
+     transform: translateX(-47%);
+   }
+ } */
+
+
+.btn:hover {
+  color: #313131;
+  background-color: #f0bc5a!important;
+  text-decoration: none;
+  outline: none;
+}
+
+.google-form {
+  margin-top: 8rem;
+  margin-bottom: 5rem;
+}
+
+.footer {
+  background:#28657f;
+  padding: 5rem 10rem 4rem 10rem;
+}
+
+.partners {
+  display: flex;
+  justify-content: space-between;
+  padding: 2rem 1rem 3rem 1rem;
+}
+
+.footer-image {
+  max-width: 25%;
+  max-height: auto;
+}
+
+
+
+.partner-text {
+  text-transform: uppercase;
+  color: #ffb366;
+  line-height: 0.5;
+  text-align: center;
+}
+
+.partner-text span {
+  display: inline-block;
+  position: relative;
+  color: #fff;
+  font-size: 1.7rem;
+}
+
+.partner-text span:before,
+.partner-text span:after {
+  content: "";
+    position: absolute;
+    height: 5px;
+    border-top: 1px solid #ffffff;
+    top: 3px;
+    width:490px;
+}
+
+.partner-text span:before {
+  right: 100%;
+  margin-right: 15px;
+}
+.partner-text span:after {
+  left: 100%;
+  margin-left: 15px;
+}
+
+#nyspi {
+  padding-top: .9rem;
+}
+
+.icon-credit {
+  font-size: 1rem;
+  color: #1ac9ff;
+  padding-top: 1rem;
+}
+
+.icon-credit a {
+  color: #1ac9ff;
+}
+
+
+a:hover {
+  color: #ffb366;
+  text-decoration: none;
+  outline: none;
+}
+
+a {
+  transition: all 0.2s cubic-bezier(0.42, 0, 0.58, 1);
+  cursor: pointer;
+  color: #000000;
+}
+
+
+
+
+::-webkit-input-placeholder {
+  color: #fff !important;
+}
+
+::-moz-placeholder {
+  color: #fff !important;
+}
+
+:-moz-placeholder {
+  color: #fff !important;
+}
+
+:-ms-input-placeholder {
+  color: #fff !important;
+}
