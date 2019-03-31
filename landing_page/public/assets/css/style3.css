@@ -17,7 +17,7 @@ body {
 }
 
 .neurons {
-  background: #26657F;
+  background: #20566c;
  /* background:
         linear-gradient(
           rgba(0, 0, 0, 0.7),
@@ -27,7 +27,7 @@ body {
 }
 
 .navbar {
-  background-color:#28657f;
+  background-color: #20566c;
   height: 6rem;
   padding-top: 2rem;
   border-width: 0;
@@ -609,7 +609,7 @@ div.transbox p {
 }
 
 .footer {
-  background:#28657f;
+  background: #20566c;
   padding: 5rem 10rem 4rem 10rem;
 }
 
