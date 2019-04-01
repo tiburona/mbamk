@@ -17,7 +17,8 @@ body {
 }
 
 .navbar {
-  background-color: #1e333a; /* #26657f; */
+  /* very dark to allow logo to stand out */
+  background-color: #1e333a; /* #26657f; #20566c;*/
   height: 6rem;
   padding-top: 1rem;
   border-width: 0;
@@ -468,7 +469,7 @@ div.transbox p {
 }
 
 .footer {
-  background:#28657f;
+  background: #20566c;
   padding: 5rem 10rem 4rem 10rem;
 }
 
