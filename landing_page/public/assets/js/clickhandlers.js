@@ -24,8 +24,14 @@ $("#find-out-more").click(function(){
 
 })
 
-$("#survey").click(function(){
-  $("#welcome-text-container").css("display", "block")
-  $(".google-form").css("display", "block")
+$("#tell-us").click(function(){
+  $(".survey").css("display", "block")
+  $(".email").css("display", "none")
+  // $(".learn-more").css("display", "none")
+})
+
+$("#get-updates").click(function(){
+  $(".email").css("display", "block")
+  $(".survey").css("display", "none")
   // $(".learn-more").css("display", "none")
 })

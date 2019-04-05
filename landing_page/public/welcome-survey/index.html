@@ -29,6 +29,7 @@
           <a class="navbar-brand" id="mbam-logo" href="#"><img src="../assets/images/mbam-logo-v2-white.png" id="brain-icon"></a>
           <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="nav navbar-nav navbar-right">
+              <li class="nav-item navbar-link"><a href="#welcome-text">About</a></li>
               <li class="nav-item navbar-link"><a href="https://www.thecombine.nyc/my-brain-and-me">Media</a></li>
               <li class="nav-item"><a href="mailto:mbaminfo@gmail.com">Contact Us</a></li>
               <li class="nav-item"><a href="https://twitter.com/MyBrainandMeOrg"><i class="fab fa-twitter"></i></a></li>
@@ -46,7 +47,10 @@
             <!-- <h1>My Brain and Me</h1> -->
             <h2>Your neuroscience and psychology portal</h2>
             <h3>See yourself like never before. Contribute to mental health research.</h3>
-            <a class="btn btn-primary survey-button" id="find-out-more" href=#subscribe-form>Take a Survey</a>
+            <div class="buttons">
+              <a class="btn btn-primary survey-button" id="get-updates" href=#email-form>Get Updates</a>
+              <a class="btn btn-primary survey-button" id="tell-us" href=#survey-form>Tell Us What You Think</a>
+            </div>
           </div>
         </div>
 
@@ -78,14 +82,20 @@
                 brain visualization tool.  But that's not all! We have a lot of ideas about where to go from here, and we want to know what’s
                 important to you, so we’re opening the floor. Tell us what you think we
                 should work on next, and if you like, sign up to get updates on our projects.</p>
-              <p style="text-align: center;"><a class="btn btn-primary survey-button" id="survey" href=#subscribe-form>Take a Survey</a></p>
+              <!-- <p style="text-align: center;"><a class="btn btn-primary survey-button" id="survey" href=#subscribe-form>Take a Survey</a></p> -->
             </div>
           </div> <!-- /welcome-link -->
         </div>
 
-        <div class="container-fluid google-form" >
-          <a id="subscribe-form">
-            <iframe id="iframe" src="https://docs.google.com/forms/d/e/1FAIpQLSeUwtxk2TAg2Mbs__tAZqwrYfXwu-4EeREyQkRRsBbDPYnRHw/viewform?embedded=true" height="720px" frameborder="0" marginheight="0" marginwidth="0">Loading...</iframe>
+        <div class="container-fluid google-form survey" >
+          <a id="survey-form">
+            <iframe class="iframe" src="https://docs.google.com/forms/d/e/1FAIpQLSeUwtxk2TAg2Mbs__tAZqwrYfXwu-4EeREyQkRRsBbDPYnRHw/viewform?embedded=true" height="720px" frameborder="0" marginheight="0" marginwidth="0">Loading...</iframe>
+          </a>
+        </div>
+
+        <div class="container-fluid google-form email" >
+          <a id="email-form">
+            <iframe class="iframe" src="https://docs.google.com/forms/d/e/1FAIpQLScD4V3w25sARJ3GlPLe5wgBr8XSjmW6eXT7JcWm7mSfyO9KOA/viewform?embedded=true" height="720px" frameborder="0" marginheight="0" marginwidth="0">Loading...</iframe>
           </a>
         </div>
 

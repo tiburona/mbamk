@@ -100,7 +100,7 @@ body {
 
 
 .header-text {
-  text-align: left;
+  text-align: center;
   color: #fff;
   font-weight: 100;
   padding: 6rem 8rem 8rem 12rem;
@@ -108,15 +108,17 @@ body {
   z-index: 9999999;
 }
 
-.spinning-brain {
-  grid-area: 1 / 3 / span 1/ span 2;
-
-  z-index: 9999;
-  margin-right:0rem;
-  position: absolute;
-      padding-top: 3rem;
-    right: 0rem;
+.buttons {
+  text-align: center;
 }
+
+.survey-button {
+  margin-left: 3rem;
+  margin-right: 3rem;
+}
+
+
+
 
 h1 {
   font-size: 2.4rem;
@@ -164,6 +166,10 @@ div.value-props {
   font-size: 2.3rem;
 }
 
+.teaser {
+  margin-top: 5rem;
+}
+
 .survey-button {
   background-color: #F3B131 !important;
   color: #3c2a08;
@@ -173,9 +179,6 @@ div.value-props {
   padding: 0rem 2.3rem;;
 }
 
-.verb {
-  color: rgba(255, 179, 102, .8);
-}
 
 .value-props i {
   margin-right: .7rem;
@@ -308,7 +311,7 @@ div.transbox p {
 
 
 
-.google-form {
+.survey  {
   margin-top: 8rem;
   margin-bottom: 5rem;
   border-radius: 10px;
@@ -317,7 +320,16 @@ div.transbox p {
   display:none;
 }
 
-#iframe {
+.email {
+  margin-top: 8rem;
+  margin-bottom: 5rem;
+  border-radius: 10px;
+  overflow: hidden;
+  width: 710px;
+  display:none;
+}
+
+.iframe {
   /* width: 520px; */
   margin-left: -2.5rem;
   margin-bottom: -1rem;
