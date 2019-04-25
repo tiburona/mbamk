@@ -17,9 +17,6 @@ with gzip.open(gz_path, 'wb') as gzipped_file:
     with open(nii_path, 'rb') as f:
         gzipped_file.writelines(f)
 
-# nifti_file = {'file': ('T1.nii.gz', open(gz_path, 'rb'), 'application/octet-stream')}
-# json_file = {'file': ('T1_info.json', open(json_path, 'rb'), 'application/octet-stream')}
-
 files = {'nii_file': ('T1.nii.gz', open(gz_path, 'rb'), 'application/octet-stream'),
          'json_file': ('T1_info.json', open(json_path, 'rb'), 'application / octet-stream')}
 
@@ -27,11 +24,6 @@ def init_session(user, password):
     s = requests.Session()
     s.auth = (user, password)
     return s
-
-# with init_session(user, password) as s:
-#     for file in [nifti_file, json_file]:
-#         s.put(host + url)
-#         s.put(host + url, files=file)
 
 with init_session(user, password) as s:
     s.put(host + url)
