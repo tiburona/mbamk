@@ -1,0 +1,58 @@
+{ "name": "dcm2niix-xfer",
+  "label": null,
+  "description": "Downloads dicom files, converts them to nifti, and reuploads them to XNAT",
+  "version": null,
+  "schema-version": null,
+  "info-url": null,
+  "image": "mbam/dcm2niix:latest",
+  "type": "docker",
+  "index": null,
+  "working-directory": null,
+  "command-line": "./main.sh #input_url# #output_url#",
+  "override-entrypoint": null,
+  "mounts": [],
+  "environment-variables": {},
+  "ports": {},
+  "inputs": [
+    {
+      "name": "input_url",
+      "description": "URL for the DICOM files resource",
+      "type": "string",
+      "matcher": null,
+      "default-value": "",
+      "required": false,
+      "replacement-key": null,
+      "command-line-flag": null,
+      "command-line-separator": null,
+      "true-value": null,
+      "false-value": null
+    },
+    {
+      "name": "output_url",
+      "description": "URL for the NIFTI resource",
+      "type": "string",
+      "matcher": null,
+      "default-value": "",
+      "required": false,
+      "replacement-key": null,
+      "command-line-flag": null,
+      "command-line-separator": null,
+      "true-value": null,
+      "false-value": null
+    }
+  ],
+  "outputs": [],
+  "xnat": [
+    {
+      "name": "dcm2niix-xfer-wrapper",
+      "description": "download dicoms, convert to nifti, reupload nifti",
+      "contexts": [],
+      "external-inputs": [],
+      "derived-inputs": [],
+      "output-handlers": []
+    }
+  ],
+  "reserve-memory": null,
+  "limit-memory": null,
+  "limit-cpu": null
+}

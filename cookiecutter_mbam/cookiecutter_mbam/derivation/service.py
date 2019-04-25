@@ -37,7 +37,7 @@ class DerivationService:
         wrapper_id = self.command_config[self.process_name + '_wrapper_id']
         self.derivation.status = 'started'
         rv = self.xc.launch_command(command_id, wrapper_id, data)
-        return json.loads(rv.text)['container-id']
+        return json.loads(rv.text)['container-id'] #todo: is this a longwinded way of saying rv.json()? check.
 
 
 
