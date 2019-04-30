@@ -13,6 +13,8 @@ class Scan(SurrogatePK, Model):
     """A user's scan."""
 
     __tablename__ = 'scan'
+    xnat_status = db.Column(db.String(80))
+    aws_status = db.Column(db.String(80))
     xnat_uri = db.Column(db.String(255))
     xnat_scan_id = db.Column(db.String(80))
     orig_aws_key = db.Column(db.String(255))

@@ -25,7 +25,7 @@ class DerivationService:
         self.command_config = config['commands']
 
     # A note about this method and this entire class: right now it arguably looks like like unnecessary wrapping.  Its functions
-    # could be wrapped into Scan Service.  I think it will make sense with time.
+    # could be folded into Scan Service.  I think it will make sense with time.
     def launch(self, data=None):
         """Launch a command
         Generates command id and wrapper id strings to pass to XNAT, sets the derivation status to indicate the process
@@ -37,7 +37,13 @@ class DerivationService:
         wrapper_id = self.command_config[self.process_name + '_wrapper_id']
         self.derivation.status = 'started'
         rv = self.xc.launch_command(command_id, wrapper_id, data)
-        return json.loads(rv.text)['container-id'] #todo: is this a longwinded way of saying rv.json()? check.
+        return rv.json()['container-id']
+
+    def _generate_ids(self):
+        return (
+            self.command_config[self.process_name+ '_command_id'],
+            self.command_config[self.process_name + '_wrapper_id']
+        )
 
 
 

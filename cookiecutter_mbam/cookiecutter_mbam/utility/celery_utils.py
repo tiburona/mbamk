@@ -1,4 +1,5 @@
 from celery import Celery
+from cookiecutter_mbam import celery
 
 
 def init_celery(app, celery):
@@ -28,6 +29,13 @@ def get_celery_worker_status(app):
   'scheduled_tasks': scheduled_tasks
  }
  return result
+
+@celery.task
+def update_model(val, class_name, instance_id, key):
+    instance = class_name.get_by_id(instance_id)
+    args = {key: val}
+    instance.update(**args)
+    return val
 
 
 

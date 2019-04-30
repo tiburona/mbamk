@@ -5,17 +5,12 @@ from flask_security import SQLAlchemyUserDatastore
 from celery import Celery
 from cookiecutter_mbam import celery
 from cookiecutter_mbam.utility.celery_utils import init_celery
-
-
 from cookiecutter_mbam import commands, public, user, experiment, scan
 from cookiecutter_mbam.admin import UserAdmin, RoleAdmin
 from cookiecutter_mbam.extensions import admin, cache, csrf_protect, db, debug_toolbar, migrate, \
     security, webpack, mail, jsglue
 from cookiecutter_mbam.user import User, Role
 from .hooks import create_test_users, models_committed_hooks
-
-
-#from cookiecutter_mbam.utils import user_context_processor
 
 
 def create_app(config_object='cookiecutter_mbam.settings'):
@@ -32,9 +27,7 @@ def create_app(config_object='cookiecutter_mbam.settings'):
     register_errorhandlers(app)
     register_shellcontext(app)
     register_commands(app)
-    #register_processors(app)
     return app
-
 
 def register_extensions(app):
     """Register Flask extensions."""
@@ -116,7 +109,3 @@ def make_celery(app=None):
     celery.Task = ContextTask
     return celery
 
-
-# def register_processors(app):
-#     """Register context processors."""
-#     app.context_processor(user_context_processor)

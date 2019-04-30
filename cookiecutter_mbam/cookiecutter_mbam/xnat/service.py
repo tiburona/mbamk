@@ -1,6 +1,7 @@
 import os
 
 import xnat
+import requests
 from flask import current_app
 
 from cookiecutter_mbam.utility.celery_utils import get_celery_worker_status
@@ -31,6 +32,9 @@ class XNATConnection:
             # log the exception
             pass
 
+        # Do I want to set Docker's server in response to config?
+        self._set_docker_host()
+
     def _set_attributes(self):
         """ Set attributes on self
 
@@ -44,6 +48,11 @@ class XNATConnection:
             setattr(self, dest + '_prefix', '/data/{}/projects/{}'.format(dest, self.project))
         self.auth = (self.server, self.user, self.password)
 
+    def _set_docker_host(self):
+        docker_host_route = '/xapi/docker/server'
+        if self.xnat_get(docker_host_route).json()['host'] != self.docker_host:
+            self.xnat_post(docker_host_route, data={'host':self.docker_host})
+
     # Todo: This will almost certainly need to change in a production environment.
     # It's hard to say exactly how without seeing exactly what is returned from worker inspection in a prod env.
     def _get_celery_status(self):
@@ -52,10 +61,14 @@ class XNATConnection:
         if registered_tasks:
             for key in registered_tasks:
                 for task in registered_tasks[key]:
-                    if 'celery_import' in task:
+                    if 'import_scan_to_xnat' in task:
                         self.celery_import = True
-                    if 'celery_upload' in task:
+                    if 'upload_scan_to_xnat' in task:
                         self.celery_upload = True
+
+    def _command_config(self):
+        # check that commands exist on XNAT?  do I really need to do this?
+        pass
 
     # todo: what do we want from the response object?  to log it?
     def _upload_file(self, url, file_path):
@@ -70,19 +83,21 @@ class XNATConnection:
     def _import_file(self, file_path, url, **kwargs):
         if self.celery_import:
             url = url[url.find('/archive'):]
-            result = celery_import.delay(self.server, self.user, self.password, file_path, url)
+            result = import_scan_to_xnat.delay(self.server, self.user, self.password, file_path, url)
             result.wait()
         else:
             with xnat.connect(self.server, self.user, self.password) as session:
                 result = session.services.import_(file_path, overwrite='delete', **kwargs)
         return result
 
+    def xnat_get(self, url):
+        with init_session(self.user, self.password) as session:
+            return session.get(self.server + url)
 
     def xnat_put(self, url):
-        with xnat.connect(self.server, self.user, self.password) as session:
+        with init_session(self.user, self.password) as session:
             try:
-                response = session.put(url)
-                return response
+                return session.put(self.server + url)
             except xnat.exceptions.XNATResponseError as e:
                 error = e
                 if 'status 409' in error.args[0]:  # this error is raised when you try to create a resource that exists
@@ -92,21 +107,26 @@ class XNATConnection:
                     # error is unknown, handle it somehow
             return ''
 
-    def xnat_get(self, url):
+    def xnat_post(self, url, data=None):
         with init_session(self.user, self.password) as session:
-            return session.get(self.server + url)
+            return session.post(self.server + url, data=data)
 
     def nifti_files_url(self, scan):
         return self.server + os.path.join(scan.xnat_uri, 'resources', 'NIFTI', 'files')
 
-    def _fetch_uris(self):
-        """
-        :param session: the xnatpy XNAT connection object
-        :return: the uris of the subject, experiment, and last created scan
-        :rtype: tuple
-        """
-        _, subject, experiment, scan = self.get_scan_info()
-        return (subject.uri, experiment.uri, scan.uri)
+    def _fetch_uris(self, subject_uri, experiment_uri):
+        new_uris = [self.xnat_get(orig_uri).json()['URI'] for orig_uri in [subject_uri, experiment_uri]]
+        scans = self.xnat_get(self.server + self.experiment_uri + '/scans')
+        debug()
+        return new_uris
+
+        # Here I have just uploaded a scan.
+        # Ways I can tell what the most recent scan is:
+        # I should know its unique xnat identifier, but in practice I don't unless I figure out how to set this
+        # when using the import service
+        # does scan have a created by attribute?
+        # experiment and subject uri I should be able to fetch by their xnat_id.  if I can get the resource for each of them
+        # I can take response.json()['URI']
 
     def get_scan_info(self, scan_id='latest'):
         subject_id = self.xnat_ids['subject']['xnat_id']
@@ -141,12 +161,13 @@ class XNATConnection:
             # todo: handle errors!
             pass
 
-    def xnat_post(self, url, data=None):
-        with xnat.connect(self.server, self.user, self.password) as session:
-            response = session.post(url, data=data)
-            return response
-
     def launch_command(self, command_id, wrapper_id, data=None):
+        """
+        :param command_id:
+        :param wrapper_id:
+        :param data:
+        :return:
+        """
         url =  '/xapi/projects/{}/commands/{}/wrappers/{}/launch'.format(self.project, command_id, wrapper_id)
         return self.xnat_post(url, data)
 
@@ -155,6 +176,20 @@ class XNATConnection:
             resource_url = resource_url[5:]
         refresh_url = '/data/services/refresh/catalog?resource=' + resource_url
         return self.xnat_post(refresh_url)
+
+    def upload_chain(self, ids, file_path, import_service=False):
+        create_resources_signature = create_resources.s(xnat_credentials = self.auth, ids = ids,
+                                                        levels = self.xnat_hierarchy, import_service = import_service,
+                                                        archive_prefix = self.archive_prefix)
+        if not import_service:
+            upload_signature = upload_scan_to_xnat.s(xnat_credentials = self.auth, file_path = file_path)
+        else:
+            upload_signature = import_scan_to_xnat.s(xnat_credentials = self.auth, file_path = file_path)
+
+        get_uris_signature = get_uris.s(xnat_credentials=self.auth)
+
+        return create_resources_signature | upload_signature | get_uris_signature
+
 
     def upload_scan(self, xnat_ids, existing_xnat_ids, file_path, import_service=False):
         """The method to upload a scan to XNAT
@@ -207,7 +242,7 @@ class XNATConnection:
         if import_service:
             result = self._import_file(file_path, uri, **kwargs)
 
-        return self._fetch_uris()
+        return self._fetch_uris(uris['subject'], uris['experiment'])
 
 
 

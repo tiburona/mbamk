@@ -46,3 +46,4 @@ MAIL_USE_TLS = True
 # File upload settings
 MAX_CONTENT_LENGTH = 30 * 1024 * 1024
 
+
