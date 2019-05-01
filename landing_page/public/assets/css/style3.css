@@ -104,7 +104,7 @@ body {
   text-align: center;
   color: #fff;
   font-weight: 100;
-  padding: 6rem 8rem 8rem 12rem;
+  padding: 10rem 8rem 14rem 8rem;
   grid-area: 1 / 1 /span 1 / span 2;
   z-index: 9999999;
 }
@@ -112,16 +112,6 @@ body {
 .buttons {
   text-align: center;
 }
-
-.survey-button {
-  margin-left: 3rem;
-  margin-right: 3rem;
-}
-
-
-
-
-
 
 h1 {
   font-size: 2.4rem;
@@ -154,9 +144,7 @@ div.transbox {
   /*border-color: rgba(77, 213, 255, .6);
   background-color: rgba(77, 213, 255, .5);*/
   background: #ffffff;
-  padding-top: 5rem;
-  padding-bottom: 1rem;
-  padding-right: 1rem;
+  padding: 5rem 1rem 1rem 0;
   text-align: left;
   position: relative;
 }
@@ -164,25 +152,22 @@ div.transbox {
 div.value-props {
   display:flex;
   justify-content: center;
-  padding-left: 12rem;
-  padding-right: 10rem;
-  padding-bottom: 3rem;
+  padding: 0 10rem 3rem 12rem;
   font-size: 2.3rem;
 }
 
-.teaser {
+/*.teaser {
   margin-top: 5rem;
-}
+}*/
 
 .survey-button {
   background-color: #F3B131 !important;
   color: #3c2a08;
   font-weight: 600;
-  margin-top: 4rem;
   border: none;
-  padding: 0rem 2.3rem;;
+  padding: 0rem 2.3rem;
+  margin: 4rem 3rem 0 3rem;
 }
-
 
 .value-props i {
   margin-right: .7rem;
@@ -339,13 +324,57 @@ div.transbox p {
 .partners>img {
   width: 30%;
   height: 30%;
-  padding-top: 2rem;
-  padding-left: 2rem;
-  padding-right: 2rem;
+  padding: 2rem;
 }
 
 #nyspi {
   padding-top: .9rem;
+}
+
+@media screen and (max-width: 565px) {
+  .navbar-brand>img {
+    height: 35px !important;
+  }
+
+  .header-text {
+    padding: 5rem 5rem 8rem 5rem!important;
+  }
+
+  .spinning-brain {
+    margin-top:0;
+  }
+
+  .btn {
+    padding-top: 1rem !important;
+    padding-bottom: 1rem !important;
+  }
+
+  h2 {
+    font-size: 2.5rem !important;
+  }
+
+  h3 {
+    padding-top: 9px !important;
+    font-size: 1.5rem !important;
+  }
+
+  .survey-button {
+    margin: 1rem 1rem 0 1rem !important;
+    font-size: 1.2rem !important;
+  }
+
+  .value-prop li p {
+    font-size: 1.5rem !important;
+  }
+
+  .value-prop li:before {
+    width: 1.6rem !important;
+  }
+
+  #welcome-text p {
+    font-size: 1.4rem !important;
+  }
+
 }
 
 @media screen and (max-width: 770px) {
@@ -421,8 +450,75 @@ div.transbox p {
   }
 }
 
+@media screen and (max-width: 850px) {
+  iframe {
+    width: 720px;
+  }
+
+  .partners {
+    margin-left: -4rem;
+  }
+
+  .partners>img {
+    width: 33% !important;
+    height: 33% !important;
+  }
+
+  .footer-image {
+      max-width: 40% !important;
+  }
+
+}
+
 
 @media screen and (max-width: 596px) {
+    h1 {
+    margin-top: 1rem;
+  }
+
+  h3 {
+    margin-top: 0rem;
+  }
+
+  #welcome-text p {
+    margin-left: 3.5rem;
+    margin-right: 2rem;
+  }
+
+  .value-prop>li p {
+    font-size: 1.6rem;
+    display: initial;
+  }
+
+  .partners {
+    display: initial!important;
+    margin: 0 3rem 0 -6rem !important;
+    padding: 2rem 0 0 0 !important;
+  }
+
+  .partners>img {
+    width: 60% !important;
+    height: 60% !important;
+  }
+
+  #welcome-text {
+    padding: 0 7rem 0 7rem;
+    text-align: justify;
+  }
+
+  ul li:before {
+    margin-right: 1rem;
+    width: 6%;
+  }
+
+  .value-prop {
+    margin-top: 2rem;
+  }
+
+  .footer-image {
+    max-width: 80% !important;
+  }
+
   #brain-gif {
     width: 120%;
     opacity: .8;
@@ -438,35 +534,71 @@ div.transbox p {
 
   #stacked {
     display: block;
+    padding: 0 8rem;
   }
 }
 
-@media screen and (max-width: 596px) {
-  h1 {
-    margin-top: 1rem;
+
+
+@media screen and (max-width: 992px) {
+  .header-text {
+    padding: 6rem 5rem 8rem 5rem!important;
+  }
+
+  .survey-button {
+    margin: 3rem 2rem 0 2rem;
+    font-size: 1.5rem;
+  }
+
+  div.transbox {
+    padding-top: 4rem;
+  }
+
+  .partners {
+    padding-left: 1rem !important;
+  }
+
+  .value-prop>li p {
+    font-size: 1.75rem;
+  }
+
+}
+
+@media screen and (max-width: 1200px) {
+  h2 {
+    font-size: 3.5rem;
   }
 
   h3 {
-    margin-top: 0rem;
+    padding-top: 5px;
+    font-size: 1.7rem;
+  }
+
+  div.value-props {
+    padding-bottom: 1rem;
+  }
+
+  .value-prop li p {
+    font-size: 1.7rem;
+  }
+
+  .header-text {
+    padding: 8rem;
   }
 
   #welcome-text p {
-    margin-left: 3.5rem;
-    margin-right: 2rem;
+    font-size: 1.5rem;
+    line-height: 1.9;
+    margin: 2rem;
   }
+
+  div.transbox {
+  }
+
 }
 
-@media screen and (max-width: 430px) {
-  .spinning-brain {
-    margin-top:0;
-  }
-}
 
-@media screen and (min-width: 720px) {
-  iframe {
-    width: 720px;
-  }
-}
+
 
 .btn:hover {
   color: #313131;
@@ -489,7 +621,7 @@ div.transbox p {
 .partners {
   display: flex;
   justify-content: space-between;
-  padding: 2rem 1rem 3rem 6rem;
+  padding: 3rem 1rem 3rem 6rem;
 }
 
 .footer-image {
