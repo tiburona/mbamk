@@ -36,7 +36,7 @@ body {
 
 
 .navbar-nav>li>a:hover {
-  color: #ccc !important;
+  color: #f3b132 !important;
 }
 
 .navbar-link a {
@@ -154,6 +154,18 @@ div.value-props {
   justify-content: center;
   padding: 0 10rem 3rem 12rem;
   font-size: 2.3rem;
+}
+
+a#get-updates {
+  color: #fff;
+  font-style: italic;
+  font-size: 1.9rem;
+  text-decoration: underline;
+  line-height: 3;
+}
+
+a#get-updates:hover {
+  color: #f3b132;
 }
 
 /*.teaser {
@@ -375,6 +387,10 @@ div.transbox p {
     font-size: 1.4rem !important;
   }
 
+  a#get-updates{
+    font-size: 1.6rem;
+  }
+
 }
 
 @media screen and (max-width: 770px) {
@@ -542,7 +558,7 @@ div.transbox p {
 
 @media screen and (max-width: 992px) {
   .header-text {
-    padding: 6rem 5rem 8rem 5rem!important;
+    padding: 3rem 5rem !important;
   }
 
   .survey-button {
@@ -583,7 +599,7 @@ div.transbox p {
   }
 
   .header-text {
-    padding: 8rem;
+    padding: 5rem;
   }
 
   #welcome-text p {
