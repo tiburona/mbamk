@@ -485,11 +485,12 @@ div.transbox p {
 
   .partners {
     margin-left: -4rem;
+    margin-right: 4rem;
   }
 
   .partners>img {
-    width: 33% !important;
-    height: 33% !important;
+    width: 90% !important;
+    height: 90% !important;
   }
 
   .footer-image {
@@ -500,7 +501,7 @@ div.transbox p {
 
 
 @media screen and (max-width: 596px) {
-    h1 {
+  h1 {
     margin-top: 1rem;
   }
 
@@ -525,12 +526,12 @@ div.transbox p {
   }
 
   .partners>img {
-    width: 60% !important;
-    height: 60% !important;
+    width: 90% !important;
+    height: 90% !important;
   }
 
   #welcome-text {
-    padding: 0 7rem 0 7rem;
+    padding: 0 4rem 0 4rem;
     text-align: justify;
   }
 
@@ -565,8 +566,6 @@ div.transbox p {
     padding: 0 8rem;
   }
 }
-
-
 
 @media screen and (max-width: 992px) {
   .header-text {
@@ -686,6 +685,7 @@ div.transbox p {
   right: 100%;
   margin-right: 15px;
 }
+
 .partner-text span:after {
   left: 100%;
   margin-left: 15px;
@@ -700,7 +700,6 @@ div.transbox p {
 .icon-credit a {
   color: #1ac9ff;
 }
-
 
 a:hover {
   color: #ffb366;
