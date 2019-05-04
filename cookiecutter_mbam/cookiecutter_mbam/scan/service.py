@@ -195,6 +195,7 @@ class ScanService:
             image_file, gz_path = gzip_file(local_path)
             os.remove(local_path)
             local_path = gz_path
+            filename = filename + '.gz'
         image_file.close()
         dcm = ext == '.zip'
         return (local_path, filename, dcm)
