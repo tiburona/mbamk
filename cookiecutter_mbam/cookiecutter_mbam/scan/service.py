@@ -25,7 +25,7 @@ from cookiecutter_mbam.derivation import Derivation, DerivationService, update_d
 from .utils import gzip_file, crop
 from cookiecutter_mbam.storage.tasks import upload_scan_to_cloud_storage
 from celery import group
-from .tasks import update_database_objects
+from .tasks import update_database_objects, get_attributes
 
 from flask import current_app
 
@@ -107,7 +107,7 @@ class ScanService:
             xnat_ids = [self.xnat_ids['subject']['xnat_id'], self.xnat_ids['experiment']['xnat_id'], self.xnat_ids['scan']['xnat_id']]
         )
 
-    def _dicom_conversion_chain(self, scan, derivation):
+    def _dicom_conversion_chain(self, scan):
         """ Check for and respond to completed dicom conversion
 
         Polls the container service to check for completed dicom converstion, and on completion updates the derivation
@@ -116,7 +116,6 @@ class ScanService:
 
         :param str container_id: the id of the launched container
         :param Scan scan: the scan object
-        :param Derivation derivation: the derivation object
         :return: None
         """
 
@@ -126,15 +125,16 @@ class ScanService:
         if self.xc.xnat_config['local_docker'] == 'False':
             process_name += '_transfer'
         nifti = Derivation.create(scan_id=scan.id, process_name=process_name, status='pending')
-        ds = DerivationService(nifti.id, scan.id)
-        data = {'scan': crop(scan.xnat_uri, '/experiments')}
-        command_ids = ds._generate_ids()
+        command_ids = self.xc._generate_ids('dicom_to_nifti')
 
-        chain = poll_cs.s(xnat_credentials) | \
-                update_derivation_model.s(derivation.id, 'status') | \
-                dl_file_from_xnat.s(xnat_credentials, self.xc.nifti_files_url(scan), self.upload_dest) | \
-                upload_scan_to_cloud_storage.s(self.csc.bucket_name, self.upload_dest, self.csc.auth, scan_info) | \
-                update_derivation_model.s(derivation.id, 'cloud_storage_key')
+        chain = launch_command.s(xnat_credentials, self.xc.project, command_ids) | \
+                poll_cs.s(xnat_credentials) | \
+                update_derivation_model.s(nifti.id, 'status') | \
+                get_attributes.s(('scan', scan.id, 'xnat_uri'), ('derivation', nifti.id, 'status')) | \
+                dl_file_from_xnat.s(xnat_credentials, self.upload_dest) | \
+                upload_scan_to_cloud_storage.s(self.upload_dest, self.csc.bucket_name, self.csc.auth, scan_info) | \
+                update_derivation_model.s(nifti.id, 'cloud_storage_key')
+
         return chain
 
     def _dicom_conversion(self, scan):

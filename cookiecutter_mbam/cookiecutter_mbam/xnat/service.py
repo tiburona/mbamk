@@ -111,8 +111,8 @@ class XNATConnection:
         with init_session(self.user, self.password) as session:
             return session.post(self.server + url, data=data)
 
-    def nifti_files_url(self, scan):
-        return self.server + os.path.join(scan.xnat_uri, 'resources', 'NIFTI', 'files')
+    def nifti_files_url(self, scan_uri):
+        return self.server + os.path.join(scan_uri, 'resources', 'NIFTI', 'files')
 
     def _fetch_uris(self, subject_uri, experiment_uri):
         new_uris = [self.xnat_get(orig_uri).json()['URI'] for orig_uri in [subject_uri, experiment_uri]]
@@ -189,6 +189,13 @@ class XNATConnection:
         get_uris_signature = get_uris.s(xnat_credentials=self.auth)
 
         return create_resources_signature | upload_signature | get_uris_signature
+
+
+    def _generate_ids(self, process_name):
+        return (
+            self.xnat_config[process_name + '_command_id'],
+            self.xnat_config[process_name + '_wrapper_id']
+        )
 
 
     def upload_scan(self, xnat_ids, existing_xnat_ids, file_path, import_service=False):

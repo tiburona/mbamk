@@ -1,5 +1,6 @@
 from celery import Celery
 from cookiecutter_mbam import celery
+import functools
 
 
 def init_celery(app, celery):
@@ -37,5 +38,13 @@ def update_model(val, class_name, instance_id, key):
     instance.update(**args)
     return val
 
+def unpack_tuple(f):
+    # this method taken from this blogpost: https://wiredcraft.com/blog/3-gotchas-for-celery/
+    @functools.wraps(f)
+    def _wrapper(*args, **kwargs):
+        if len(args) > 0 and type(args[0]) == tuple:
+            args = args[0] + args[1:]
+        return f(*args, **kwargs)
+    return _wrapper
 
 
