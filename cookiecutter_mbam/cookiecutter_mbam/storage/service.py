@@ -1,6 +1,9 @@
 import boto3
 from cookiecutter_mbam.utility.celery_utils import get_celery_worker_status
 from .tasks import *
+from flask import current_app
+def debug():
+    assert current_app.debug == False, "Don't panic! You're here by request of debug()"
 
 class CloudStorageConnection:
 
@@ -23,8 +26,11 @@ class CloudStorageConnection:
         if registered_tasks:
             for key in registered_tasks:
                 for task in registered_tasks[key]:
-                    if 'upload_scan' in task:
+                    if 'upload_scan_to_cloud_storage' in task:
                         self.celery_upload = True
+
+    def upload_chain(self, filename, filedir, scan_info):
+        return upload_scan_to_cloud_storage.s(filename, filedir, self.bucket_name, self.auth, scan_info)
 
     def upload_scan(self, filename, dir, scan_info):
         """ Upload a scan to AWS
@@ -36,8 +42,9 @@ class CloudStorageConnection:
         :param str dir: the directory where the file is located
         :param tuple scan_info: a 3-tuple of strings with the XNAT subject, experiment, and scan identifiers
         """
+
         if self.celery_upload:
-            upload_scan(filename, self.bucket_name, dir, self.auth, scan_info)
+            upload_scan_to_cloud_storage(filename, self.bucket_name, dir, self.auth, scan_info)
         else:
             key = self._construct_key(scan_info, filename)
             file_path = os.path.join(dir, filename)

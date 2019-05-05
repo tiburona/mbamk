@@ -2,6 +2,8 @@ from .models import Derivation
 
 from cookiecutter_mbam import celery
 
+from cookiecutter_mbam.utility.celery_utils import update_model
+
 
 @celery.task
 def update_derivation_model(val, model_id, key):
@@ -9,3 +11,4 @@ def update_derivation_model(val, model_id, key):
     args = {key: val}
     derivation.update(**args)
     return val
+
