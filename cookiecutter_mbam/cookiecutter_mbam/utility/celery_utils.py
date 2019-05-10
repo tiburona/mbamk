@@ -72,8 +72,9 @@ def send_email(email_info):
     return
 
 @celery.task
-def error_handler(request, exc, traceback):
+def error_handler(request, exc, traceback, email_info):
     print("THE REQUEST IS", request)
     print("THE EXC IS", exc)
     print("THE TRACEBACK IS", traceback)
+    send_email(email_info)
     return "an error"

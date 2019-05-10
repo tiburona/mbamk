@@ -7,6 +7,7 @@ accept_content = ['json']
 enable_utc = True
 
 
-include = ['cookiecutter_mbam.xnat.tasks', 'cookiecutter_mbam.storage.tasks', 'cookiecutter_mbam.derivation.tasks']
+include = ['cookiecutter_mbam.xnat.tasks', 'cookiecutter_mbam.storage.tasks', 'cookiecutter_mbam.derivation.tasks',
+           'cookiecutter_mbam.scan.tasks', 'cookiecutter_mbam.utility.celery_utils']
 
 

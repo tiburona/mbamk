@@ -175,7 +175,6 @@ class ScanService:
             self.xc.upload_chain(
                 ids=(self.xnat_ids, self.existing_xnat_ids),
                 file_path=local_path,
-                email_info=email_info,
                 import_service=dcm
             ) | \
             self._update_database_objects_sig(scan.id, list(scan_info))
@@ -186,7 +185,7 @@ class ScanService:
         else:
             xnat_chain = xnat_upload_chain
 
-        #xnat_chain.set()
+        xnat_chain.set(link_error=error_handler.s(email_info))
 
         job = group([cloud_storage_upload_chain, xnat_chain])
         job.apply_async()
