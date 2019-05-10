@@ -7,3 +7,5 @@
 /web/flask_brain_db/xnat_c9.cfg
 /.semaphore-cache
 .DS_Store
+/landing_page/.firebase
+/cookiecutter_mbam/setup.cfg
