@@ -20,6 +20,7 @@ def update_database_objects(uris=[], model_names=[], model_ids = [], keywords=[]
         obj = class_names[model_name].get_by_id(model_id)
         obj.update(xnat_uri=uri)
         obj.update(**{'xnat_{}_id'.format(kw): id})
+    #raise Exception
     return uris
 
 @celery.task
@@ -33,7 +34,6 @@ def get_attributes(*args):
         cls, model_id, key = arg
         cls = class_names[cls]
         vals_to_return.append(getattr(cls.get_by_id(model_id), key))
-    print(tuple(vals_to_return))
     return tuple(vals_to_return)
 
 

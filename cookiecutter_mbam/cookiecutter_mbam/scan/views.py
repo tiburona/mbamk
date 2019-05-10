@@ -24,7 +24,12 @@ def add_scans(request, exp_id):
     }
     user_id = str(current_user.get_id())
     for f in request.files.getlist('scan_file'):
-        ScanService(user_id, exp_id).add(f)
+        try:
+            ScanService(user_id, exp_id).add(f)
+        except Exception as e:
+            # log error
+            # send something went wrong message to user
+            pass
     num_scans = len(request.files.getlist('scan_file'))
     flash('You successfully started the process of adding {}.'.format(num2words[num_scans]), 'success')
     return redirect(url_for('experiment.experiments'))
@@ -69,7 +74,12 @@ def meta_add(form, request, redirect_route, template, add_exp = False):
 @login_required
 def add():
     """Access the add scan route and form."""
-    return meta_add(ScanForm(request.form), request, 'scan.add', 'scans/upload.html')
+    try:
+        return meta_add(ScanForm(request.form), request, 'scan.add', 'scans/upload.html')
+    except Exception as e:
+        # log exception
+        # show flash message to the user that says something went wrong.
+        pass
 
 
 @blueprint.route('/add_experiment_and_scans', methods=['GET', 'POST'])
