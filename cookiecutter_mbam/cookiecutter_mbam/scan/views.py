@@ -7,6 +7,8 @@ from .service import ScanService
 from cookiecutter_mbam.experiment.views import add_experiment
 from cookiecutter_mbam.experiment import Experiment
 from cookiecutter_mbam.utils import flash_errors
+from cookiecutter_mbam.utility.celery_utils import send_email
+from cookiecutter_mbam.settings import MAIL_PASSWORD
 
 blueprint = Blueprint('scan', __name__, url_prefix='/scans', static_folder='../static')
 
@@ -23,15 +25,18 @@ def add_scans(request, exp_id):
         3: 'three new scans'
     }
     user_id = str(current_user.get_id())
-    for f in request.files.getlist('scan_file'):
-        try:
+    try:
+        for f in request.files.getlist('scan_file'):
             ScanService(user_id, exp_id).add(f)
-        except Exception as e:
-            # log error
-            # send something went wrong message to user
-            pass
-    num_scans = len(request.files.getlist('scan_file'))
-    flash('You successfully started the process of adding {}.'.format(num2words[num_scans]), 'success')
+        num_scans = len(request.files.getlist('scan_file'))
+        flash('You successfully started the process of adding {}.'.format(num2words[num_scans]), 'success')
+    except:
+        # log error
+        flash('There was a problem uploading your scan', 'error') #todo: error should be color coded red
+        email_info = (MAIL_PASSWORD, current_user.email, "Something went wrong uploading your scan")
+        send_email_sig = send_email.s(email_info)
+        send_email_sig.apply_async()
+
     return redirect(url_for('experiment.experiments'))
 
 def scan_number_validation(request, add_exp):
@@ -54,6 +59,7 @@ def scan_number_validation(request, add_exp):
             return "A session can only have three scans.  You already have {}.".format(num2words[num_scans])
     return ''
 
+
 def meta_add(form, request, redirect_route, template, add_exp = False):
     """Validate form, initiate adding experiments and/or scans, display messages to user and redirect"""
     if form.validate_on_submit():
@@ -74,13 +80,7 @@ def meta_add(form, request, redirect_route, template, add_exp = False):
 @login_required
 def add():
     """Access the add scan route and form."""
-    try:
-        return meta_add(ScanForm(request.form), request, 'scan.add', 'scans/upload.html')
-    except Exception as e:
-        # log exception
-        # show flash message to the user that says something went wrong.
-        pass
-
+    return meta_add(ScanForm(request.form), request, 'scan.add', 'scans/upload.html')
 
 @blueprint.route('/add_experiment_and_scans', methods=['GET', 'POST'])
 @login_required
