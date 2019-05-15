@@ -9,6 +9,7 @@ from cookiecutter_mbam.experiment import Experiment
 from cookiecutter_mbam.utils import flash_errors
 from cookiecutter_mbam.utility.celery_utils import send_email
 from cookiecutter_mbam.settings import MAIL_PASSWORD
+import logging
 
 blueprint = Blueprint('scan', __name__, url_prefix='/scans', static_folder='../static')
 
@@ -30,8 +31,10 @@ def add_scans(request, exp_id):
             ScanService(user_id, exp_id).add(f)
         num_scans = len(request.files.getlist('scan_file'))
         flash('You successfully started the process of adding {}.'.format(num2words[num_scans]), 'success')
-    except:
+    except Exception as e:
         # log error
+
+        current_app.logging.error("ack")
         flash('There was a problem uploading your scan', 'error') #todo: error should be color coded red
         email_info = (MAIL_PASSWORD, current_user.email, "Something went wrong uploading your scan")
         send_email_sig = send_email.s(email_info)

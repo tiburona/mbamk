@@ -84,8 +84,10 @@ class ScanService:
         # todo: update scan's status on successful upload to XNAT
         self.scan = self._add_scan_to_database()  # todo: what should scan's string repr be?
 
-
-        self._await_external_uploads()
+        try:
+            self._await_external_uploads()
+        except Exception as e:
+            current_app.logger.error(e)
 
     def _process_file(self, image_file):
         """Prepare file for upload to XNAT and cloud storage
