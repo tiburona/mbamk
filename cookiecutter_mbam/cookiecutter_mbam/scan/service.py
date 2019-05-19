@@ -10,22 +10,28 @@ Todo: Right now if we use the import service XNAT is inferring its own scan id. 
 Todo: if someone uploads a zip file we don't actually know that there are dicoms inside (could be NIFTI).  Consider this
 fact.
 
-Todo: I need to make sure that if I catch an exception in XNAT connection I don't go ahead and create a scan in the database.
+Todo: Need to think more about recording status of uploads in database since scan object is going to be created regardless.  Should scan have field like container
+path?
 
 """
 
 import configparser
-from cookiecutter_mbam.xnat import XNATConnection
-from cookiecutter_mbam.xnat.tasks import *
-from cookiecutter_mbam.storage import CloudStorageConnection
-from cookiecutter_mbam.experiment import Experiment
+from celery import group, chord
 from cookiecutter_mbam.user import User
+from cookiecutter_mbam.experiment import Experiment
 from .models import Scan
-from cookiecutter_mbam.derivation import Derivation, DerivationService, update_derivation_model
-from .utils import gzip_file, crop
+from cookiecutter_mbam.xnat import XNATConnection
+from cookiecutter_mbam.storage import CloudStorageConnection
+from cookiecutter_mbam.derivation import Derivation
+from .utils import gzip_file
+from cookiecutter_mbam.xnat.tasks import *
 from cookiecutter_mbam.storage.tasks import upload_scan_to_cloud_storage
-from celery import group
+from cookiecutter_mbam.derivation.tasks import update_derivation_model
 from .tasks import update_database_objects, get_attributes
+from cookiecutter_mbam.settings import MAIL_PASSWORD
+from cookiecutter_mbam.utility.celery_utils import send_email, error_handler
+
+
 
 from flask import current_app
 
@@ -45,7 +51,7 @@ class ScanService:
         self._config_read(os.path.join(config_dir, 'setup.cfg'))
 
     def _config_read(self, config_path):
-        """Scan service configuratino
+        """Scan service configuration
         Reads the config file passed on scan service object creation, and sets the upload path and creates XNAT
         Connection and a Cloud Storage Connection instance and attaches them to the scan service object.
         :param config_path:
@@ -53,8 +59,7 @@ class ScanService:
         """
         config = configparser.ConfigParser()
         config.read(config_path)
-        # todo: consider changing name of upload_dest if we also use it for downloads
-        self.upload_dest = os.path.join(self.instance_path, config['uploads']['uploaded_scans_dest'])
+        self.file_depo = os.path.join(self.instance_path, config['files']['file_depo'])
         self.xc = XNATConnection(config=config['XNAT'])
         self.csc = CloudStorageConnection(config=config['AWS'])
 
@@ -62,134 +67,37 @@ class ScanService:
         """The top level public method for adding a scan
 
         Calls methods to infer file type and further process the file, generate xnat identifiers and query strings,
-        check what XNAT identifiers objects have, upload the scan to cloud storage, upload the scan to XNAT, add the
-        scan to the database, update user, experiment, and scan database objects with their XNAT-related attributes,
-        and finally, if the uploaded file was zipped file of dicoms, starts the process of conversion to nifti.
+        check what XNAT identifiers objects have, add the scan to the database, and finally begin the process of
+        uploading the file to external sites.
 
         :param file object image_file: the file object
         :return: None
 
         """
-        local_path, filename, dcm = self._process_file(image_file)
+        self.local_path, self.filename, self.dcm = self._process_file(image_file)
 
-        self.xnat_ids = self._generate_xnat_identifiers(dcm=dcm)
+        self.xnat_ids = self._generate_xnat_identifiers(dcm=self.dcm)
         self.existing_xnat_ids = self._check_for_existing_xnat_ids()
+        self.scan_info = (self.xnat_ids['subject']['xnat_id'], self.xnat_ids['experiment']['xnat_id'],
+                          self.xnat_ids['scan']['xnat_id'])
 
-        scan = self._add_scan_to_database(dcm=dcm, xnat_status='Pending', aws_status='Pending')  # todo: what should scan's string repr be?
+        # todo: update scan's status on successful upload to XNAT
+        self.scan = self._add_scan_to_database()  # todo: what should scan's string repr be?
 
-        self._await_external_uploads(scan, local_path, filename, dcm)
-
-    def _await_external_uploads(self, scan, local_path, filename, dcm):
-
-        scan_info = (self.xnat_ids['subject']['xnat_id'], self.xnat_ids['experiment']['xnat_id'], self.xnat_ids['scan']['xnat_id'])
-
-        cloud_storage_upload_chain = self.csc.upload_chain(filename, self.upload_dest, scan_info)
-
-        xnat_upload_chain = self.xc.upload_chain(ids=(self.xnat_ids, self.existing_xnat_ids),
-                                                 file_path=local_path, import_service=dcm) | \
-                            self._update_database_objects_sig(scan.id)
-
-        if not dcm:
-            xnat_chain = xnat_upload_chain
-
-        else:
-            dicom_conversion_chain = self._dicom_conversion_chain(scan)
-            xnat_chain = xnat_upload_chain | dicom_conversion_chain
-
-        job = group([cloud_storage_upload_chain, xnat_chain])
-        job.apply_async()
-
-    def _update_database_objects_sig(self, scan_id):
-        return update_database_objects.s(
-            model_names = ['user', 'experiment', 'scan'],
-            model_ids = [self.user_id, self.experiment.id, scan_id],
-            keywords = ['subject', 'experiment', 'scan'],
-            xnat_ids = [self.xnat_ids['subject']['xnat_id'], self.xnat_ids['experiment']['xnat_id'], self.xnat_ids['scan']['xnat_id']]
-        )
-
-    def _dicom_conversion_chain(self, scan):
-        """ Check for and respond to completed dicom conversion
-
-        Polls the container service to check for completed dicom converstion, and on completion updates the derivation
-        model with the new derivation status, downloads the completed nifti file from XNAT, uploads it to the cloud
-        storage, and updates the derivation model with the new cloud storage key.
-
-        :param str container_id: the id of the launched container
-        :param Scan scan: the scan object
-        :return: None
-        """
-
-        xnat_credentials = (self.xc.server, self.xc.user, self.xc.password)
-        scan_info = (self.user_id, scan.experiment_id, scan.id)
-        process_name = 'dicom_to_nifti'
-        if self.xc.xnat_config['local_docker'] == 'False':
-            process_name += '_transfer'
-        nifti = Derivation.create(scan_id=scan.id, process_name=process_name, status='pending')
-        command_ids = self.xc._generate_ids('dicom_to_nifti')
-
-        chain = launch_command.s(xnat_credentials, self.xc.project, command_ids) | \
-                poll_cs.s(xnat_credentials) | \
-                update_derivation_model.s(nifti.id, 'status') | \
-                get_attributes.s(('scan', scan.id, 'xnat_uri'), ('derivation', nifti.id, 'status')) | \
-                dl_file_from_xnat.s(xnat_credentials, self.upload_dest) | \
-                upload_scan_to_cloud_storage.s(self.upload_dest, self.csc.bucket_name, self.csc.auth, scan_info) | \
-                update_derivation_model.s(nifti.id, 'cloud_storage_key')
-
-        return chain
-
-    def _dicom_conversion(self, scan):
-        """Kick off conversion of dicom file to nifti
-
-        Starts remote dicom conversion via the container service and calls the method that checks for completion
-
-        :param Scan scan: the scan object
-        :return: None
-        """
-        container_id, nifti, derivation_service = self._dicom_to_nifti(scan.id)
-        self.dicom2nifti_container_id = container_id
-        self._await_dicom_conversion(container_id=container_id, scan=scan, derivation=nifti)
-
-
-    def delete(self, scan_id, delete_from_xnat=False):
-        """ Delete a scan from the database
-
-        Deletes a scan from the database and optionally deletes it from XNAT. Only admins should delete a scan from XNAT
-
-        :param int scan_id: the database id of the scan to delete
-        :param bool delete_from_xnat: whether to delete the scan file from XNAT, default False
-        :return: None
-        """
-        scan = Scan.get_by_id(scan_id)
-        if delete_from_xnat:
-            self._delete_from_xnat(self, scan)
-            self.experiment.update(num_scans=self.experiment.num_scans - 1)
-        scan.delete()
-
-    def _delete_from_xnat(self, scan):
-        # todo: consider whether this really needs to be its own method or should just folded into delete
-        """
-        :param object scan: the database object corresponding to the scan to delete in xnat
-        :return: None
-        """
-        self.xc.xnat_delete(scan.xnat_uri)
-
-    def _add_scan_to_database(self, dcm, xnat_status='Pending', aws_status='Pending'):
-        """Add a scan to the database
-
-        Creates the scan object, adds it to the database, and sets the AWS key
-        :return: scan
-        """
-        scan = Scan.create(experiment_id=self.experiment.id, xnat_status=xnat_status, aws_status=aws_status)
-        return scan
+        try:
+            self._await_external_uploads()
+        except Exception as e:
+            current_app.logger.error(e)
 
     def _process_file(self, image_file):
         """Prepare file for upload to XNAT and cloud storage
+
         :param image_file:
         :return: two-tuple of the path to the file on local disk and a boolean indicating if the file is a zip file
         """
         name, ext = os.path.splitext(image_file.filename)
         filename = os.path.basename(image_file.filename)
-        local_path = os.path.join(self.upload_dest, filename)
+        local_path = os.path.join(self.file_depo, filename)
         image_file.save(local_path)
         if ext == '.nii':
             image_file, gz_path = gzip_file(local_path)
@@ -246,43 +154,122 @@ class ScanService:
         return {k: getattr(v, k) if getattr(v, k) else '' for k, v in {'xnat_subject_id': self.user,
                                                                        'xnat_experiment_id': self.experiment}.items()}
 
-    def _update_database_objects(self, objects=[], keywords=[], uris=[], ids=[], ):
-        """Update database objects
+    def _await_external_uploads(self):
+        """The method to start the Celery chain that uploads scans to XNAT and cloud storage
 
-        After uploading a scan, ensures that user, experiment, and scan are updated in the database with their xnat uri
-        and xnat id.
+        Calls the method to construct the chain that uploads the file to cloud storage, calls the method to construct
+        the chain that uploads the file to XNAT, and finally, runs the cloud storage upload chain and XNAT upload chain
+        in parallel.
 
-        :param list objects: user, experiment, and scan
-        :param list keywords: 'subject', 'experiment', and 'scan'
-        :param list uris: xnat uris
-        :param list ids: xnat ids
         :return: None
         """
-        attributes = zip(objects, keywords, uris, ids)
-        for (obj, kw, uri, id) in attributes:
-            obj.update(xnat_uri=uri)
-            obj.update(**{'xnat_{}_id'.format(kw): id})
 
-    def _dicom_to_nifti(self, scan_id):
-        """Convert dicom files to nifti
+        #raise Exception
 
-        When dicom files are uploaded to the container service, creates a new derivation object and use the derivation
-        service to launch dicom to nifti conversion.
+        cloud_storage_upload_chain = self.csc.upload_chain(self.filename, self.file_depo, self.scan_info).set(
+            link_error=[])
 
-        :param int scan_id: the id of the scan whose dicom files will be converted
-        :return: the id of the container running the process
-        :rtype string
+        xnat_chain = self._construct_xnat_chain()
+
+        job = group([cloud_storage_upload_chain, xnat_chain])
+        job.apply_async()
+
+    def _construct_xnat_chain(self):
+        """Construct the celery chain that performs XNAT functions and updates MBAM databse
+
+        Constructs the chain to upload a file to XNAT and update user, experiment, and scan representations in the MBAM
+        database, and if the file is a dicom, append to that chain a chain that conducts dicom conversion, and finally
+        set the error handler on the chain.
+
+        :return: Celery chain that performs XNAT functions
         """
-        scan = Scan.get_by_id(scan_id)
+
+        email_info = (MAIL_PASSWORD, self.user.email, "Something went wrong with XNAT.")
+
+        xnat_upload_chain = \
+            self.xc.upload_chain(
+                ids=(self.xnat_ids, self.existing_xnat_ids),
+                file_path=self.local_path,
+                import_service=self.dcm
+            ) | \
+            self._update_database_objects_sig()
+
+        if self.dcm:
+            dicom_conversion_chain = self._dicom_conversion_chain(self.scan)
+            xnat_chain = xnat_upload_chain | dicom_conversion_chain
+        else:
+            xnat_chain = xnat_upload_chain
+
+        return xnat_chain.set(link_error=error_handler.s(email_info))
+
+
+    def _update_database_objects_sig(self):
+        """Create the signature of update_database_objects task
+
+        Construct the signature of the update_database_ojbects task, passing it model names, model ids, keywords, and
+        xnat_ids arguments.
+
+        :return: the signature of the Celery task to update database objects
+        """
+        return update_database_objects.s(
+            model_names = ['user', 'experiment', 'scan'],
+            model_ids = [self.user_id, self.experiment.id, self.scan.id],
+            keywords = ['subject', 'experiment', 'scan'],
+            xnat_ids = self.scan_info
+        )
+
+    def _dicom_conversion_chain(self):
+        """Construct a chain to perform conversion of dicoms to nifti
+
+        Constructs a chain that launches the dicom conversion command, pools the container service to check for
+        completed dicom converstion, and on completion updates the derivation model with the new derivation status,
+        downloads the completed nifti file from XNAT, uploads it to the cloud storage, and updates the derivation model
+        with the new cloud storage key.
+
+        :return: the chain to be executed
+        """
+
+        xnat_credentials = (self.xc.server, self.xc.user, self.xc.password)
         process_name = 'dicom_to_nifti'
         if self.xc.xnat_config['local_docker'] == 'False':
             process_name += '_transfer'
-        nifti = Derivation.create(scan_id=scan.id, process_name=process_name, status='pending')
-        ds = DerivationService(nifti.id, scan.id)
-        scan_data_locator = crop(scan.xnat_uri, '/experiments')
-        container_id = ds.launch(data={'scan': scan_data_locator})
-        nifti.update(status='started')
-        return (container_id, nifti, ds)
+        nifti = Derivation.create(scan_id=self.scan.id, process_name=process_name, status='pending')
+        command_ids = self.xc._generate_ids('dicom_to_nifti')
+
+        chain = launch_command.s(xnat_credentials, self.xc.project, command_ids) | \
+                poll_cs.s(xnat_credentials) | \
+                update_derivation_model.s(nifti.id, 'status') | \
+                get_attributes.s(('scan', self.scan.id, 'xnat_uri'), ('derivation', nifti.id, 'status')) | \
+                dl_file_from_xnat.s(xnat_credentials, self.file_depo) | \
+                upload_scan_to_cloud_storage.s(self.file_depo, self.csc.bucket_name, self.csc.auth, self.scan_info) | \
+                update_derivation_model.s(nifti.id, 'cloud_storage_key')
+
+        return chain
+
+    def _add_scan_to_database(self, xnat_status='Pending', aws_status='Pending'):
+        """Add a scan to the database
+
+        Creates the scan object, adds it to the database, and sets the initial xnat and cloud storage status
+        :return: scan
+        """
+        return Scan.create(experiment_id=self.experiment.id, xnat_status=xnat_status, aws_status=aws_status)
+
+    def delete(self, scan_id, delete_from_xnat=False):
+        # todo: add delete listener
+        """ Delete a scan from the database
+
+        Deletes a scan from the database and optionally deletes it from XNAT. Only admins should delete a scan from XNAT
+
+        :param int scan_id: the database id of the scan to delete
+        :param bool delete_from_xnat: whether to delete the scan file from XNAT, default False
+        :return: None
+        """
+        scan = Scan.get_by_id(scan_id)
+        if delete_from_xnat:
+            self.xc.xnat_delete(scan.xnat_uri)
+            self.experiment.update(num_scans=self.experiment.num_scans - 1)
+        scan.delete()
+
 
 
 

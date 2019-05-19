@@ -1,6 +1,8 @@
 from celery import Celery
 from cookiecutter_mbam import celery
+import os
 import functools
+import smtplib, ssl
 
 
 def init_celery(app, celery):
@@ -48,3 +50,31 @@ def unpack_tuple(f):
     return _wrapper
 
 
+@celery.task
+def log_error(task_id):
+    result = celery.AsyncResult(task_id)
+    result.get(propagate=False)  # make sure result written.
+    with open(os.path.join('/var/errors', task_id), 'a') as fh:
+        fh.write('--\n\n%s %s %s' % (
+            task_id, result.result, result.traceback))
+
+@celery.task
+def send_email(email_info):
+    password, recipient, message = email_info
+    port = 587
+    smtp_server = "smtp.gmail.com"
+    sender_email = "testingmbam@gmail.com"
+    context = ssl.create_default_context()
+    with smtplib.SMTP(smtp_server, port) as server:
+        server.starttls(context=context)
+        server.login(sender_email, password)
+        server.sendmail(sender_email, recipient, message)
+    return
+
+@celery.task
+def error_handler(request, exc, traceback, email_info):
+    print("THE REQUEST IS", request)
+    print("THE EXC IS", exc)
+    print("THE TRACEBACK IS", traceback)
+    send_email(email_info)
+    return "an error"

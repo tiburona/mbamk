@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """The app module, containing the app factory function."""
+import logging
 from flask import Flask, render_template
+import cookiecutter_mbam.logging
 from flask_security import SQLAlchemyUserDatastore
 from celery import Celery
 from cookiecutter_mbam import celery
@@ -67,7 +69,6 @@ def register_errorhandlers(app):
     for errcode in [401, 404, 413, 500]:
         app.errorhandler(errcode)(render_error)
     return None
-
 
 def register_shellcontext(app):
     """Register shell context objects."""

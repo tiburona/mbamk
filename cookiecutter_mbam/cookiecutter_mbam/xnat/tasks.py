@@ -1,13 +1,20 @@
 import time
-import json
 import os
-from cookiecutter_mbam.utility.request_utils import init_session
 from cookiecutter_mbam import celery
+from cookiecutter_mbam.utility.request_utils import init_session
 from .utils import crop
-from cookiecutter_mbam.utility.celery_utils import unpack_tuple
+from cookiecutter_mbam.utility.celery_utils import unpack_tuple, log_error
 
 @celery.task
 def create_resources(xnat_credentials, ids, levels, import_service, archive_prefix):
+    """
+    :param tuple xnat_credentials:
+    :param ids:
+    :param levels:
+    :param import_service:
+    :param archive_prefix:
+    :return:
+    """
     server, user, password = xnat_credentials
     xnat_ids, existing_xnat_ids = ids
     uri = archive_prefix  # todo: decide whether to use prearchive
