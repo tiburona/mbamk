@@ -80,10 +80,10 @@ class ScanService(BaseService):
 
         self.scan = self._add_scan_to_database()
 
-        #try:
-        self._await_external_uploads()
-        # except Exception as e:
-        #     self._call_error_handler(e, log_message='generic_message', user_message='user_external_uploads')
+        try:
+            self._await_external_uploads()
+        except Exception as e:
+             self._call_error_handler(e, log_message='generic_message', user_message='user_external_uploads')
 
     def _process_file(self, image_file):
         """Prepare file for upload to XNAT and cloud storage
@@ -181,8 +181,6 @@ class ScanService(BaseService):
             self._upload_file_to_cloud_storage()
         )
 
-    # todo: consider whether it's possible to avoid the need for this separate method by having xc.upload_scan_file
-    # return only the scan uri, then calling
     def _update_database_objects(self):
         """Create the signature of update_database_objects task
 

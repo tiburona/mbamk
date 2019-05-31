@@ -12,7 +12,9 @@ class RequestandTaskFormatter(TaskFormatter):
             record.url = request.url
             record.remote_addr = request.remote_addr
         except RuntimeError:
-            return super().format(record)
+            record.url = '???'
+            record.remote_addr = '???'
+        return super().format(record)
 
 request_and_task_formatter = RequestandTaskFormatter(
     '[%(asctime)s] %(remote_addr)s requested %(url)s\n'
@@ -37,6 +39,7 @@ mail_handler.setLevel(logging.ERROR)
 
 file_handler = FileHandler('/Users/katie/mbam.log')
 file_handler.setFormatter(request_and_task_formatter)
+file_handler.setLevel(logging.ERROR)
 
 logger.addHandler(mail_handler)
 logger.addHandler(file_handler)
