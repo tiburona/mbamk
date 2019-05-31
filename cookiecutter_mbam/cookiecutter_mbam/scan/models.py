@@ -16,7 +16,7 @@ class Scan(SurrogatePK, Model):
     xnat_status = db.Column(db.String(80))
     aws_status = db.Column(db.String(80))
     xnat_uri = db.Column(db.String(255))
-    xnat_scan_id = db.Column(db.String(80))
+    xnat_id = db.Column(db.String(80))
     orig_aws_key = db.Column(db.String(255))
     nifti_aws_key = db.Column(db.String(255))
     experiment_id = reference_col('experiment', nullable=True)
@@ -28,7 +28,8 @@ class Scan(SurrogatePK, Model):
 
     def __repr__(self):
         """Represent instance as a unique string."""
-        return '<Scan({uri})>'.format(uri=self.xnat_uri)
+        experiment_date = Experiment.get_by_id(self.experiment_id).date
+        return f'<Scan(date: {experiment_date} xnat_uri: {self.xnat_uri})>'
 
 @event.listens_for(Scan, "after_insert")
 def after_insert_listener(mapper, connection, target):

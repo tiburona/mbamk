@@ -2,11 +2,11 @@
 """The app module, containing the app factory function."""
 import logging
 from flask import Flask, render_template
-import cookiecutter_mbam.logging
+import cookiecutter_mbam.logger
 from flask_security import SQLAlchemyUserDatastore
 from celery import Celery
 from cookiecutter_mbam import celery
-from cookiecutter_mbam.utility.celery_utils import init_celery
+from cookiecutter_mbam.init_celery import init_celery
 from cookiecutter_mbam import commands, public, user, experiment, scan
 from cookiecutter_mbam.admin import UserAdmin, RoleAdmin
 from cookiecutter_mbam.extensions import admin, cache, csrf_protect, db, debug_toolbar, migrate, \

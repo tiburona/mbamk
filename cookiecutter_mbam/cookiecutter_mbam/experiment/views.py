@@ -2,10 +2,11 @@
 """Experiment views."""
 from flask import Blueprint, render_template, request, flash, redirect, url_for, session
 from flask_security import current_user
-from .models import Experiment
+
+from cookiecutter_mbam.utils.error_utils import flash_errors
 from .forms import ExperimentForm
+from .models import Experiment
 from .service import ExperimentService
-from cookiecutter_mbam.utils import flash_errors
 
 blueprint = Blueprint('experiment', __name__, url_prefix='/experiments', static_folder='../static')
 
@@ -46,7 +47,7 @@ def edit_experiment(id):
     form = ExperimentForm(obj=exp)
 
     if form.validate_on_submit():
-        form.populate_obj(exp); # update whatever has been changed in the form
+        form.populate_obj(exp) # update whatever has been changed in the form
         exp.save()
         flash("Experiment metadata updated","success")
         return redirect(url_for('experiment.single_experiment', id=exp.id))
