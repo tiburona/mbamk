@@ -114,6 +114,14 @@ class ScanService(BaseService):
         return ext, filename, local_path
 
     def _compress_file(self, local_path, filename):
+        """Compress a scan
+
+        Gzips the image file and returns data about the gzipped file.
+
+        :param str local_path: the path to the uncompressed file
+        :param str filename: the name of the uncompressed file
+        :return: a three-tuple of the compressed file, the path to that file, and its name
+        """
         image_file, gz_path = gzip_file(local_path)
         os.remove(local_path)
         local_path = gz_path

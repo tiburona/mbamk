@@ -26,7 +26,7 @@ def create_resources(xnat_credentials, ids, levels, import_service, archive_pref
     with init_session(user, password) as s:
         for level in levels:
 
-            exists_already = len(existing_xnat_ids[level]['xnat_id'])
+            exists_already = level in ['subject', 'experiment'] and len(existing_xnat_ids[level]['xnat_id'])
             d = existing_xnat_ids if exists_already else xnat_ids
 
             uri = os.path.join(uri, level + 's', d[level]['xnat_id'])
@@ -109,6 +109,7 @@ def launch_command(uri, xnat_credentials, project, command_ids):
     server, user, password = xnat_credentials
     command_id, wrapper_id = command_ids
     url = '/xapi/projects/{}/commands/{}/wrappers/{}/launch'.format(project, command_id, wrapper_id)
+    a = 1/0
     with init_session(user, password) as s:
         r = s.post(server + url, data)
         return r.json()['container-id']
