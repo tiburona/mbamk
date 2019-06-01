@@ -2,7 +2,13 @@ from cookiecutter_mbam import celery
 import ssl
 import smtplib
 from cookiecutter_mbam.settings import MAIL_PASSWORD
-from cookiecutter_mbam.logger import logger
+from cookiecutter_mbam.logger import file_handler, mail_handler
+from celery.utils.log import get_task_logger
+
+logger = get_task_logger(__name__)
+logger.addHandler(file_handler)
+logger.addHandler(mail_handler)
+
 
 
 messages = {
@@ -31,7 +37,6 @@ def multi_setter_factory(cls):
         instance = cls.get_by_id(instance_id)
         for key, val in attr_dict.items():
             instance.update(**{key: val})
-        #import epdb; epdb.set_trace()
         return attr_dict
     return set_attributes
 

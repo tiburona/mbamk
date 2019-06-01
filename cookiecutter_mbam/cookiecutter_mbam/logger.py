@@ -6,12 +6,15 @@ from celery.app.log import TaskFormatter
 
 logger = logging.getLogger()
 
+# todo: figure out why this request.url etc. appears as an unhandled error in wsgi logging.
+# It doesn't seem to effect anything but is confusing noise.  
+
 class RequestandTaskFormatter(TaskFormatter):
     def format(self, record):
         try:
             record.url = request.url
             record.remote_addr = request.remote_addr
-        except RuntimeError:
+        except (RuntimeError, KeyError):
             record.url = '???'
             record.remote_addr = '???'
         return super().format(record)
@@ -35,7 +38,6 @@ mail_handler = SMTPHandler(
 mail_handler.addFilter(MailFilter())
 mail_handler.setFormatter(request_and_task_formatter)
 mail_handler.setLevel(logging.ERROR)
-
 
 file_handler = FileHandler('/Users/katie/mbam.log')
 file_handler.setFormatter(request_and_task_formatter)

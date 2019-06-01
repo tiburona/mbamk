@@ -147,7 +147,7 @@ class ScanService(BaseService):
 
         Constructs the chain to upload a file to XNAT and update user, experiment, and scan representations in the MBAM
         database, and if the file is a dicom, append to that chain a chain that conducts dicom conversion, and finally
-        set the error handler on the chain.
+        sets the error handler on the chain.
 
         :return: Celery chain that performs XNAT functions
         """
@@ -161,6 +161,10 @@ class ScanService(BaseService):
                                                              user_message='user_external_uploads'))
 
     def upload_file_to_xnat(self):
+        """
+
+        :return:
+        """
 
         error_proc = [self._error_handler(log_message='generic_message', user_message='user_external_uploads'),
                               self.set_attribute(self.scan.id, 'xnat_status', val='error')]
@@ -192,12 +196,12 @@ class ScanService(BaseService):
     def _update_database_objects(self):
         """Create the signature of update_database_objects task
 
-        Construct the signature of the update_database_objects task, passing it model names, model ids, keywords, and
-        xnat_ids arguments. This is basically the same functionality as set_attribute.  However, in this particular
-        case, if a scan is imported, the scan uri is not known until the file is imported and the chain is executed.
-        For this reason, a specialized method is needed.
+        Constructs a chain of signature of tasks to update user, experiment, and scan with their IDs and URIs in XNAT.
+        Because in the case of scan the ID and URI are not known a priori (at least if the scan is an imported dicom),
+        scan must accept its new attributes as arguments passed from the signature of the task executed just before,
+        part of xc.upload_scan_file.
 
-        :return: the signature of the Celery task to update database objects
+        :return: a chain of Celery tasks to update database objects
         """
 
         es = ExperimentService()
@@ -214,6 +218,9 @@ class ScanService(BaseService):
 
 
     def _convert_dicom_to_nifti(self):
+        """
+        :return: a chain of Celery tasks to convert a DICOM file to NIFTI
+        """
         self.ds = DerivationService(self.scan.id)
         self.ds.create('dicom_to_nifti')
 

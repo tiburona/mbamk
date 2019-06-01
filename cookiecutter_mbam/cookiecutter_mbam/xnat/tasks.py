@@ -109,7 +109,6 @@ def launch_command(uri, xnat_credentials, project, command_ids):
     server, user, password = xnat_credentials
     command_id, wrapper_id = command_ids
     url = '/xapi/projects/{}/commands/{}/wrappers/{}/launch'.format(project, command_id, wrapper_id)
-    a = 1/0
     with init_session(user, password) as s:
         r = s.post(server + url, data)
         return r.json()['container-id']
