@@ -90,6 +90,7 @@ def dl_file_from_xnat(scan_uri, xnat_credentials, file_path):
     with init_session(user, password) as s:
         r = s.get(server + os.path.join(scan_uri, 'resources', 'NIFTI', 'files'))
         if r.ok:
+            print("I shouldn't get here")
             result = r.json()['ResultSet']['Result'][0]
             response = s.get(server + result['URI'])
             if response.ok:

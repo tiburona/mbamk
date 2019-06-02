@@ -1,5 +1,5 @@
 from .models import User
-from cookiecutter_mbam.base_service import BaseService
+from cookiecutter_mbam.base import BaseService
 from .tasks import set_user_attribute, get_user_attribute
 
 tasks = {'set_attribute': set_user_attribute, 'get_attribute': get_user_attribute}

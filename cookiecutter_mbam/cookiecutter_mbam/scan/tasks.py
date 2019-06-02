@@ -1,12 +1,8 @@
 from .models import Scan
-from cookiecutter_mbam.base_service.tasks import setter_factory, getter_factory, multi_setter_factory
+from cookiecutter_mbam.base.tasks import run_task_factories
 from cookiecutter_mbam import celery
 
-set_attribute = setter_factory(Scan)
-
-set_attributes = multi_setter_factory(Scan)
-
-get_attribute = getter_factory(Scan)
+set_attribute, set_attributes, get_attribute = run_task_factories(Scan)
 
 @celery.task
 def set_scan_attribute(*args):

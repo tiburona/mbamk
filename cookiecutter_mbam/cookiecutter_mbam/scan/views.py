@@ -8,7 +8,7 @@ from flask_security import current_user, login_required
 
 from cookiecutter_mbam.experiment import Experiment
 from cookiecutter_mbam.experiment.views import add_experiment
-from cookiecutter_mbam.base_service.tasks import global_error_handler
+from cookiecutter_mbam.base.tasks import global_error_handler
 from cookiecutter_mbam.utils.error_utils import flash_errors
 from .forms import ScanForm, ExperimentAndScanForm
 from .service import ScanService

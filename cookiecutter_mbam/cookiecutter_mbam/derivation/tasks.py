@@ -1,11 +1,8 @@
 from .models import Derivation
-from cookiecutter_mbam.base_service.tasks import setter_factory, getter_factory
+from cookiecutter_mbam.base.tasks import run_task_factories
 from cookiecutter_mbam import celery
 
-
-set_attribute = setter_factory(Derivation)
-
-get_attribute = getter_factory(Derivation)
+set_attribute, set_attributes, get_attribute = run_task_factories(Derivation)
 
 @celery.task
 def set_derivation_attribute(*args):

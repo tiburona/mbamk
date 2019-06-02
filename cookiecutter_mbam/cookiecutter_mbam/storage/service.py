@@ -21,22 +21,6 @@ class CloudStorageConnection:
         self.bucket_name = config['bucket_name']
         self._get_celery_status()
 
-    def _get_celery_status(self):
-        """Verify Celery worker is registered
-        Sets default to upload synchronously, but if celery worker is registered, changes default.
-        """
-        self.celery_upload = False
-        celery_status = get_celery_worker_status(celery)
-        registered_tasks = celery_status['registered_tasks']
-        if registered_tasks:
-            for key in registered_tasks:
-                for task in registered_tasks[key]:
-                    if 'upload_scan_to_cloud_storage' in task:
-                        self.celery_upload = True
-
-    def ul_scan_to_cloud_storage(self, filename, filedir, scan_info):
-        return upload_scan_to_cloud_storage.si(filename, filedir, self.bucket_name, self.auth, scan_info)
-
     def _construct_key(self, scan_info, filename):
         """
         :param tuple scan_info: a 3-tuple of strings with the XNAT subject, experiment, and scan identifiers
@@ -46,8 +30,8 @@ class CloudStorageConnection:
         user_id, experiment_id, scan_id = scan_info
         return 'user/{}/experiment/{}/scan/{}/file/{}'.format(user_id, experiment_id, scan_id, filename)
 
-    def upload_chain(self, filename, file_depot, scan_info):
-        return upload_scan_to_cloud_storage.s(filename, file_depot, self.bucket_name, self.auth, scan_info)
+    def upload_to_cloud_storage(self, filename, filedir, scan_info):
+        return upload_scan_to_cloud_storage.si(filename, filedir, self.bucket_name, self.auth, scan_info)
 
     def object_exists(self, key):
         """

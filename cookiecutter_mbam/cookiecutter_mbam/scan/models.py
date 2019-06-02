@@ -2,6 +2,7 @@
 """Scan model."""
 
 from cookiecutter_mbam.database import Model, SurrogatePK, db, reference_col, relationship
+from cookiecutter_mbam.utils.model_utils import make_ins_del_listener
 from cookiecutter_mbam.experiment import Experiment
 from flask_sqlalchemy import event
 
@@ -18,7 +19,6 @@ class Scan(SurrogatePK, Model):
     xnat_uri = db.Column(db.String(255))
     xnat_id = db.Column(db.String(80))
     orig_aws_key = db.Column(db.String(255))
-    nifti_aws_key = db.Column(db.String(255))
     experiment_id = reference_col('experiment', nullable=True)
     derivations = relationship('Derivation', backref='scan')
 
@@ -43,3 +43,4 @@ def after_insert_listener(mapper, connection, target):
         .values(num_scans=num_scans)
     )
 
+delete_listener = make_ins_del_listener(Scan, Experiment, 'scan', 'experiment', 'after_delete', -1)

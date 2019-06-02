@@ -3,7 +3,7 @@
 """
 
 from .models import Experiment
-from cookiecutter_mbam.base_service import BaseService
+from cookiecutter_mbam.base import BaseService
 from .tasks import set_experiment_attribute, get_experiment_attribute
 
 tasks = {'set_attribute': set_experiment_attribute, 'get_attribute': get_experiment_attribute}

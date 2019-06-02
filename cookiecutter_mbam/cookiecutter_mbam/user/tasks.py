@@ -1,10 +1,8 @@
 from .models import User
-from cookiecutter_mbam.base_service.tasks import setter_factory, getter_factory
+from cookiecutter_mbam.base.tasks import run_task_factories
 from cookiecutter_mbam import celery
 
-set_attribute = setter_factory(User)
-
-get_attribute = getter_factory(User)
+set_attribute, set_attributes, get_attribute = run_task_factories(User)
 
 @celery.task
 def set_user_attribute(*args):

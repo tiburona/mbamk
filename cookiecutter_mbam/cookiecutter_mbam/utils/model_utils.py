@@ -1,6 +1,6 @@
 from flask_sqlalchemy import event
 
-def make_increment_decrement_listener(child_model, parent_model, child_model_str, parent_model_str,
+def make_ins_del_listener(child_model, parent_model, child_model_str, parent_model_str,
                                       event_type, inc_quant):
 
     @event.listens_for(child_model, event_type)

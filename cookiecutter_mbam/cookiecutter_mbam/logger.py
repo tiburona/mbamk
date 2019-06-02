@@ -7,7 +7,7 @@ from celery.app.log import TaskFormatter
 logger = logging.getLogger()
 
 # todo: figure out why this request.url etc. appears as an unhandled error in wsgi logging.
-# It doesn't seem to effect anything but is confusing noise.  
+# It doesn't seem to effect anything but is confusing noise.
 
 class RequestandTaskFormatter(TaskFormatter):
     def format(self, record):

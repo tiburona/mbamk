@@ -1,7 +1,7 @@
 from .models import Derivation
 from .tasks import raise_exception, set_derivation_attribute, get_derivation_attribute
 from celery import chain
-from cookiecutter_mbam.base_service import BaseService
+from cookiecutter_mbam.base import BaseService
 
 tasks = {'set_attribute': set_derivation_attribute, 'get_attribute': get_derivation_attribute}
 

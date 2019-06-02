@@ -20,6 +20,7 @@ from celery import group, chain
 from cookiecutter_mbam.user import User
 from cookiecutter_mbam.experiment import Experiment
 from .models import Scan
+from cookiecutter_mbam.base.models import BaseService
 from cookiecutter_mbam.xnat import XNATConnection
 from cookiecutter_mbam.storage import CloudStorageConnection
 from cookiecutter_mbam.derivation import DerivationService
@@ -28,7 +29,7 @@ from cookiecutter_mbam.user import UserService
 from .utils import gzip_file
 from cookiecutter_mbam.xnat.tasks import *
 from .tasks import set_scan_attribute, get_scan_attribute, set_scan_attributes
-from cookiecutter_mbam.base_service.models import BaseService
+
 
 from flask import current_app
 
@@ -129,50 +130,61 @@ class ScanService(BaseService):
         return image_file, local_path, filename
 
     def _await_external_uploads(self):
-        """The method to start the Celery chain that uploads scans to XNAT and cloud storage
+        """Start the Celery chain that uploads scans to XNAT and cloud storage
 
-        Calls the methods to construct the chain that uploads the file to cloud storage and to construct
-        the chain that uploads the file to XNAT, and runs both these chains in parallel.
+        Calls the methods to construct the chain that uploads the file to cloud storage and the chain that uploads the
+        file to XNAT, and runs both these chains in parallel.
 
         :return: None
         """
-        job = group([self._cloud_storage_upload_chain(), self._xnat_chain()])
+        job = group([self._cloud_storage_chain(), self._xnat_chain()])
         job.apply_async()
 
-    def _cloud_storage_upload_chain(self):
-        return self.csc.upload_chain(self.filename, self.file_depot, self.scan_info)
+    def _cloud_storage_chain(self):
+        """Construct the celery chain to upload an original scan file to cloud storage
+
+        :return: Celery chain that uploads a scan to cloud storage
+        """
+        return chain(
+            self.csc.upload_to_cloud_storage(self.filename, self.file_depot, self.scan_info),
+            self.set_attribute(self.scan.id, 'orig_aws_key', passed_val=True)
+        )
 
     def _xnat_chain(self):
         """Construct the celery chain that performs XNAT functions and updates MBAM database with XNAT IDs
 
         Constructs the chain to upload a file to XNAT and update user, experiment, and scan representations in the MBAM
-        database, and if the file is a dicom, append to that chain a chain that conducts dicom conversion, and finally
+        database, and if the file is a dicom, appends to that chain a chain that runs dicom conversion, and finally
         sets the error handler on the chain.
 
         :return: Celery chain that performs XNAT functions
         """
 
         if self.dcm:
-            xnat_chain = self.upload_file_to_xnat() | self._convert_dicom()
+            xnat_chain = self._upload_file_to_xnat() | self._convert_dicom()
         else:
-            xnat_chain = self.upload_file_to_xnat()
+            xnat_chain = self._upload_file_to_xnat()
 
         return xnat_chain.set(link_error=self._error_handler(log_message='generic_message',
                                                              user_message='user_external_uploads'))
 
-    def upload_file_to_xnat(self):
-        """
+    def _upload_file_to_xnat(self):
+        """Construct a Celery chain to upload a file to XNAT
 
-        :return:
+        Constructs a chain that uploads the scan file to XNAT, updates the user, experiment, and subject in the MBAM
+        database with their XNAT attributes, updates the status of the scan object to affirm that it was successfully
+        uploaded, and gets the scan URI to pass to the dicom conversion chain.
+
+        :return: the chain to upload a file to XNAT
         """
 
         error_proc = [self._error_handler(log_message='generic_message', user_message='user_external_uploads'),
-                              self.set_attribute(self.scan.id, 'xnat_status', val='error')]
+                              self.set_attribute(self.scan.id, 'xnat_status', val='Error')]
 
         return chain(
             self.xc.upload_scan_file(file_path=self.local_path, import_service=self.dcm),
             self._update_database_objects(),
-            self.set_attribute(self.scan.id, 'xnat_status', val='uploaded'),
+            self.set_attribute(self.scan.id, 'xnat_status', val='Uploaded'),
             self.get_attribute(self.scan.id, attr='xnat_uri')
             ).set(link_error=error_proc)
 
@@ -190,7 +202,7 @@ class ScanService(BaseService):
         return chain(
             self._convert_dicom_to_nifti(),
             self._download_file(),
-            self._upload_file_to_cloud_storage()
+            self._upload_derivation_to_cloud_storage()
         )
 
     def _update_database_objects(self):
@@ -216,9 +228,14 @@ class ScanService(BaseService):
             us.set_attributes(self.user_id, subj_attrs)
         )
 
-
     def _convert_dicom_to_nifti(self):
-        """
+        """Construct a chain to convert dicom files to NIFTI
+
+        Chains together a chain generated by XNATConnection (which launches the task for dicom to nifti conversion and
+        polls the container service to check whether it is complete) and a derivation service task (which updates the
+        derivation model with its status). The derivation service task will raise an exception and interrupt the chain
+        (and the larger XNAT chain) if dicom conversion was not successful.
+
         :return: a chain of Celery tasks to convert a DICOM file to NIFTI
         """
         self.ds = DerivationService(self.scan.id)
@@ -230,14 +247,27 @@ class ScanService(BaseService):
         )
 
     def _download_file(self):
+        """Construct a chain to download converted nifti file from XNAT
+
+         Chains together the task to fetch the XNAT uri and the task to download a nifti file from XNAT
+
+        :return: a chain of Celery tasks to download a file from XNAT
+        """
         return chain(
             self.get_attribute(self.scan.id, attr='xnat_uri', passed_val=False),
             self.xc.dl_file_from_xnat(self.file_depot),
         )
 
-    def _upload_file_to_cloud_storage(self):
+    def _upload_derivation_to_cloud_storage(self):
+        """Construct a chain to upload a derivation to cloud storage
+
+        Constructs a chain to upload a scan to cloud storage and update the derivation model. This method differs
+        from self._cloud_storage_upload_chain only in including the derivation model updating.
+
+        :return: a chain of Celery tasks to upload a scan to cloud storage
+        """
         return chain(
-            self.csc.ul_scan_to_cloud_storage(self.filename, self.file_depot, self.scan_info),
+            self.csc.upload_to_cloud_storage(self.filename, self.file_depot, self.scan_info),
             self.ds.update_derivation_model('cloud_storage_key', exception_on_failure=False)
         )
 
@@ -253,7 +283,7 @@ class ScanService(BaseService):
         # todo: add delete listener
         """ Delete a scan from the database
 
-        Deletes a scan from the database and optionally deletes it from XNAT. Only admins should delete a scan from XNAT
+        Deletes a scan from the database and optionally deletes it from XNAT. Only admins should delete a scan from XNAT.
 
         :param int scan_id: the database id of the scan to delete
         :param bool delete_from_xnat: whether to delete the scan file from XNAT, default False
