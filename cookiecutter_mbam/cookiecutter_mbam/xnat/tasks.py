@@ -1,17 +1,17 @@
 import time
 import os
 from cookiecutter_mbam import celery
-from cookiecutter_mbam.utility.request_utils import init_session
+from cookiecutter_mbam.utils.request_utils import init_session
 from .utils import crop
-from cookiecutter_mbam.utility.celery_utils import unpack_tuple, log_error
+
 
 @celery.task
 def create_resources(xnat_credentials, ids, levels, import_service, archive_prefix):
     """
-    :param tuple xnat_credentials:
-    :param ids:
-    :param levels:
-    :param import_service:
+    :param tuple xnat_credentials: a three-tuple of the server, username, and password to log into XNAT
+    :param dict ids:
+    :param list levels:
+    :param bool import_service:
     :param archive_prefix:
     :return:
     """
@@ -25,13 +25,11 @@ def create_resources(xnat_credentials, ids, levels, import_service, archive_pref
 
     with init_session(user, password) as s:
         for level in levels:
-            id = 'xnat_{}_id'.format(level)
-            exists_already = id in existing_xnat_ids and len(existing_xnat_ids[id])
-            if exists_already:
-                uri = os.path.join(uri, level + 's', existing_xnat_ids[id])
-            else:
-                uri = os.path.join(uri, level + 's', xnat_ids[level]['xnat_id'])
 
+            exists_already = level in ['subject', 'experiment'] and len(existing_xnat_ids[level]['xnat_id'])
+            d = existing_xnat_ids if exists_already else xnat_ids
+
+            uri = os.path.join(uri, level + 's', d[level]['xnat_id'])
             uris[level] = uri
 
             try:
@@ -64,13 +62,14 @@ def import_scan_to_xnat(uris, xnat_credentials, file_path):
     return uris
 
 @celery.task
-def get_uris(uris, xnat_credentials):
+def get_latest_scan_info(uris, xnat_credentials):
     server, user, password = xnat_credentials
     with init_session(user, password) as s:
         scans = s.get(server + uris['experiment'] + '/scans').json()['ResultSet']['Result']
         scans = sorted(scans, key=lambda scan: int(scan['xnat_imagescandata_id']))
         scan_uri = scans[-1]['URI']
-        return [uris['subject'], uris['experiment'], scan_uri]
+        scan_id = scans[-1]['ID']
+        return {'xnat_id': scan_id, 'xnat_uri': scan_uri}
 
 # todo: figure out how to specify action to take if celery times out.
 @celery.task(time_limit=10000)
@@ -86,34 +85,35 @@ def poll_cs(container_id, xnat_credentials):
     return 'none'
 
 @celery.task
-def dl_file_from_xnat(uri_and_container_status, xnat_credentials, file_path):
-    scan_uri, container_status = uri_and_container_status
+def dl_file_from_xnat(scan_uri, xnat_credentials, file_path):
     server, user, password = xnat_credentials
-    if container_status == 'Complete':
-        with init_session(user, password) as s:
-            r = s.get(server + os.path.join(scan_uri, 'resources', 'NIFTI', 'files'))
-            if r.ok:
-                result = r.json()['ResultSet']['Result'][0]
-                response = s.get(server + result['URI'])
-                if response.ok:
-                    with open(os.path.join(file_path, result['Name']), 'wb') as f:
-                        f.write(response.content)
-                        return result['Name']
+    with init_session(user, password) as s:
+        r = s.get(server + os.path.join(scan_uri, 'resources', 'NIFTI', 'files'))
+        if r.ok:
+            print("I shouldn't get here")
+            result = r.json()['ResultSet']['Result'][0]
+            response = s.get(server + result['URI'])
+            if response.ok:
+                with open(os.path.join(file_path, result['Name']), 'wb') as f:
+                    f.write(response.content)
+                    return result['Name']
+            else:
+                raise ValueError(f'Unexpected status code: {response.status_code}')
+        else:
+            raise ValueError(f'Unexpected status code: {response.status_code}')
+    return r
 
-        return r # need some kind of method here that communicates that the process completed but the file is not accessible
-    else:
-        pass
-        # should probably break chain before this.
 
 @celery.task
-def launch_command(uris, xnat_credentials, project, command_ids):
-    data = {'scan': crop(uris[2], '/experiments')}
+def launch_command(uri, xnat_credentials, project, command_ids):
+    data = {'scan': crop(uri, '/experiments')}
     server, user, password = xnat_credentials
     command_id, wrapper_id = command_ids
     url = '/xapi/projects/{}/commands/{}/wrappers/{}/launch'.format(project, command_id, wrapper_id)
     with init_session(user, password) as s:
         r = s.post(server + url, data)
         return r.json()['container-id']
+
 
 
 

@@ -1,6 +1,6 @@
 import xnat
 from .tasks import *
-from cookiecutter_mbam.utility.celery_utils import log_error, send_email
+from celery import chain
 
 from flask import current_app
 def debug():
@@ -45,7 +45,60 @@ class XNATConnection:
         # check that commands exist on XNAT?  do I really need to do this?
         pass
 
-    def upload_chain(self, ids, file_path, import_service=False):
+    def generate_xnat_identifiers(self, user, experiment, dcm=False):
+        """Generate object ids for use in XNAT
+
+        Creates a dictionary with keys for type of XNAT object, including subject, experiment, scan, resource and file.
+        The values in the dictionary are dictionaries with keys 'xnat_id' and, optionally, 'query_string'.  'xnat_id'
+        points to the identifier of the object in XNAT, and 'query_string' to the query that will be used in the put
+        request to create the object.
+
+        :return: xnat_id dictionary
+        :rtype: dict
+        """
+        xnat_ids = {}
+
+        xnat_ids['subject'] = {'xnat_id': str(user.id).zfill(6)}
+
+        xnat_exp_id = '{}_MR{}'.format(xnat_ids['subject']['xnat_id'], user.num_experiments)
+        exp_date = experiment.date.strftime('%m/%d/%Y')
+        xnat_ids['experiment'] = {'xnat_id': xnat_exp_id,
+                                  'query_string': '?xnat:mrSessionData/date={}'.format(exp_date)}
+
+        scan_number = experiment.num_scans + 1
+        xnat_scan_id = 'T1_{}'.format(scan_number)
+        xnat_ids['scan'] = {'xnat_id': xnat_scan_id, 'query_string': '?xsiType=xnat:mrScanData'}
+
+        if dcm:
+            resource = 'DICOM'
+        else:
+            resource = 'NIFTI'
+        xnat_ids['resource'] = {'xnat_id': resource}
+
+        xnat_ids['file'] = {'xnat_id': 'T1.nii.gz', 'query_string': '?xsi:type=xnat:mrScanData'}
+
+        self.xnat_ids = xnat_ids
+
+        self.existing_xnat_ids = self.check_for_existing_xnat_ids(user, experiment)
+
+        return (xnat_ids['subject']['xnat_id'], xnat_ids['experiment']['xnat_id'], xnat_ids['scan']['xnat_id'])
+
+    def check_for_existing_xnat_ids(self, user, experiment):
+        """Check for existing attributes on the user and experiment
+
+        Generates a dictionary with current xnat_id for the user and the experiment as
+        values if they exist (empty string if they do not exist).
+
+        :return: a dictionary with two keys with the xnat subject id and xnat experiment id.
+        :rtype: dict
+        """
+
+        objs = {'subject': user, 'experiment': experiment}
+
+
+        return {k:{'xnat_id': getattr(objs[k], 'xnat_id')} if getattr(objs[k], 'xnat_id') else {'xnat_id': ''} for k in objs}
+
+    def upload_scan_file(self, file_path, import_service=False):
         """ Create the XNAT upload chain
         Creates, but does not execute, the Celery chain that creates the XNAT subject and experiment, if necessary, then
         either uploads or imports (for non-dicoms and dicoms, respectively) a dicom file to XNAT.  This chain eventually
@@ -59,7 +112,7 @@ class XNATConnection:
 
         create_resources_signature = create_resources.s(
             xnat_credentials=self.auth,
-            ids=ids,
+            ids=(self.xnat_ids, self.existing_xnat_ids),
             levels=self.xnat_hierarchy,
             import_service=import_service,
             archive_prefix=self.archive_prefix,
@@ -72,9 +125,35 @@ class XNATConnection:
 
         upload_signature = upload_task.s(xnat_credentials=self.auth, file_path=file_path)
 
-        get_uris_signature = get_uris.s(xnat_credentials=self.auth)
+        get_latest_scan_info_signature = get_latest_scan_info.s(xnat_credentials=self.auth)
 
-        return create_resources_signature | upload_signature | get_uris_signature
+        return create_resources_signature | upload_signature | get_latest_scan_info_signature
+
+    def launch_and_poll_for_completion(self, process_name):
+        return chain(
+            self.launch_command(process_name),
+            self.poll_container_service()
+        )
+
+    def launch_command(self, process_name):
+        xnat_credentials = (self.server, self.user, self.password)
+        if self.xnat_config['local_docker'] == 'False':
+            process_name += '_transfer'
+        command_ids = self.generate_container_service_ids(process_name)
+        return launch_command.s(xnat_credentials, self.project, command_ids)
+
+    def poll_container_service(self):
+        xnat_credentials = (self.server, self.user, self.password)
+        return poll_cs.s(xnat_credentials)
+
+    def dl_file_from_xnat(self, file_depot):
+        return dl_file_from_xnat.s(self.auth, file_depot)
+
+    def generate_container_service_ids(self, process_name):
+        return (
+            self.xnat_config[process_name + '_command_id'],
+            self.xnat_config[process_name + '_wrapper_id']
+        )
 
     def xnat_get(self, url):
         """Get a resource from XNAT
@@ -90,14 +169,18 @@ class XNATConnection:
             try:
                 return session.put(self.server + url)
             except Exception as e:
-                error = e
-                # print to a log file
-            return e
+                pass
+
 
     def xnat_post(self, url, data=None):
         with init_session(self.user, self.password) as session:
             return session.post(self.server + url, data=data)
 
+    def xnat_experiment_uri(self, exp_id):
+        return f'/data/experiments/{exp_id}'
+
+    def xnat_subject_uri(self, sub_id):
+        return f'/data/subjects/{sub_id}'
 
     def xnat_delete(self, url):
         """ Delete an item from XNAT

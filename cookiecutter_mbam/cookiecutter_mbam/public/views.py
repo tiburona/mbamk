@@ -1,12 +1,9 @@
 # -*- coding: utf-8 -*-
 """Public section, including homepage and signup."""
-from flask import Blueprint, flash, redirect, render_template, request, url_for, session
-from flask_security import login_required, login_user, logout_user
+from flask import Blueprint, flash, redirect, render_template, url_for
 
-from cookiecutter_mbam.public.forms import LoginForm, ContactForm
-from cookiecutter_mbam.user.forms import RegisterForm
-from cookiecutter_mbam.user.models import User
-from cookiecutter_mbam.utils import flash_errors
+
+from cookiecutter_mbam.public.forms import ContactForm
 
 blueprint = Blueprint('public', __name__, static_folder='../static')
 
