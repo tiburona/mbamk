@@ -4,6 +4,7 @@ services:
  web:
    restart: always
    build: ./cookiecutter_mbam
+   image: mbam_web
    environment:
      - "PYTHONUNBUFFERED=1"
    volumes:
@@ -23,7 +24,6 @@ services:
    env_file:
      - jatos_config.env
 
-
  nginx:
    restart: always
    build:
@@ -39,7 +39,20 @@ services:
    depends_on:
      - web
 
+ redis:
+   image: 'redis:5.0.3-alpine'
+   command: redis-server
+   volumes:
+    - 'redis-data:/data'
+   ports:
+    - '6379:6379'
+
+ celery:
+   image: mbam_web
+   command: celery -A cookiecutter_mbam.cookiecutter_mbam.run_celery:celery worker --loglevel info
+
 volumes:
   jatos-data:
   user-data:
   assets-data:
+  redis-data:
