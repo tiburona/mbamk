@@ -39,7 +39,7 @@ mail_handler.addFilter(MailFilter())
 mail_handler.setFormatter(request_and_task_formatter)
 mail_handler.setLevel(logging.ERROR)
 
-file_handler = FileHandler('/Users/Spiro/mbam.log')
+file_handler = FileHandler('./mbam.log')
 file_handler.setFormatter(request_and_task_formatter)
 file_handler.setLevel(logging.ERROR)
 

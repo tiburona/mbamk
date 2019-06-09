@@ -49,7 +49,9 @@ services:
 
  celery:
    image: mbam_web
-   command: celery -A cookiecutter_mbam.cookiecutter_mbam.run_celery:celery worker --loglevel info
+   command: celery -A cookiecutter_mbam.run_celery:celery worker --loglevel info
+   links:
+    - redis
 
 volumes:
   jatos-data:
