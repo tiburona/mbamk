@@ -13,15 +13,15 @@ from cookiecutter_mbam.extensions import admin, cache, csrf_protect, db, debug_t
     security, webpack, mail, jsglue
 from cookiecutter_mbam.user import User, Role
 from .hooks import create_test_users, models_committed_hooks
+from cookiecutter_mbam.config import config_by_name, config_name
 
-
-def create_app(config_object='cookiecutter_mbam.settings'):
+def create_app(config_name=config_name):
     """An application factory, as explained here: http://flask.pocoo.org/docs/patterns/appfactories/.
-
     :param config_object: The configuration object to use.
     """
     app = Flask(__name__.split('.')[0])
-    app.config.from_object(config_object)
+    app.config.from_object(config_by_name[config_name])
+
     init_celery(app, celery=celery)
     register_extensions(app)
     register_hooks(app)
@@ -81,7 +81,6 @@ def register_shellcontext(app):
 
     app.shell_context_processor(shell_context)
 
-
 def register_commands(app):
     """Register Click commands."""
     app.cli.add_command(commands.test)
@@ -95,8 +94,8 @@ def register_admin_views():
     admin.add_view(RoleAdmin(Role, db.session))
 
 def make_celery(app=None):
-    app = app or create_app(config='cookicutter_mbam.settings')
-    celery = Celery(__name__, broker='redis://localhost:6379')
+    app = app or create_app(config_name=config_name)
+    celery = Celery(__name__, broker=config_by_name[config_name].broker_url)
     celery.conf.update(app.config)
     TaskBase = celery.Task
 
@@ -109,4 +108,3 @@ def make_celery(app=None):
 
     celery.Task = ContextTask
     return celery
-

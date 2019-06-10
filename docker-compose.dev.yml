@@ -3,11 +3,15 @@ version: '3'
 services:
   web:
     volumes:
-      - ./cookiecutter_mbam:/app     
+      - ./cookiecutter_mbam:/app
+
+  celery:
+    volumes:
+      - ./cookiecutter_mbam:/app
 
   jatos:
     depends_on:
-      - mysql 
+      - mysql
 
   mysql:
    restart: always
