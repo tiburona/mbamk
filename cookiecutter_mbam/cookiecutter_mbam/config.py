@@ -84,6 +84,7 @@ class TestConfig(Config):
     SECRET_KEY = 'not-so-secret-in-tests'
     DEBUG_TB_ENABLED = False
     WTF_CSRF_ENABLED = False  # Allows form testing
+    PRESERVE_CONTEXT_ON_EXCEPTION = False
 
 config_by_name = dict(
     local=LocalConfig,
