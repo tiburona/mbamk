@@ -1,4 +1,4 @@
-from cookiecutter_mbam.config import config_by_name, config_name
+from .config import config_by_name, config_name
 
 def init_celery(app, celery):
     """Add flask app context to celery.Task"""

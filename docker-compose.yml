@@ -21,8 +21,8 @@ services:
     - "9000"
    volumes:
     - jatos-data:/opt/docker
-   env_file:
-     - jatos_config.env
+   # env_file:
+   #  - .env
 
  nginx:
    restart: always
