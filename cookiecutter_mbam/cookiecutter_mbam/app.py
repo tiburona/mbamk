@@ -13,7 +13,7 @@ from cookiecutter_mbam.extensions import admin, cache, csrf_protect, db, debug_t
     security, webpack, mail, jsglue
 from cookiecutter_mbam.user import User, Role
 from .hooks import create_test_users, models_committed_hooks
-from cookiecutter_mbam.config import config_by_name, config_name
+from .config import config_by_name, config_name
 
 def create_app(config_name=config_name):
     """An application factory, as explained here: http://flask.pocoo.org/docs/patterns/appfactories/.

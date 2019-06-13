@@ -11,7 +11,6 @@ services:
       JATOS_DB_DRIVER: "com.mysql.jdbc.Driver"
       JATOS_JPA: "mysqlPersistenceUnit"
 
-
   mysql:
    restart: always
    build: ./mysql
