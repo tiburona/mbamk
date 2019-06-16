@@ -1,13 +1,16 @@
 from cookiecutter_mbam import celery
-import ssl
-import smtplib
-from cookiecutter_mbam.settings import MAIL_PASSWORD
+import ssl, smtplib
+#from cookiecutter_mbam.settings import MAIL_PASSWORD
 from cookiecutter_mbam.logger import file_handler, mail_handler
 from celery.utils.log import get_task_logger
+from cookiecutter_mbam.config import config_by_name, config_name
 
 logger = get_task_logger(__name__)
 logger.addHandler(file_handler)
 logger.addHandler(mail_handler)
+
+# Set mail password 
+MAIL_PASSWORD=config_by_name[config_name].MAIL_PASSWORD
 
 messages = {
     'generic_message': "An error occurred",
@@ -62,11 +65,3 @@ def global_error_handler(req, exc, tb, log_message='generic_message', user_name=
         email_info = (user_name, user_email, messages[user_message])
         send_email.s(email_info).apply_async()
     logger.error(messages[log_message], exc_info=True, extra={'email_admin': email_admin})
-
-
-
-
-
-
-
-

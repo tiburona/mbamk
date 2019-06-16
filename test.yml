@@ -2,5 +2,5 @@ version: '3'
 
 services:
  sut:
-   build: ./cookiecutter_mbam
-   command: bash -c "flask db upgrade && flask test"
+   image: mbam_web
+   command: bash -c "flask test"
