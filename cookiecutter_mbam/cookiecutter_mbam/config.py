@@ -78,6 +78,7 @@ class DockerConfig(Config):
     broker_url = 'redis://redis:6379'
     result_backend = 'redis://redis:6379'
 
+
 class TestConfig(Config):
     TESTING = True
     SQLALCHEMY_DATABASE_URI = 'sqlite://'
@@ -100,7 +101,7 @@ def guess_environment():
     # Override the configuration with an environment variable if it's set
     config_name = os.getenv('CONFIG_NAME')
 
-    # If configuration is not set in the 
+    # If configuration is not set in the
     if not config_name:
         if os.uname()[1].find('Mac') > -1:
             config_name='local'

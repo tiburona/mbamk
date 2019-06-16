@@ -4,7 +4,7 @@ My Brain and Me
 
 Cookiecutter MBAM
 
-Quickstart
+Quickstart ('local' configuration)
 ----------
 
 Be sure to first install recent versions of Node/NPM and pipenv (i.e. pip install pipenv).

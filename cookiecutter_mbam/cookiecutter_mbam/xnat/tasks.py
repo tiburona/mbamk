@@ -113,8 +113,3 @@ def launch_command(uri, xnat_credentials, project, command_ids):
     with init_session(user, password) as s:
         r = s.post(server + url, data)
         return r.json()['container-id']
-
-
-
-
-

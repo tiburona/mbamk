@@ -1,6 +1,21 @@
 version: '3'
 
 services:
+  web:
+    volumes:
+      - ./cookiecutter_mbam:/app
+    environment:
+      FLASK_APP: "autoapp.py"
+      FLASK_ENV: "development"
+      DATABASE_URL: "mysql+pymysql://mbam:mbam123@mysql/brain_db"
+      SECRET_KEY: "not-so-secret"
+      FLASK_RUN_PORT: "8000"
+      FLASK_RUN_HOST: "0.0.0.0"
+
+  celery:
+    volumes:
+      - ./cookiecutter_mbam:/app
+
   jatos:
     depends_on:
       - mysql
