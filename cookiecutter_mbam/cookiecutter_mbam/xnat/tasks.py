@@ -106,7 +106,7 @@ def dl_file_from_xnat(scan_uri, xnat_credentials, file_path):
 
 @celery.task
 def launch_command(uri, xnat_credentials, project, command_ids):
-    data = {'scan': crop(uri, '/experiments')}
+    data = {'input_url': crop(uri, '/data/experiments')}
     server, user, password = xnat_credentials
     command_id, wrapper_id = command_ids
     url = '/xapi/projects/{}/commands/{}/wrappers/{}/launch'.format(project, command_id, wrapper_id)
