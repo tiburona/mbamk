@@ -35,7 +35,7 @@ SECURITY_CHANGEABLE = True
 MAIL_USERNAME = 'testingmbam@gmail.com'
 # Below is temporary application specific password for gmail smtp. Delete and replace with
 # env variable when repo goes public
-MAIL_PASSWORD='R8S6bSgeqGgknH3'
+MAIL_PASSWORD='N9sRe3Sj9TMdWm9'
 # Wait for the fix in flask-security, see https://github.com/mattupstate/flask-security/issues/685
 #MAIL_DEFAULT_SENDER = '"MyBrainandMe" <mbaminfo@gmail.com>'
 MAIL_SERVER = 'smtp.gmail.com'

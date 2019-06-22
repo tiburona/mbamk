@@ -19,7 +19,6 @@ class CloudStorageConnection:
         self.s3_client = boto3.client('s3', **self.auth)
         self.s3_resource = boto3.resource('s3', **self.auth)
         self.bucket_name = config['bucket_name']
-        self._get_celery_status()
 
     def _construct_key(self, scan_info, filename):
         """

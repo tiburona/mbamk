@@ -30,8 +30,3 @@
 
 
 from cookiecutter_mbam import celery
-
-class TestXNATChain:
-
-
-

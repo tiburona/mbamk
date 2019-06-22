@@ -10,8 +10,7 @@ Todo: Right now if we use the import service XNAT is inferring its own scan id. 
 Todo: if someone uploads a zip file we don't actually know that there are dicoms inside (could be NIFTI).  Consider this
 fact.
 
-Todo: Need to think more about recording status of uploads in database since scan object is going to be created regardless.  Should scan have field like container
-path?
+Todo: figure out why redis-server not running doesn't get caught as Exception.  Figure out how to catch it.
 
 """
 
