@@ -129,8 +129,3 @@ def launch_command(self, uri, xnat_credentials, project, command_ids):
             return r.json()['container-id']
         else:
             raise ValueError(f'Unexpected status code: {r.status_code}')
-
-
-
-
-

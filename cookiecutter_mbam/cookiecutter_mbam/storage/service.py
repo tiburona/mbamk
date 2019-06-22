@@ -1,9 +1,4 @@
-from cookiecutter_mbam.utils.celery_utils import get_celery_worker_status
-from .tasks import *
 from flask import current_app
-from flask import current_app
-
-from cookiecutter_mbam.utils.celery_utils import get_celery_worker_status
 from .tasks import *
 
 
@@ -49,5 +44,3 @@ class CloudStorageConnection:
 
     def delete_object(self, key):
         self.s3_client.delete_object(Bucket=self.bucket_name, Key=key)
-
-

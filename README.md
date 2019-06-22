@@ -1,3 +1,12 @@
+===============================
+My Brain and Me
+===============================
+
+Cookiecutter MBAM
+
+Quickstart ('docker' configuration)
+----------
+
 To spin up a non-dockerized version of the app for development, you can skip steps 1 and 6 below.
 
 1. If you haven't already, the first step is to [install Docker](https://docs.docker.com/install/). If you're using Linux,you may need to also install docker-compose using [this link](https://docs.docker.com/compose/install/). Be sure to use the link since default apt repositories may not have up to date version of docker-compose that is required to read yml version 3 files.
@@ -8,18 +17,20 @@ To spin up a non-dockerized version of the app for development, you can skip ste
 
    If the current version is under v0.1 then you will need to clone a specific branch:
 
-   `git clone --single-branch -b mbam_merge1 https://github.com/spiropan/mbam`
+   `git clone --single-branch -b cookiecutter_mbam https://github.com/spiropan/mbam`
 
-   Replace mbam_merge1 with i.e. 'cookiecutter_mbam' or 'development'.
+   Replace 'cookiecutter_mbam' with i.e. 'development'.
 
 3. Install a local version of XNAT using [these instructions](https://wiki.xnat.org/display/XNAT17/Running+XNAT+in+a+Vagrant+Virtual+Machine). Use the one-line XNAT setup.  You will know it has worked when you can navigate to 10.1.1.17 in your browser and get an XNAT login page. The login and password are both 'admin', which of course you can change in your configuration if you wish. The above link also explains what you need to know to interact with and control your local XNAT. You will also need to install the XNAT Container services plugin. You can find instructions [here](https://github.com/MIND-NYSPI/xnat-cs-tutorial/blob/master/tutorial_part1.md#installing-the-container-service-plugin).
 
-4. You'll need an XNAT project and you'll need to replace the DicomToNifti.xml pipeline with the custom pipeline in the repository. For the project, log in to your XNAT instance and go to **New -> Project**. Fill out the values for Project Title , Running Title, and Project ID and set to 'MBAM_TEST'. For the pipeline file (required for .zip uploading), copy the ./pipelines/DicomToNifti.xml in the MBAM repository to the /data/xnat/pipeline/catalog/mricron/ folder in the xnat VM that was installed in step 3. You should be able to use the "vagrant ssh" command and the share directories that were set up in step 3 above to transfer the file. If you get stuck with this let us know and we'll improve the instructions. You'll then need to add the pipeline to the site (Administer -> Pipelines -> Add Pipeline to Repository), and then also to the project (On the project page, press the Pipelines tab and then click Add More Pipelines).
+4. You'll need an XNAT project and you'll need to replace the DicomToNifti.xml pipeline with the custom pipeline in the repository. For the project, log in to your XNAT instance and go to **New -> Project**. Fill out the values for Project Title , Running Title, and Project ID and set to 'MBAM_TEST'.
 
-5. The repo *should* come with configuration files already preconfigured to bootstrap the app for development. You may need to change them though depending on your environment. See [here](Configuration_Files.md) for a description of these files. 
+(THE FOLLOWING COMMAND IS DEPRECATED AND WILL BE REPLACED WITH DCM2NIIX CONTAINER SERVICE)
+  For the pipeline file (required for .zip uploading), copy the ./pipelines/DicomToNifti.xml in the MBAM repository to the /data/xnat/pipeline/catalog/mricron/ folder in the xnat VM that was installed in step 3. You should be able to use the "vagrant ssh" command and the share directories that were set up in step 3 above to transfer the file. If you get stuck with this let us know and we'll improve the instructions. You'll then need to add the pipeline to the site (Administer -> Pipelines -> Add Pipeline to Repository), and then also to the project (On the project page, press the Pipelines tab and then click Add More Pipelines).
 
-6. To spin up a dockerized version of the app (that includes docker containers for Flask app,
-  NGINX, MySQL and JATOS, but not XNAT), see below:
+5. You will need a configuration file called setup.cfg in the ./cookiecutter_mbam folder to bootstrap the app for development. See [bottom of this readme](cookiecutter_mbam/README.rst) for a description of the file.
+
+6. To spin up a dockerized version of the app (that includes docker containers for Flask App, NGINX, MySQL, JATOS, REDIS and CELERY, but not XNAT), see below:
 
    `docker-compose up -d`
 

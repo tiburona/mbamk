@@ -5,7 +5,6 @@ import traceback
 from functools import reduce
 from celery import chain
 
-
 from flask import current_app
 
 def debug():
