@@ -350,6 +350,7 @@ div.transbox p {
   width: 21%;
   height: 30%;
   padding: 2rem;
+  filter: invert(65%) sepia(15%) saturate(1700%) hue-rotate(130deg) brightness(95%) contrast(80%)
 }
 
 #nyspi {
@@ -664,6 +665,10 @@ div.transbox p {
   padding: 3rem 5rem 3rem 5rem;
 }
 
+.partner-section {
+  padding: 50px 0px;
+}
+
 .footer-image {
   max-width: 25%;
   max-height: auto;
@@ -671,7 +676,7 @@ div.transbox p {
 }
 
 .partner-text {
-  text-transform: uppercase;
+  text-transform: capitalize;
   color: #ffb366;
   line-height: 0.5;
   text-align: center;
@@ -680,8 +685,9 @@ div.transbox p {
 .partner-text span {
   display: inline-block;
   position: relative;
-  color: #fff;
+  color: #333;
   font-size: 1.7rem;
+  letter-spacing: 1px;
 }
 
 .partner-text span:before,
@@ -689,7 +695,7 @@ div.transbox p {
   content: "";
     position: absolute;
     height: 5px;
-    border-top: 1px solid #ffffff;
+    border-top: 1px solid #eee;
     top: 3px;
     width:490px;
 }
@@ -702,6 +708,15 @@ div.transbox p {
 .partner-text span:after {
   left: 100%;
   margin-left: 15px;
+}
+
+.repeat-section {
+  padding: 8rem 0px 6rem 0;
+  background: #f6f6f6;
+}
+
+.repeat-section .survey-button{
+  margin-top: 1rem;
 }
 
 .icon-credit {
