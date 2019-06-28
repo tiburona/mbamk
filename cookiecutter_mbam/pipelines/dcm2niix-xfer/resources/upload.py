@@ -5,6 +5,8 @@ import gzip
 
 url, user, password, host = sys.argv[1:]
 
+url = os.path.join(host + url, 'resources', 'NIFTI', 'files')
+
 def get_file_by_extension(dir, ext):
     return [file for file in os.listdir(dir) if os.path.splitext(file)[1] == ext][0]
 
@@ -26,5 +28,5 @@ def init_session(user, password):
     return s
 
 with init_session(user, password) as s:
-    s.put(host + url)
-    s.put(host + url, files=files)
+    s.put(url)
+    s.put(url, files=files)

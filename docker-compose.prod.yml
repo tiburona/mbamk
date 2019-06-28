@@ -4,7 +4,7 @@ services:
   web:
     volumes:
       - /etc/letsencrypt:/etc/letsencrypt
-    command: bash -c "sleep 20 && flask db upgrade && flask run"
+    command: bash -c "sleep 20 && cp .docker_env .env && flask run" # Come back to fix
 
   nginx:
     volumes:

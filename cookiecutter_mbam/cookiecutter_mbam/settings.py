@@ -32,10 +32,10 @@ SECURITY_REGISTERABLE = True
 SECURITY_CHANGEABLE = True
 
 # Flask-Mail Settings
-MAIL_USERNAME = 'mbaminfo@gmail.com'
+MAIL_USERNAME = 'testingmbam@gmail.com'
 # Below is temporary application specific password for gmail smtp. Delete and replace with
 # env variable when repo goes public
-MAIL_PASSWORD='digkexrwzscfpybx'
+MAIL_PASSWORD='N9sRe3Sj9TMdWm9'
 # Wait for the fix in flask-security, see https://github.com/mattupstate/flask-security/issues/685
 #MAIL_DEFAULT_SENDER = '"MyBrainandMe" <mbaminfo@gmail.com>'
 MAIL_SERVER = 'smtp.gmail.com'
@@ -45,4 +45,9 @@ MAIL_USE_TLS = True
 
 # File upload settings
 MAX_CONTENT_LENGTH = 30 * 1024 * 1024
+
+# Logging Settings
+
+LOG_FILENAME = 'static/logs/log.txt'
+
 

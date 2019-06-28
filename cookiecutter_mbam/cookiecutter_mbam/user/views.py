@@ -2,8 +2,9 @@
 """User views."""
 from flask import Blueprint, render_template, flash, redirect, url_for
 from flask_security import login_required, current_user
+
+from cookiecutter_mbam.utils.error_utils import flash_errors
 from .forms import ProfileForm, ConsentForm, AssentForm
-from cookiecutter_mbam.utils import flash_errors
 
 blueprint = Blueprint('user', __name__, url_prefix='/users', static_folder='../static')
 

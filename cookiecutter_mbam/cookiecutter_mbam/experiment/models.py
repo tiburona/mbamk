@@ -18,7 +18,7 @@ class Experiment(SurrogatePK, Model):
     scanner = Column(db.String(80), nullable=True)
     field_strength = Column(db.String(80), nullable=True)
     num_scans = Column(db.Integer(), nullable=True, default=0)
-    xnat_experiment_id = Column(db.String(80), nullable=True)
+    xnat_id = Column(db.String(80), nullable=True)
     xnat_uri = Column(db.String(80), nullable=True)
     user_id = reference_col('user', nullable=False)
     scans = relationship('Scan', backref='experiment')

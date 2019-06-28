@@ -35,7 +35,7 @@ class User(UserMixin, SurrogatePK, Model):
     __tablename__ = 'user'
 
     # required for flask-security
-    #id = Column(db.Integer, primary_key=True, autoincrement=True)
+    id = Column(db.Integer, primary_key=True, autoincrement=True)
     email = Column(db.String(80), unique=True)
     password = Column(db.String(255))
     active = Column(db.Boolean())
@@ -51,7 +51,7 @@ class User(UserMixin, SurrogatePK, Model):
     parent_email = Column(db.String(80), unique=False, nullable=True)
 
     is_admin = Column(db.Boolean(), default=False)
-    xnat_subject_id = Column(db.String(80), nullable=True)
+    xnat_id = Column(db.String(80), nullable=True)
     num_experiments = Column(db.Integer(), default=0)
     roles = db.relationship(
         'Role', secondary=roles_users,

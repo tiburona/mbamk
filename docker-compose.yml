@@ -4,12 +4,13 @@ services:
  web:
    restart: always
    build: ./cookiecutter_mbam
+   image: mbam_web
    environment:
      - "PYTHONUNBUFFERED=1"
    volumes:
      - user-data:/app/cookiecutter_mbam/static/files
      - assets-data:/app/cookiecutter_mbam/static/build
-   command: bash -c "sleep 20 && cp .docker_env .env && npm run build && flask run"
+   command: bash -c "sleep 20 && cp .docker_env .env && flask run"
    depends_on:
      - jatos
 
@@ -20,9 +21,8 @@ services:
     - "9000"
    volumes:
     - jatos-data:/opt/docker
-   env_file:
-     - jatos_config.env
-
+   # env_file:
+   #  - .env
 
  nginx:
    restart: always
@@ -39,7 +39,22 @@ services:
    depends_on:
      - web
 
+ redis:
+   image: 'redis:5.0.3-alpine'
+   command: redis-server
+   volumes:
+    - 'redis-data:/data'
+   ports:
+    - '6379:6379'
+
+ celery:
+   image: mbam_web
+   command: celery -A cookiecutter_mbam.run_celery:celery worker --loglevel info
+   links:
+    - redis
+
 volumes:
   jatos-data:
   user-data:
   assets-data:
+  redis-data:
