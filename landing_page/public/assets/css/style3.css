@@ -18,11 +18,16 @@ body {
 
 .navbar {
   background-color: #14353f;
-  height: 6rem;
-  padding-top: 1rem;
+  height: 6.5rem;
+  padding-top: 1.3rem;
   border-width: 0;
   border-radius: 0;
   font-size: 1.59rem;
+  /*fixed position*/
+  position: fixed;
+  width: 100%;
+  z-index: 99;
+
 }
 
 .navbar-inverse {
@@ -32,6 +37,8 @@ body {
 .navbar-inverse .navbar-nav>li>a {
   color:#fff;
   font-weight: 500;
+  padding: 10px 25px;
+  letter-spacing: 1px;
 }
 
 
@@ -58,7 +65,7 @@ body {
 }
 
 .nav>li>a {
-  z-index: 9999999;
+  z-index: 99;
 }
 
 .navbar-header>button {
@@ -67,7 +74,7 @@ body {
 
 #myNavbar {
   border-top: 0px;
-  padding: 0 36px;
+  padding: 0 45px;
 }
 /*
 #brain-icon {
@@ -94,9 +101,10 @@ body {
 .brain-background {
   display: grid;
   width: 100%;
+  background-color: #18343f;
 /*  grid-template-rows: 1fr;
   grid-template-columns: 1fr 1fr 1fr 1fr;*/
-  /*height: 65vh;*/
+  /*height: 89vh;*/
 }
 
 
@@ -104,9 +112,9 @@ body {
   text-align: center;
   color: #fff;
   font-weight: 100;
-  padding: 10rem 8rem 14rem 8rem;
-  grid-area: 1 / 1 /span 1 / span 2;
-  z-index: 9999999;
+  padding: 18rem 9.5rem 14rem 8rem;
+  /*grid-area: 1 / 1 /span 1 / span 2;*/
+  z-index: 9;
 }
 
 .buttons {
@@ -128,12 +136,15 @@ h2 {
   color: #fff;
   font-weight: 700;
   line-height: 1.3;
+  letter-spacing: 0.5px;
 }
 
 h3 {
   font-size: 1em;
+  font-weight: 100;
   margin-top: 0;
   margin-bottom: 3rem;
+  letter-spacing: 0.5px;
 }
 
 hr {
@@ -152,14 +163,14 @@ div.transbox {
 div.value-props {
   display:flex;
   justify-content: center;
-  padding: 0 10rem 3rem 12rem;
+  padding: 0 15rem 3rem 15rem;
   font-size: 2.3rem;
 }
 
 a#get-updates {
   color: #fff;
   font-style: italic;
-  font-size: 1.9rem;
+  font-size: 1.6rem;
   text-decoration: underline;
   line-height: 3;
 }
@@ -209,9 +220,10 @@ ul {
 }
 
 .value-prop>li p{
-      line-height: 3em;
-    font-size: 2rem;
-    margin: 0!important;
+  line-height: 3em;
+  font-size: 1.7rem;
+  letter-spacing: 1px;
+  margin: 0!important;
 }
 
 .value-prop li:before {
@@ -267,12 +279,14 @@ ul#learn-col li:before {
 }
 
 #welcome-text {
-  padding: 0 10rem 0 10rem;
+  padding: 0 13rem 0 14rem;
 }
 
 #welcome-text p{
-      font-size: 1.6rem;
-    line-height: 2;
+  font-size: 1.56rem;
+  line-height: 2;
+  letter-spacing: 0.3px;
+  word-spacing: 0.4px;
 }
 
 .welcome-link {
@@ -298,9 +312,8 @@ div.transbox p {
 }
 
 .btn {
-  padding-top: 1.5rem;
-  padding-bottom:1.5rem;
-  font-size: 2rem;
+  padding: 1.5rem 3rem;
+  font-size: 1.8rem;
   background-color: #286090;
   margin-bottom: 1rem;
 }
@@ -334,7 +347,7 @@ div.transbox p {
 }
 
 .partners>img {
-  width: 30%;
+  width: 21%;
   height: 30%;
   padding: 2rem;
 }
@@ -647,8 +660,8 @@ div.transbox p {
 
 .partners {
   display: flex;
-  justify-content: space-between;
-  padding: 3rem 1rem 3rem 6rem;
+  justify-content: space-around;
+  padding: 3rem 5rem 3rem 5rem;
 }
 
 .footer-image {
