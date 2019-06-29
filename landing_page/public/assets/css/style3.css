@@ -357,6 +357,33 @@ div.transbox p {
   padding-top: .9rem;
 }
 
+.footer-content {
+  color: #ffffff;
+  font-size: 1.7rem;
+  letter-spacing: 1px;
+  word-spacing: 1px;
+}
+
+.footer-content p:nth-child(2){
+  font-size: 1.4rem;
+  margin-top: 3rem;
+}
+
+.footer-content p:nth-child(3){
+  font-size: 1.4rem;
+  margin-top: 1rem;
+  color: #ffffff;
+}
+
+.contact-link {
+  color: #ffffff;
+}
+
+.contact-link:hover {
+  color: #F3B131;
+}
+
+
 @media screen and (max-width: 565px) {
   .navbar-brand>img {
     height: 35px !important;
@@ -659,10 +686,96 @@ div.transbox p {
   position: relative;
 }
 
+.media-section {
+  display: flex;
+}
+
+.article-image > img {
+  object-fit: cover;
+  width: 600px;
+  height: 410px;
+}
+
+.spiro-columbia {
+  object-position: 100% 0;
+}
+
+.combine-brain {
+  object-position: -50% 0;
+}
+
+.article-wrapper {
+  text-align: center;
+}
+
+.article-title {
+  font-size: 2rem;
+  font-weight: 500;
+}
+
+
+.article-date {
+  font-size: 1.3rem;
+  color: #6d6d6d;
+}
+
+.article-description {
+    display: inline-block;
+    background-color: #ffffff;
+    text-align: left;
+    margin: 8% 20% 5% -10%;
+    padding: 4%;
+    border: 1px solid #eee0;
+    box-shadow: 1px 4px 8px #88888842;
+}
+
+.media-section:nth-child(even) {
+  flex-direction: row-reverse;
+}
+
+.media-section:nth-child(even) .article-description{
+  margin: 10% -10% 5% 20%;
+}
+
+.article-para {
+    font-size: 1.4rem;
+    letter-spacing: 1px;
+    word-spacing: 1px;
+    line-height: 1.3;
+    margin: 15px 0;
+}
+
+.article-button {
+    color: #e4a52b;
+    font-weight: 500;
+    font-size: 1.3rem;
+    padding: 0.6rem 0rem;
+}
+
 .partners {
   display: flex;
   justify-content: space-around;
   padding: 3rem 5rem 3rem 5rem;
+}
+
+.team{
+  display: flex;
+  margin: 0;
+  padding: 4rem 12rem;
+}
+
+.team-image {
+  width: 50%;
+}
+
+.member-name {
+  padding-top: 2rem;
+  margin-bottom: 7px;
+}
+
+.member-title {
+  font-size: 1.6rem;
+  color: #737373;
 }
 
 .partner-section {
@@ -717,6 +830,11 @@ div.transbox p {
 
 .repeat-section .survey-button{
   margin-top: 1rem;
+}
+
+.team-section {
+  padding: 8rem 0px 6rem 0;
+  background: #fff;
 }
 
 .icon-credit {
