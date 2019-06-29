@@ -760,12 +760,22 @@ div.transbox p {
 
 .team{
   display: flex;
+  flex-wrap: wrap;
   margin: 0;
-  padding: 4rem 12rem;
+  padding: 4rem 11rem 4rem 12rem;
+}
+
+.team-member {
+  width: 33%;
+}
+
+.team-member:nth-child(n+4) {
+    margin-top: 4%;
 }
 
 .team-image {
   width: 50%;
+  border-radius: 50%;
 }
 
 .member-name {
@@ -833,8 +843,12 @@ div.transbox p {
 }
 
 .team-section {
-  padding: 8rem 0px 6rem 0;
+  padding: 8rem 0px 2rem 0;
   background: #fff;
+}
+
+.team-supporters{
+  padding-top: 10px;
 }
 
 .icon-credit {
