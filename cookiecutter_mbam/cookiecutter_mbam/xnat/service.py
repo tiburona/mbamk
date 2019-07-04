@@ -7,16 +7,14 @@ def debug():
     assert current_app.debug == False, "Don't panic! You're here by request of debug()"
 
 
-# todo: error handling!
-
-
 class XNATConnection:
 
-    def __init__(self, config):
+    def __init__(self, config, set_docker_host=True):
         self.xnat_config = config
         self._set_attributes()
         self.xnat_hierarchy = ['subject', 'experiment', 'scan', 'resource', 'file']
-        self._set_docker_host()
+        if set_docker_host:
+            self._set_docker_host()
 
     def _set_attributes(self):
         """ Set attributes on self
@@ -95,7 +93,6 @@ class XNATConnection:
 
         objs = {'subject': user, 'experiment': experiment}
 
-
         return {k:{'xnat_id': getattr(objs[k], 'xnat_id')} if getattr(objs[k], 'xnat_id') else {'xnat_id': ''} for k in objs}
 
     def upload_scan_file(self, file_path, import_service=False):
@@ -131,9 +128,13 @@ class XNATConnection:
 
     def launch_and_poll_for_completion(self, process_name):
         return chain(
+            self.gen_dicom_conversion_data(),
             self.launch_command(process_name),
             self.poll_container_service()
         )
+
+    def gen_dicom_conversion_data(self):
+        return gen_dicom_conversion_data.s()
 
     def launch_command(self, process_name):
         xnat_credentials = (self.server, self.user, self.password)

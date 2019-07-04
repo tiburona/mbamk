@@ -57,3 +57,7 @@ class BaseService():
             pass
         except:
             pass
+
+    def _send_email(self):
+        #todo: this method should take relevant arguments and return send email signature with arguments
+        pass

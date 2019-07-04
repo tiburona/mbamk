@@ -5,8 +5,6 @@ from cookiecutter_mbam import celery
 from cookiecutter_mbam.utils.request_utils import init_session
 from .utils import crop
 
-#todo: figure out how to set retries
-
 @celery.task
 def create_resources(xnat_credentials, ids, levels, import_service, archive_prefix):
     """
@@ -36,11 +34,14 @@ def create_resources(xnat_credentials, ids, levels, import_service, archive_pref
 
             try:
                 query = xnat_ids[level]['query_string']
-            except:  # todo specify KeyError here?
+            except KeyError:  # A KeyError will occur when there's no query, which is expected for some levels (like Resource)
                 query = ''
 
             if not exists_already:
-                r = s.put(url=server+ uri + query)
+                # I'm concerned here about the file put.  Does this actually work?
+                r = s.put(url = server + uri + query)
+                if not r.ok:
+                    raise ValueError(f'Unexpected status code: {r.status_code}')
         return uris
 
 @celery.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5})
@@ -118,8 +119,11 @@ def dl_file_from_xnat(self, scan_uri, xnat_credentials, file_path):
     return r
 
 @celery.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5})
-def launch_command(self, uri, xnat_credentials, project, command_ids):
-    data = {'scan': crop(uri, '/experiments')}
+def gen_dicom_conversion_data(self, uri):
+    return {'scan': crop(uri, '/experiments')}
+
+@celery.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5})
+def launch_command(self, data, xnat_credentials, project, command_ids):
     server, user, password = xnat_credentials
     command_id, wrapper_id = command_ids
     url = '/xapi/projects/{}/commands/{}/wrappers/{}/launch'.format(project, command_id, wrapper_id)
