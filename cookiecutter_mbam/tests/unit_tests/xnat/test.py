@@ -8,7 +8,10 @@ from datetime import datetime
 from cookiecutter_mbam.xnat.tasks import *
 from cookiecutter_mbam.xnat.service import XNATConnection
 
-# todo: right now these only run properly if you run them from the directory they're in. Fix this.  
+# todo: right now these only run properly if you run them from the directory they're in. Fix this.
+
+# Weirdness: merely trying to import anything from the factories.py factory breaks a bunch of tests
+
 
 
 class TestXNATTasks:
@@ -45,47 +48,50 @@ class TestXNATTasks:
             assert assertion(req)
         return task
 
-# class TestCreateResources(TestXNATTasks):
-#
-#     @responses.activate
-#     @pytest.fixture(autouse=True, params=[(True), (False)])
-#     def setup_tests(self, setup_xnat_tests, xnat_connection, request):
-#         dcm = request.param
-#         User = collections.namedtuple('User', 'id num_experiments')
-#         Experiment = collections.namedtuple('Experiment', 'date num_scans')
-#         user = User(id=1, num_experiments=1)
-#         self.date = datetime.now()
-#         experiment = Experiment(date=self.date, num_scans=0)
-#         xc =XNATConnection(self.xnat_config, set_docker_host=False)
-#         xc.generate_xnat_identifiers(user, experiment, dcm=dcm)
-#         levels = ['subject', 'experiment', 'scan', 'resource', 'file']
-#         self.signature = create_resources.s(self.xnat_credentials, xc.xnat_ids, levels, dcm, xc.archive_prefix)
-#
-#
-#     @responses.activate
-#     def test_create_resources(self):
-#         exp_date = self.date.strftime('%m/%d/%Y')
-#         # there should be a query for each level
-#         uris = {
-#             'subject': '/data/subjects/000001',
-#             'experiment': '/data/subjects/000001/experiments/0000001_MR1',
-#             'scan': '/data/subjects/000001/experiments/0000001_MR1/scans/T1_1',
-#             'resource': '/data/subjects/000001/experiments/0000001_MR1/scans/T1_1/resources/NIFTI',
-#             'file': '/data/subjects/000001/experiments/0000001_MR1/scans/T1_1/resources/NIFTI/files/T1.nii.gz'
-#         }
-#         mocked_uris = [
-#             (uris['subject'], ''),
-#             (uris['experiment'],'?xnat:mrSessionData/date={}'.format(exp_date)),
-#             (uris['scan'], '?xsiType=xnat:mrScanData'),
-#             (uris['resource'], ''),
-#             (uris['file'], '?xsiType = xnat:mrScanData')
-#         ]
-#         for uri, query in mocked_uris:
-#             responses.add('PUT', self.server + uri + query, status=200, json={})
-#
-#         task = self.signature.apply()
-#         assert len(responses.calls) == 6
-#         assert task.result == uris
+class TestCreateResources(TestXNATTasks):
+
+    @responses.activate
+    @pytest.fixture(autouse=True, params=[(True), (False)])
+    def setup_tests(self, setup_xnat_tests, request):
+        dcm = request.param
+        User = collections.namedtuple('User', 'id num_experiments xnat_id')
+        Experiment = collections.namedtuple('Experiment', 'id date num_scans xnat_id')
+        user = User(id=1, num_experiments=1, xnat_id=None)
+        self.date = datetime.now()
+        experiment = Experiment(id=1, num_scans=0, date=self.date, xnat_id=None)
+        xc = XNATConnection(self.xnat_config, set_docker_host=False)
+        xc.generate_xnat_identifiers(user, experiment, dcm=dcm)
+        levels = ['subject', 'experiment', 'scan', 'resource', 'file']
+        self.signature = create_resources.s(self.xnat_credentials, (xc.xnat_ids, xc.existing_xnat_ids), levels, dcm,
+                                            xc.archive_prefix)
+
+
+    @responses.activate
+    def test_create_resources(self):
+        exp_date = self.date.strftime('%m/%d/%Y')
+        prefix = '/data/archive/projects/MBAM_TEST'
+        # there should be a query for each level
+        uris = {
+            'subject': prefix + '/subjects/000001',
+            'experiment': prefix + '/subjects/000001/experiments/000001_MR1',
+            'scan': prefix + '/subjects/000001/experiments/000001_MR1/scans/T1_1',
+            'resource': prefix + '/subjects/000001/experiments/000001_MR1/scans/T1_1/resources/NIFTI',
+            'file': prefix + '/subjects/000001/experiments/000001_MR1/scans/T1_1/resources/NIFTI/files/T1.nii.gz'
+        }
+        mocked_uris = [
+            (uris['subject'], ''),
+            (uris['experiment'],'?xnat:mrSessionData/date={}'.format(exp_date)),
+            (uris['scan'], '?xsiType=xnat:mrScanData'),
+            (uris['resource'], ''),
+            (uris['file'], '?xsi:type=xnat:mrScanData')
+        ]
+
+        for uri, query in mocked_uris:
+            responses.add('PUT', self.server+  uri + query, status=200, json={})
+
+        task = self.signature.apply()
+        assert len(responses.calls) == 5
+        assert task.result == uris
 
 class TestUploadsAndImports(TestXNATTasks):
 
