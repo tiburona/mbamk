@@ -169,6 +169,33 @@ class TestGetLatestScanInfo(TestXNATTasks):
         self.failure_response(self.mocked_uri, self.signature)
 
 
+class TestGenDicomConversionData(TestXNATTasks):
+
+    @pytest.fixture(autouse=True)
+    def set_up(self, setup_xnat_tests):
+        self.signature = gen_dicom_conversion_data.s(self.scan_uri)
+
+    def test_gen_dicom_conversion_data(self):
+        task = self.signature.apply()
+        assert task.result == {'scan': self.scan_uri[5:]}
+
+
+class TestLaunchCommand(TestXNATTasks):
+
+    @pytest.fixture(autouse=True)
+    def set_up(self, setup_xnat_tests):
+        self.mocked_uri = '{}/xapi/projects/{}/commands/{}/wrappers/{}/launch'.format(
+            self.server, self.project, self.command_id, self.wrapper_id)
+        self.signature = launch_command.s(self.scan_uri, self.xnat_credentials, self.project, self.command_ids)
+        self.mocked_json_response = {'container-id': 'hello'}
+
+    def test_launch_command(self):
+        task = self.success_response(self.mocked_uri, self.mocked_json_response, self.signature, method='POST')
+        assert task.result == 'hello'
+
+    def test_launch_command_raises_value_error_if_failure_response(self):
+        self.failure_response(self.mocked_uri, self.signature, method='POST')
+
 class TestPollCS(TestXNATTasks):
     @pytest.fixture(autouse=True)
     def set_up(self, setup_xnat_tests):
@@ -225,29 +252,7 @@ class TestDLFileFromXnat(TestXNATTasks):
         with pytest.raises(ValueError) as e_info:
             self.signature.apply(throw=True)
 
-class TestGenDicomConversionData(TestXNATTasks):
-
-    @pytest.fixture(autouse=True)
-    def set_up(self, setup_xnat_tests):
-        self.signature = gen_dicom_conversion_data.s(self.scan_uri)
-
-    def test_gen_dicom_conversion_data(self):
-        task = self.signature.apply()
-        assert task.result == {'scan': self.scan_uri[5:]}
 
 
-class TestLaunchCommand(TestXNATTasks):
 
-    @pytest.fixture(autouse=True)
-    def set_up(self, setup_xnat_tests):
-        self.mocked_uri = '{}/xapi/projects/{}/commands/{}/wrappers/{}/launch'.format(
-            self.server, self.project, self.command_id, self.wrapper_id)
-        self.signature = launch_command.s(self.scan_uri, self.xnat_credentials, self.project, self.command_ids)
-        self.mocked_json_response = {'container-id': 'hello'}
 
-    def test_launch_command(self):
-        task = self.success_response(self.mocked_uri, self.mocked_json_response, self.signature, method='POST')
-        assert task.result == 'hello'
-
-    def test_launch_command_raises_value_error_if_failure_response(self):
-        self.failure_response(self.mocked_uri, self.signature, method='POST')
