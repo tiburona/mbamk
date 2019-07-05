@@ -3,7 +3,7 @@ import responses
 import configparser
 import pytest
 import collections
-import mock
+import random
 from datetime import datetime
 from cookiecutter_mbam.xnat.tasks import *
 from cookiecutter_mbam.xnat.service import XNATConnection
@@ -50,48 +50,66 @@ class TestXNATTasks:
 
 class TestCreateResources(TestXNATTasks):
 
-    @responses.activate
-    @pytest.fixture(autouse=True, params=[(True), (False)])
+    @pytest.fixture(autouse=True, params=[True, False])
     def setup_tests(self, setup_xnat_tests, request):
         dcm = request.param
+
         User = collections.namedtuple('User', 'id num_experiments xnat_id')
         Experiment = collections.namedtuple('Experiment', 'id date num_scans xnat_id')
+
         user = User(id=1, num_experiments=1, xnat_id=None)
-        self.date = datetime.now()
-        experiment = Experiment(id=1, num_scans=0, date=self.date, xnat_id=None)
+        date = datetime.now()
+        experiment = Experiment(id=1, num_scans=0, date=date, xnat_id=None)
+
         xc = XNATConnection(self.xnat_config, set_docker_host=False)
         xc.generate_xnat_identifiers(user, experiment, dcm=dcm)
+
         levels = ['subject', 'experiment', 'scan', 'resource', 'file']
+
         self.signature = create_resources.s(self.xnat_credentials, (xc.xnat_ids, xc.existing_xnat_ids), levels, dcm,
                                             xc.archive_prefix)
 
+        prefix = '/data/archive/projects/MBAM_TEST'
+        subject_uri = prefix + '/subjects/000001'
+        experiment_uri = subject_uri + '/experiments/000001_MR1'
+        scan_uri = experiment_uri + '/scans/T1_1'
+        resource_uri = scan_uri + '/resources/NIFTI'
+        file_uri = resource_uri + '/files/T1.nii.gz'
+        uris = [subject_uri, experiment_uri, scan_uri, resource_uri, file_uri]
+
+        queries= ['', '?xnat:mrSessionData/date={}'.format(date.strftime('%m/%d/%Y')), '?xsiType=xnat:mrScanData', '',
+                  '?xsi:type=xnat:mrScanData']
+
+        if dcm:
+            levels = levels[:-3]
+            uris = uris[:-3]
+            queries = queries[:-3]
+
+        self.num_expected_calls = 2 if dcm else 5
+
+        self.mocked_uris = zip(levels, uris, queries)
+
+        self.uris = {level[0]:level[1] for level in zip(levels, uris, queries)}
 
     @responses.activate
     def test_create_resources(self):
-        exp_date = self.date.strftime('%m/%d/%Y')
-        prefix = '/data/archive/projects/MBAM_TEST'
-        # there should be a query for each level
-        uris = {
-            'subject': prefix + '/subjects/000001',
-            'experiment': prefix + '/subjects/000001/experiments/000001_MR1',
-            'scan': prefix + '/subjects/000001/experiments/000001_MR1/scans/T1_1',
-            'resource': prefix + '/subjects/000001/experiments/000001_MR1/scans/T1_1/resources/NIFTI',
-            'file': prefix + '/subjects/000001/experiments/000001_MR1/scans/T1_1/resources/NIFTI/files/T1.nii.gz'
-        }
-        mocked_uris = [
-            (uris['subject'], ''),
-            (uris['experiment'],'?xnat:mrSessionData/date={}'.format(exp_date)),
-            (uris['scan'], '?xsiType=xnat:mrScanData'),
-            (uris['resource'], ''),
-            (uris['file'], '?xsi:type=xnat:mrScanData')
-        ]
 
-        for uri, query in mocked_uris:
-            responses.add('PUT', self.server+  uri + query, status=200, json={})
+        for _, uri, query in self.mocked_uris:
+            responses.add('PUT', self.server + uri + query, status=200, json={})
 
         task = self.signature.apply()
-        assert len(responses.calls) == 5
-        assert task.result == uris
+        assert len(responses.calls) == self.num_expected_calls
+        assert task.result == self.uris
+
+    @responses.activate
+    def test_get_latest_scan_info_raises_error_if_failure_response(self):
+        failure = random.randint(0, self.num_expected_calls - 1)
+        for i, (_, uri, query) in enumerate(self.mocked_uris):
+            kw = {'status': 404, 'json':{'error': 'not found'}} if i is failure else {'status': 200, 'json':{}}
+            responses.add('PUT', self.server + uri + query, **kw)
+
+        with pytest.raises(ValueError):
+            self.signature.apply(throw=True)
 
 class TestUploadsAndImports(TestXNATTasks):
 
@@ -127,15 +145,6 @@ class TestUploadsAndImports(TestXNATTasks):
 
     def test_scan_to_xnat_raises_error_if_failure_response(self):
         self.failure_response(self.mocked_uri, self.signature, method=self.method)
-
-lanch_poll_getinfo_params = [
-    ()
-]
-
-class TestLaunchPollGetInfo(TestXNATTasks):
-    @pytest.fixture(autouse=True, scope='class')
-    def set_up(self, setup_xnat_tests):
-        pass
 
 
 class TestGetLatestScanInfo(TestXNATTasks):
@@ -242,4 +251,3 @@ class TestLaunchCommand(TestXNATTasks):
 
     def test_launch_command_raises_value_error_if_failure_response(self):
         self.failure_response(self.mocked_uri, self.signature, method='POST')
-#

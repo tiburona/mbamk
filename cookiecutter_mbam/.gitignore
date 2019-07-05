@@ -73,6 +73,7 @@ setup.cfg
 
 cookiecutter_mbam/static/files
 files/
+tests/test_files
 
 # landing page
 

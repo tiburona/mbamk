@@ -42,6 +42,7 @@ def create_resources(xnat_credentials, ids, levels, import_service, archive_pref
                 r = s.put(url = server + uri + query)
                 if not r.ok:
                     raise ValueError(f'Unexpected status code: {r.status_code}')
+
         return uris
 
 @celery.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5})
