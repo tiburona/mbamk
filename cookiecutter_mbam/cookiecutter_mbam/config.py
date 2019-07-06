@@ -61,6 +61,31 @@ class Config:
     include = ['cookiecutter_mbam.xnat.tasks', 'cookiecutter_mbam.storage.tasks', 'cookiecutter_mbam.derivation.tasks',
                'cookiecutter_mbam.scan.tasks', 'cookiecutter_mbam.base.tasks']
 
+    XNAT = {
+        'user': 'admin',
+        'password': 'admin',
+        'server': 'http://10.1.1.17',
+        'project': 'MBAM_TEST',
+        'local_docker': True,
+        'docker_host': 'unix:///var/run/docker.sock',
+        'dicom_to_nifti_command_id': 2,
+        'dicom_to_nifti_wrapper_id':'dcm2niix-scan',
+        'dicom_to_nifti_transfer_command_id':1,
+        'dicom_to_nifti_transfer_wrapper_id':'dcm2niix-xfer'
+    }
+
+    files = {
+        'file_depot': 'static/files/',
+        'file_depot_url': 'http://0.0.0.0:8081/static/files/'
+    }
+
+    AWS = {
+        'access_key_id': 'AKIAJ3CJ3JWENS3XA6QQ',
+        'secret_access_key': '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',
+        'bucket_name' : 'mbam-test'
+    }
+
+
 class LocalConfig(Config):
     """ Class defining configurations for local development. Config_name is 'local'. """
     SQLALCHEMY_DATABASE_URI = 'sqlite:////tmp/dev.db'

@@ -182,6 +182,7 @@ def poll_cs(self, container_id, xnat_credentials):
 @celery.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5})
 def dl_file_from_xnat(self, scan_uri, xnat_credentials, file_path):
     """Download a file from XNAT
+
     :param self: the task object
     :param str scan_uri: the XNAT uri of the scan to download
     :param tuple xnat_credentials: a three-tuple of the server, username, and password to log into XNAT

@@ -30,18 +30,19 @@ def add_scans(request, exp_id):
         3: 'three new scans'
     }
     user_id = str(current_user.get_id())
-    try:
-        for f in request.files.getlist('scan_file'):
-            ScanService(user_id, exp_id).add(f)
+    debug()
+    #try:
+    for f in request.files.getlist('scan_file'):
+        ScanService(user_id, exp_id).add(f)
 
-        num_scans = len(request.files.getlist('scan_file'))
-        flash('You successfully started the process of adding {}.'.format(num2words[num_scans]), 'success')
+    num_scans = len(request.files.getlist('scan_file'))
+    flash('You successfully started the process of adding {}.'.format(num2words[num_scans]), 'success')
 
-    except Exception as e:
-        flash('There was a problem uploading your scan', 'error')  # todo: error should be color coded red
-        global_error_handler(request, e, traceback.format_exc(), log_message='generic_message',
-                             user_email=current_user.email, user_message='generic_message', email_user=True,
-                             email_admin=False)
+    # except Exception as e:
+    #     flash('There was a problem uploading your scan', 'error')  # todo: error should be color coded red
+    #     global_error_handler(request, e, traceback.format_exc(), log_message='generic_message',
+    #                          user_email=current_user.email, user_message='generic_message', email_user=True,
+    #                          email_admin=False)
 
     return redirect(url_for('experiment.experiments'))
 

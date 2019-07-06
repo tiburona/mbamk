@@ -9,7 +9,7 @@ from . import textbank
 
 logger = get_task_logger(__name__)
 logger.addHandler(file_handler)
-logger.addHandler(mail_handler)
+#logger.addHandler(mail_handler)
 
 # set mail constants
 mail_constants = ['USERNAME', 'SERVER', 'PASSWORD', 'PORT']
@@ -102,4 +102,4 @@ def global_error_handler(req, exc, tb, log_message='generic_message', user_name=
     if email_user:
         email_info = (user_name, user_email, textbank.messages[user_message])
         send_email.s(email_info).apply_async()
-    logger.error(textbank.messages[log_message], exc_info=True, extra={'email_admin': email_admin})
+    logger.error(textbank.messages[log_message]['subject'], exc_info=True, extra={'email_admin': email_admin})

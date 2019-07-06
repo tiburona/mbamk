@@ -43,5 +43,5 @@ file_handler = FileHandler('./mbam.log')
 file_handler.setFormatter(request_and_task_formatter)
 file_handler.setLevel(logging.ERROR)
 
-logger.addHandler(mail_handler)
+#logger.addHandler(mail_handler)
 logger.addHandler(file_handler)

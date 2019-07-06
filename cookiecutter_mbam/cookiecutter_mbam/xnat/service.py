@@ -29,6 +29,7 @@ class XNATConnection:
             setattr(self, dest + '_prefix', '/data/{}/projects/{}'.format(dest, self.project))
         self.auth = (self.server, self.user, self.password)
 
+
     def _set_docker_host(self):
         """ Set the Docker host
         Reads the desired Docker host from the config file. If XNAT is not currently configured to launch containers on

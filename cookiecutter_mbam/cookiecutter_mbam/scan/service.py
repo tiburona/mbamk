@@ -14,8 +14,8 @@ Todo: figure out why redis-server not running doesn't get caught as Exception.  
 
 """
 
-import configparser
 from celery import group, chain
+from cookiecutter_mbam.config import config_by_name, config_name
 from cookiecutter_mbam.user import User
 from cookiecutter_mbam.experiment import Experiment
 from .models import Scan
@@ -28,9 +28,12 @@ from cookiecutter_mbam.user import UserService
 from .utils import gzip_file
 from cookiecutter_mbam.xnat.tasks import *
 from .tasks import set_scan_attribute, get_scan_attribute, set_scan_attributes
+import logging
 
 
 from flask import current_app
+
+logger = logging.getLogger()
 
 def debug():
     assert current_app.debug == False, "Don't panic! You're here by request of debug()"
@@ -47,21 +50,22 @@ class ScanService(BaseService):
         self.instance_path = current_app.instance_path[:-8]
         if not len(config_dir):
             config_dir = self.instance_path
-        self._config_read(os.path.join(config_dir, 'setup.cfg'))
+        self._config_read()
         self.tasks = tasks
 
-    def _config_read(self, config_path):
+    def _config_read(self):
         """Scan service configuration
         Reads the config file passed on scan service object creation, and sets the upload path and creates XNAT
         Connection and a Cloud Storage Connection instance and attaches them to the scan service object.
         :param str config_path:
         :return: None
         """
-        config = configparser.ConfigParser()
-        config.read(config_path)
-        self.file_depot = os.path.join(self.instance_path, config['files']['file_depot'])
-        self.xc = XNATConnection(config=config['XNAT'])
-        self.csc = CloudStorageConnection(config=config['AWS'])
+        config = config_by_name[config_name]
+        self.file_depot = os.path.join(self.instance_path, config.files['file_depot'])
+        debug()
+        self.xc = XNATConnection(config=config.XNAT)
+        logger.error(config.XNAT)
+        self.csc = CloudStorageConnection(config=config.AWS)
 
     def add(self, image_file):
         """The top level public method for adding a scan
