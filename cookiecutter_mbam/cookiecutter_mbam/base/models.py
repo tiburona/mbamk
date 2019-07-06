@@ -15,7 +15,10 @@ class BaseService():
         self.cls = cls
         self.tasks = tasks
 
-    #todo: think about appropriateness of property decorator here
+    @property
+    def username(self):
+        return self._username()
+
     def _username(self):
         try:
             return current_user.name
@@ -23,7 +26,7 @@ class BaseService():
             return ''
 
     def _error_handler(self, log_message, user_message=''):
-        return global_error_handler.s(log_message=log_message, user_name=self._username(),
+        return global_error_handler.s(log_message=log_message, user_name=self.username,
                                       user_email=current_user.email, user_message=user_message,  email_user=True,
                                       email_admin=False)
 
@@ -39,6 +42,12 @@ class BaseService():
         return self._gen_signature_of_factory_task('get_attribute', attr, instance_id, passed_val=passed_val)
 
     def set_attributes(self, instance_id, attributes={}, passed_val=False):
+        """
+        :param int instance_id:
+        :param dict attributes:
+        :param bool passed_val:
+        :return:
+        """
         if not passed_val:
             return reduce(chain, [self._gen_signature_of_factory_task('set_attribute', val, instance_id, key)
                                   for key, val in attributes.items()])
