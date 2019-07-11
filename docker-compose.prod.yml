@@ -2,10 +2,4 @@ version: '3'
 
 services:
   web:
-    volumes:
-      - /etc/letsencrypt:/etc/letsencrypt
-    command: bash -c "sleep 20 && cp .docker_env .env && flask run" # Come back to fix
-
-  nginx:
-    volumes:
-      - /etc/letsencrypt:/etc/letsencrypt
+    command: bash -c "cp .production_env .env && npm run build && flask run" # Come back to fix
