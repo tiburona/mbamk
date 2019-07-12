@@ -1,10 +1,13 @@
 *.pyc
-
+/cookiecutter_mbam/cookiecutter_mbam/node_modules
 /app_config.env
-/jatos_config.env
-/.env
 /web/flask_brain_db/app_config.py
 /web/venv/
 /web/flask_brain_db/xnat.cfg
 /web/flask_brain_db/xnat_c9.cfg
 /.semaphore-cache
+.DS_Store
+/landing_page/.firebase
+/cookiecutter_mbam/setup.cfg
+/landing_page/public/returned-brain-demo/
+

@@ -1,0 +1,5 @@
+version: '3'
+
+services:
+  web:
+    command: bash -c "cp .production_env .env && npm run build && flask run" # Come back to fix

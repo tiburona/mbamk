@@ -1,0 +1,7 @@
+CONFIG_NAME='docker'
+FLASK_APP=autoapp.py
+FLASK_ENV=production
+DATABASE_URL=mysql+pymysql://mbam:mbam123@mysql/brain_db
+SECRET_KEY='not-so-secret'
+FLASK_RUN_PORT=8000
+FLASK_RUN_HOST=0.0.0.0

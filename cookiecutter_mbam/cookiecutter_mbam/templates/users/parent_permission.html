@@ -1,0 +1,113 @@
+{% extends "layout.html" %}
+
+{% block title %}Consent Form{% endblock %}
+
+{% block content %}
+
+<div class="container-narrow">
+    <h3 class="mt-5">MyBrainandMe.Org: An online resource for user-driven data sharing of structural MRI brain imaging and behavioral data.</h3>
+    <h5>Purpose and Overview</h5>
+    <p class="text-justify">Thanks for your interest in MyBrainandMe.org. Before your child uploads his/her brain scan, we would like to
+      inform you of any potential risks and/or benefits of participation.</p>
+    <p class="text-justify">MyBrainandMe.org is a website where your child can learn more about neuroscience and his/her brain
+      while enabling scientists to make new discoveries about how the brain works. The site is not-for-profit and directed
+      by Dr. Spiro Pantazatos in the Brain Imaging Lab in the Molecular Imaging and Neuropathology Division at the New
+      York State Psychiatric Institute.</p>
+    <p class="text-justify">If your child has previously had a structural brain MRI scan for research or clinical purposes,
+      he/she can upload it to MyBrainandMe.org. Your child’s data will contribute to a growing neuroscience resource that
+      will be available to scientific researchers around the world.  At the same time, your child will have an opportunity
+      to view and explore his/her own anatomically labeled brain scan in a web browser. We also aim to increase public
+      awareness and education of neuroscience. There are no direct benefits from participating in this study.</p>
+    <h5>Voluntary</h5>
+    <p class="text-justify">Participation in this research study is voluntary.  Your child is free to withdraw consent
+      and stop participating at any time.</p>
+    <h5>Procedures</h5>
+    <p class="text-justify">Your child will complete a brief personal profile and upload a digital copy of his/her
+      MRI. Your child will also be asked to complete brief surveys or tasks in your web browser. These surveys
+      and tasks take about 30 minutes to complete in total. Your child can take a break in between each survey
+      or task. Some tasks measure things like your reaction time in response to pictures. Other tasks ask questions
+      about emotions, feelings, life experiences, and habits. We may contact your child in the future to ask if
+      he/she is interested in completing additional tasks.</p>
+    <p class="text-justify">After uploading his/her MRI scan, your child will have the opportunity to view it in a web-browser.
+      Our site will label each brain region so that your child can learn brain anatomy on his/her own brain.</p>
+    <h5>Risks and Inconveniences</h5>
+    <p class="text-justify">There are no physical health risks associated with this study. Any changes in our
+      study that may affect your child’s willingness to continue participation will be communicated to him/her
+      promptly.</p>
+    <p class="text-justify">Participation in our study is associated with potential information risks. As with
+      any research that requires uploading data, there is some risk to your child’s personal identifying information.
+      We will to the best of our ability protect his/her data from any security breaches. However, we cannot
+      guarantee against any breach. We believe that the security threat to your child’s personal identifying
+      information is low.</p>
+    <h5>Benefits</h5>
+      <p class="text-justify">Your child will not derive any medical or clinical benefit from participating in this
+        study. Through participating in this study, your child will have the opportunity to learn more about
+        neuroscience and neuroanatomy using his/her own brain. Please note that you will not learn anything
+        about your child’s brain specifically through participating in this study. Rather, you may learn about
+        the names of different parts of the brain, displayed on your child’s brain scan. Your child will also
+        contribute to the scientific community’s understanding of how the brain works.</p>
+    <h5>Confidentiality</h5>
+    <p class="text-justify">Your child’s MRI and other information will be kept in a secure database. His/her
+      information will be available to scientists around the world for research purposes. Your child’s privacy
+      is protected because shared data will not include any identifying information about him/her.</p>
+
+    <p class="text-justify">This research is covered by a Certificate of Confidentiality issued by the Department
+      of Health and Human Services. The researchers with this Certificate may not disclose or use information,
+      documents, or biospecimens that may identify your child in any federal, state, or local civil, criminal,
+      administrative, legislative, or other action, suit, or proceeding, or be used as evidence, for example,
+      if there is a court subpoena, unless you have consented for this use. Information, documents, or biospecimens
+      protected by this Certificate cannot be disclosed to anyone else who is not connected with the research except,
+      if there is a federal, state, or local law that requires disclosure (such as to report child abuse, intent to
+      harm self or others, or communicable diseases, but not for federal, state, or local civil, criminal, administrative,
+      legislative, or other proceedings, see below); if you have consented to the disclosure, including for your child’s
+      medical treatment; or if it is used for other scientific research, as allowed by federal regulations protecting
+      research subjects.</p>
+    <p class="text-justify">You should understand that a Certificate of Confidentiality does not prevent your child or a
+      member of your child’s family from voluntarily releasing information about their involvement in this research.
+      If an insurer, employer, or other person obtains your written consent to receive research information, then the
+      researchers may not use the Certificate to withhold that information.</p>
+    <p class="text-justify">This Certificate cannot be used to refuse a request for information from personnel of the
+      United States federal or state government agency sponsoring the project that is needed for auditing or program
+      evaluation by the organization which is funding this project or for information that must be disclosed in order
+      to meet the requirements of the federal Food and Drug Administration (FDA). Records will be available to
+      research staff, and State and Institutional regulatory personnel (who may review records as part of the routine
+      audits).</p>
+    <h5>Study Compensation</h5>
+    <p class="text-justify">There are no costs associated with your child’s participation in MyBrainandMe.org.
+      Your child will not be compensated for his/her participation.</p>
+    <h5>In Case of Injury</h5>
+    <p class="text-justify">Federal regulations require that we inform participants about our institution's
+      policy with regard to compensation and payment for treatment of research-related injuries. If you believe
+      that your child has sustained an injury as a result of participating in this research study, you may
+      contact the Principal Investigator at (646) 774-8710 so that you can review the matter and identify the
+      medical resources that may be available to you.</p>
+    <h5>Questions</h5>
+    <p class="text-justify">If you have any questions, there may already be an answer at our <a href="{{ url_for('public.FAQ') }}">FAQ</a>.
+      Dr. Spiro Pantazatos, PhD is the primary investigator in charge of this study, and Dr. Jeffrey Miller, MD is
+      a co-investigator. The primary investigator and/or members of the research team will answer to the best of their
+      ability any questions that you or your child may have now or in the future about the research procedure or your response to study
+      procedures. If you have any questions, you may contact the primary investigator at 646-774-8710 or by email at
+      spiro.pantazatos@nyspi.columbia.edu.</p>
+    <p class="text-justify">If you have any questions about your child's rights as a research participant, want to
+      provide feedback, or have a complaint, you may call the NYSPI Institutional Review Board (IRB). An IRB is a
+      committee that protects the rights of participants in research studies. You may call the IRB Office at (646) 774-7155
+      during regular office hours or send an email to IRBMail@nyspi.columbia.edu.</p>
+    <hr>
+    <h5>Documentation of Consent</h5>
+    <p class="text-justify">Do you have questions about the research study? Check our <a href="{{ url_for('public.FAQ') }}">FAQ</a> or ask us
+      <a href="{{ url_for('public.contact') }}">here </a>before moving forward! By checking the box below, you indicate that you agree with the following
+    statements.</p>
+    <p class="text-justify">“My child is age thirteen (13) years or older. I understand the above study procedures.
+      I have had any questions answered. I voluntarily agree for my child to participate in the research study
+      described above.”</p>
+      {% from "security/_macros.html" import render_field %}
+      <form method="POST" action="{{ url_for( 'user.parent_permission' ) }}" role="form">
+          {{ form.hidden_tag() }}
+          {{ render_field(form.consented) }}
+          <button type="submit" class="btn btn-primary">Submit</button>
+          <a href="{{ url_for('public.home') }}" class="btn btn-primary">Cancel</a>
+      </form>
+
+</div>
+
+{% endblock %}

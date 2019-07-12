@@ -1,0 +1,5 @@
+CONFIG_NAME='production'
+FLASK_APP=autoapp.py
+FLASK_ENV=production
+FLASK_RUN_PORT=8000
+FLASK_RUN_HOST=0.0.0.0

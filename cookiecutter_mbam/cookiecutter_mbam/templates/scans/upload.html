@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<div class="container-narrow">
+<br>
+<br>
+<br>
+<form method="POST" action="{{ url_for('scan.add') }}" enctype="multipart/form-data">
+    {{ form.csrf_token }}
+
+    {{ form.hidden_tag()}}
+    {{ form.scan_file(multiple="multiple") }}
+    <br>
+    <br>
+    {{ form.submit }}
+
+</form>
+    </div>
+
+{% endblock %}
