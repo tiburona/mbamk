@@ -17,8 +17,9 @@ develop-eggs
 lib
 lib64
 
-# Installer logs
+# logs
 pip-log.txt
+mbam.log
 
 # Unit test / coverage reports
 .coverage
@@ -40,7 +41,9 @@ output/*/index.html
 # Sphinx
 docs/_build
 
+# cache
 .webassets-cache
+.pytest_cache/
 
 # Virtualenvs
 env/
@@ -60,21 +63,14 @@ setup.cfg
 # Development database
 *.db
 
-
 # Mac file browsing
-
 .DS_Store
-
-
 .idea
 .idea/*
 
 # test files
-
 cookiecutter_mbam/static/files
 files/
 tests/test_files
 
-# landing page
 
-../landing_page/*
