@@ -1,12 +1,13 @@
 import os
 import responses
-import configparser
+
 import pytest
 import collections
 import random
 from datetime import datetime
 from cookiecutter_mbam.xnat.tasks import *
 from cookiecutter_mbam.xnat.service import XNATConnection
+from cookiecutter_mbam.config import config_by_name, config_name
 
 # todo: right now these only run properly if you run them from the directory they're in. Fix this.
 
@@ -18,10 +19,9 @@ class TestXNATTasks:
     @pytest.fixture(autouse=True)
     def setup_xnat_tests(self):
         self.project = 'MBAM_TEST'
-        config = configparser.ConfigParser()
-        config.read('../setup.cfg')
-        self.file_depot = config['files']['file_depot']
-        self.xnat_config = config['XNAT']
+        config = config_by_name[config_name]
+        self.file_depot = config.files['file_depot']
+        self.xnat_config = config.XNAT
         self.server = self.xnat_config['server']
         self.xnat_credentials = (self.server, self.xnat_config['user'], self.xnat_config['password'])
         self.command_ids = (self.xnat_config['dicom_to_nifti_command_id'], self.xnat_config['dicom_to_nifti_wrapper_id'])
@@ -111,6 +111,7 @@ class TestCreateResources(TestXNATTasks):
         with pytest.raises(ValueError):
             self.signature.apply(throw=True)
 
+
 class TestUploadsAndImports(TestXNATTasks):
 
     @pytest.fixture(
@@ -126,7 +127,9 @@ class TestUploadsAndImports(TestXNATTasks):
             self.uris['file'] = uri
         self.mocked_uri = self.server + uri
         self.method = method
-        local_path = os.path.join('../test_files', filename)
+        dir_path = os.path.dirname(os.path.realpath(__file__))
+        par_path = os.path.abspath(os.path.join(dir_path, os.pardir, os.pardir))
+        local_path = os.path.join(par_path, 'test_files', filename)
         self.files =  {'file': (filename, open(local_path, 'rb'), 'application/octet-stream')}
         self.mocked_json_response = {}
         self.signature = celery_task.s(self.uris, self.xnat_credentials, local_path)
@@ -196,6 +199,7 @@ class TestLaunchCommand(TestXNATTasks):
     def test_launch_command_raises_value_error_if_failure_response(self):
         self.failure_response(self.mocked_uri, self.signature, method='POST')
 
+
 class TestPollCS(TestXNATTasks):
     @pytest.fixture(autouse=True)
     def set_up(self, setup_xnat_tests):
@@ -219,7 +223,9 @@ class TestDLFileFromXnat(TestXNATTasks):
         self.file_uri = os.path.join(self.files_uri, 'T1.nii.gz')
         self.signature = dl_file_from_xnat.s(self.scan_uri, self.xnat_credentials, self.file_depot)
         self.name = 'T1.nii.gz'
-        self.test_file_src = '../test_files/T1.nii.gz'
+        dir_path = os.path.dirname(os.path.realpath(__file__))
+        par_path = os.path.abspath(os.path.join(dir_path, os.pardir, os.pardir))
+        self.test_file_src = os.path.join(par_path, 'test_files', self.name)
         self.files_mock_args = [responses.GET, self.server + self.files_uri]
         self.files_mock_kwargs = {'status': 200,
                                   'json': {'ResultSet': {'Result': [{'Name': self.name, 'URI': self.file_uri}]}}}

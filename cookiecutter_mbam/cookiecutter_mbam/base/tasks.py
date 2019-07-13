@@ -77,6 +77,11 @@ def run_task_factories(cls):
 
 @celery.task
 def send_email(email_info):
+    """ Send an email
+
+    :param tuple email_info: a three-tuple of the recipient's name and email address, as well as message,
+    :return:
+    """
     user_name, user_email, message = email_info
     recipient = f'{user_name} <{user_email}>'
     message = format_email(message, UNAME, recipient)

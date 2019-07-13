@@ -62,7 +62,6 @@ class ScanService(BaseService):
         """
         config = config_by_name[config_name]
         self.file_depot = os.path.join(self.instance_path, config.files['file_depot'])
-        debug()
         self.xc = XNATConnection(config=config.XNAT)
         logger.error(config.XNAT)
         self.csc = CloudStorageConnection(config=config.AWS)
