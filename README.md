@@ -15,11 +15,9 @@ To spin up a non-dockerized version of the app for development, you can skip ste
    `git clone https://github.com/spiropan/mbam`
    (or clone via ssh)
 
-   If the current version is under v0.1 then you will need to clone a specific branch:
+   To clone a specific branch:
 
-   `git clone --single-branch -b cookiecutter_mbam https://github.com/spiropan/mbam`
-
-   Replace 'cookiecutter_mbam' with i.e. 'development'.
+   `git clone --single-branch -b development https://github.com/spiropan/mbam`
 
 3. Install a local version of XNAT using [these instructions](https://wiki.xnat.org/display/XNAT17/Running+XNAT+in+a+Vagrant+Virtual+Machine). Use the one-line XNAT setup.  You will know it has worked when you can navigate to 10.1.1.17 in your browser and get an XNAT login page. The login and password are both 'admin', which of course you can change in your configuration if you wish. The above link also explains what you need to know to interact with and control your local XNAT. You will also need to install the XNAT Container services plugin. You can find instructions [here](https://github.com/MIND-NYSPI/xnat-cs-tutorial/blob/master/tutorial_part1.md#installing-the-container-service-plugin).
 
@@ -46,7 +44,7 @@ To spin up a non-dockerized version of the app for development, you can skip ste
 
 7. During development, it is more convenient to work on the web app in DEBUG mode outside of docker, rather than work on the dockerized version of the app. For this, follow [these instructions](cookiecutter_mbam/README.rst) in the cookiecutter_mbam subfolder.  
 
-   The above steps will set up a sqlite db file for development. You can also set up another DBMS such as a dockerized mysql service. To do this type the below commands:
+   The above step will set up a sqlite db file for development. You can also set up another DBMS such as a dockerized mysql service. To do this type the below commands:
 
    `docker-compose down`
 
@@ -54,4 +52,4 @@ To spin up a non-dockerized version of the app for development, you can skip ste
 
    `docker-compose up -d mysql`
 
-   You can repeat these steps if you would like to also include a dockerized JATOS, or you can install a local JATOS server using the [non-dockerized method](https://www.jatos.org/JATOS-on-a-server.html).
+   You can also include a dockerized JATOS by running the above command and replacing 'mysql' with 'jatos', or you can install a local JATOS server using the [non-dockerized method](https://www.jatos.org/JATOS-on-a-server.html).
