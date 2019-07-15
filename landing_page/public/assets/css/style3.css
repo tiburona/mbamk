@@ -296,7 +296,7 @@ ul#learn-col li:before {
 div.link-spacing::before {
   display: block;
   content: " ";
-  margin-top: 30px;
+  margin-top: 40px;
   height: 15px;
   visibility: hidden;
   pointer-events: none;
