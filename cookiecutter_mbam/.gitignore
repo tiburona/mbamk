@@ -68,9 +68,5 @@ setup.cfg
 .idea
 .idea/*
 
-# test files
-cookiecutter_mbam/static/files
-files/
-tests/test_files
 
 
