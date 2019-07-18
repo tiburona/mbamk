@@ -7,6 +7,7 @@ from .utils import crop
 
 @celery.task
 def create_resources(xnat_credentials, ids, levels, import_service, archive_prefix):
+    #todo: add empty folder for FSv6
     """ Create XNAT resources (subject, experiment, scan, resource, and file) as necessary
 
     :param tuple xnat_credentials: a three-tuple of the server, username, and password to log into XNAT

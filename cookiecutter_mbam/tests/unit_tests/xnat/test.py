@@ -9,11 +9,6 @@ from cookiecutter_mbam.xnat.tasks import *
 from cookiecutter_mbam.xnat.service import XNATConnection
 from cookiecutter_mbam.config import config_by_name, config_name
 
-# todo: right now these only run properly if you run them from the directory they're in. Fix this.
-
-# Weirdness: merely trying to import anything from the factories.py factory breaks a bunch of tests
-
-
 
 class TestXNATTasks:
     @pytest.fixture(autouse=True)

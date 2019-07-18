@@ -8,15 +8,15 @@
   "type": "docker",
   "index": null,
   "working-directory": null,
-  "command-line": "./main.sh #scan#",
+  "command-line": "./main.sh #experiment# #input file 1# ",
   "override-entrypoint": null,
   "mounts": [],
   "environment-variables": {},
   "ports": {},
   "inputs": [
     {
-      "name": "scan",
-      "description": "URL for input scan",
+      "name": "experiment",
+      "description": "URL for the DICOM files resource",
       "type": "string",
       "matcher": null,
       "default-value": "",

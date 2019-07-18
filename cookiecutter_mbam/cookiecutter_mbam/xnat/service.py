@@ -9,7 +9,7 @@ def debug():
 
 class XNATConnection:
 
-    def __init__(self, config, set_docker_host=True):
+    def __init__(self, config, set_docker_host=False):
         self.xnat_config = config
         self._set_attributes()
         self.xnat_hierarchy = ['subject', 'experiment', 'scan', 'resource', 'file']
