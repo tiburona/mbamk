@@ -75,6 +75,8 @@ body {
 #myNavbar {
   border-top: 0px;
   padding: 0 45px;
+  width: 100%;
+  background: #264551;
 }
 /*
 #brain-icon {
@@ -694,10 +696,22 @@ div.transbox p {
   display: flex;
 }
 
+.article-image {
+  width: 50%;
+}
+
 .article-image > img {
   object-fit: cover;
   width: 600px;
   height: 410px;
+}
+
+.image-brain {
+  width: 480px;
+}
+
+.article-wrapper {
+  width: 50%;
 }
 
 .spiro-columbia {
