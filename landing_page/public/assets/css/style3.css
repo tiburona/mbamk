@@ -20,6 +20,7 @@ body {
   background-color: #14353f;
   height: 6.5rem;
   padding-top: 1.3rem;
+  padding-bottom: 0!important;
   border-width: 0;
   border-radius: 0;
   font-size: 1.59rem;
@@ -39,6 +40,17 @@ body {
   font-weight: 500;
   padding: 10px 25px;
   letter-spacing: 1px;
+}
+
+.navbar-toggle {
+    top: 10%;
+    right: 2%;
+    position: absolute;
+    border: none !important;
+}
+
+.navbar-inverse .navbar-toggle:focus, .navbar-inverse .navbar-toggle:hover {
+    background-color: #ffffff0a;
 }
 
 
@@ -76,7 +88,7 @@ body {
   border-top: 0px;
   padding: 0 45px;
   width: 100%;
-  background: #264551;
+  background: #18343f;
 }
 /*
 #brain-icon {
@@ -452,7 +464,7 @@ div.transbox p {
 
 }
 
-@media screen and (max-width: 770px) {
+@media screen and (max-width: 767px) {
   #brain-gif {
     width: 100%;
   }
@@ -469,6 +481,10 @@ div.transbox p {
   .header-text {
     margin-left: 0rem;
     padding-top: 1rem;
+  }
+
+  #myNavbar {
+      background: #264551 !important;
   }
 
   h1 {
@@ -706,8 +722,8 @@ div.transbox p {
   height: 410px;
 }
 
-.image-brain {
-  width: 480px;
+.image-brain img{
+  width: 500px;
 }
 
 .article-wrapper {
