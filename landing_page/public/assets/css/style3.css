@@ -406,10 +406,24 @@ div.transbox p {
   #brainvideo {
     display: none;
   }
-/*
-  .header-text {
-    padding: 5rem 5rem 8rem 5rem!important;
-  }*/
+
+  .team {
+    padding: 4rem 3rem 4rem 4rem !important;
+  }
+
+  .team-member {
+    width: 50% !important;
+    margin-bottom: 10%;
+  }
+
+
+  .article-description {
+    margin: 8% 60% 5% -90% !important;
+  }
+
+  .article-description2{
+    margin: 25% -40% 5% 11% !important
+  }
 
   .spinning-brain {
     margin-top:0;
@@ -746,7 +760,6 @@ div.transbox p {
   font-size: 2rem;
   font-weight: 500;
 }
-
 
 .article-date {
   font-size: 1.3rem;
