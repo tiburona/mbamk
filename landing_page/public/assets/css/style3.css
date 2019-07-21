@@ -20,6 +20,7 @@ body {
   background-color: #14353f;
   height: 6.5rem;
   padding-top: 1.3rem;
+  padding-bottom: 0!important;
   border-width: 0;
   border-radius: 0;
   font-size: 1.59rem;
@@ -39,6 +40,17 @@ body {
   font-weight: 500;
   padding: 10px 25px;
   letter-spacing: 1px;
+}
+
+.navbar-toggle {
+    top: 10%;
+    right: 2%;
+    position: absolute;
+    border: none !important;
+}
+
+.navbar-inverse .navbar-toggle:focus, .navbar-inverse .navbar-toggle:hover {
+    background-color: #ffffff0a;
 }
 
 
@@ -75,6 +87,8 @@ body {
 #myNavbar {
   border-top: 0px;
   padding: 0 45px;
+  width: 100%;
+  background: #18343f;
 }
 /*
 #brain-icon {
@@ -389,8 +403,26 @@ div.transbox p {
     height: 35px !important;
   }
 
-  .header-text {
-    padding: 5rem 5rem 8rem 5rem!important;
+  #brainvideo {
+    display: none;
+  }
+
+  .team {
+    padding: 4rem 3rem 4rem 4rem !important;
+  }
+
+  .team-member {
+    width: 50% !important;
+    margin-bottom: 10%;
+  }
+
+
+  .article-description {
+    margin: 8% 60% 5% -90% !important;
+  }
+
+  .article-description2{
+    margin: 25% -40% 5% 11% !important
   }
 
   .spinning-brain {
@@ -446,7 +478,7 @@ div.transbox p {
 
 }
 
-@media screen and (max-width: 770px) {
+@media screen and (max-width: 767px) {
   #brain-gif {
     width: 100%;
   }
@@ -463,6 +495,10 @@ div.transbox p {
   .header-text {
     margin-left: 0rem;
     padding-top: 1rem;
+  }
+
+  #myNavbar {
+      background: #264551 !important;
   }
 
   h1 {
@@ -530,8 +566,8 @@ div.transbox p {
   }
 
   .partners>img {
-    width: 90% !important;
-    height: 90% !important;
+    width: 70% !important;
+    height: 70% !important;
   }
 
   .footer-image {
@@ -567,8 +603,8 @@ div.transbox p {
   }
 
   .partners>img {
-    width: 90% !important;
-    height: 90% !important;
+    width: 45% !important;
+    height: 45% !important;
   }
 
   #welcome-text {
@@ -594,9 +630,9 @@ div.transbox p {
     opacity: .8;
   }
 
-  .brain-background {
+/*  .brain-background {
     margin-left: 1rem;
-  }
+  }*/
 
   div.value-props {
     display: none;
@@ -609,9 +645,9 @@ div.transbox p {
 }
 
 @media screen and (max-width: 992px) {
-  .header-text {
+/*  .header-text {
     padding: 3rem 5rem !important;
-  }
+  }*/
 
   .survey-button {
     margin: 3rem 2rem 0 2rem;
@@ -651,7 +687,7 @@ div.transbox p {
   }
 
   .header-text {
-    padding: 5rem;
+    padding: 12rem 5rem 7rem 5rem;
   }
 
   #welcome-text p {
@@ -690,10 +726,22 @@ div.transbox p {
   display: flex;
 }
 
+.article-image {
+  width: 50%;
+}
+
 .article-image > img {
   object-fit: cover;
   width: 600px;
   height: 410px;
+}
+
+.image-brain img{
+  width: 500px;
+}
+
+.article-wrapper {
+  width: 50%;
 }
 
 .spiro-columbia {
@@ -712,7 +760,6 @@ div.transbox p {
   font-size: 2rem;
   font-weight: 500;
 }
-
 
 .article-date {
   font-size: 1.3rem;
