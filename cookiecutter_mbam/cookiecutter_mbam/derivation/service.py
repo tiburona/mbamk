@@ -7,13 +7,13 @@ tasks = {'set_attribute': set_derivation_attribute, 'get_attribute': get_derivat
 
 class DerivationService(BaseService):
 
-    def __init__(self, scan_id, tasks=tasks):
+    def __init__(self, scans, tasks=tasks):
         super().__init__(Derivation)
-        self.scan_id = scan_id
+        self.scans = scans
         self.tasks = tasks
 
     def create(self, process_name):
-        self.derivation = Derivation.create(scan_id=self.scan_id, process_name=process_name, status='pending')
+        self.derivation = Derivation.create(scans=self.scans, process_name=process_name, status='pending')
         return self.derivation
 
     def _raise_exception_if_process_fails(self):

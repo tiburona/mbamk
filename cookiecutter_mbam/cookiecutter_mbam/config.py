@@ -70,7 +70,7 @@ class Config:
         'docker_host': 'unix:///var/run/docker.sock',
         'dicom_to_nifti_command_id': 2,
         'dicom_to_nifti_wrapper_id':'dcm2niix-scan',
-        'dicom_to_nifti_transfer_command_id':1,
+        'dicom_to_nifti_transfer_command_id':3,
         'dicom_to_nifti_transfer_wrapper_id':'dcm2niix-xfer'
     }
 

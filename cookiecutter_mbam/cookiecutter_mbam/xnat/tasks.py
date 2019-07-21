@@ -149,6 +149,7 @@ def launch_command(self, data, xnat_credentials, project, command_ids):
     url = '/xapi/projects/{}/commands/{}/wrappers/{}/launch'.format(project, command_id, wrapper_id)
     with init_session(user, password) as s:
         r = s.post(server + url, data)
+        #import epdb; epdb.set_trace()
         if r.ok:
             return r.json()['container-id']
         else:

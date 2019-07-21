@@ -238,7 +238,7 @@ class ScanService(BaseService):
 
         :return: a chain of Celery tasks to convert a DICOM file to NIFTI
         """
-        self.ds = DerivationService(self.scan.id)
+        self.ds = DerivationService([self.scan])
         self.ds.create('dicom_to_nifti')
 
         return chain(

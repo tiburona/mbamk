@@ -20,7 +20,6 @@ class Scan(SurrogatePK, Model):
     xnat_id = db.Column(db.String(80))
     orig_aws_key = db.Column(db.String(255))
     experiment_id = reference_col('experiment', nullable=True)
-    derivations = relationship('Derivation', backref='scan')
 
     def __init__(self, experiment_id, **kwargs):
         """Create instance."""

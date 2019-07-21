@@ -5,7 +5,7 @@ import smtplib
 from email.message import EmailMessage
 from cookiecutter_mbam.config import config_by_name, config_name
 from . import textbank
-from cookiecutter_mbam.logging import app_logger, celery_logger
+from cookiecutter_mbam.mbam_logging import app_logger, celery_logger
 
 # set mail constants
 mail_constants = ['USERNAME', 'SERVER', 'PASSWORD', 'PORT']
@@ -121,6 +121,7 @@ def global_error_handler(req, exc, tb, cel, log_message='generic_message', user_
     handlers, and so must be included, even though they are not used
     :param Exception exc: the second argument automatically passed to Celery error handlers
     :param Traceback tb: the third argument automatically passed to Celery error handlers
+    :param bool cel: whether to send the message to the celery logger (as opposed to the main app logger)
     :param str log_message: a key in a dictionary that contains various log messages for different circumstances
     :param str user_name: the name of the current user
     :param str user_email: the email of the current user
