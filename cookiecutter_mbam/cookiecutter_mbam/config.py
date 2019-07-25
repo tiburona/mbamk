@@ -113,10 +113,22 @@ class TestConfig(Config):
     WTF_CSRF_ENABLED = False  # Allows form testing
     PRESERVE_CONTEXT_ON_EXCEPTION = False
 
+class DevConfig(Config):
+    """ Class defining configurations for local development. Config_name is 'aws_dev'. """
+    DB_URI = env.str('DB_URI')
+    DB_USER = env.str('DB_USER', default='mbam')
+    DB_PASSWORD = env.str('DB_PASSWORD', default='mbam1234')
+    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://{}:{}@{}/brain_db'.format(DB_USER,DB_PASSWORD,DB_URI)
+
+    # Celery cettings COME BACK TO
+    broker_url = 'redis://redis:6379'
+    result_backend = 'redis://redis:6379'
+
 config_by_name = dict(
     local=LocalConfig,
     docker=DockerConfig,
-    test=TestConfig
+    test=TestConfig,
+    aws_dev=DevConfig
     )
 
 def guess_environment():
