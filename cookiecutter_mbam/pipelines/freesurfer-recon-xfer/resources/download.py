@@ -2,9 +2,9 @@ import requests
 import sys
 import os
 
-url, user, password, host = sys.argv[1:]
+experiment, scan, user, password, host = sys.argv[1:]
 
-url = os.path.join(host + url, 'resources', 'NIFTI', 'T1.nii.gz')
+url = os.path.join(host, 'data', 'experiments', experiment, 'scans', scan, 'resources', 'NIFTI', 'files')
 
 def init_session(user, password):
     s = requests.Session()

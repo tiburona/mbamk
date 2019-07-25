@@ -7,6 +7,8 @@ def debug():
     assert current_app.debug == False, "Don't panic! You're here by request of debug()"
 
 
+
+
 class XNATConnection:
 
     def __init__(self, config, set_docker_host=False):
@@ -128,10 +130,13 @@ class XNATConnection:
         return create_resources_signature | upload_signature | get_latest_scan_info_signature
 
     def launch_and_poll_for_completion(self, process_name):
+
+        intervals =  {'dicom_to_nifti': 5,  'freesurfer_recon_all': 172800}
+
         return chain(
             self.gen_dicom_conversion_data(),
             self.launch_command(process_name),
-            self.poll_container_service()
+            self.poll_container_service(interval)
         )
 
     def gen_dicom_conversion_data(self):
@@ -144,9 +149,9 @@ class XNATConnection:
         command_ids = self.generate_container_service_ids(process_name)
         return launch_command.s(xnat_credentials, self.project, command_ids)
 
-    def poll_container_service(self):
+    def poll_container_service(self, interval):
         xnat_credentials = (self.server, self.user, self.password)
-        return poll_cs.s(xnat_credentials)
+        return poll_cs.s(xnat_credentials, interval)
 
     def dl_file_from_xnat(self, file_depot):
         return dl_file_from_xnat.s(self.auth, file_depot)

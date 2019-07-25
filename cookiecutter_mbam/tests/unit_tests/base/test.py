@@ -56,15 +56,18 @@ class TestEmailFunctions:
     @mock.patch('cookiecutter_mbam.base.tasks.smtplib')
     def test_send_email(self, mock_smtp, mocker):
         server = mocker.MagicMock()
-        server.startttls = mocker.MagicMock()
+        server.starttls = mocker.MagicMock()
         server.login = mocker.MagicMock()
         server.send_message = mocker.MagicMock()
         mock_smtp.SMTP = mocker.MagicMock()
         mock_smtp.SMTP.return_value = server
+        mock_smtp.SMTP.starttls = mocker.MagicMock()
+        mock_smtp.SMTP.login = mocker.MagicMock()
+        mock_smtp.SMTP.send_message = mocker.MagicMock
         msg = {'subject': "Hi, Elmo!", 'body':"It's Grover!"}
         send_email(('Elmo', 'elmo@sesamestreet.org', msg))
         mock_smtp.SMTP.assert_called_once()
-        import pdb; pdb.set_trace()
+        mock_smtp.SMTP.login.assert_called_once()
         server.login.assert_called_once()
         assert server.login.call_args[0] == 'Elmo'
         server.send_message.assert_called_once()

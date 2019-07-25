@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Derivation model."""
 
-from cookiecutter_mbam.database import Model, SurrogatePK, db, reference_col, Table
+from cookiecutter_mbam.database import Model, SurrogatePK, db, Table
 
 from flask import current_app
 def debug():
