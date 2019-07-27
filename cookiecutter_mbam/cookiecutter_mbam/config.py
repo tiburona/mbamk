@@ -121,8 +121,8 @@ class DevConfig(Config):
     SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://{}:{}@{}/brain_db'.format(DB_USER,DB_PASSWORD,DB_URI)
 
     # Celery settings
-    broker_url = 'redis.h8ngnk.0001.use1.cache.amazonaws.com:6379'
-    result_backend = 'redis.h8ngnk.0001.use1.cache.amazonaws.com:6379'
+    broker_url = env.str('broker_url', default='redis.h8ngnk.0001.use1.cache.amazonaws.com:6379')
+    result_backend = env.str('result_backend', default='redis.h8ngnk.0001.use1.cache.amazonaws.com:6379')
 
 config_by_name = dict(
     local=LocalConfig,

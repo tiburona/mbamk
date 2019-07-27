@@ -8,6 +8,7 @@
 /.semaphore-cache
 .DS_Store
 /landing_page/.firebase
+/landing_page/.DS_Store
 /cookiecutter_mbam/setup.cfg
 /landing_page/public/returned-brain-demo/
 
