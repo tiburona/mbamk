@@ -8,16 +8,29 @@
   "type": "docker",
   "index": null,
   "working-directory": null,
-  "command-line": "./main.sh #scan#",
+  "command-line": "./main.sh #experiment# #scans#",
   "override-entrypoint": null,
   "mounts": [],
   "environment-variables": {},
   "ports": {},
   "inputs": [
     {
-      "name": "scan",
-      "description": "URL for input scan",
+      "name": "experiment",
+      "description": "URL for the DICOM files resource",
       "type": "string",
+      "matcher": null,
+      "default-value": "",
+      "required": false,
+      "replacement-key": null,
+      "command-line-flag": null,
+      "command-line-separator": null,
+      "true-value": null,
+      "false-value": null
+    },
+    {
+      "name": "scans",
+      "description": "array of scans with which to perform the recon",
+      "type": "array",
       "matcher": null,
       "default-value": "",
       "required": false,
@@ -31,8 +44,8 @@
   "outputs": [],
   "xnat": [
     {
-      "name": "dcm2niix-xfer",
-      "description": "download dicoms, convert to nifti, reupload nifti",
+      "name": "freesurfer-recon-all-xfer",
+      "description": "download nifti files, run freesurfer recon, reupload files",
       "contexts": [],
       "external-inputs": [],
       "derived-inputs": [],

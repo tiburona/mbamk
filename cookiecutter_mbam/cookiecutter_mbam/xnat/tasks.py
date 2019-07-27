@@ -154,7 +154,7 @@ def launch_command(self, data, xnat_credentials, project, command_ids):
             raise ValueError(f'Unexpected status code: {r.status_code}')
 
 @celery.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5}, soft_time_limit=10000)
-def poll_cs(self, container_id, xnat_credentials):
+def poll_cs(self, container_id, xnat_credentials, interval):
     """ Check for completion of a Container Service command
 
     :param self: the task object
@@ -173,7 +173,7 @@ def poll_cs(self, container_id, xnat_credentials):
                     status = r.json()['status']
                     if status in ['Complete', 'Failed', 'Killed', 'Killed (Out of Memory)']:
                         return status
-                    time.sleep(5)
+                    time.sleep(interval)
                 else:
                     raise ValueError(f'Unexpected status code: {r.status_code}')
     except SoftTimeLimitExceeded:
@@ -205,6 +205,18 @@ def dl_file_from_xnat(self, scan_uri, xnat_credentials, file_path):
         else:
             raise ValueError(f'Unexpected status code: {r.status_code}')
     return r
+
+@celery.task
+def create_freesurfer_resource(xnat_credentials, archive_prefix, experiment_xnat_id):
+    server, user, password = xnat_credentials
+    resources_uri = archive_prefix + f'/experiments/{experiment_xnat_id}/resources'
+    freesurfer_uri = resources_uri + '/fsv6'
+    with init_session(user, password) as s:
+        for uri in [resources_uri, freesurfer_uri]:
+            r = s.put(url=server + uri)
+            if not r.ok:
+                raise ValueError(f'Unexpected status code: {r.status_code}')
+    return freesurfer_uri
 
 
 

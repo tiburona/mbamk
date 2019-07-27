@@ -70,7 +70,7 @@ class Config:
         'docker_host': 'unix:///var/run/docker.sock',
         'dicom_to_nifti_command_id': 2,
         'dicom_to_nifti_wrapper_id':'dcm2niix-scan',
-        'dicom_to_nifti_transfer_command_id':1,
+        'dicom_to_nifti_transfer_command_id':3,
         'dicom_to_nifti_transfer_wrapper_id':'dcm2niix-xfer'
     }
 
@@ -113,10 +113,22 @@ class TestConfig(Config):
     WTF_CSRF_ENABLED = False  # Allows form testing
     PRESERVE_CONTEXT_ON_EXCEPTION = False
 
+class DevConfig(Config):
+    """ Class defining configurations for development on AWS. Config_name is 'aws_dev'. """
+    DB_URI = env.str('DB_URI', default='braindb-instance.clem3xtlzpyq.us-east-1.rds.amazonaws.com')
+    DB_USER = env.str('DB_USER', default='mbam')
+    DB_PASSWORD = env.str('DB_PASSWORD', default='mbam1234')
+    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://{}:{}@{}/brain_db'.format(DB_USER,DB_PASSWORD,DB_URI)
+
+    # Celery settings
+    broker_url = 'redis.h8ngnk.0001.use1.cache.amazonaws.com:6379'
+    result_backend = 'redis.h8ngnk.0001.use1.cache.amazonaws.com:6379'
+
 config_by_name = dict(
     local=LocalConfig,
     docker=DockerConfig,
-    test=TestConfig
+    test=TestConfig,
+    aws_dev=DevConfig
     )
 
 def guess_environment():

@@ -42,29 +42,24 @@ tasks = {'set_attribute': set_scan_attribute, 'get_attribute': get_scan_attribut
          'set_attributes': set_scan_attributes}
 
 class ScanService(BaseService):
-    def __init__(self, user_id, exp_id, config_dir='', tasks=tasks):
+    def __init__(self, user_id, exp_id, tasks=tasks):
         super().__init__(Scan)
         self.user_id = user_id
         self.user = User.get_by_id(self.user_id)
         self.experiment = Experiment.get_by_id(exp_id)
         self.instance_path = current_app.instance_path[:-8]
-        if not len(config_dir):
-            config_dir = self.instance_path
         self._config_read()
         self.tasks = tasks
 
     def _config_read(self):
         """Scan service configuration
-        Reads the config file passed on scan service object creation, and sets the upload path and creates XNAT
-        Connection and a Cloud Storage Connection instance and attaches them to the scan service object.
-        :param str config_path:
+        Obtains the configuration with config_by_name, and sets the upload path and creates XNAT Connection and a Cloud
+        Storage Connection instance and attaches them to the scan service object.
         :return: None
         """
         config = config_by_name[config_name]
         self.file_depot = os.path.join(self.instance_path, config.files['file_depot'])
-        debug()
         self.xc = XNATConnection(config=config.XNAT)
-        logger.error(config.XNAT)
         self.csc = CloudStorageConnection(config=config.AWS)
 
     def add(self, image_file):
@@ -111,6 +106,7 @@ class ScanService(BaseService):
 
         :param str filename: the name of the file as stored on the image_file object
         :return: the extension of the file, the basename of the file, and the path to write the file to in local storage
+        :rtype: tuple
         """
         _, ext = os.path.splitext(filename)
         filename = os.path.basename(filename)
@@ -169,7 +165,8 @@ class ScanService(BaseService):
             xnat_chain = self._upload_file_to_xnat()
 
         return xnat_chain.set(link_error=self._error_handler(log_message='generic_message',
-                                                             user_message='user_external_uploads'))
+                                                             user_message='user_external_uploads',
+                                                             email_admin=True))
 
     def _upload_file_to_xnat(self):
         """Construct a Celery chain to upload a file to XNAT
@@ -241,7 +238,7 @@ class ScanService(BaseService):
 
         :return: a chain of Celery tasks to convert a DICOM file to NIFTI
         """
-        self.ds = DerivationService(self.scan.id)
+        self.ds = DerivationService([self.scan])
         self.ds.create('dicom_to_nifti')
 
         return chain(
