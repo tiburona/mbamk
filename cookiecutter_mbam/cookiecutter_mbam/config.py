@@ -117,9 +117,9 @@ class DevConfig(Config):
     """ Class defining configurations for development on AWS. Config_name is 'aws_dev'. """
     # MYSQL parameters are stored in AWS Systems Manager Parameter store and passed
     # as environment variables in the Cloudformation Templates. 
-    DB_URI = env.str('MYSQL_HOST')
-    DB_USER = env.str('MYSQL_USERNAME')
-    DB_PASSWORD = env.str('MYSQL_PASSWORD')
+    DB_URI = env.str('MYSQL_HOST','dummy')
+    DB_USER = env.str('MYSQL_USERNAME','dummy')
+    DB_PASSWORD = env.str('MYSQL_PASSWORD','dummy')
     SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://{}:{}@{}/brain_db'.format(DB_USER,DB_PASSWORD,DB_URI)
 
     # Celery settings. In AWS, redis is run as a daemon (one service per EC2 instance)
