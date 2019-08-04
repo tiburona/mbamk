@@ -1,7 +1,4 @@
 CONFIG_NAME='aws_dev'
-DB_URI='braindb-instance.clem3xtlzpyq.us-east-1.rds.amazonaws.com'
-DB_USER='mbam'
-DB_PASSWORD='mbam1234'
 FLASK_APP=autoapp.py
 FLASK_ENV=production
 SECRET_KEY='not-so-secret'
