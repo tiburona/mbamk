@@ -31,6 +31,10 @@ Parameters:
     Type: String
     Default: true
     AllowedValues: [ true, false ]
+  MaxSize:
+    Type: Number
+    Default: '2'
+    Description: Maximum number of EC2 instances that can be launched in your ECS cluster.
 
 Conditions:
   CreatePublicVPC: !Equals [ !Ref MakeVPCPublic, true ]
@@ -44,7 +48,7 @@ Resources:
         InstanceType: !Ref 'InstanceType'
         KeyName: !If [ CreatePublicVPC, "personal", !Ref "AWS::NoValue" ]
         DesiredCapacity: '1'
-        MaxSize: '2'
+        MaxSize: !Ref 'MaxSize'
         ECSAMI: /aws/service/ecs/optimized-ami/amazon-linux/recommended/image_id
       TemplateURL: !If [ CreatePublicVPC, !Join ["",[!Ref S3Location,"cluster-ec2-public-vpc.yaml"]], !Join ["",[!Ref S3Location,"cluster-ec2-private-vpc.yaml"]]]
 
