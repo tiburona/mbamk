@@ -75,7 +75,6 @@ To run all tests, run ::
 
     flask test
 
-
 Migrations
 ----------
 
