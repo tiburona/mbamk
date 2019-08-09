@@ -1,16 +1,22 @@
 import requests
 import sys
 import os
-import gzip
 from glob import glob
+import zipfile
 
-files_to_upload=[]
+surf_names = ['surf/?h.pial', 'surf/?h.sphere.reg', 'surf/?h.thickness', 'surf/?h.volume', 'surf/?h.area', 'surf/?h.sulc',
+    'surf/?h.curv', 'surf/?h.avg_curv']
 
-names = ['surf/?h.pial', 'surf/?h.sphere.reg', 'surf/?h.thickness', 'surf/?h.volume', 'surf/?h.area', 'surf/?h.sulc',
-    'surf/?h.curv', 'surf/?h.avg_curv', 'stats/*']
+surf_files = []
 
-for name in names:
-    files_to_upload.extend(glob('/output/currsub/' + name))
+os.chdir('/output/currsub/')
+
+for name in surf_names:
+    surf_files.extend(glob('./' + name))
+
+stats_files = glob('./stats/*')
+
+znames_files = [('surf.zip', surf_files), ('stats.zip', stats_files)]
 
 def init_session(user, password):
     s = requests.Session()
@@ -19,20 +25,18 @@ def init_session(user, password):
 
 experiment, user, password, host = sys.argv[1:]
 
-urls = [os.path.join(host, 'data', 'experiments', experiment, path) for path in
-        ['resources', 'resources/FSv6', 'resources/FSv6/files']]
+url = os.path.join(host, 'data', 'experiments', experiment, 'resources/FSv6/files')
 
 with init_session(user, password) as s:
-    for url in urls:
-        s.put(url)
+    for z_name, files in znames_files:
+        with zipfile.ZipFile(z_name, 'w', zipfile.ZIP_DEFLATED) as zf:
+            for file in files:
+                zf.write(file)
+        files = {'file': (z_name, open('./' + z_name, 'rb'), 'application/octet-stream')}
+        r = s.put(url + '?extract=true', files=files)
 
-fs_path = '/output/currsub'
 
 
-for file_path in files_to_upload:
-    files = {'file': (os.path.basename(file_path), open(file_path, 'rb'), 'application/octet-stream')}
-    with init_session(user, password) as s:
-        s.put(urls[2], files=files)
 
 
 
