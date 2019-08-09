@@ -13,7 +13,7 @@ env.read_env()
 class Config:
     """ Base config class the sets variables in common (or default) to all environments."""
     SECRET_KEY = env.str('SECRET_KEY')
-    ENV = env.str('FLASK_ENV', default='production')
+    ENV = env.str('FLASK_ENV', default='development')
     DEBUG = ENV == 'development'
 
     DEBUG_TB_ENABLED = DEBUG
@@ -115,7 +115,7 @@ class TestConfig(Config):
 
 class DevConfig(Config):
     """ Class defining configurations for local development. Config_name is 'aws_dev'. """
-    DB_URI = env.str('DB_URI')
+    DB_URI = env.str('DB_URI', default='abc')
     DB_USER = env.str('DB_USER', default='mbam')
     DB_PASSWORD = env.str('DB_PASSWORD', default='mbam1234')
     SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://{}:{}@{}/brain_db'.format(DB_USER,DB_PASSWORD,DB_URI)
