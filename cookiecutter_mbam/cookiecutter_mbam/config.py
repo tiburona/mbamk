@@ -114,15 +114,18 @@ class TestConfig(Config):
     PRESERVE_CONTEXT_ON_EXCEPTION = False
 
 class DevConfig(Config):
-    """ Class defining configurations for local development. Config_name is 'aws_dev'. """
-    DB_URI = env.str('DB_URI', default='abc')
-    DB_USER = env.str('DB_USER', default='mbam')
-    DB_PASSWORD = env.str('DB_PASSWORD', default='mbam1234')
+    """ Class defining configurations for development on AWS. Config_name is 'aws_dev'. """
+    # MYSQL parameters are stored in AWS Systems Manager Parameter store and passed
+    # as environment variables in the Cloudformation Templates. 
+    DB_URI = env.str('MYSQL_HOST','dummy')
+    DB_USER = env.str('MYSQL_USERNAME','dummy')
+    DB_PASSWORD = env.str('MYSQL_PASSWORD','dummy')
     SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://{}:{}@{}/brain_db'.format(DB_USER,DB_PASSWORD,DB_URI)
 
-    # Celery cettings COME BACK TO
-    broker_url = 'redis://redis:6379'
-    result_backend = 'redis://redis:6379'
+    # Celery settings. In AWS, redis is run as a daemon (one service per EC2 instance)
+    # This setting assumes the redis container is launched with 'host' network settings.
+    broker_url = env.str('broker_url', default='redis://localhost:6379')
+    result_backend = env.str('result_backend', default='redis://localhost:6379')
 
 config_by_name = dict(
     local=LocalConfig,

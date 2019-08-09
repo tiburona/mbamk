@@ -27,6 +27,7 @@ module.exports = {
       path.join(__dirname, 'node_modules', 'bootstrap', 'dist', 'css', 'bootstrap.css'),
       path.join(__dirname, 'node_modules', 'bootstrap-fileinput', 'css', 'fileinput.min.css'),
       path.join(__dirname, 'assets', 'css', 'style.css'),
+      path.join(__dirname, 'assets', 'scss', 'style.scss'),
     ],
   },
   output: {
@@ -36,7 +37,7 @@ module.exports = {
     chunkFilename: '[id].[hash].js',
   },
   resolve: {
-    extensions: ['.js', '.jsx', '.css'],
+    extensions: ['.js', '.jsx', '.css','.scss'],
   },
   devtool: 'source-map',
   devServer: {
@@ -49,7 +50,7 @@ module.exports = {
     loaders: [
       { test: /\.html$/, loader: 'raw-loader' },
       { test: /\.less$/, loader: ExtractTextPlugin.extract({ fallback: 'style-loader', use: 'css-loader!less-loader' }) },
-      { test: /\.css$/, loader: ExtractTextPlugin.extract({ fallback: 'style-loader', use: 'css-loader' }) },
+      { test: /\.(s*)css$/, loader: ExtractTextPlugin.extract({ fallback: 'style-loader', use: ['css-loader','sass-loader'] }) },
       { test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: 'url-loader?limit=10000&mimetype=application/font-woff' },
       { test: /\.(ttf|eot|svg|png|jpe?g|gif|ico)(\?.*)?$/i,
         loader: `file-loader?context=${rootAssetPath}&name=[path][name].[hash].[ext]` },

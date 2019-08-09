@@ -1,0 +1,142 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Master template to launch nested stacks.
+
+Parameters:
+  S3Location:
+    Description: Your S3 location to store cloudformation template
+    Type: String
+    Default: "https://mbam-cfn-templates.s3.amazonaws.com/"
+    MinLength: 1
+  EnvironmentName:
+    Description: "A friendly environment name that will be used for namespacing all
+                 cluster resources. Example: staging, qa, or production"
+    Type: String
+    Default: staging
+  InstanceType:
+    Description: EC2 instance type
+    Type: String
+    Default: t2.small
+    Description: Class of EC2 instance used to host containers. Choose t2 for testing,
+                  m5 for general purpose, c5 for CPU intensive services, and r5 for memory intensive services
+    AllowedValues: [ t2.micro, t2.small, t2.medium, t2.large, t2.xlarge, t2.2xlarge,
+     m5.large, m5.xlarge, m5.2large, m5.4xlarge, m5.12xlarge, m5.24large,
+     c5.large, c5.xlarge, c5.2xlarge, c5.4xlarge, c5.9xlarge, c5.18xlarge,
+     r5.large, r5.xlarge, r5.2xlarge, r5.4xlarge, r5.12xlarge, r5.24xlarge ]
+  FlaskAppImageUrl:
+    Description: URL to the MBaM Flask app container.
+    Type: String
+    Default: 413377292493.dkr.ecr.us-east-1.amazonaws.com/mbam/flask-app:latest
+  MakeVPCPublic:
+    Description: If set to false will create a private (not public) VPC. Leave to true in order to access EC2 instances with SSH.
+    Type: String
+    Default: true
+    AllowedValues: [ true, false ]
+  DesiredCapacity:
+      Type: Number
+      Default: 2
+      Description: Number of EC2 instances to launch in your ECS cluster.
+  MaxSize:
+    Type: Number
+    Default: 4
+    Description: Maximum number of EC2 instances that can be launched in your ECS cluster.
+
+
+Conditions:
+  CreatePublicVPC: !Equals [ !Ref MakeVPCPublic, true ]
+
+Resources:
+  ECS:
+    Type: "AWS::CloudFormation::Stack"
+    Properties:
+      Parameters:
+        EnvironmentName: !Ref 'EnvironmentName'
+        InstanceType: !Ref 'InstanceType'
+        KeyName: !If [ CreatePublicVPC, "personal", !Ref "AWS::NoValue" ]
+        DesiredCapacity: !Ref 'DesiredCapacity'
+        MaxSize: !Ref 'MaxSize'
+        ECSAMI: /aws/service/ecs/optimized-ami/amazon-linux/recommended/image_id
+      TemplateURL: !If [ CreatePublicVPC, !Join ["",[!Ref S3Location,"cluster-ec2-public-vpc.yaml"]], !Join ["",[!Ref S3Location,"cluster-ec2-private-vpc.yaml"]]]
+
+  ALB:
+    Type: "AWS::CloudFormation::Stack"
+    Properties:
+      Parameters:
+        EnvironmentName: !Ref 'EnvironmentName'
+        URLSUBDOMAIN: !Ref 'EnvironmentName'
+      TemplateURL: !Join ["",[!Ref S3Location,"alb-external.yaml"]]
+    DependsOn: "ECS"
+
+  JATOS:
+    Type: "AWS::CloudFormation::Stack"
+    Properties:
+      Parameters:
+        EnvironmentName: !Ref 'EnvironmentName'
+        ServiceName: cfn-jatos
+        ImageUrl: jatos/jatos:3.3.3
+        ContainerPort: 9000
+        ContainerCpu: 256
+        ContainerMemory: 512
+        ContainerCommand: ""
+        Path: "jatos*.mybrainandme.org"
+        Priority: 1 # This sets the priority for the routing and must be 1 for Jatos.
+        HealthCheckPath: /jatos/login
+        ContainerMountPoint: /opt/docker/study_assets_root
+        HostMountPoint: /efs/jatos/study_assets_root
+        DesiredCount: 1
+        Role: ""
+        VolumeName: "EFSVolume"
+      TemplateURL: !Join ["", [!Ref S3Location,"service-ec2-public-lb.yaml"]]
+    DependsOn: "ALB"
+
+  MBAM:
+    Type: "AWS::CloudFormation::Stack"
+    Properties:
+      Parameters:
+        EnvironmentName: !Ref 'EnvironmentName'
+        ServiceName: cfn-web
+        ImageUrl: !Ref 'FlaskAppImageUrl'
+        ContainerPort: 8000
+        ContainerCpu: 256
+        ContainerMemory: 384
+        ContainerCommand: "bash,-c,cp .dev_env .env && flask run"
+        Path: "*"
+        Priority: 2 # This must NOT be set to 1 due to downstream IF statements to check.
+        HealthCheckPath: /
+        ContainerMountPoint: /app/cookiecutter_mbam/static/files
+        HostMountPoint: /efs/mbam/user-data
+        DesiredCount: 1
+        Role: ""
+        VolumeName: "EFSVolume"
+      TemplateURL: !Join ["", [!Ref S3Location,"service-ec2-public-lb.yaml"]]
+    DependsOn: "JATOS"
+
+  REDIS:
+    Type: "AWS::CloudFormation::Stack"
+    Properties:
+      Parameters:
+        EnvironmentName: !Ref 'EnvironmentName'
+        ServiceName: cfn-redis
+        ImageUrl: redis:5.0.3-alpine
+        ContainerPort: 6379
+        ContainerCpu: 256
+        ContainerMemory: 384
+        ContainerCommand: "redis-server"
+        ContainerWorkingDirectory: /data
+        Role: ""
+      TemplateURL: !Join ["", [!Ref S3Location,"service-ec2-redis.yaml"]]
+    DependsOn: "ECS"
+
+  CELERY:
+    Type: "AWS::CloudFormation::Stack"
+    Properties:
+      Parameters:
+        EnvironmentName: !Ref 'EnvironmentName'
+        ServiceName: cfn-celery
+        ImageUrl: !Ref 'FlaskAppImageUrl'
+        ContainerCpu: 256
+        ContainerMemory: 384
+        ContainerCommand: "celery -A cookiecutter_mbam.run_celery:celery worker --loglevel info"
+        ContainerWorkingDirectory: /app
+        Role: ""
+      TemplateURL: !Join ["", [!Ref S3Location,"service-ec2-celery.yaml"]]
+    DependsOn: "REDIS"
