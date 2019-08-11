@@ -4,11 +4,11 @@ Description: Deploy a jatos service behind a public load balancer.
 Parameters:
   EnvironmentName:
     Type: String
-    Default: development
+    Default: staging
     Description: The name of the environment to add this service to
   ServiceName:
     Type: String
-    Default: cfn-jatos
+    Default: jatos
     Description: A name for the service
   ImageUrl:
     Type: String
@@ -36,7 +36,6 @@ Parameters:
     Default: "jatos*.mybrainandme.org"
     Description: A pattern in the host URL that directs traffic from the public load balancer to
                  this service. Use '*' to direct all traffic to this service.
-
   HealthCheckPath:
     Type: String
     Default: "/jatos/login"
@@ -58,18 +57,28 @@ Parameters:
     Type: Number
     Default: 1
     Description: How many copies of the service task to run
-  Role:
+  TaskRole:
     Type: String
     Default: ""
-    Description: (Optional) An IAM role to give the service's containers if the code within needs to
+    Description: (Optional) An IAM task role to give the service's containers if the code within needs to
                  access other AWS resources like S3 buckets, DynamoDB tables, etc
+  ExecutionRole:
+    Type: String
+    Default: "arn:aws:iam::413377292493:role/ecsTaskExecutionRole"
+    Description: (Optional) An IAM execution role to give ECS permission to pull secrets and sensitive
+                  data from AWS parameter store, etc
   VolumeName:
     Type: String
     Default: "EFSVolume"
     Description: Docker volume name for the EFS mount
+  ParameterStore:
+    Type: String
+    Default: "arn:aws:ssm:us-east-1:413377292493:parameter"
+    Description: "String to prepend for the full ARN for parameters such as XNAT credentials."
 
 Conditions:
-  HasCustomRole: !Not [ !Equals [!Ref 'Role', ''] ]
+  HasCustomTaskRole: !Not [ !Equals [!Ref 'TaskRole', ''] ]
+  HasCustomExecutionRole: !Not [ !Equals [!Ref 'ExecutionRole', ''] ]
   IsJatosService: !Equals [!Ref 'Priority', 1] # If Priority is 1 then this is for Jatos
 
 Resources:
@@ -94,8 +103,13 @@ Resources:
       Memory: !Ref 'ContainerMemory'
       TaskRoleArn:
         Fn::If:
-          - 'HasCustomRole'
-          - !Ref 'Role'
+          - 'HasCustomTaskRole'
+          - !Ref 'TaskRole'
+          - !Ref "AWS::NoValue"
+      ExecutionRoleArn:
+        Fn::If:
+          - 'HasCustomExecutionRole'
+          - !Ref 'ExecutionRole'
           - !Ref "AWS::NoValue"
       ContainerDefinitions:
         - Name: !Ref 'ServiceName'
@@ -114,6 +128,32 @@ Resources:
             - ContainerPath: !Ref 'ContainerMountPoint'
               SourceVolume: !Ref 'VolumeName'
           Command: !Ref 'ContainerCommand'
+          Secrets:
+            - Name: XNAT_USER
+              ValueFrom: !Sub
+                - ${PREPEND}/XNAT_USER
+                - { PREPEND: !Ref ParameterStore }
+            - Name: XNAT_PASSWORD
+              ValueFrom: !Sub
+                - ${PREPEND}/XNAT_PASSWORD
+                - { PREPEND: !Ref ParameterStore }
+            - Name: MYSQL_PASSWORD
+              ValueFrom: !Sub
+                - ${PREPEND}/MYSQL_PASSWORD
+                - { PREPEND: !Ref ParameterStore }
+            - Name: JATOS_DB_PASSWORD
+              ValueFrom: !Sub
+                - ${PREPEND}/MYSQL_PASSWORD
+                - { PREPEND: !Ref ParameterStore }
+            - Name: MYSQL_USERNAME
+              ValueFrom: !Sub
+                - ${PREPEND}/MYSQL_USERNAME
+                - { PREPEND: !Ref ParameterStore }
+            - Name: JATOS_DB_USERNAME
+              ValueFrom: !Sub
+                - ${PREPEND}/MYSQL_USERNAME
+                - { PREPEND: !Ref ParameterStore }
+
           Environment:
           # Pass the same environment variables to JATOS and MBaM app.
           - Name: JATOS_DB_URL
@@ -122,21 +162,20 @@ Resources:
                     - - 'jdbc:mysql://'
                       - '{{resolve:ssm:MYSQL_HOST:1}}'
                       - '/brain_db?characterEncoding=UTF-8&useSSL=false'
-          - Name: JATOS_DB_USERNAME
-            Value: '{{resolve:ssm:MYSQL_USERNAME:1}}'
-          - Name: JATOS_DB_PASSWORD
-            Value: '{{resolve:ssm:MYSQL_PASSWORD:1}}'
           - Name: JATOS_DB_DRIVER
             Value: "com.mysql.jdbc.Driver"
           - Name: JATOS_JPA
             Value: "mysqlPersistenceUnit"
-          # Below for the MBaM app
+          # Access to MYSQL database
           - Name: MYSQL_HOST
             Value: '{{resolve:ssm:MYSQL_HOST:1}}'
-          - Name: MYSQL_PASSWORD
-            Value: '{{resolve:ssm:MYSQL_PASSWORD:1}}'
-          - Name: MYSQL_USERNAME
-            Value: '{{resolve:ssm:MYSQL_USERNAME:1}}'
+          # Access to XNAT
+          - Name: XNAT_HOST
+            Value: '{{resolve:ssm:XNAT_HOST:1}}'
+          # Access to Redis
+          - Name: broker_url
+            Value:
+              Fn::ImportValue: !Sub ${EnvironmentName}:RedisEndpoint
 
   # The service. The service is a resource which allows you to run multiple
   # copies of a type of task, and gather up their logs and metrics, as well
@@ -207,7 +246,7 @@ Resources:
             - Fn::ImportValue: !Sub ${EnvironmentName}:ClusterName
             - !Ref 'ServiceName'
       MinCapacity: 1
-      MaxCapacity: 2
+      MaxCapacity: 4
       RoleARN:
         Fn::ImportValue: !Sub ${EnvironmentName}:AutoscalingRole
 

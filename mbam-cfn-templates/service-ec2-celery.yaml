@@ -4,15 +4,15 @@ Description: Deploy a service into an ECS cluster behind a public load balancer.
 Parameters:
   EnvironmentName:
     Type: String
-    Default: development
+    Default: staging
     Description: The name of the environment to add this service to
   ServiceName:
     Type: String
-    Default: cfn-celery
+    Default: celery
     Description: A name for the service.
   ImageUrl:
     Type: String
-    Default: 413377292493.dkr.ecr.us-east-1.amazonaws.com/mbam/flask-app:latest
+    Default: 413377292493.dkr.ecr.us-east-1.amazonaws.com/mbam/flask-app:2301dab
     Description: The url of a docker image that contains the application process that
                  will handle the traffic for this service
   ContainerCpu:
@@ -35,6 +35,14 @@ Parameters:
     Type: Number
     Default: 1
     Description: How many copies of the service task to run
+  Grouping:
+    Type: String
+    Default: web
+    Description: This should match the service name of the flask app in order to place celery
+                  workers with the flask app. This is presumably required since redis is
+                  run as a daemon per instance. In the future if we use a centralized Redis Memcache
+                  I don't think this is necessary...
+
   Role:
     Type: String
     Default: ""
@@ -56,7 +64,7 @@ Resources:
   TaskDefinition:
     Type: AWS::ECS::TaskDefinition
     Properties:
-      Family: !Ref 'ServiceName'
+      Family: !Ref 'Grouping'
       Cpu: !Ref 'ContainerCpu'
       Memory: !Ref 'ContainerMemory'
       NetworkMode: 'host'
@@ -79,6 +87,11 @@ Resources:
           EntryPoint: ["bash","-c"]
           Command: !Ref 'ContainerCommand'
           WorkingDirectory: !Ref 'ContainerWorkingDirectory'
+          Environment:
+          # Access to Redis
+          - Name: broker_url
+            Value:
+              Fn::ImportValue: !Sub ${EnvironmentName}:RedisEndpoint
 
   # The service. The service is a resource which allows you to run multiple
   # copies of a type of task, and gather up their logs and metrics, as well
@@ -94,6 +107,11 @@ Resources:
         MinimumHealthyPercent: 75
       DesiredCount: !Ref 'DesiredCount'
       TaskDefinition: !Ref 'TaskDefinition'
+      # PlacementConstraints:
+      #   - Expression: !Sub
+      #     - task:group == ${GroupName}
+      #     - { GroupName: !Ref Grouping }
+      #     Type: memberOf
 
   # Enable autoscaling for this service
   ScalableTarget:
@@ -109,7 +127,7 @@ Resources:
             - Fn::ImportValue: !Sub ${EnvironmentName}:ClusterName
             - !Ref 'ServiceName'
       MinCapacity: 1
-      MaxCapacity: 5
+      MaxCapacity: 2
       RoleARN:
         Fn::ImportValue: !Sub ${EnvironmentName}:AutoscalingRole
 

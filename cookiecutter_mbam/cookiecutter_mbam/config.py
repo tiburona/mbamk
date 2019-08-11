@@ -7,6 +7,8 @@ At the bottom is the config_name which sets the app environment passed on to app
 
 from environs import Env
 import os
+from utils.secret_utils import get_secret
+
 env = Env()
 env.read_env()
 
@@ -116,7 +118,7 @@ class TestConfig(Config):
 class DevConfig(Config):
     """ Class defining configurations for development on AWS. Config_name is 'aws_dev'. """
     # MYSQL parameters are stored in AWS Systems Manager Parameter store and passed
-    # as environment variables in the Cloudformation Templates. 
+    # as environment variables in the Cloudformation Templates.
     DB_URI = env.str('MYSQL_HOST','dummy')
     DB_USER = env.str('MYSQL_USERNAME','dummy')
     DB_PASSWORD = env.str('MYSQL_PASSWORD','dummy')
@@ -125,7 +127,28 @@ class DevConfig(Config):
     # Celery settings. In AWS, redis is run as a daemon (one service per EC2 instance)
     # This setting assumes the redis container is launched with 'host' network settings.
     broker_url = env.str('broker_url', default='redis://localhost:6379')
-    result_backend = env.str('result_backend', default='redis://localhost:6379')
+    result_backend = broker_url
+
+    # Use this code snippet in your app.
+    # If you need more information about configurations or implementing the sample code, visit the AWS docs:
+    # https://aws.amazon.com/developers/getting-started/python/
+    # secret_name = "MINDXNAT/credentials"
+    # region_name = "us-east-1"
+    # test = get_secret(secret_name, region_name)
+
+    XNAT = {
+        'user': env.str('XNAT_USER','mbam'),
+        'password': env.str('XNAT_PASSWORD','dummy'),
+        'server': env.str('XNAT_HOST','dummy'),
+        'project': 'MBAM_TEST',
+        'local_docker': True,
+        #'docker_host': 'unix:///var/run/docker.sock',
+        'docker_host': 'http://10.20.193.32:2375',
+        'dicom_to_nifti_command_id': 2,
+        'dicom_to_nifti_wrapper_id':'dcm2niix-scan',
+        'dicom_to_nifti_transfer_command_id': 23,
+        'dicom_to_nifti_transfer_wrapper_id':'dcm2niix-xfer'
+    }
 
 config_by_name = dict(
     local=LocalConfig,
