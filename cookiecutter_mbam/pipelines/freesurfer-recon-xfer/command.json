@@ -1,10 +1,10 @@
-{ "name": "dcm2niix-xfer",
+{ "name": "freesurfer-recon-xfer",
   "label": null,
-  "description": "Downloads dicom files, converts them to nifti, and reuploads them to XNAT",
+  "description": "Downloads nifti file(s), runs recon, uploads surf and stats files to XNAT",
   "version": null,
   "schema-version": null,
   "info-url": null,
-  "image": "mbam/dcm2niix:latest",
+  "image": "freesurfer_image:latest",
   "type": "docker",
   "index": null,
   "working-directory": null,
@@ -16,7 +16,7 @@
   "inputs": [
     {
       "name": "experiment",
-      "description": "URL for the DICOM files resource",
+      "description": "XNAT id of the experiment",
       "type": "string",
       "matcher": null,
       "default-value": "",
@@ -29,8 +29,8 @@
     },
     {
       "name": "scans",
-      "description": "array of scans with which to perform the recon",
-      "type": "array",
+      "description": "space-delimited XNAT scan ids",
+      "type": "string",
       "matcher": null,
       "default-value": "",
       "required": false,

@@ -15,7 +15,7 @@ env.read_env()
 class Config:
     """ Base config class the sets variables in common (or default) to all environments."""
     SECRET_KEY = env.str('SECRET_KEY')
-    ENV = env.str('FLASK_ENV', default='production')
+    ENV = env.str('FLASK_ENV', default='development')
     DEBUG = ENV == 'development'
 
     DEBUG_TB_ENABLED = DEBUG

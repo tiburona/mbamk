@@ -13,7 +13,9 @@ def init_session(user, password):
 
 with init_session(user, password) as s:
     r = s.get(url)
+    print(url)
     for file in r.json()['ResultSet']['Result']:
+        print(file)
         r = s.get(host + file['URI'])
         if r.status_code == 200:
             with open('/input/' + file['Name'], 'wb') as f:
