@@ -7,7 +7,6 @@ At the bottom is the config_name which sets the app environment passed on to app
 
 from environs import Env
 import os
-from utils.secret_utils import get_secret
 
 env = Env()
 env.read_env()

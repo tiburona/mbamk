@@ -153,7 +153,6 @@ Resources:
               ValueFrom: !Sub
                 - ${PREPEND}/MYSQL_USERNAME
                 - { PREPEND: !Ref ParameterStore }
-
           Environment:
           # Pass the same environment variables to JATOS and MBaM app.
           - Name: JATOS_DB_URL
