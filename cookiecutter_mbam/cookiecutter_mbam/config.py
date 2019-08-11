@@ -123,17 +123,9 @@ class DevConfig(Config):
     DB_PASSWORD = env.str('MYSQL_PASSWORD','dummy')
     SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://{}:{}@{}/brain_db'.format(DB_USER,DB_PASSWORD,DB_URI)
 
-    # Celery settings. In AWS, redis is run as a daemon (one service per EC2 instance)
-    # This setting assumes the redis container is launched with 'host' network settings.
-    broker_url = env.str('broker_url', default='redis://localhost:6379')
+    # Celery settings. App will connect to redis memcache set up in AWS
+    broker_url = env.str('broker_url', default='dummy')
     result_backend = broker_url
-
-    # Use this code snippet in your app.
-    # If you need more information about configurations or implementing the sample code, visit the AWS docs:
-    # https://aws.amazon.com/developers/getting-started/python/
-    # secret_name = "MINDXNAT/credentials"
-    # region_name = "us-east-1"
-    # test = get_secret(secret_name, region_name)
 
     XNAT = {
         'user': env.str('XNAT_USER','mbam'),
