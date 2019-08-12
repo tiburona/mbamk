@@ -1,4 +1,4 @@
-CONFIG_NAME='aws_dev'
+CONFIG_NAME='staging'
 FLASK_APP=autoapp.py
 FLASK_ENV=production
 SECRET_KEY='not-so-secret'

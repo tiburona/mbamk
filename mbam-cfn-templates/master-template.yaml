@@ -25,7 +25,7 @@ Parameters:
   FlaskAppImageUrl:
     Description: URL to the MBaM Flask app container.
     Type: String
-    Default: 413377292493.dkr.ecr.us-east-1.amazonaws.com/mbam/flask-app:2301dab
+    Default: 413377292493.dkr.ecr.us-east-1.amazonaws.com/mbam/flask-app:277eee2
   MakeVPCPublic:
     Description: If set to false will create a private (not public) VPC. Leave to true in order to access EC2 instances with SSH.
     Type: String
@@ -155,6 +155,6 @@ Resources:
         ContainerCommand: "celery -A cookiecutter_mbam.run_celery:celery worker --loglevel info"
         ContainerWorkingDirectory: /app
         Role: ""
-        Grouping: !Ref 'FlaskServiceName'
+        #Grouping: !Ref 'FlaskServiceName'
       TemplateURL: !Join ["", [!Ref S3Location,"service-ec2-celery.yaml"]]
     DependsOn: "REDIS"

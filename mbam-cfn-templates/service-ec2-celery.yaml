@@ -35,13 +35,13 @@ Parameters:
     Type: Number
     Default: 1
     Description: How many copies of the service task to run
-  Grouping:
-    Type: String
-    Default: web
-    Description: This should match the service name of the flask app in order to place celery
-                  workers with the flask app. This is presumably required since redis is
-                  run as a daemon per instance. In the future if we use a centralized Redis Memcache
-                  I don't think this is necessary...
+  # Grouping:
+  #   Type: String
+  #   Default: web
+  #   Description: This should match the service name of the flask app in order to place celery
+  #                 workers with the flask app. This is presumably required since redis is
+  #                 run as a daemon per instance. In the future if we use a centralized Redis Memcache
+  #                 I don't think this is necessary...
 
   Role:
     Type: String
@@ -64,7 +64,7 @@ Resources:
   TaskDefinition:
     Type: AWS::ECS::TaskDefinition
     Properties:
-      Family: !Ref 'Grouping'
+      #Family: !Ref 'Grouping'
       Cpu: !Ref 'ContainerCpu'
       Memory: !Ref 'ContainerMemory'
       NetworkMode: 'host'
@@ -92,6 +92,8 @@ Resources:
           - Name: broker_url
             Value:
               Fn::ImportValue: !Sub ${EnvironmentName}:RedisEndpoint
+          - Name: CONFIG_NAME
+            Value: !Ref 'EnvironmentName'
 
   # The service. The service is a resource which allows you to run multiple
   # copies of a type of task, and gather up their logs and metrics, as well

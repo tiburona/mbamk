@@ -92,19 +92,3 @@ def register_admin_views():
     """Register Flask admin views."""
     admin.add_view(UserAdmin(User, db.session))
     admin.add_view(RoleAdmin(Role, db.session))
-
-def make_celery(app=None):
-    app = app or create_app(config_name=config_name)
-    celery = Celery(__name__, broker=config_by_name[config_name].broker_url)
-    celery.conf.update(app.config)
-    TaskBase = celery.Task
-
-    class ContextTask(TaskBase):
-        abstract = True
-
-        def __call__(self, *args, **kwargs):
-            with app.app_context():
-                return TaskBase.__call__(self, *args, **kwargs)
-
-    celery.Task = ContextTask
-    return celery

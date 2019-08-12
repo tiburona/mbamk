@@ -97,14 +97,14 @@ class LocalConfig(Config):
 
     # Celery local settings
     broker_url = 'redis://localhost:6379'
-    result_backend = 'redis://localhost:6379'
+    results_backend = broker_url
 
 class DockerConfig(Config):
     """ Class defining configurations for local development. Config_name is 'docker'. """
     SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://mbam:mbam123@mysql/brain_db'
     # Celery cettings
     broker_url = 'redis://redis:6379'
-    result_backend = 'redis://redis:6379'
+    results_backend = 'redis://redis:6379'
 
 class TestConfig(Config):
     TESTING = True
@@ -115,7 +115,7 @@ class TestConfig(Config):
     PRESERVE_CONTEXT_ON_EXCEPTION = False
 
 class DevConfig(Config):
-    """ Class defining configurations for development on AWS. Config_name is 'aws_dev'. """
+    """ Class defining configurations for development on AWS. Config_name is 'staging'. """
     # MYSQL parameters are stored in AWS Systems Manager Parameter store and passed
     # as environment variables in the Cloudformation Templates.
     DB_URI = env.str('MYSQL_HOST','dummy')
@@ -125,7 +125,7 @@ class DevConfig(Config):
 
     # Celery settings. App will connect to redis memcache set up in AWS
     broker_url = env.str('broker_url', default='dummy')
-    result_backend = broker_url
+    results_backend = broker_url
 
     XNAT = {
         'user': env.str('XNAT_USER','mbam'),
@@ -145,7 +145,7 @@ config_by_name = dict(
     local=LocalConfig,
     docker=DockerConfig,
     test=TestConfig,
-    aws_dev=DevConfig
+    staging=DevConfig
     )
 
 def guess_environment():
@@ -153,13 +153,14 @@ def guess_environment():
 
     :returns config_name: String specifying the configuration.
     """
-    # Override the configuration with an environment variable if it's set
-    config_name = os.getenv('CONFIG_NAME')
-
-    # If configuration is not set in the
-    if not config_name:
+    # Override the configuration with an environment variable if it's set in the .env file
+    try:
+        config_name = env.str('CONFIG_NAME')
+    except:
         if os.uname()[1].find('Mac') > -1:
             config_name='local'
+        elif os.uname()[1].find('ip-') > -1:
+            config_name='staging'
         else:
             config_name='docker'
 
