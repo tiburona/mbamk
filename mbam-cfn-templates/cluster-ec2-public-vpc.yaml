@@ -5,7 +5,7 @@ Description: EC2 ECS cluster running containers in a public subnet. Only support
 Parameters:
   EnvironmentName:
     Type: String
-    Default: development
+    Default: staging
     Description: "A friendly environment name that will be used for namespacing all cluster resources. Example: staging, qa, or production"
   InstanceType:
     Description: EC2 instance type

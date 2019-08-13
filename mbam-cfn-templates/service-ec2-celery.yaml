@@ -31,26 +31,39 @@ Parameters:
     Type: String
     Default: "/app"
     Description: The working directory for the container.
+  ContainerMountPoint:
+    Type: String
+    Default: "/app/cookiecutter_mbam/static/files"
+    Description: The path in the container to mount to host mount point.
+  HostMountPoint:
+    Type: String
+    Default: "/efs/mbam/user-data"
   DesiredCount:
     Type: Number
     Default: 1
     Description: How many copies of the service task to run
-  # Grouping:
-  #   Type: String
-  #   Default: web
-  #   Description: This should match the service name of the flask app in order to place celery
-  #                 workers with the flask app. This is presumably required since redis is
-  #                 run as a daemon per instance. In the future if we use a centralized Redis Memcache
-  #                 I don't think this is necessary...
-
-  Role:
+  TaskRole:
     Type: String
     Default: ""
-    Description: (Optional) An IAM role to give the service's containers if the code within needs to
+    Description: (Optional) An IAM task role to give the service's containers if the code within needs to
                  access other AWS resources like S3 buckets, DynamoDB tables, etc
+  ExecutionRole:
+    Type: String
+    Default: "arn:aws:iam::413377292493:role/ecsTaskExecutionRole"
+    Description: (Optional) An IAM execution role to give ECS permission to pull secrets and sensitive
+                  data from AWS parameter store, etc
+  VolumeName:
+    Type: String
+    Default: "EFSVolume"
+    Description: Docker volume name for the EFS mount
+  ParameterStore:
+    Type: String
+    Default: "arn:aws:ssm:us-east-1:413377292493:parameter"
+    Description: "String to prepend for the full ARN for parameters such as XNAT credentials."
+
 
 Conditions:
-  HasCustomRole: !Not [ !Equals [!Ref 'Role', ''] ]
+  HasCustomRole: !Not [ !Equals [!Ref 'TaskRole', ''] ]
 
 Resources:
   # A log group for storing the stdout logs from this service's containers
@@ -64,14 +77,18 @@ Resources:
   TaskDefinition:
     Type: AWS::ECS::TaskDefinition
     Properties:
-      #Family: !Ref 'Grouping'
+      Volumes:
+      - Name: !Ref 'VolumeName'
+        Host:
+          SourcePath: !Ref 'HostMountPoint'
+
       Cpu: !Ref 'ContainerCpu'
       Memory: !Ref 'ContainerMemory'
       NetworkMode: 'host'
       TaskRoleArn:
         Fn::If:
           - 'HasCustomRole'
-          - !Ref 'Role'
+          - !Ref 'TaskRole'
           - !Ref "AWS::NoValue"
       ContainerDefinitions:
         - Name: !Ref 'ServiceName'
@@ -84,16 +101,59 @@ Resources:
               awslogs-group: !Sub ${EnvironmentName}-service-${ServiceName}
               awslogs-region: !Ref 'AWS::Region'
               awslogs-stream-prefix: !Ref 'ServiceName'
+          MountPoints:
+            - ContainerPath: !Ref 'ContainerMountPoint'
+              SourceVolume: !Ref 'VolumeName'
           EntryPoint: ["bash","-c"]
           Command: !Ref 'ContainerCommand'
           WorkingDirectory: !Ref 'ContainerWorkingDirectory'
+          Secrets:
+            - Name: XNAT_USER
+              ValueFrom: !Sub
+                - ${PREPEND}/XNAT_USER
+                - { PREPEND: !Ref ParameterStore }
+            - Name: XNAT_PASSWORD
+              ValueFrom: !Sub
+                - ${PREPEND}/XNAT_PASSWORD
+                - { PREPEND: !Ref ParameterStore }
+            - Name: MYSQL_PASSWORD
+              ValueFrom: !Sub
+                - ${PREPEND}/MYSQL_PASSWORD
+                - { PREPEND: !Ref ParameterStore }
+            - Name: JATOS_DB_PASSWORD
+              ValueFrom: !Sub
+                - ${PREPEND}/MYSQL_PASSWORD
+                - { PREPEND: !Ref ParameterStore }
+            - Name: MYSQL_USERNAME
+              ValueFrom: !Sub
+                - ${PREPEND}/MYSQL_USERNAME
+                - { PREPEND: !Ref ParameterStore }
+            - Name: JATOS_DB_USERNAME
+              ValueFrom: !Sub
+                - ${PREPEND}/MYSQL_USERNAME
+                - { PREPEND: !Ref ParameterStore }
           Environment:
+          # Pass the same environment variables to JATOS and MBaM app.
+          - Name: JATOS_DB_URL
+            Value: !Join
+                    - ''
+                    - - 'jdbc:mysql://'
+                      - '{{resolve:ssm:MYSQL_HOST:1}}'
+                      - '/brain_db?characterEncoding=UTF-8&useSSL=false'
+          - Name: JATOS_DB_DRIVER
+            Value: "com.mysql.jdbc.Driver"
+          - Name: JATOS_JPA
+            Value: "mysqlPersistenceUnit"
+          # Access to MYSQL database
+          - Name: MYSQL_HOST
+            Value: '{{resolve:ssm:MYSQL_HOST:1}}'
+          # Access to XNAT
+          - Name: XNAT_HOST
+            Value: '{{resolve:ssm:XNAT_HOST:1}}'
           # Access to Redis
           - Name: broker_url
             Value:
               Fn::ImportValue: !Sub ${EnvironmentName}:RedisEndpoint
-          - Name: CONFIG_NAME
-            Value: !Ref 'EnvironmentName'
 
   # The service. The service is a resource which allows you to run multiple
   # copies of a type of task, and gather up their logs and metrics, as well

@@ -25,7 +25,7 @@ Parameters:
   FlaskAppImageUrl:
     Description: URL to the MBaM Flask app container.
     Type: String
-    Default: 413377292493.dkr.ecr.us-east-1.amazonaws.com/mbam/flask-app:277eee2
+    Default: 413377292493.dkr.ecr.us-east-1.amazonaws.com/mbam/flask-app:796fe03
   MakeVPCPublic:
     Description: If set to false will create a private (not public) VPC. Leave to true in order to access EC2 instances with SSH.
     Type: String
@@ -34,7 +34,7 @@ Parameters:
   DesiredCapacity:
       Type: Number
       Default: 2
-      Description: Number of EC2 instances to launch in your ECS cluster.
+      Description: The number of EC2 instances to launch in your ECS cluster.
   MaxSize:
     Type: Number
     Default: 4
@@ -109,7 +109,7 @@ Resources:
         Path: "*"
         Priority: 2 # This must NOT be set to 1 due to downstream IF statements to check.
         HealthCheckPath: /
-        ContainerMountPoint: /app/cookiecutter_mbam/static/files
+        ContainerMountPoint: /app/static/files # This should be same as files['files_depot'] in config.py
         HostMountPoint: /efs/mbam/user-data
         DesiredCount: 1
         TaskRole: ""
@@ -127,21 +127,29 @@ Resources:
       TemplateURL: !Join ["", [!Ref S3Location,"redis-memcache.yaml"]]
     DependsOn: "ECS"
 
-  # REDIS:
+  # CELERY:
   #   Type: "AWS::CloudFormation::Stack"
   #   Properties:
   #     Parameters:
   #       EnvironmentName: !Ref 'EnvironmentName'
-  #       ServiceName: redis
-  #       ImageUrl: redis:5.0.3-alpine
-  #       ContainerPort: 6379
+  #       ServiceName: celery
+  #       ImageUrl: !Ref 'FlaskAppImageUrl'
+  #       ContainerPort: 0
   #       ContainerCpu: 256
   #       ContainerMemory: 384
-  #       ContainerCommand: "redis-server"
-  #       ContainerWorkingDirectory: /data
-  #       Role: ""
-  #     TemplateURL: !Join ["", [!Ref S3Location,"service-ec2-redis.yaml"]]
-  #   DependsOn: "MBAM"
+  #       ContainerCommand: "celery -A cookiecutter_mbam.run_celery:celery worker --loglevel info"
+  #       Path: ""
+  #       Priority: 0 # Set to 0 if the service is not to be added to the load balancer
+  #       HealthCheckPath: /
+  #       ContainerMountPoint: /app/static/files # This should be same as files['files_depot'] in config.py
+  #       HostMountPoint: /efs/mbam/user-data
+  #       DesiredCount: 1
+  #       TaskRole: ""
+  #       ExecutionRole: "arn:aws:iam::413377292493:role/ecsTaskExecutionRole"
+  #       VolumeName: "EFSVolume"
+  #       ParameterStore: "arn:aws:ssm:us-east-1:413377292493:parameter"
+  #     TemplateURL: !Join ["", [!Ref S3Location,"service-ec2-public-lb.yaml"]]
+  #   DependsOn: "REDIS"
 
   CELERY:
     Type: "AWS::CloudFormation::Stack"
@@ -154,7 +162,28 @@ Resources:
         ContainerMemory: 384
         ContainerCommand: "celery -A cookiecutter_mbam.run_celery:celery worker --loglevel info"
         ContainerWorkingDirectory: /app
-        Role: ""
-        #Grouping: !Ref 'FlaskServiceName'
+        ContainerMountPoint: /app/static/files # This should be same as files['files_depot'] in config.py
+        HostMountPoint: /efs/mbam/user-data
+        DesiredCount: 1
+        TaskRole: ""
+        ExecutionRole: "arn:aws:iam::413377292493:role/ecsTaskExecutionRole"
+        VolumeName: "EFSVolume"
+        ParameterStore: "arn:aws:ssm:us-east-1:413377292493:parameter"
       TemplateURL: !Join ["", [!Ref S3Location,"service-ec2-celery.yaml"]]
     DependsOn: "REDIS"
+
+    # REDIS:
+    #   Type: "AWS::CloudFormation::Stack"
+    #   Properties:
+    #     Parameters:
+    #       EnvironmentName: !Ref 'EnvironmentName'
+    #       ServiceName: redis
+    #       ImageUrl: redis:5.0.3-alpine
+    #       ContainerPort: 6379
+    #       ContainerCpu: 256
+    #       ContainerMemory: 384
+    #       ContainerCommand: "redis-server"
+    #       ContainerWorkingDirectory: /data
+    #       Role: ""
+    #     TemplateURL: !Join ["", [!Ref S3Location,"service-ec2-redis.yaml"]]
+    #   DependsOn: "MBAM"

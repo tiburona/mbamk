@@ -52,7 +52,8 @@ Parameters:
     Default: 1
     Description: The priority for the routing rule added to the load balancer.
                  This only applies if your have multiple services which have been
-                 assigned to different paths on the load balancer.
+                 assigned to different paths on the load balancer. Set Priority to zero to
+                 not add the service to the load balancer (i.e. for Celery Workers)
   DesiredCount:
     Type: Number
     Default: 1
@@ -80,6 +81,8 @@ Conditions:
   HasCustomTaskRole: !Not [ !Equals [!Ref 'TaskRole', ''] ]
   HasCustomExecutionRole: !Not [ !Equals [!Ref 'ExecutionRole', ''] ]
   IsJatosService: !Equals [!Ref 'Priority', 1] # If Priority is 1 then this is for Jatos
+  AddtoLoadBalancer: !Not [!Equals [!Ref 'Priority', 0]] # If Priority is 0 then will not add to Load Balancer
+  DontAddtoLoadBalancer: !Equals [!Ref 'Priority', 0]
 
 Resources:
   # A log group for storing the stdout logs from this service's containers
@@ -181,6 +184,7 @@ Resources:
   # as monitor the number of running tasks and replace any that have crashed
   Service:
     Type: AWS::ECS::Service
+    Condition: AddtoLoadBalancer
     DependsOn: LoadBalancerRule
     Properties:
       ServiceName: !Ref 'ServiceName'
@@ -197,6 +201,19 @@ Resources:
           TargetGroupArn: !Ref 'TargetGroup'
       HealthCheckGracePeriodSeconds: 30
 
+  Service:
+    Type: AWS::ECS::Service
+    Condition: DontAddtoLoadBalancer
+    Properties:
+      ServiceName: !Ref 'ServiceName'
+      Cluster:
+        Fn::ImportValue: !Sub ${EnvironmentName}:ClusterName
+      DeploymentConfiguration:
+        MaximumPercent: 200
+        MinimumHealthyPercent: 75
+      DesiredCount: !Ref 'DesiredCount'
+      TaskDefinition: !Ref 'TaskDefinition'
+
   # A target group. This is used for keeping track of all the tasks, and
   # what IP addresses / port numbers they have. You can query it yourself,
   # to use the addresses yourself, but most often this target group is just
@@ -204,6 +221,7 @@ Resources:
   # it can automatically distribute traffic across all the targets.
   TargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Condition: AddtoLoadBalancer
     Properties:
       HealthCheckIntervalSeconds: 15
       HealthCheckPath: !Ref HealthCheckPath
@@ -220,6 +238,7 @@ Resources:
   # Create a rule on the load balancer for routing traffic to the target group
   LoadBalancerRule:
     Type: AWS::ElasticLoadBalancingV2::ListenerRule
+    Condition: AddtoLoadBalancer
     Properties:
       Actions:
         - TargetGroupArn: !Ref 'TargetGroup'

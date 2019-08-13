@@ -76,7 +76,7 @@ class Config:
     }
 
     files = {
-        'file_depot': 'static/files/',
+        'file_depot': 'static/files/', # this corresponds to /app/static/files ContainerMountPoint
         'file_depot_url': 'http://0.0.0.0:8081/static/files/'
     }
 
@@ -100,11 +100,26 @@ class LocalConfig(Config):
     results_backend = broker_url
 
 class DockerConfig(Config):
-    """ Class defining configurations for local development. Config_name is 'docker'. """
+    """ Class defining configurations for docker development. Config_name is 'docker'. """
     SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://mbam:mbam123@mysql/brain_db'
     # Celery cettings
     broker_url = 'redis://redis:6379'
     results_backend = 'redis://redis:6379'
+
+    XNAT = {
+        # Be sure below XNAT variables are set in your host environment to access the MIND XNAT server.
+        'user': env.str('XNAT_USER','dummy'),
+        'password': env.str('XNAT_PASSWORD','dummy'),
+        'server': env.str('XNAT_HOST','dummy'),
+        'project': 'MBAM_TEST',
+        'local_docker': True,
+        #'docker_host': 'unix:///var/run/docker.sock',
+        'docker_host': 'http://10.20.193.32:2375',
+        'dicom_to_nifti_command_id': 2,
+        'dicom_to_nifti_wrapper_id':'dcm2niix-scan',
+        'dicom_to_nifti_transfer_command_id': 23,
+        'dicom_to_nifti_transfer_wrapper_id':'dcm2niix-xfer'
+    }
 
 class TestConfig(Config):
     TESTING = True

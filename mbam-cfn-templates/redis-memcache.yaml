@@ -1,0 +1,69 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: This template creates Memcache Redis instance for use in the stack and necessary
+              credentials/parameters in the parameter store.
+Parameters:
+  EnvironmentName:
+    Type: String
+    Default: staging
+    Description: The name of the environment to add this load balancer to
+    ## For now hard code the type to be t2.micro.cache but here can add the size/type
+
+Resources:
+  RedisSubnetGroup:
+    Type: AWS::ElastiCache::SubnetGroup
+    Properties:
+      CacheSubnetGroupName: 'RedisSubnetGroup'
+      Description: Subnet group for the Redis node.
+      SubnetIds:
+        - Fn::ImportValue: !Sub ${EnvironmentName}:PublicSubnetOne
+        - Fn::ImportValue: !Sub ${EnvironmentName}:PublicSubnetTwo
+
+  RedisServerSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: "Elasticache Security Group"
+      VpcId:
+        Fn::ImportValue: !Sub ${EnvironmentName}:VpcId
+      SecurityGroupIngress:
+      - IpProtocol: "tcp"
+        FromPort: "6379"
+        ToPort: "6379"
+        #CidrIp: "0.0.0.0/0"
+        SourceSecurityGroupId:
+          Fn::ImportValue: !Sub ${EnvironmentName}:ContainerSecurityGroup
+
+
+  RedisServer:
+    Type: AWS::ElastiCache::CacheCluster
+    Properties:
+      AutoMinorVersionUpgrade: "false"
+      Engine: "redis"
+      EngineVersion: 5.0.0
+      CacheNodeType: "cache.t2.micro"
+      NumCacheNodes: "1"
+      CacheSubnetGroupName: !Ref RedisSubnetGroup
+      VpcSecurityGroupIds:
+        - Fn::GetAtt:
+          - "RedisServerSecurityGroup"
+          - "GroupId"
+
+Outputs:
+  RedisServer:
+    Description : "ID of ElastiCache Cache Cluster with Redis Engine"
+    Value: !Ref 'RedisServer'
+    Export:
+      Name: !Sub ${EnvironmentName}:RedisServer
+  RedisEndpoint:
+    Description: "The DNS address of the primary read-write cache node."
+    Value: !Join
+      - ''
+      - - 'redis://'
+        - !GetAtt
+          - RedisServer
+          - RedisEndpoint.Address
+        - ':'
+        - !GetAtt
+          - RedisServer
+          - RedisEndpoint.Port
+    Export:
+      Name: !Sub ${EnvironmentName}:RedisEndpoint
