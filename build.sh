@@ -20,6 +20,10 @@ aws cloudformation update-stack --stack-name ${STACK_NAME} --use-previous-templa
   ParameterKey=S3Location,UsePreviousValue=true \
   ParameterKey=EnvironmentName,UsePreviousValue=true \
   ParameterKey=InstanceType,UsePreviousValue=true \
+  ParameterKey=RedisInstanceType,UsePreviousValue=true \
   ParameterKey=MakeVPCPublic,UsePreviousValue=true \
   ParameterKey=DesiredCapacity,UsePreviousValue=true \
   ParameterKey=MaxSize,UsePreviousValue=true \
+
+echo "Done. Now exiting"
+exit 1
