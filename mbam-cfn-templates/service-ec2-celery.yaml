@@ -63,7 +63,8 @@ Parameters:
 
 
 Conditions:
-  HasCustomRole: !Not [ !Equals [!Ref 'TaskRole', ''] ]
+  HasCustomTaskRole: !Not [ !Equals [!Ref 'TaskRole', ''] ]
+  HasCustomExecutionRole: !Not [ !Equals [!Ref 'ExecutionRole', ''] ]
 
 Resources:
   # A log group for storing the stdout logs from this service's containers
@@ -87,8 +88,13 @@ Resources:
       NetworkMode: 'host'
       TaskRoleArn:
         Fn::If:
-          - 'HasCustomRole'
+          - 'HasCustomTaskRole'
           - !Ref 'TaskRole'
+          - !Ref "AWS::NoValue"
+      ExecutionRoleArn:
+        Fn::If:
+          - 'HasCustomExecutionRole'
+          - !Ref 'ExecutionRole'
           - !Ref "AWS::NoValue"
       ContainerDefinitions:
         - Name: !Ref 'ServiceName'
@@ -120,30 +126,14 @@ Resources:
               ValueFrom: !Sub
                 - ${PREPEND}/MYSQL_PASSWORD
                 - { PREPEND: !Ref ParameterStore }
-            - Name: JATOS_DB_PASSWORD
-              ValueFrom: !Sub
-                - ${PREPEND}/MYSQL_PASSWORD
-                - { PREPEND: !Ref ParameterStore }
             - Name: MYSQL_USERNAME
-              ValueFrom: !Sub
-                - ${PREPEND}/MYSQL_USERNAME
-                - { PREPEND: !Ref ParameterStore }
-            - Name: JATOS_DB_USERNAME
               ValueFrom: !Sub
                 - ${PREPEND}/MYSQL_USERNAME
                 - { PREPEND: !Ref ParameterStore }
           Environment:
           # Pass the same environment variables to JATOS and MBaM app.
-          - Name: JATOS_DB_URL
-            Value: !Join
-                    - ''
-                    - - 'jdbc:mysql://'
-                      - '{{resolve:ssm:MYSQL_HOST:1}}'
-                      - '/brain_db?characterEncoding=UTF-8&useSSL=false'
-          - Name: JATOS_DB_DRIVER
-            Value: "com.mysql.jdbc.Driver"
-          - Name: JATOS_JPA
-            Value: "mysqlPersistenceUnit"
+          - Name: CONFIG_NAME
+            Value: !Ref 'EnvironmentName' # This should be staging or production
           # Access to MYSQL database
           - Name: MYSQL_HOST
             Value: '{{resolve:ssm:MYSQL_HOST:1}}'

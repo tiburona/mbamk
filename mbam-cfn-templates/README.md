@@ -7,11 +7,12 @@ My Brain and Me
 
 The yaml files are based on ECS Cloudformation stack templates provided by another project (see [here](https://github.com/nathanpeck/ecs-cloudformation)). The stacks are based on the first two architectures listed in the link (the public networked service with public load balancer and the privately networked service with public load balancer). The former is used for testing/debugging/development via providing SSH access to the created EC2 instances, and the latter will eventually be used for the production environment.
 
-This project differs from the above mentioned stacks in that it adds additional 3 container services to stack. The four services are:
+This project differs from the above mentioned stacks in that it adds additional 2 container services to the stack and also creates a REDIS server (AWS Elasticache). The three services run on EC2 instances are:
 1. JATOS (Just Another Tool for Online Studies) attached to public load balancer and autoscaling.  
 2. MBaM Flask app attached to public load balancer and autoscaling.  
-3. Redis run as a DAEMON service (one service instance per EC2 instance). The celery workers use the redis server on each EC2 host.  
-4. Celery worker attached to an autoscaling group.  
+3. Celery worker attached to an autoscaling group.  
+
+Redis run as AWS REDIS Mecache. The celery workers each access this same REDIS server instance.
 
 The stack also create an EFS that mounts persistance storage for JATOS and MBaM directory within each EC2 instance at /efs/jatos/study_assets_root and /efs/mbam/user-data respectively.
 

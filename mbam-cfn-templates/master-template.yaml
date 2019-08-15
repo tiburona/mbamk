@@ -12,6 +12,7 @@ Parameters:
                  cluster resources. Example: staging, qa, or production"
     Type: String
     Default: staging
+    AllowedValues: [ 'staging' ]
   InstanceType:
     Description: EC2 instance type
     Type: String
@@ -22,6 +23,13 @@ Parameters:
      m5.large, m5.xlarge, m5.2large, m5.4xlarge, m5.12xlarge, m5.24large,
      c5.large, c5.xlarge, c5.2xlarge, c5.4xlarge, c5.9xlarge, c5.18xlarge,
      r5.large, r5.xlarge, r5.2xlarge, r5.4xlarge, r5.12xlarge, r5.24xlarge ]
+  RedisInstanceType:
+      Description: Redis server instance type.
+      Type: String
+      Default: cache.t2.micro
+      AllowedValues: [ cache.t2.micro, cache.t2.small, cache.t2.medium, cache.m4.large,
+        cache.m4.xlarge, cache.m4.2xlarge, cache.m4.4xlarge, cache.m4.10xlarge, cache.m5.large,
+        cache.m5.xlarge, cache.m5.2xlarge, cache.m5.4xlarge, cache.m5.12xlarge, cache.m5.24xlarge ]
   FlaskAppImageUrl:
     Description: URL to the MBaM Flask app container.
     Type: String
@@ -124,32 +132,9 @@ Resources:
     Properties:
       Parameters:
         EnvironmentName: !Ref 'EnvironmentName'
+        RedisInstanceType: !Ref 'RedisInstanceType'
       TemplateURL: !Join ["", [!Ref S3Location,"redis-memcache.yaml"]]
     DependsOn: "ECS"
-
-  # CELERY:
-  #   Type: "AWS::CloudFormation::Stack"
-  #   Properties:
-  #     Parameters:
-  #       EnvironmentName: !Ref 'EnvironmentName'
-  #       ServiceName: celery
-  #       ImageUrl: !Ref 'FlaskAppImageUrl'
-  #       ContainerPort: 0
-  #       ContainerCpu: 256
-  #       ContainerMemory: 384
-  #       ContainerCommand: "celery -A cookiecutter_mbam.run_celery:celery worker --loglevel info"
-  #       Path: ""
-  #       Priority: 0 # Set to 0 if the service is not to be added to the load balancer
-  #       HealthCheckPath: /
-  #       ContainerMountPoint: /app/static/files # This should be same as files['files_depot'] in config.py
-  #       HostMountPoint: /efs/mbam/user-data
-  #       DesiredCount: 1
-  #       TaskRole: ""
-  #       ExecutionRole: "arn:aws:iam::413377292493:role/ecsTaskExecutionRole"
-  #       VolumeName: "EFSVolume"
-  #       ParameterStore: "arn:aws:ssm:us-east-1:413377292493:parameter"
-  #     TemplateURL: !Join ["", [!Ref S3Location,"service-ec2-public-lb.yaml"]]
-  #   DependsOn: "REDIS"
 
   CELERY:
     Type: "AWS::CloudFormation::Stack"
@@ -171,19 +156,3 @@ Resources:
         ParameterStore: "arn:aws:ssm:us-east-1:413377292493:parameter"
       TemplateURL: !Join ["", [!Ref S3Location,"service-ec2-celery.yaml"]]
     DependsOn: "REDIS"
-
-    # REDIS:
-    #   Type: "AWS::CloudFormation::Stack"
-    #   Properties:
-    #     Parameters:
-    #       EnvironmentName: !Ref 'EnvironmentName'
-    #       ServiceName: redis
-    #       ImageUrl: redis:5.0.3-alpine
-    #       ContainerPort: 6379
-    #       ContainerCpu: 256
-    #       ContainerMemory: 384
-    #       ContainerCommand: "redis-server"
-    #       ContainerWorkingDirectory: /data
-    #       Role: ""
-    #     TemplateURL: !Join ["", [!Ref S3Location,"service-ec2-redis.yaml"]]
-    #   DependsOn: "MBAM"

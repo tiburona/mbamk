@@ -1,6 +1,8 @@
 *.pyc
 /cookiecutter_mbam/cookiecutter_mbam/node_modules
 /.semaphore-cache
+/cookiecutter_mbam/cookiecutter_mbam/webpack/manifest.json
+/cookiecutter_mbam/mbam.log
 
 ._.DS_Store
 **/.DS_Store

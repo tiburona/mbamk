@@ -44,10 +44,11 @@ def create_resources(xnat_credentials, ids, levels, import_service, archive_pref
                 query = ''
 
             # Create the resource in XNAT
-            if not exists_already:
-                r = s.put(url = server + uri + query)
+            if not exists_already and level != 'file':
+                url = server + uri + query
+                r = s.put(url)
                 if not r.ok:
-                    raise ValueError(f'Unexpected status code: {r.status_code}')
+                    raise ValueError(f'Unexpected status code: {r.status_code} Response: {r.text}')
 
         return uris
 
@@ -217,6 +218,3 @@ def create_freesurfer_resource(xnat_credentials, archive_prefix, experiment_xnat
             if not r.ok:
                 raise ValueError(f'Unexpected status code: {r.status_code}')
     return freesurfer_uri
-
-
-

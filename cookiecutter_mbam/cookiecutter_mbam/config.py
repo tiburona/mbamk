@@ -62,16 +62,31 @@ class Config:
     include = ['cookiecutter_mbam.xnat.tasks', 'cookiecutter_mbam.storage.tasks', 'cookiecutter_mbam.derivation.tasks',
                'cookiecutter_mbam.scan.tasks', 'cookiecutter_mbam.base.tasks']
 
+    # XNAT = {
+    #     'user': 'admin',
+    #     'password': 'admin',
+    #     'server': 'http://10.1.1.17',
+    #     'project': 'MBAM_TEST',
+    #     'local_docker': True,
+    #     'docker_host': 'unix:///var/run/docker.sock',
+    #     'dicom_to_nifti_command_id': 2,
+    #     'dicom_to_nifti_wrapper_id':'dcm2niix-scan',
+    #     'dicom_to_nifti_transfer_command_id':3,
+    #     'dicom_to_nifti_transfer_wrapper_id':'dcm2niix-xfer'
+    # }
+
     XNAT = {
-        'user': 'admin',
-        'password': 'admin',
-        'server': 'http://10.1.1.17',
+        # Be sure below XNAT variables are set in your host environment to access the MIND XNAT server.
+        'user': env.str('XNAT_USER','admin'),
+        'password': env.str('XNAT_PASSWORD','admin'),
+        'server': env.str('XNAT_HOST','http://10.1.1.17'),
         'project': 'MBAM_TEST',
-        'local_docker': True,
-        'docker_host': 'unix:///var/run/docker.sock',
+        'local_docker': False,
+        #'docker_host': 'unix:///var/run/docker.sock',
+        'docker_host': 'http://10.20.193.32:2375',
         'dicom_to_nifti_command_id': 2,
         'dicom_to_nifti_wrapper_id':'dcm2niix-scan',
-        'dicom_to_nifti_transfer_command_id':3,
+        'dicom_to_nifti_transfer_command_id': 23,
         'dicom_to_nifti_transfer_wrapper_id':'dcm2niix-xfer'
     }
 
