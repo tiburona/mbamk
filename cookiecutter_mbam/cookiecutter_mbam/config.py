@@ -62,6 +62,22 @@ class Config:
     include = ['cookiecutter_mbam.xnat.tasks', 'cookiecutter_mbam.storage.tasks', 'cookiecutter_mbam.derivation.tasks',
                'cookiecutter_mbam.scan.tasks', 'cookiecutter_mbam.base.tasks']
 
+
+    # XNAT = {
+    #     # Be sure below XNAT variables are set in your host environment to access the MIND XNAT server.
+    #     'user': env.str('XNAT_USER','dummy'),
+    #     'password': env.str('XNAT_PASSWORD','dummy'),
+    #     'server': env.str('XNAT_HOST','dummy'),
+    #     'project': env.str('XNAT_PROJECT', 'MBAM_TEST'),
+    #     'local_docker': False,
+    #     #'docker_host': 'unix:///var/run/docker.sock',
+    #     'docker_host': 'http://10.20.193.32:2375',
+    #     'dicom_to_nifti_command_id': 2,
+    #     'dicom_to_nifti_wrapper_id':'dcm2niix-scan',
+    #     'dicom_to_nifti_transfer_command_id': 23,
+    #     'dicom_to_nifti_transfer_wrapper_id':'dcm2niix-xfer'
+    # }
+
     XNAT = {
         'user': 'admin',
         'password': 'admin',

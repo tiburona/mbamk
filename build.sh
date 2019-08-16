@@ -26,4 +26,4 @@ aws cloudformation update-stack --stack-name ${STACK_NAME} --use-previous-templa
   ParameterKey=MaxSize,UsePreviousValue=true \
 
 echo "Done. Now exiting"
-exit 1
+exit 0

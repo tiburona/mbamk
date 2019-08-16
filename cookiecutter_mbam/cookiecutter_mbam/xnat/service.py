@@ -131,7 +131,7 @@ class XNATConnection:
 
     def launch_and_poll_for_completion(self, process_name):
 
-        intervals =  {'dicom_to_nifti': 5,  'freesurfer_recon_all': 172800}
+        interval =  {'dicom_to_nifti': 5,  'freesurfer_recon_all': 172800}
 
         return chain(
             self.gen_dicom_conversion_data(),
@@ -209,9 +209,3 @@ class XNATConnection:
             resource_url = resource_url[5:]
         refresh_url = '/data/services/refresh/catalog?resource=' + resource_url
         return self.xnat_post(refresh_url)
-
-
-
-
-
-
