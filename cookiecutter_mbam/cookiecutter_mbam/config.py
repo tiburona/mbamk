@@ -111,7 +111,7 @@ class DockerConfig(Config):
         'user': env.str('XNAT_USER','dummy'),
         'password': env.str('XNAT_PASSWORD','dummy'),
         'server': env.str('XNAT_HOST','dummy'),
-        'project': env.str('XNAT_PROJECT', 'MBAM_TEST')
+        'project': env.str('XNAT_PROJECT', 'MBAM_TEST'),
         'local_docker': True,
         #'docker_host': 'unix:///var/run/docker.sock',
         'docker_host': 'http://10.20.193.32:2375',
