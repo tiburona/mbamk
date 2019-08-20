@@ -128,7 +128,7 @@ class DockerConfig(Config):
         'password': env.str('XNAT_PASSWORD','dummy'),
         'server': env.str('XNAT_HOST','dummy'),
         'project': env.str('XNAT_PROJECT', 'MBAM_TEST'),
-        'local_docker': True,
+        'local_docker': False,
         #'docker_host': 'unix:///var/run/docker.sock',
         'docker_host': 'http://10.20.193.32:2375',
         'dicom_to_nifti_command_id': 2,
