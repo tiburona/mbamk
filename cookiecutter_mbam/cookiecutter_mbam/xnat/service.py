@@ -6,15 +6,19 @@ from flask import current_app
 def debug():
     assert current_app.debug == False, "Don't panic! You're here by request of debug()"
 
+from .tasks import poll_cs_dcm2nii, poll_cs_fsrecon
 
 
+poll_tasks = {
+    'dicom_to_nifti': poll_cs_dcm2nii,
+    'freesurfer_recon_all': poll_cs_fsrecon
+}
 
 class XNATConnection:
 
     def __init__(self, config, set_docker_host=False):
         self.xnat_config = config
         self._set_attributes()
-        self.xnat_hierarchy = ['subject', 'experiment', 'scan', 'resource', 'file']
         if set_docker_host:
             self._set_docker_host()
 
@@ -46,7 +50,26 @@ class XNATConnection:
         # check that commands exist on XNAT?  do I really need to do this?
         pass
 
-    def generate_xnat_identifiers(self, user, experiment, dcm=False):
+
+    def sub_exp_ids(self, user, experiment):
+        xnat_ids = self._generate_sub_exp_ids(user, experiment)
+        existing_user_ids = self._check_for_existing_user_ids(user)
+
+        return self._merge_ids(xnat_ids, existing_user_ids)
+
+    def _generate_sub_exp_ids(self, user, experiment):
+        xnat_ids = {}
+
+        xnat_ids['subject'] = {'xnat_id': str(user.id).zfill(6)}
+
+        xnat_exp_id = '{}_MR{}'.format(xnat_ids['subject']['xnat_id'], user.num_experiments)
+        exp_date = experiment.date.strftime('%m/%d/%Y')
+        xnat_ids['experiment'] = {'xnat_id': xnat_exp_id,
+                                  'query_string': '?xnat:mrSessionData/date={}'.format(exp_date)}
+
+        return xnat_ids
+
+    def _generate_scan_ids(self, experiment,  dcm=False):
         """Generate object ids for use in XNAT
 
         Creates a dictionary with keys for type of XNAT object, including subject, experiment, scan, resource and file.
@@ -57,34 +80,19 @@ class XNATConnection:
         :return: xnat_id dictionary
         :rtype: dict
         """
+
         xnat_ids = {}
-
-        xnat_ids['subject'] = {'xnat_id': str(user.id).zfill(6)}
-
-        xnat_exp_id = '{}_MR{}'.format(xnat_ids['subject']['xnat_id'], user.num_experiments)
-        exp_date = experiment.date.strftime('%m/%d/%Y')
-        xnat_ids['experiment'] = {'xnat_id': xnat_exp_id,
-                                  'query_string': '?xnat:mrSessionData/date={}'.format(exp_date)}
 
         scan_number = experiment.num_scans + 1
         xnat_scan_id = 'T1_{}'.format(scan_number)
         xnat_ids['scan'] = {'xnat_id': xnat_scan_id, 'query_string': '?xsiType=xnat:mrScanData'}
 
-        if dcm:
-            resource = 'DICOM'
-        else:
-            resource = 'NIFTI'
-        xnat_ids['resource'] = {'xnat_id': resource}
+        if not dcm:
+            xnat_ids['resource'] = {'xnat_id': 'NIFTI'}
 
-        xnat_ids['file'] = {'xnat_id': 'T1.nii.gz', 'query_string': '?xsi:type=xnat:mrScanData'}
+        return xnat_ids
 
-        self.xnat_ids = xnat_ids
-
-        self.existing_xnat_ids = self.check_for_existing_xnat_ids(user, experiment)
-
-        return (xnat_ids['subject']['xnat_id'], xnat_ids['experiment']['xnat_id'], xnat_ids['scan']['xnat_id'])
-
-    def check_for_existing_xnat_ids(self, user, experiment):
+    def _check_for_existing_user_ids(self, user):
         """Check for existing attributes on the user and experiment
 
         Generates a dictionary with current xnat_id for the user and the experiment as
@@ -94,9 +102,15 @@ class XNATConnection:
         :rtype: dict
         """
 
-        objs = {'subject': user, 'experiment': experiment}
+        return {'subject': {key: getattr(user, key) if hasattr(user, key) else {key: ''} for key in ['xnat_id', 'xnat_uri']}}
 
-        return {k:{'xnat_id': getattr(objs[k], 'xnat_id')} if getattr(objs[k], 'xnat_id') else {'xnat_id': ''} for k in objs}
+    def _merge_ids(self, new, existing, levels=['subject'], keys=['xnat_uri', 'xnat_id']):
+        for level in levels:
+            for key in keys:
+                if key in existing:
+                    if len(existing[level][key]):
+                        new[level][key] = existing[level][key]
+        return new
 
     def upload_scan_file(self, file_path, import_service=False):
         """ Create the XNAT upload chain
@@ -104,19 +118,12 @@ class XNATConnection:
         either uploads or imports (for non-dicoms and dicoms, respectively) a dicom file to XNAT.  This chain eventually
         returns the uris for all the created objects.
 
-        :param dict ids: xnat ids, uris, and query strings for the creation of subjects, experiments, and scans
         :param str file_path:
         :param bool import_service:
         :return: Celery upload chain
         """
 
-        create_resources_signature = create_resources.s(
-            xnat_credentials=self.auth,
-            ids=(self.xnat_ids, self.existing_xnat_ids),
-            levels=self.xnat_hierarchy,
-            import_service=import_service,
-            archive_prefix=self.archive_prefix,
-        )
+        exp_uri, req_url = self._gen_exp_uri_and_req_url
 
         if import_service:
             upload_task = import_scan_to_xnat
@@ -127,31 +134,67 @@ class XNATConnection:
 
         get_latest_scan_info_signature = get_latest_scan_info.s(xnat_credentials=self.auth)
 
-        return create_resources_signature | upload_signature | get_latest_scan_info_signature
+        return upload_signature | get_latest_scan_info_signature
 
-    def launch_and_poll_for_completion(self, process_name):
+    def _gen_exp_uri_and_req_url(self, ids, dcm):
+        uri = self.archive_prefix
+        url = self.server + uri
 
-        intervals =  {'dicom_to_nifti': 5,  'freesurfer_recon_all': 172800}
+        levels = ['subject', 'experiment', 'scan', 'resource']
+        if dcm:
+            levels = levels[:-2]
+
+        for level in levels:
+
+            addition = os.path.join(level + 's', ids[level]['xnat_id'])
+
+            # Check if a query must be added to the uri
+            try:
+                query = ids[level]['query_string']
+            except KeyError:  # A KeyError will occur when there's no query, which is expected for some levels (like Resource)
+                query = ''
+
+            uri = os.path.join(uri, addition)
+            if level == 'experiment':
+                experiment_uri = uri
+
+            url = os.path.join(url, addition + query)
+
+        if not dcm:
+            url = os.path.join(url, 'files')
+
+        return experiment_uri, url
+
+    def launch_and_poll_for_completion(self, process_name, data=None):
 
         return chain(
-            self.gen_dicom_conversion_data(),
-            self.launch_command(process_name),
-            self.poll_container_service(interval)
+            self.launch_command(process_name, data),
+            self.poll_container_service(process_name)
         )
 
     def gen_dicom_conversion_data(self):
         return gen_dicom_conversion_data.s()
 
-    def launch_command(self, process_name):
+    def launch_command(self, process_name, data=None):
         xnat_credentials = (self.server, self.user, self.password)
-        if self.xnat_config['local_docker'] == 'False':
-            process_name += '_transfer'
-        command_ids = self.generate_container_service_ids(process_name)
-        return launch_command.s(xnat_credentials, self.project, command_ids)
 
-    def poll_container_service(self, interval):
+        if not self.xnat_config['local_docker']:
+            process_name += '_transfer'
+
+        command_ids = self.generate_container_service_ids(process_name)
+
+        if data:
+            return launch_command.si(data, xnat_credentials, self.project, command_ids)
+        else:
+            return launch_command.s(xnat_credentials, self.project, command_ids)
+
+    def poll_container_service(self, process_name):
+
+        intervals = {'dicom_to_nifti': 5, 'freesurfer_recon_all': 172800}
+        poll_task = poll_tasks[process_name]
         xnat_credentials = (self.server, self.user, self.password)
-        return poll_cs.s(xnat_credentials, interval)
+
+        return poll_task.s(xnat_credentials, intervals[process_name])
 
     def dl_file_from_xnat(self, file_depot):
         return dl_file_from_xnat.s(self.auth, file_depot)

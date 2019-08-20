@@ -12,19 +12,17 @@ fact.
 
 Todo: figure out why redis-server not running doesn't get caught as Exception.  Figure out how to catch it.
 
+Todo: consider that the import service leaves a file as a .nii, but upload service leaves a file as .nii.gz.
+
 """
 
 from celery import group, chain
 from cookiecutter_mbam.config import config_by_name, config_name
-from cookiecutter_mbam.user import User
-from cookiecutter_mbam.experiment import Experiment
 from .models import Scan
 from cookiecutter_mbam.base.models import BaseService
 from cookiecutter_mbam.xnat import XNATConnection
 from cookiecutter_mbam.storage import CloudStorageConnection
 from cookiecutter_mbam.derivation import DerivationService
-from cookiecutter_mbam.experiment import ExperimentService
-from cookiecutter_mbam.user import UserService
 from .utils import gzip_file
 from cookiecutter_mbam.xnat.tasks import *
 from .tasks import set_scan_attribute, get_scan_attribute, set_scan_attributes
@@ -42,11 +40,10 @@ tasks = {'set_attribute': set_scan_attribute, 'get_attribute': get_scan_attribut
          'set_attributes': set_scan_attributes}
 
 class ScanService(BaseService):
-    def __init__(self, user_id, exp_id, tasks=tasks):
+    def __init__(self, user, experiment, tasks=tasks):
         super().__init__(Scan)
-        self.user_id = user_id
-        self.user = User.get_by_id(self.user_id)
-        self.experiment = Experiment.get_by_id(exp_id)
+        self.user = user
+        self.experiment = experiment
         self.instance_path = current_app.instance_path[:-8]
         self._config_read()
         self.tasks = tasks
@@ -62,7 +59,7 @@ class ScanService(BaseService):
         self.xc = XNATConnection(config=config.XNAT)
         self.csc = CloudStorageConnection(config=config.AWS)
 
-    def add(self, image_file):
+    def add(self, image_file, xnat_ids):
         """The top level public method for adding a scan
 
         Calls methods to infer file type and further process the file, generate xnat identifiers and query strings,
@@ -75,14 +72,12 @@ class ScanService(BaseService):
         """
         self.local_path, self.filename, self.dcm = self._process_file(image_file)
 
-        self.scan_info = self.xc.generate_xnat_identifiers(self.user, self.experiment, dcm=self.dcm)
+        self.xnat_ids = self.xc.generate_scan_ids(self.experiment, xnat_ids, dcm=self.dcm)
+
+        self.scan_info = [self.xnat_ids[level]['xnat_id'] for level in ('subject', 'experiment', 'scan')]
 
         self.scan = self._add_scan_to_database()
 
-        try:
-            self._await_external_uploads()
-        except Exception as e:
-             self._call_error_handler(e, log_message='generic_message', user_message='user_external_uploads')
 
     def _process_file(self, image_file):
         """Prepare file for upload to XNAT and cloud storage
@@ -128,7 +123,7 @@ class ScanService(BaseService):
         filename = filename + '.gz'
         return image_file, local_path, filename
 
-    def _await_external_uploads(self):
+    def upload_and_convert_scan(self):
         """Start the Celery chain that uploads scans to XNAT and cloud storage
 
         Calls the methods to construct the chain that uploads the file to cloud storage and the chain that uploads the
@@ -136,8 +131,7 @@ class ScanService(BaseService):
 
         :return: None
         """
-        job = group([self._cloud_storage_chain(), self._xnat_chain()])
-        job.apply_async()
+        return group([self._cloud_storage_chain(), self._xnat_chain()])
 
     def _cloud_storage_chain(self):
         """Construct the celery chain to upload an original scan file to cloud storage
@@ -182,8 +176,8 @@ class ScanService(BaseService):
                               self.set_attribute(self.scan.id, 'xnat_status', val='Error')]
 
         return chain(
-            self.xc.upload_scan_file(file_path=self.local_path, import_service=self.dcm),
-            self._update_database_objects(),
+            self.xc.upload_scan_file(file_path=self.local_path, xnat_ids=self.xnat_ids, import_service=self.dcm),
+            self.set_attributes(self.scan.id, passed_val=True),
             self.set_attribute(self.scan.id, 'xnat_status', val='Uploaded'),
             self.get_attribute(self.scan.id, attr='xnat_uri')
             ).set(link_error=error_proc)
@@ -205,29 +199,6 @@ class ScanService(BaseService):
             self._upload_derivation_to_cloud_storage()
         )
 
-    def _update_database_objects(self):
-        """Create the signature of update_database_objects task
-
-        Constructs a chain of signature of tasks to update user, experiment, and scan with their IDs and URIs in XNAT.
-        Because in the case of scan the ID and URI are not known a priori (at least if the scan is an imported dicom),
-        scan must accept its new attributes as arguments passed from the signature of the task executed just before,
-        part of xc.upload_scan_file.
-
-        :return: a chain of Celery tasks to update database objects
-        """
-
-        es = ExperimentService()
-        us = UserService()
-
-        exp_attrs = {'xnat_id': self.scan_info[1], 'xnat_uri': self.xc.xnat_experiment_uri(self.scan_info[1])}
-        subj_attrs = {'xnat_id': self.scan_info[0], 'xnat_uri': self.xc.xnat_subject_uri(self.scan_info[0])}
-
-        return chain(
-            self.set_attributes(self.scan.id, passed_val=True),
-            es.set_attributes(self.experiment.id, exp_attrs),
-            us.set_attributes(self.user_id, subj_attrs)
-        )
-
     def _convert_dicom_to_nifti(self):
         """Construct a chain to convert dicom files to NIFTI
 
@@ -242,6 +213,7 @@ class ScanService(BaseService):
         self.ds.create('dicom_to_nifti')
 
         return chain(
+            self.xc.gen_dicom_conversion_data(),
             self.xc.launch_and_poll_for_completion('dicom_to_nifti'),
             self.ds.update_derivation_model('status', exception_on_failure=True),
         )

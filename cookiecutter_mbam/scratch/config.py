@@ -1,9 +1,4 @@
-# -*- coding: utf-8 -*-
-"""Application configuration.
-Module defining classes for configuring the app across multiple environments.
-Based loosely on https://medium.freecodecamp.org/structuring-a-flask-restplus-web-service-for-production-builds-c2ec676de563
-At the bottom is the config_name which sets the app environment passed on to application factory.
-"""
+
 
 from environs import Env
 import os
@@ -52,7 +47,6 @@ class Config:
     # Logging Settings
     LOG_FILENAME = 'static/logs/log.txt'
 
-    # Celery settings
     task_serializer = 'json'
     result_serializer = 'json'
     accept_content = ['json']
@@ -63,8 +57,8 @@ class Config:
     celery_ignore_result = False
 
 
-    include = ['cookiecutter_mbam.xnat.tasks', 'cookiecutter_mbam.storage.tasks', 'cookiecutter_mbam.derivation.tasks',
-               'cookiecutter_mbam.scan.tasks', 'cookiecutter_mbam.base.tasks']
+    # include = ['cookiecutter_mbam.xnat.tasks', 'cookiecutter_mbam.storage.tasks', 'cookiecutter_mbam.derivation.tasks',
+    #            'cookiecutter_mbam.scan.tasks', 'cookiecutter_mbam.base.tasks']
 
     XNAT = {
         'user': 'admin',
@@ -92,7 +86,6 @@ class Config:
         'bucket_name' : 'mbam-test'
     }
 
-
 class LocalConfig(Config):
     """ Class defining configurations for local development. Config_name is 'local'. """
     SQLALCHEMY_DATABASE_URI = 'sqlite:////tmp/dev.db'
@@ -106,40 +99,18 @@ class LocalConfig(Config):
     # result_backend = 'redis://localhost:6379'
     # celery_ignore_result = False
 
-class DockerConfig(Config):
-    """ Class defining configurations for local development. Config_name is 'docker'. """
-    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://mbam:mbam123@mysql/brain_db'
-    # Celery cettings
-    # broker_url = 'redis://redis:6379'
-    # result_backend = 'redis://redis:6379'
-
-class TestConfig(Config):
-    TESTING = True
-    SQLALCHEMY_DATABASE_URI = 'sqlite://'
-    SECRET_KEY = 'not-so-secret-in-tests'
-    DEBUG_TB_ENABLED = False
-    WTF_CSRF_ENABLED = False  # Allows form testing
-    PRESERVE_CONTEXT_ON_EXCEPTION = False
-
-class DevConfig(Config):
-    """ Class defining configurations for development on AWS. Config_name is 'aws_dev'. """
-    # MYSQL parameters are stored in AWS Systems Manager Parameter store and passed
-    # as environment variables in the Cloudformation Templates. 
-    DB_URI = env.str('MYSQL_HOST','dummy')
-    DB_USER = env.str('MYSQL_USERNAME','dummy')
-    DB_PASSWORD = env.str('MYSQL_PASSWORD','dummy')
-    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://{}:{}@{}/brain_db'.format(DB_USER,DB_PASSWORD,DB_URI)
-
-    # Celery settings. In AWS, redis is run as a daemon (one service per EC2 instance)
-    # This setting assumes the redis container is launched with 'host' network settings.
-    # broker_url = env.str('broker_url', default='redis://localhost:6379')
-    # result_backend = env.str('result_backend', default='redis://localhost:6379')
+    # Celery settings
+    task_serializer = 'json'
+    result_serializer = 'json'
+    accept_content = ['json']
+    enable_utc = True
+    enable_utc = True
+    broker_url = 'redis://localhost:6379'
+    result_backend = 'redis://localhost:6379'
+    celery_ignore_result = False
 
 config_by_name = dict(
-    local=LocalConfig,
-    docker=DockerConfig,
-    test=TestConfig,
-    aws_dev=DevConfig
+    local=LocalConfig
     )
 
 def guess_environment():
@@ -160,4 +131,8 @@ def guess_environment():
     return config_name
 
 # Guess the config_names for dev and testing configurations
+#config_name = 'local'
 config_name = guess_environment()
+
+
+

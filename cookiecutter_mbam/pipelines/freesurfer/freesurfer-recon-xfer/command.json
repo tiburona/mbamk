@@ -8,7 +8,7 @@
   "type": "docker",
   "index": null,
   "working-directory": null,
-  "command-line": "./main.sh #experiment# #scans#",
+  "command-line": "recon-all #experiment# #scans#",
   "override-entrypoint": null,
   "mounts": [],
   "environment-variables": {},
@@ -49,7 +49,15 @@
       "contexts": [],
       "external-inputs": [],
       "derived-inputs": [],
-      "output-handlers": []
+      "output-handlers": [
+          {
+                    "name": "fs-resource",
+                    "accepts-command-output": "nifti",
+                    "as-a-child-of-wrapper-input": "scan",
+                    "type": "Resource",
+                    "label": "NIFTI"
+                }
+        }
     }
   ],
   "reserve-memory": null,

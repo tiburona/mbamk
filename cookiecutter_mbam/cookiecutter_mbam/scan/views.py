@@ -6,8 +6,6 @@ from flask import Blueprint, render_template, flash, redirect, url_for, session
 from flask import request
 from flask_security import current_user, login_required
 
-from cookiecutter_mbam.experiment import Experiment
-from cookiecutter_mbam.experiment.views import add_experiment
 from cookiecutter_mbam.base.tasks import global_error_handler
 from cookiecutter_mbam.utils.error_utils import flash_errors
 from .forms import ScanForm, ExperimentAndScanForm
@@ -62,9 +60,10 @@ def scan_number_validation(request, add_exp):
         if num_scans_to_add > 3:
             return 'You can upload up to three files.'
     else:
-        num_scans = Experiment.get_by_id(str(session['curr_experiment'])).num_scans
-        if num_scans + num_scans_to_add > 3:
-            return "A session can only have three scans.  You already have {}.".format(num2words[num_scans])
+        pass
+        # num_scans = Experiment.get_by_id(str(session['curr_experiment'])).num_scans
+        # if num_scans + num_scans_to_add > 3:
+        #     return "A session can only have three scans.  You already have {}.".format(num2words[num_scans])
     return ''
 
 
@@ -76,7 +75,8 @@ def meta_add(form, request, redirect_route, template, add_exp=False):
             flash(scan_number_error, 'warning')
             return redirect(url_for(redirect_route))
         if add_exp:
-            exp_id = add_experiment(form)
+            pass
+            #exp_id = add_experiment(form)
         else:
             exp_id = str(session['curr_experiment'])
         return add_scans(request, exp_id)

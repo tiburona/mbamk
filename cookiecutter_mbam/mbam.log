@@ -1,0 +1,442 @@
+[1;31m[2019-08-10 14:04:54,296] ??? requested ???
+None - cookiecutter_mbam.base.tasks.global_error_handler - cookiecutter_mbam.mbam_logging
+ERROR in tasks: An error occurred
+Traceback (most recent call last):
+  File "/Users/katie/anaconda/lib/python3.6/site-packages/celery/app/trace.py", line 382, in trace_task
+    R = retval = fun(*args, **kwargs)
+  File "/Users/katie/spiro/mbam/cookiecutter_mbam/cookiecutter_mbam/init_celery.py", line 11, in __call__
+    return TaskBase.__call__(self, *args, **kwargs)
+  File "/Users/katie/spiro/mbam/cookiecutter_mbam/cookiecutter_mbam/init_celery.py", line 11, in __call__
+    return TaskBase.__call__(self, *args, **kwargs)
+  File "/Users/katie/anaconda/lib/python3.6/site-packages/celery/app/trace.py", line 641, in __protected_call__
+    return self.run(*args, **kwargs)
+  File "/Users/katie/spiro/mbam/cookiecutter_mbam/cookiecutter_mbam/xnat/tasks.py", line 56, in create_resources
+    raise ValueError(f'Unexpected status code: {r.status_code} Response: /n {r.text}')
+ValueError: Unexpected status code: 409 Response: /n <html>
+<head>
+   <title>Status page</title>
+</head>
+<body>
+<h3>Specified resource already exists.</h3><p>You can get technical details <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.10">here</a>.<br>
+Please continue your visit at our <a href="/">home page</a>.
+</p>
+</body>
+</html>
+[0m
+[1;31m[2019-08-10 14:09:00,814] ??? requested ???
+None - cookiecutter_mbam.base.tasks.global_error_handler - cookiecutter_mbam.mbam_logging
+ERROR in tasks: An error occurred
+Traceback (most recent call last):
+  File "/Users/katie/anaconda/lib/python3.6/site-packages/celery/app/trace.py", line 382, in trace_task
+    R = retval = fun(*args, **kwargs)
+  File "/Users/katie/spiro/mbam/cookiecutter_mbam/cookiecutter_mbam/init_celery.py", line 11, in __call__
+    return TaskBase.__call__(self, *args, **kwargs)
+  File "/Users/katie/spiro/mbam/cookiecutter_mbam/cookiecutter_mbam/init_celery.py", line 11, in __call__
+    return TaskBase.__call__(self, *args, **kwargs)
+  File "/Users/katie/anaconda/lib/python3.6/site-packages/celery/app/trace.py", line 641, in __protected_call__
+    return self.run(*args, **kwargs)
+  File "/Users/katie/spiro/mbam/cookiecutter_mbam/cookiecutter_mbam/xnat/tasks.py", line 56, in create_resources
+    raise ValueError(f'Unexpected status code: {r.status_code} Response: /n {r.text}')
+ValueError: Unexpected status code: 409 Response: /n <html>
+<head>
+   <title>Status page</title>
+</head>
+<body>
+<h3>Specified resource already exists.</h3><p>You can get technical details <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.10">here</a>.<br>
+Please continue your visit at our <a href="/">home page</a>.
+</p>
+</body>
+</html>
+[0m
+[1;31m[2019-08-10 14:12:59,693] ??? requested ???
+None - cookiecutter_mbam.base.tasks.global_error_handler - cookiecutter_mbam.mbam_logging
+ERROR in tasks: An error occurred
+Traceback (most recent call last):
+  File "/Users/katie/anaconda/lib/python3.6/site-packages/celery/app/trace.py", line 382, in trace_task
+    R = retval = fun(*args, **kwargs)
+  File "/Users/katie/spiro/mbam/cookiecutter_mbam/cookiecutter_mbam/init_celery.py", line 11, in __call__
+    return TaskBase.__call__(self, *args, **kwargs)
+  File "/Users/katie/spiro/mbam/cookiecutter_mbam/cookiecutter_mbam/init_celery.py", line 11, in __call__
+    return TaskBase.__call__(self, *args, **kwargs)
+  File "/Users/katie/anaconda/lib/python3.6/site-packages/celery/app/trace.py", line 641, in __protected_call__
+    return self.run(*args, **kwargs)
+  File "/Users/katie/spiro/mbam/cookiecutter_mbam/cookiecutter_mbam/xnat/tasks.py", line 56, in create_resources
+    raise ValueError(f'Unexpected status code: {r.status_code} Response: {r.text}')
+ValueError: Unexpected status code: 400 Response: /n <html>
+<head>
+   <title>Status page</title>
+</head>
+<body>
+<h3>You tried to PUT to this service, but didn't provide any data (found request entity size of 0). Please check the format of your service request.</h3><p>You can get technical details <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.1">here</a>.<br>
+Please continue your visit at our <a href="/">home page</a>.
+</p>
+</body>
+</html>
+[0m
+[1;31m[2019-08-10 14:31:42,398] ??? requested ???
+None - cookiecutter_mbam.base.tasks.global_error_handler - cookiecutter_mbam.mbam_logging
+ERROR in tasks: An error occurred
+Traceback (most recent call last):
+  File "/Users/katie/anaconda/lib/python3.6/site-packages/celery/app/trace.py", line 382, in trace_task
+    R = retval = fun(*args, **kwargs)
+  File "/Users/katie/spiro/mbam/cookiecutter_mbam/cookiecutter_mbam/init_celery.py", line 11, in __call__
+    return TaskBase.__call__(self, *args, **kwargs)
+  File "/Users/katie/spiro/mbam/cookiecutter_mbam/cookiecutter_mbam/init_celery.py", line 11, in __call__
+    return TaskBase.__call__(self, *args, **kwargs)
+  File "/Users/katie/anaconda/lib/python3.6/site-packages/celery/app/trace.py", line 641, in __protected_call__
+    return self.run(*args, **kwargs)
+  File "/Users/katie/anaconda/lib/python3.6/site-packages/celery/app/base.py", line 476, in run
+    raise task.retry(exc=exc, **retry_kwargs)
+  File "/Users/katie/anaconda/lib/python3.6/site-packages/celery/app/task.py", line 667, in retry
+    raise_with_context(exc)
+  File "/Users/katie/anaconda/lib/python3.6/site-packages/celery/app/base.py", line 467, in run
+    return task._orig_run(*args, **kwargs)
+  File "/Users/katie/spiro/mbam/cookiecutter_mbam/cookiecutter_mbam/xnat/tasks.py", line 71, in upload_scan_to_xnat
+    url = uris['file']
+KeyError: 'file'[0m
+[1;31m[2019-08-10 15:47:22,606] ??? requested ???
+None - cookiecutter_mbam.base.tasks.global_error_handler - cookiecutter_mbam.mbam_logging
+ERROR in tasks: An error occurred
+Traceback (most recent call last):
+  File "/Users/katie/anaconda/lib/python3.6/site-packages/celery/app/trace.py", line 382, in trace_task
+    R = retval = fun(*args, **kwargs)
+  File "/Users/katie/spiro/mbam/cookiecutter_mbam/cookiecutter_mbam/init_celery.py", line 11, in __call__
+    return TaskBase.__call__(self, *args, **kwargs)
+  File "/Users/katie/spiro/mbam/cookiecutter_mbam/cookiecutter_mbam/init_celery.py", line 11, in __call__
+    return TaskBase.__call__(self, *args, **kwargs)
+  File "/Users/katie/anaconda/lib/python3.6/site-packages/celery/app/trace.py", line 641, in __protected_call__
+    return self.run(*args, **kwargs)
+  File "/Users/katie/spiro/mbam/cookiecutter_mbam/cookiecutter_mbam/xnat/tasks.py", line 56, in create_resources
+    @celery.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5})
+ValueError: Unexpected status code: 400 Response: <html>
+<head>
+   <title>Status page</title>
+</head>
+<body>
+<h3>You tried to PUT to this service, but didn't provide any data (found request entity size of 0). Please check the format of your service request.</h3><p>You can get technical details <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.1">here</a>.<br>
+Please continue your visit at our <a href="/">home page</a>.
+</p>
+</body>
+</html>
+[0m
+[1;31m[2019-08-10 15:56:41,989] ??? requested ???
+None - cookiecutter_mbam.base.tasks.global_error_handler - cookiecutter_mbam.mbam_logging
+ERROR in tasks: An error occurred
+Traceback (most recent call last):
+  File "/Users/katie/anaconda/lib/python3.6/site-packages/celery/app/trace.py", line 382, in trace_task
+    R = retval = fun(*args, **kwargs)
+  File "/Users/katie/spiro/mbam/cookiecutter_mbam/cookiecutter_mbam/init_celery.py", line 11, in __call__
+    return TaskBase.__call__(self, *args, **kwargs)
+  File "/Users/katie/spiro/mbam/cookiecutter_mbam/cookiecutter_mbam/init_celery.py", line 11, in __call__
+    return TaskBase.__call__(self, *args, **kwargs)
+  File "/Users/katie/anaconda/lib/python3.6/site-packages/celery/app/trace.py", line 641, in __protected_call__
+    return self.run(*args, **kwargs)
+  File "/Users/katie/anaconda/lib/python3.6/site-packages/celery/app/base.py", line 476, in run
+    raise task.retry(exc=exc, **retry_kwargs)
+  File "/Users/katie/anaconda/lib/python3.6/site-packages/celery/app/task.py", line 667, in retry
+    raise_with_context(exc)
+  File "/Users/katie/anaconda/lib/python3.6/site-packages/celery/app/base.py", line 467, in run
+    return task._orig_run(*args, **kwargs)
+  File "/Users/katie/spiro/mbam/cookiecutter_mbam/cookiecutter_mbam/xnat/tasks.py", line 67, in upload_scan_to_xnat
+    url = uris['file']
+KeyError: 'file'[0m
+[1;31m[2019-08-20 10:37:39,280] ??? requested ???
+??? - ??? - cookiecutter_mbam.mbam_logging
+ERROR in app: CONFIG NAME IS local[0m
+[1;31m[2019-08-20 10:37:39,280] ??? requested ???
+??? - ??? - cookiecutter_mbam.mbam_logging
+ERROR in app: CONFIG NAME IS local[0m
+[1;31m[2019-08-20 10:39:23,271] ??? requested ???
+??? - ??? - root
+ERROR in app: CONFIG NAME IS local[0m
+[1;31m[2019-08-20 10:41:46,648] ??? requested ???
+??? - ??? - root
+ERROR in app: CONFIG NAME IS local[0m
+[1;31m[2019-08-20 10:42:54,366] ??? requested ???
+??? - ??? - root
+ERROR in app: CONFIG NAME IS local[0m
+[1;31m[2019-08-20 12:08:03,384] ??? requested ???
+??? - ??? - root
+ERROR in app: CONFIG NAME IS local[0m
+[1;31m[2019-08-20 12:08:05,077] ??? requested ???
+??? - ??? - root
+ERROR in app: Celery backend <celery.backends.redis.RedisBackend object at 0x10cfa5470>[0m
+[1;31m[2019-08-20 12:16:01,114] ??? requested ???
+??? - ??? - root
+ERROR in tasks: Celery backend <celery.backends.base.DisabledBackend object at 0x1053c1f28>[0m
+[1;31m[2019-08-20 12:16:02,737] ??? requested ???
+??? - ??? - root
+ERROR in app: CONFIG NAME IS local[0m
+[1;31m[2019-08-20 12:22:14,321] ??? requested ???
+??? - ??? - root
+ERROR in tasks: Celery backend <celery.backends.base.DisabledBackend object at 0x1085fdef0>[0m
+[1;31m[2019-08-20 12:22:15,894] ??? requested ???
+??? - ??? - root
+ERROR in app: CONFIG NAME IS local[0m
+[1;31m[2019-08-20 12:22:27,284] ??? requested ???
+??? - ??? - root
+ERROR in tasks: Celery backend <celery.backends.base.DisabledBackend object at 0x10c331978>[0m
+[1;31m[2019-08-20 12:22:28,698] ??? requested ???
+??? - ??? - root
+ERROR in app: CONFIG NAME IS local[0m
+[1;31m[2019-08-20 12:22:47,836] ??? requested ???
+??? - ??? - root
+ERROR in tasks: Celery backend <celery.backends.base.DisabledBackend object at 0x10adef898>[0m
+[1;31m[2019-08-20 12:22:51,651] ??? requested ???
+??? - ??? - root
+ERROR in app: CONFIG NAME IS local[0m
+[1;31m[2019-08-20 12:23:05,312] ??? requested ???
+??? - ??? - root
+ERROR in tasks: Celery backend <celery.backends.base.DisabledBackend object at 0x10a67f198>[0m
+[1;31m[2019-08-20 12:23:05,446] ??? requested ???
+??? - ??? - root
+ERROR in app: CONFIG NAME IS local[0m
+[1;31m[2019-08-20 12:24:13,038] ??? requested ???
+??? - ??? - root
+ERROR in tasks: Celery backend in tasks <celery.backends.base.DisabledBackend object at 0x10b32df28>[0m
+[1;31m[2019-08-20 12:24:13,336] ??? requested ???
+??? - ??? - root
+ERROR in app: CONFIG NAME IS local[0m
+[1;31m[2019-08-20 12:25:28,187] 127.0.0.1 requested http://0.0.0.0:8000/experiments/add
+??? - ??? - root
+ERROR in service: celery backend in experiment service <celery.backends.base.DisabledBackend object at 0x10b32df28>[0m
+[1;31m[2019-08-20 12:26:33,922] ??? requested ???
+??? - ??? - root
+ERROR in tasks: Celery backend in tasks <celery.backends.base.DisabledBackend object at 0x10983ef28>[0m
+[1;31m[2019-08-20 12:26:34,155] ??? requested ???
+??? - ??? - root
+ERROR in app: CONFIG NAME IS local[0m
+[1;31m[2019-08-20 12:28:59,735] ??? requested ???
+??? - ??? - root
+ERROR in tasks: Celery backend in tasks <celery.backends.base.DisabledBackend object at 0x10ce09eb8>[0m
+[1;31m[2019-08-20 12:28:59,961] ??? requested ???
+??? - ??? - root
+ERROR in app: CONFIG NAME IS local[0m
+[1;31m[2019-08-20 12:28:59,964] ??? requested ???
+??? - ??? - root
+ERROR in app: celery backend in create app <celery.backends.base.DisabledBackend object at 0x10ce09eb8>[0m
+[1;31m[2019-08-20 12:29:24,699] ??? requested ???
+??? - ??? - root
+ERROR in tasks: Celery backend in tasks <celery.backends.base.DisabledBackend object at 0x10f8ae4e0>[0m
+[1;31m[2019-08-20 12:29:24,923] ??? requested ???
+??? - ??? - root
+ERROR in app: CONFIG NAME IS local[0m
+[1;31m[2019-08-20 12:29:24,927] ??? requested ???
+??? - ??? - root
+ERROR in app: celery backend in create app <celery.backends.base.DisabledBackend object at 0x10f8ae4e0>[0m
+[1;31m[2019-08-20 12:29:30,324] ??? requested ???
+??? - ??? - root
+ERROR in tasks: Celery backend in tasks <celery.backends.base.DisabledBackend object at 0x109913c88>[0m
+[1;31m[2019-08-20 12:29:30,445] ??? requested ???
+??? - ??? - root
+ERROR in app: CONFIG NAME IS local[0m
+[1;31m[2019-08-20 12:29:30,448] ??? requested ???
+??? - ??? - root
+ERROR in app: celery backend in create app <celery.backends.base.DisabledBackend object at 0x109913c88>[0m
+[1;31m[2019-08-20 12:31:20,298] ??? requested ???
+??? - ??? - root
+ERROR in __init__: celery backend in init file <celery.backends.base.DisabledBackend object at 0x10e900fd0>[0m
+[1;31m[2019-08-20 12:31:20,976] ??? requested ???
+??? - ??? - root
+ERROR in tasks: Celery backend in tasks <celery.backends.base.DisabledBackend object at 0x10e900fd0>[0m
+[1;31m[2019-08-20 12:31:21,212] ??? requested ???
+??? - ??? - root
+ERROR in app: CONFIG NAME IS local[0m
+[1;31m[2019-08-20 12:31:21,215] ??? requested ???
+??? - ??? - root
+ERROR in app: celery backend in create app <celery.backends.base.DisabledBackend object at 0x10e900fd0>[0m
+[1;31m[2019-08-20 12:32:08,913] ??? requested ???
+??? - ??? - root
+ERROR in __init__: celery backend in init file <celery.backends.base.DisabledBackend object at 0x106d356d8>[0m
+[1;31m[2019-08-20 12:32:09,697] ??? requested ???
+??? - ??? - root
+ERROR in tasks: Celery backend in tasks <celery.backends.base.DisabledBackend object at 0x106d356d8>[0m
+[1;31m[2019-08-20 12:32:09,933] ??? requested ???
+??? - ??? - root
+ERROR in app: CONFIG NAME IS local[0m
+[1;31m[2019-08-20 12:32:09,939] ??? requested ???
+??? - ??? - root
+ERROR in app: celery backend in create app <celery.backends.base.DisabledBackend object at 0x106d356d8>[0m
+[1;31m[2019-08-20 12:32:35,086] ??? requested ???
+??? - ??? - root
+ERROR in __init__: celery backend in init file <celery.backends.base.DisabledBackend object at 0x1102f7f28>[0m
+[1;31m[2019-08-20 12:32:35,917] ??? requested ???
+??? - ??? - root
+ERROR in tasks: Celery backend in tasks <celery.backends.base.DisabledBackend object at 0x1102f7f28>[0m
+[1;31m[2019-08-20 12:32:36,159] ??? requested ???
+??? - ??? - root
+ERROR in app: CONFIG NAME IS local[0m
+[1;31m[2019-08-20 12:32:36,162] ??? requested ???
+??? - ??? - root
+ERROR in app: celery backend in create app <celery.backends.base.DisabledBackend object at 0x1102f7f28>[0m
+[1;31m[2019-08-20 12:32:36,661] 127.0.0.1 requested http://0.0.0.0:8000/experiments/add
+??? - ??? - root
+ERROR in service: celery backend in experiment service <celery.backends.base.DisabledBackend object at 0x1102f7f28>[0m
+[1;31m[2019-08-20 12:33:27,937] ??? requested ???
+??? - ??? - root
+ERROR in __init__: celery backend in init file <celery.backends.base.DisabledBackend object at 0x10aa12828>[0m
+[1;31m[2019-08-20 12:33:28,650] ??? requested ???
+??? - ??? - root
+ERROR in tasks: Celery backend in tasks <celery.backends.base.DisabledBackend object at 0x10aa12828>[0m
+[1;31m[2019-08-20 12:33:28,875] ??? requested ???
+??? - ??? - root
+ERROR in app: CONFIG NAME IS local[0m
+[1;31m[2019-08-20 12:33:28,875] ??? requested ???
+??? - ??? - root
+ERROR in app: celery backend in create app <celery.backends.base.DisabledBackend object at 0x10aa12828>[0m
+[1;31m[2019-08-20 12:33:28,877] ??? requested ???
+??? - ??? - root
+ERROR in app: celery backend in create app <celery.backends.base.DisabledBackend object at 0x10aa12828>[0m
+[1;31m[2019-08-20 12:34:01,986] ??? requested ???
+??? - ??? - root
+ERROR in __init__: celery backend in init file <celery.backends.base.DisabledBackend object at 0x10abce1d0>[0m
+[1;31m[2019-08-20 12:34:02,700] ??? requested ???
+??? - ??? - root
+ERROR in tasks: Celery backend in tasks <celery.backends.base.DisabledBackend object at 0x10abce1d0>[0m
+[1;31m[2019-08-20 12:34:02,949] ??? requested ???
+??? - ??? - root
+ERROR in app: CONFIG NAME IS local[0m
+[1;31m[2019-08-20 12:34:02,949] ??? requested ???
+??? - ??? - root
+ERROR in app: celery backend in create app 1 <celery.backends.base.DisabledBackend object at 0x10abce1d0>[0m
+[1;31m[2019-08-20 12:34:02,953] ??? requested ???
+??? - ??? - root
+ERROR in app: celery backend in create app 2 <celery.backends.base.DisabledBackend object at 0x10abce1d0>[0m
+[1;31m[2019-08-20 13:02:35,332] ??? requested ???
+??? - ??? - root
+ERROR in __init__: celery backend in init file <celery.backends.base.DisabledBackend object at 0x106ab0f28>[0m
+[1;31m[2019-08-20 13:02:36,662] ??? requested ???
+??? - ??? - root
+ERROR in tasks: Celery backend in tasks <celery.backends.base.DisabledBackend object at 0x106ab0f28>[0m
+[1;31m[2019-08-20 13:02:37,149] ??? requested ???
+??? - ??? - root
+ERROR in app: CONFIG NAME IS local[0m
+[1;31m[2019-08-20 13:02:37,149] ??? requested ???
+??? - ??? - root
+ERROR in app: celery backend in create app 1 <celery.backends.base.DisabledBackend object at 0x106ab0f28>[0m
+[1;31m[2019-08-20 13:02:37,152] ??? requested ???
+??? - ??? - root
+ERROR in app: celery backend in create app 2 <celery.backends.base.DisabledBackend object at 0x106ab0f28>[0m
+[1;31m[2019-08-20 13:02:40,921] 127.0.0.1 requested http://0.0.0.0:8000/experiments/add
+??? - ??? - root
+ERROR in service: celery backend in experiment service <celery.backends.base.DisabledBackend object at 0x106ab0f28>[0m
+[1;31m[2019-08-20 13:03:21,573] ??? requested ???
+??? - ??? - root
+ERROR in __init__: celery backend in init file <celery.backends.base.DisabledBackend object at 0x104d9f940>[0m
+[1;31m[2019-08-20 13:03:22,224] ??? requested ???
+??? - ??? - root
+ERROR in tasks: Celery backend in tasks <celery.backends.base.DisabledBackend object at 0x104d9f940>[0m
+[1;31m[2019-08-20 13:03:22,489] ??? requested ???
+??? - ??? - root
+ERROR in app: CONFIG NAME IS local[0m
+[1;31m[2019-08-20 13:03:22,489] ??? requested ???
+??? - ??? - root
+ERROR in app: celery backend in create app 1 <celery.backends.base.DisabledBackend object at 0x104d9f940>[0m
+[1;31m[2019-08-20 13:03:22,492] ??? requested ???
+??? - ??? - root
+ERROR in app: celery backend in create app 2 <celery.backends.base.DisabledBackend object at 0x104d9f940>[0m
+[1;31m[2019-08-20 13:04:33,920] ??? requested ???
+??? - ??? - root
+ERROR in __init__: celery backend in init file <celery.backends.base.DisabledBackend object at 0x1050a9c88>[0m
+[1;31m[2019-08-20 13:04:34,690] ??? requested ???
+??? - ??? - root
+ERROR in tasks: Celery backend in tasks <celery.backends.base.DisabledBackend object at 0x1050a9c88>[0m
+[1;31m[2019-08-20 13:04:34,926] ??? requested ???
+??? - ??? - root
+ERROR in app: CONFIG NAME IS local[0m
+[1;31m[2019-08-20 13:04:34,927] ??? requested ???
+??? - ??? - root
+ERROR in app: celery backend in create app 1 <celery.backends.base.DisabledBackend object at 0x1050a9c88>[0m
+[1;31m[2019-08-20 13:04:34,931] ??? requested ???
+??? - ??? - root
+ERROR in app: celery backend in create app 2 <celery.backends.base.DisabledBackend object at 0x1050a9c88>[0m
+[1;31m[2019-08-20 13:07:49,094] ??? requested ???
+??? - ??? - root
+ERROR in __init__: celery backend in init file <celery.backends.base.DisabledBackend object at 0x1115dc4a8>[0m
+[1;31m[2019-08-20 13:07:52,778] ??? requested ???
+??? - ??? - root
+ERROR in __init__: celery backend in init file <celery.backends.base.DisabledBackend object at 0x10e2a8240>[0m
+[1;31m[2019-08-20 13:07:53,506] ??? requested ???
+??? - ??? - root
+ERROR in tasks: Celery backend in tasks <celery.backends.base.DisabledBackend object at 0x10e2a8240>[0m
+[1;31m[2019-08-20 13:07:53,831] ??? requested ???
+??? - ??? - root
+ERROR in app: CONFIG NAME IS local[0m
+[1;31m[2019-08-20 13:07:53,836] ??? requested ???
+??? - ??? - root
+ERROR in app: celery backend in create app 1 <celery.backends.base.DisabledBackend object at 0x10e2a8240>[0m
+[1;31m[2019-08-20 13:07:53,843] ??? requested ???
+??? - ??? - root
+ERROR in app: celery backend in create app 2 <celery.backends.base.DisabledBackend object at 0x10e2a8240>[0m
+[1;31m[2019-08-20 13:07:55,446] 127.0.0.1 requested http://0.0.0.0:8000/experiments/add
+??? - ??? - root
+ERROR in service: celery backend in experiment service <celery.backends.base.DisabledBackend object at 0x10e2a8240>[0m
+[1;31m[2019-08-20 13:08:14,807] ??? requested ???
+??? - ??? - root
+ERROR in __init__: celery backend in init file <celery.backends.base.DisabledBackend object at 0x110f08358>[0m
+[1;31m[2019-08-20 13:08:15,377] ??? requested ???
+??? - ??? - root
+ERROR in tasks: Celery backend in tasks <celery.backends.base.DisabledBackend object at 0x110f08358>[0m
+[1;31m[2019-08-20 13:08:15,530] ??? requested ???
+??? - ??? - root
+ERROR in app: CONFIG NAME IS local[0m
+[1;31m[2019-08-20 13:08:15,530] ??? requested ???
+??? - ??? - root
+ERROR in app: celery backend in create app 1 <celery.backends.base.DisabledBackend object at 0x110f08358>[0m
+[1;31m[2019-08-20 13:08:15,535] ??? requested ???
+??? - ??? - root
+ERROR in app: celery backend in create app 2 <celery.backends.base.DisabledBackend object at 0x110f08358>[0m
+[1;31m[2019-08-20 13:08:15,668] 127.0.0.1 requested http://0.0.0.0:8000/experiments/add
+??? - ??? - root
+ERROR in service: celery backend in experiment service <celery.backends.base.DisabledBackend object at 0x110f08358>[0m
+[1;31m[2019-08-20 13:08:24,434] ??? requested ???
+??? - ??? - root
+ERROR in __init__: celery backend in init file <celery.backends.base.DisabledBackend object at 0x106664390>[0m
+[1;31m[2019-08-20 13:08:25,040] ??? requested ???
+??? - ??? - root
+ERROR in tasks: Celery backend in tasks <celery.backends.base.DisabledBackend object at 0x106664390>[0m
+[1;31m[2019-08-20 13:08:25,194] ??? requested ???
+??? - ??? - root
+ERROR in app: CONFIG NAME IS local[0m
+[1;31m[2019-08-20 13:08:25,194] ??? requested ???
+??? - ??? - root
+ERROR in app: celery backend in create app 1 <celery.backends.base.DisabledBackend object at 0x106664390>[0m
+[1;31m[2019-08-20 13:08:25,197] ??? requested ???
+??? - ??? - root
+ERROR in app: celery backend in create app 2 <celery.backends.base.DisabledBackend object at 0x106664390>[0m
+[1;31m[2019-08-20 13:08:25,391] 127.0.0.1 requested http://0.0.0.0:8000/experiments/add
+??? - ??? - root
+ERROR in service: celery backend in experiment service <celery.backends.base.DisabledBackend object at 0x106664390>[0m
+[1;31m[2019-08-20 13:09:34,414] ??? requested ???
+??? - ??? - root
+ERROR in __init__: celery backend in init file <celery.backends.base.DisabledBackend object at 0x10738f240>[0m
+[1;31m[2019-08-20 13:09:35,124] ??? requested ???
+??? - ??? - root
+ERROR in tasks: Celery backend in tasks <celery.backends.base.DisabledBackend object at 0x10738f240>[0m
+[1;31m[2019-08-20 13:09:35,352] ??? requested ???
+??? - ??? - root
+ERROR in app: CONFIG NAME IS local[0m
+[1;31m[2019-08-20 13:09:35,353] ??? requested ???
+??? - ??? - root
+ERROR in app: celery backend in create app 1 <celery.backends.base.DisabledBackend object at 0x10738f240>[0m
+[1;31m[2019-08-20 13:09:35,355] ??? requested ???
+??? - ??? - root
+ERROR in app: celery backend in create app 2 <celery.backends.base.DisabledBackend object at 0x10738f240>[0m
+[1;31m[2019-08-20 13:09:37,271] ??? requested ???
+??? - ??? - root
+ERROR in __init__: celery backend in init file <celery.backends.base.DisabledBackend object at 0x10e633940>[0m
+[1;31m[2019-08-20 13:09:37,855] ??? requested ???
+??? - ??? - root
+ERROR in tasks: Celery backend in tasks <celery.backends.base.DisabledBackend object at 0x10e633940>[0m
+[1;31m[2019-08-20 13:09:38,036] ??? requested ???
+??? - ??? - root
+ERROR in app: CONFIG NAME IS local[0m
+[1;31m[2019-08-20 13:09:38,041] ??? requested ???
+??? - ??? - root
+ERROR in app: celery backend in create app 1 <celery.backends.base.DisabledBackend object at 0x10e633940>[0m
+[1;31m[2019-08-20 13:09:38,046] ??? requested ???
+??? - ??? - root
+ERROR in app: celery backend in create app 2 <celery.backends.base.DisabledBackend object at 0x10e633940>[0m
+[1;31m[2019-08-20 13:09:39,465] 127.0.0.1 requested http://0.0.0.0:8000/experiments/add
+??? - ??? - root
+ERROR in service: celery backend in experiment service <celery.backends.base.DisabledBackend object at 0x10e633940>[0m

@@ -4,3 +4,4 @@ from cookiecutter_mbam.app import create_app
 
 app = create_app()
 
+

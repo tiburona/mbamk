@@ -4,6 +4,8 @@
 from cookiecutter_mbam.database import Column, Model, SurrogatePK, db, reference_col, relationship
 from flask_sqlalchemy import event
 from cookiecutter_mbam.user import User
+from cookiecutter_mbam.scan import Scan
+from cookiecutter_mbam.utils.model_utils import make_ins_del_listener
 
 from flask import current_app
 
@@ -56,3 +58,18 @@ def after_insert_listener(mapper, connection, target):
         .where(user_table.c.id == target.user_id)
         .values(num_experiments=num_experiments)
     )
+
+
+@event.listens_for(Scan, "after_insert")
+def after_insert_listener(mapper, connection, target):
+    experiment = Experiment.get_by_id(target.experiment_id)
+    num_scans = experiment.num_scans + 1
+    experiment_table = Experiment.__table__
+    connection.execute(
+        experiment_table
+        .update()
+        .where(experiment_table.c.id == target.experiment_id)
+        .values(num_scans=num_scans)
+    )
+
+delete_listener = make_ins_del_listener(Scan, Experiment, 'scan', 'experiment', 'after_delete', -1)
