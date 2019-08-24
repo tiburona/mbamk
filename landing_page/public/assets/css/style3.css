@@ -825,10 +825,16 @@ div.transbox p {
 
 .team-member {
   width: 33%;
+  padding: 0 25px;
 }
 
 .team-member:nth-child(n+4) {
     margin-top: 4%;
+}
+
+
+.team-member-third {
+    margin-top: 0 !important;
 }
 
 .team-image {
