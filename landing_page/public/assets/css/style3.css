@@ -353,8 +353,6 @@ div.transbox p {
 }
 
 .email {
-  margin-top: 8rem;
-  margin-bottom: 5rem;
   border-radius: 10px;
   overflow: hidden;
   width: 710px;
@@ -363,6 +361,7 @@ div.transbox p {
 
 .iframe {
    width: 100%;
+   height: 500px;
   margin-left: -2.5rem;
   margin-bottom: -1rem;
 }
@@ -383,6 +382,10 @@ div.transbox p {
   font-size: 1.7rem;
   letter-spacing: 1px;
   word-spacing: 1px;
+}
+
+.footer-content a {
+  color: #fff;
 }
 
 .footer-content p:nth-child(2){
@@ -719,7 +722,6 @@ div.transbox p {
 }
 
 .google-form {
-  margin-top: 8rem;
   margin-bottom: 5rem;
 }
 
@@ -741,6 +743,7 @@ div.transbox p {
   object-fit: cover;
   width: 600px;
   height: 410px;
+  border-radius: 5px;
 }
 
 .image-brain img{
@@ -780,14 +783,15 @@ div.transbox p {
     margin: 8% 20% 5% -10%;
     padding: 4%;
     border: 1px solid #eee0;
+    border-radius: 5px;
     box-shadow: 1px 4px 8px #88888842;
 }
 
-.media-section:nth-child(even) {
+.media-section:nth-child(odd) {
   flex-direction: row-reverse;
 }
 
-.media-section:nth-child(even) .article-description{
+.media-section:nth-child(odd) .article-description{
   margin: 10% -10% 5% 20%;
 }
 
@@ -839,6 +843,7 @@ div.transbox p {
 
 .member-title {
   font-size: 1.6rem;
+  line-height: 1.5;
   color: #737373;
 }
 
@@ -925,6 +930,15 @@ a {
   transition: all 0.2s cubic-bezier(0.42, 0, 0.58, 1);
   cursor: pointer;
   color: #000000;
+}
+
+.whitespace {
+  height: 70px;
+  width: 100%;
+}
+
+.whitespace.form-space {
+    height: 140px;
 }
 
 
