@@ -348,7 +348,7 @@ div.transbox p {
   margin-bottom: 5rem;
   border-radius: 10px;
   overflow: hidden;
-  width: 710px;
+  width: 780px;
   display:none;
 }
 
@@ -364,6 +364,10 @@ div.transbox p {
    height: 500px;
   margin-left: -2.5rem;
   margin-bottom: -1rem;
+}
+
+.iframe-survey {
+  height: 1450px;
 }
 
 .partners>img {
@@ -947,10 +951,6 @@ a {
     height: 140px;
 }
 
-a .foot-para:hover {
-    cursor: initial;
-    color: #fff;
-}
 
 
 
