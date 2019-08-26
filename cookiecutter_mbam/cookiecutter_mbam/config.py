@@ -58,9 +58,6 @@ class Config:
     accept_content = ['json']
     enable_utc = True
     enable_utc = True
-    broker_url = 'redis://localhost:6379'
-    result_backend = 'redis://localhost:6379'
-    celery_ignore_result = False
 
 
     include = ['cookiecutter_mbam.xnat.tasks', 'cookiecutter_mbam.storage.tasks', 'cookiecutter_mbam.derivation.tasks',

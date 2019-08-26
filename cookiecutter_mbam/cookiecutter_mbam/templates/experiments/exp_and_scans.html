@@ -5,7 +5,7 @@
   <h4 class="mt-5">Add a New Session</h4>
     <br>
     <br>
-    <form id="newSessionForm" class="form" method="POST" action="" role="form">
+    <form id="newSessionForm" class="form" method="POST" action="" role="form" enctype="multipart/form-data">
            {{ form.csrf_token }}
             <div class="form-group">
                 {{form.date.label}}
@@ -20,10 +20,6 @@
                 {{form.field_strength(placeholder="Field Strength", class_="form-control")}}
             </div>
         {{ form.hidden_tag()}}
-        {{ form.scan_file(multiple="multiple") }}
-         {{ form.hidden_tag()}}
-        {{ form.scan_file(multiple="multiple") }}
-         {{ form.hidden_tag()}}
         {{ form.scan_file(multiple="multiple") }}
         <br>
         <br>

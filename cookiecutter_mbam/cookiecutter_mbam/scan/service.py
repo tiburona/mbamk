@@ -59,7 +59,7 @@ class ScanService(BaseService):
         self.xc = XNATConnection(config=config.XNAT)
         self.csc = CloudStorageConnection(config=config.AWS)
 
-    def add(self, image_file, xnat_ids):
+    def add(self, image_file, xnat_ids, existing_xnat_ids):
         """The top level public method for adding a scan
 
         Calls methods to infer file type and further process the file, generate xnat identifiers and query strings,
@@ -72,11 +72,20 @@ class ScanService(BaseService):
         """
         self.local_path, self.filename, self.dcm = self._process_file(image_file)
 
-        self.xnat_ids = self.xc.generate_scan_ids(self.experiment, xnat_ids, dcm=self.dcm)
+        self._update_xnat_ids(xnat_ids)
 
-        self.scan_info = [self.xnat_ids[level]['xnat_id'] for level in ('subject', 'experiment', 'scan')]
+        self.existing_xnat_ids = existing_xnat_ids
+
+        self.scan_info = [xnat_ids[level]['xnat_id'] for level in ('subject', 'experiment', 'scan')]
 
         self.scan = self._add_scan_to_database()
+
+
+    def _update_xnat_ids(self, xnat_ids):
+
+        scan_level_xnat_ids = self.xc.scan_ids(self.experiment, dcm=self.dcm)
+        xnat_ids.update(scan_level_xnat_ids)
+        self.xnat_ids = xnat_ids
 
 
     def _process_file(self, image_file):
@@ -176,7 +185,7 @@ class ScanService(BaseService):
                               self.set_attribute(self.scan.id, 'xnat_status', val='Error')]
 
         return chain(
-            self.xc.upload_scan_file(file_path=self.local_path, xnat_ids=self.xnat_ids, import_service=self.dcm),
+            self.xc.upload_scan_file(self.local_path, self.xnat_ids, self.existing_xnat_ids, self.dcm),
             self.set_attributes(self.scan.id, passed_val=True),
             self.set_attribute(self.scan.id, 'xnat_status', val='Uploaded'),
             self.get_attribute(self.scan.id, attr='xnat_uri')

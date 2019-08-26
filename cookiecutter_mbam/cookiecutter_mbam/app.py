@@ -27,13 +27,7 @@ def create_app(config_name=config_name):
     app = Flask(__name__.split('.')[0])
     app.config.from_object(config_by_name[config_name])
 
-    app_logger.error("CONFIG NAME IS {}".format(config_name), extra={'email_admin': False} )
-
-    app_logger.error("celery backend in create app 1 {}".format(celery.backend), extra={'email_admin': False})
-
     init_celery(app, celery=celery)
-
-    app_logger.error("celery backend in create app 2 {}".format(celery.backend), extra={'email_admin': False})
 
     register_extensions(app)
     register_hooks(app)

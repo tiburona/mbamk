@@ -1,18 +1,16 @@
 # -*- coding: utf-8 -*-
 """Experiment service.
 """
-import os
+
 from celery import group, chain
-from cookiecutter_mbam import celery
 from .models import Experiment
 from cookiecutter_mbam.base import BaseService
-from .tasks import set_experiment_attribute, get_experiment_attribute
+from .tasks import set_experiment_attribute, get_experiment_attribute, gen_fs_recon_data
 from cookiecutter_mbam.scan import ScanService
 from cookiecutter_mbam.derivation import DerivationService
 from cookiecutter_mbam.user import UserService
 from cookiecutter_mbam.xnat.service import XNATConnection as XC
 from cookiecutter_mbam.config import config_by_name, config_name
-from cookiecutter_mbam.mbam_logging import app_logger
 
 from flask import current_app
 def debug():
@@ -40,27 +38,29 @@ class ExperimentService(BaseService):
 
     def add(self, user, date, scanner, field_strength, files=None):
         self.experiment = Experiment.create(date=date, scanner=scanner, field_strength=field_strength, user_id=user.id)
-        self.xnat_ids = self.xc.sub_exp_ids(self.user, self.experiment)
-        app_logger.error("celery backend in experiment service {}".format(celery.backend), extra={'email_admin': True})
-        job = group([self._add_scan(file) for file in files]) | self._update_database_objects() | self._run_freesurfer()
+        self.xnat_ids, self.existing_ids = self.xc.sub_exp_ids(self.user, self.experiment)
+        header = group([self._add_scan(file) for file in files])
+        callback = chain(self._update_database_objects(), self._run_freesurfer())
+        job = header | callback
         job.apply_async()
 
     def _add_scan(self, file):
         ss = ScanService(self.user, self.experiment)
-        ss.add(file, self.xnat_ids)
+        ss.add(file, self.xnat_ids, self.existing_ids)
         return ss.upload_and_convert_scan()
+
+    def _gen_fs_recon_data(self):
+        scan_ids = [scan.id for scan in self.experiment.scans]
+        return gen_fs_recon_data.si(scan_ids)
 
     def _run_freesurfer(self):
         self.ds = DerivationService(self.experiment.scans)
         self.ds.create('freesurfer_recon_all')
-        data = {
-            'scans': ' '.join([scan.xnat_id for scan in self.experiment.scans]),
-            'experiment_id': self.experiment.xnat_id
-        }
 
         return chain(
-            self.xc.launch_and_poll_for_completion('freesurfer_recon_all', data),
-            self.ds.update_derivation_model('status', exception_on_failure=True),
+            self._gen_fs_recon_data(),
+            self.xc.launch_and_poll_for_completion('freesurfer_recon_all'),
+            self.ds.update_derivation_model('status', exception_on_failure=True)
         )
 
     def _update_database_objects(self):

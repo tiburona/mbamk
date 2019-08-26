@@ -8,6 +8,7 @@ def debug():
 
 from .tasks import poll_cs_dcm2nii, poll_cs_fsrecon
 
+from cookiecutter_mbam.mbam_logging import app_logger
 
 poll_tasks = {
     'dicom_to_nifti': poll_cs_dcm2nii,
@@ -53,9 +54,9 @@ class XNATConnection:
 
     def sub_exp_ids(self, user, experiment):
         xnat_ids = self._generate_sub_exp_ids(user, experiment)
-        existing_user_ids = self._check_for_existing_user_ids(user)
+        existing_ids = self._check_for_existing_xnat_ids(user, experiment)
+        return xnat_ids, existing_ids
 
-        return self._merge_ids(xnat_ids, existing_user_ids)
 
     def _generate_sub_exp_ids(self, user, experiment):
         xnat_ids = {}
@@ -63,13 +64,13 @@ class XNATConnection:
         xnat_ids['subject'] = {'xnat_id': str(user.id).zfill(6)}
 
         xnat_exp_id = '{}_MR{}'.format(xnat_ids['subject']['xnat_id'], user.num_experiments)
-        exp_date = experiment.date.strftime('%m/%d/%Y')
+        exp_date = experiment.date.strftime('%m-%d-%Y')
         xnat_ids['experiment'] = {'xnat_id': xnat_exp_id,
                                   'query_string': '?xnat:mrSessionData/date={}'.format(exp_date)}
 
         return xnat_ids
 
-    def _generate_scan_ids(self, experiment,  dcm=False):
+    def scan_ids(self, experiment, dcm=False):
         """Generate object ids for use in XNAT
 
         Creates a dictionary with keys for type of XNAT object, including subject, experiment, scan, resource and file.
@@ -92,27 +93,29 @@ class XNATConnection:
 
         return xnat_ids
 
-    def _check_for_existing_user_ids(self, user):
+    def _check_for_existing_xnat_ids(self, user, experiment):
         """Check for existing attributes on the user and experiment
-
         Generates a dictionary with current xnat_id for the user and the experiment as
         values if they exist (empty string if they do not exist).
-
         :return: a dictionary with two keys with the xnat subject id and xnat experiment id.
         :rtype: dict
         """
 
-        return {'subject': {key: getattr(user, key) if hasattr(user, key) else {key: ''} for key in ['xnat_id', 'xnat_uri']}}
+        objs = {'subject': user, 'experiment': experiment}
+        keys = ['xnat_id', 'xnat_uri']
 
-    def _merge_ids(self, new, existing, levels=['subject'], keys=['xnat_uri', 'xnat_id']):
-        for level in levels:
-            for key in keys:
-                if key in existing:
-                    if len(existing[level][key]):
-                        new[level][key] = existing[level][key]
-        return new
+        # sub, exp = [{obj: {key: getattr(objs[obj], key) if hasattr(objs[obj], key) else '' for key in keys}}
+        #             for obj in ['subject', 'experiment']]
 
-    def upload_scan_file(self, file_path, import_service=False):
+
+        sub = {'subject': {key: getattr(objs['subject'], key) if hasattr(objs['subject'], key) else '' for key in keys}}
+        exp = {'experiment': {key: getattr(objs['experiment'], key) if hasattr(objs['experiment'], key) else '' for key in keys}}
+        #             for obj in ['subject', 'experiment']]
+        debug()
+        sub.update(exp)
+        return sub
+
+    def upload_scan_file(self, file_path, xnat_ids, existing_xnat_ids, import_service=False):
         """ Create the XNAT upload chain
         Creates, but does not execute, the Celery chain that creates the XNAT subject and experiment, if necessary, then
         either uploads or imports (for non-dicoms and dicoms, respectively) a dicom file to XNAT.  This chain eventually
@@ -123,47 +126,27 @@ class XNATConnection:
         :return: Celery upload chain
         """
 
-        exp_uri, req_url = self._gen_exp_uri_and_req_url
+        create_resources_signature = create_resources.s(
+            xnat_credentials=self.auth,
+            ids=(xnat_ids, existing_xnat_ids),
+            levels=['subject', 'experiment', 'scan', 'resource', 'file'],
+            import_service=import_service,
+            archive_prefix=self.archive_prefix
+        )
 
         if import_service:
             upload_task = import_scan_to_xnat
         else:
             upload_task = upload_scan_to_xnat
 
-        upload_signature = upload_task.s(xnat_credentials=self.auth, file_path=file_path)
+        upload_signature = upload_task.s(
+            xnat_credentials=self.auth,
+            file_path=file_path
+        )
 
         get_latest_scan_info_signature = get_latest_scan_info.s(xnat_credentials=self.auth)
 
-        return upload_signature | get_latest_scan_info_signature
-
-    def _gen_exp_uri_and_req_url(self, ids, dcm):
-        uri = self.archive_prefix
-        url = self.server + uri
-
-        levels = ['subject', 'experiment', 'scan', 'resource']
-        if dcm:
-            levels = levels[:-2]
-
-        for level in levels:
-
-            addition = os.path.join(level + 's', ids[level]['xnat_id'])
-
-            # Check if a query must be added to the uri
-            try:
-                query = ids[level]['query_string']
-            except KeyError:  # A KeyError will occur when there's no query, which is expected for some levels (like Resource)
-                query = ''
-
-            uri = os.path.join(uri, addition)
-            if level == 'experiment':
-                experiment_uri = uri
-
-            url = os.path.join(url, addition + query)
-
-        if not dcm:
-            url = os.path.join(url, 'files')
-
-        return experiment_uri, url
+        return create_resources_signature | upload_signature | get_latest_scan_info_signature
 
     def launch_and_poll_for_completion(self, process_name, data=None):
 

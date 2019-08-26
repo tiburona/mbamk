@@ -4,7 +4,6 @@
 import traceback
 from flask import Blueprint, render_template, request, flash, redirect, url_for, session
 from flask_security import current_user
-
 from cookiecutter_mbam.utils.error_utils import flash_errors
 from .forms import ExperimentForm, ExperimentAndScanForm
 from .models import Experiment
@@ -12,16 +11,20 @@ from .service import ExperimentService
 from cookiecutter_mbam.scan import ScanService
 from cookiecutter_mbam.base.tasks import global_error_handler
 
+
+from flask import current_app
+def debug():
+    assert current_app.debug == False, "Don't panic! You're here by request of debug()"
+
+
 blueprint = Blueprint('experiment', __name__, url_prefix='/experiments', static_folder='../static')
 
 def add_experiment(form, files):
     """Add an experiment"""
     es = ExperimentService(current_user)
-    exp = es.add(date=form.date.data, scanner=form.scanner.data, field_strength=form.field_strength.data,
+    debug()
+    es.add(date=form.date.data, scanner=form.scanner.data, field_strength=form.field_strength.data,
                  user=current_user, files=files)
-    flash('You successfully created a new experiment.', 'success')
-    session['curr_experiment'] = exp.id
-    return exp
 
 @blueprint.route('/')
 def experiments():
@@ -32,31 +35,29 @@ def experiments():
 @blueprint.route('/add', methods=['GET', 'POST'])
 def add():
     """Access the add an experiment route and form."""
+
+    num2words = {
+        1: 'a new scan',
+        2: 'two new scans',
+        3: 'three new scans'
+    }
+
     form = ExperimentAndScanForm(request.form)
-    files = request.files.getlist('scan_file')
+
     if form.validate_on_submit():
-        exp = add_experiment(form, files)
+        files = request.files.getlist('scan_file')
+        add_experiment(form, files)
+        num_scans = len(files)
 
-        num2words = {
-            1: 'a new scan',
-            2: 'two new scans',
-            3: 'three new scans'
-        }
-        try:
+        flash('You successfully started the process of adding {}.'.format(num2words[num_scans]), 'success')
 
-            num_scans = len(request.files.getlist('scan_file'))
-            flash('You successfully started the process of adding {}.'.format(num2words[num_scans]), 'success')
+        # except Exception as e:
+        #     flash('There was a problem uploading your scan', 'error')  # todo: error should be color coded red
+        #     global_error_handler(request, e, traceback.format_exc(), cel=False, log_message='generic_message',
+        #                          user_email=current_user.email, user_message='generic_message', email_user=True,
+        #                          email_admin=True)
 
-
-        except Exception as e:
-            flash('There was a problem uploading your scan', 'error')  # todo: error should be color coded red
-            global_error_handler(request, e, traceback.format_exc(), cel=False, log_message='generic_message',
-                                 user_email=current_user.email, user_message='generic_message', email_user=True,
-                                 email_admin=True)
-
-
-
-        return redirect(url_for('experiment.single_experiment', id=exp.id))
+        return redirect(url_for('experiment.experiments'))
     else:
         flash_errors(form)
     return render_template('experiments/exp_and_scans.html',form=form)
