@@ -131,12 +131,13 @@ class XNATConnection:
 
     def launch_and_poll_for_completion(self, process_name):
 
-        interval =  {'dicom_to_nifti': 5,  'freesurfer_recon_all': 172800}
+        intervals =  {'dicom_to_nifti_transfer': 5,  'freesurfer_recon_all': 172800}
+        interval = intervals[process_name]
 
         return chain(
             self.gen_dicom_conversion_data(),
             self.launch_command(process_name),
-            self.poll_container_service(interval)
+            self.poll_container_service(5)
         )
 
     def gen_dicom_conversion_data(self):
