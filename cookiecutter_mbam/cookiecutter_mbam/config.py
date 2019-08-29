@@ -64,17 +64,16 @@ class Config:
 
     XNAT = {
         # Be sure below XNAT variables are set in your host environment to access the MIND XNAT server.
-        # Default values assume you are using a local XNAT
+        # Default values assume you are using a local VM XNAT
         'user': env.str('XNAT_USER','admin'),
         'password': env.str('XNAT_PASSWORD','admin'),
         'server': env.str('XNAT_HOST','http://10.1.1.17'),
         'project': env.str('XNAT_PROJECT', 'MBAM_TEST'),
         'local_docker': False,
-        #'docker_host': , 'http://10.20.193.32:2375'
         'docker_host': env.str('XNAT_DOCKER_HOST','unix:///var/run/docker.sock'),
         'dicom_to_nifti_command_id': 1, # DEPRECATED
         'dicom_to_nifti_wrapper_id':'dcm2niix-scan', # DEPRECATED
-        'dicom_to_nifti_transfer_command_id': env.str('DICOM_TO_NIFTI_TRANSFER_COMMAND_ID',2),
+        'dicom_to_nifti_transfer_command_id': env.int('DICOM_TO_NIFTI_TRANSFER_COMMAND_ID',2),
         'dicom_to_nifti_transfer_wrapper_id':'dcm2niix-xfer'
     }
 
@@ -103,11 +102,16 @@ class LocalConfig(Config):
     results_backend = broker_url
 
 class DockerConfig(Config):
-    """ Class defining configurations for docker development. Config_name is 'docker'. """
+    """ Class defining configurations for docker development. Config_name is 'docker'. This is the
+    environment used for build testing in SemaphoreCI"""
     SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://mbam:mbam123@mysql/brain_db'
     # Celery cettings
     broker_url = 'redis://redis:6379'
     results_backend = 'redis://redis:6379'
+
+    XNAT=Config.XNAT
+    XNAT['dicom_to_nifti_transfer_command_id'] = env.int('DICOM_TO_NIFTI_TRANSFER_COMMAND_ID',23)
+    XNAT['docker_host'] = env.str('XNAT_DOCKER_HOST','http://10.20.193.32:2375')
 
 class TestConfig(Config):
     TESTING = True
@@ -129,6 +133,11 @@ class DevConfig(Config):
     # Celery settings. App will connect to redis memcache set up in AWS
     broker_url = env.str('broker_url', default='dummy')
     results_backend = broker_url
+
+    XNAT=Config.XNAT
+    XNAT['dicom_to_nifti_transfer_command_id'] = env.int('DICOM_TO_NIFTI_TRANSFER_COMMAND_ID',23)
+    XNAT['project'] = env.str('XNAT_PROJECT', 'MBAM_STAGING')
+    XNAT['docker_host'] = env.str('XNAT_DOCKER_HOST','http://10.20.193.32:2375')
 
 config_by_name = dict(
     local=LocalConfig,
