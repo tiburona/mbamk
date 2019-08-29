@@ -62,34 +62,21 @@ class Config:
     include = ['cookiecutter_mbam.xnat.tasks', 'cookiecutter_mbam.storage.tasks', 'cookiecutter_mbam.derivation.tasks',
                'cookiecutter_mbam.scan.tasks', 'cookiecutter_mbam.base.tasks']
 
-
     XNAT = {
         # Be sure below XNAT variables are set in your host environment to access the MIND XNAT server.
-        'user': env.str('XNAT_USER','dummy'),
-        'password': env.str('XNAT_PASSWORD','dummy'),
-        'server': env.str('XNAT_HOST','dummy'),
+        # Default values assume you are using a local XNAT
+        'user': env.str('XNAT_USER','admin'),
+        'password': env.str('XNAT_PASSWORD','admin'),
+        'server': env.str('XNAT_HOST','http://10.1.1.17'),
         'project': env.str('XNAT_PROJECT', 'MBAM_TEST'),
         'local_docker': False,
-        #'docker_host': 'unix:///var/run/docker.sock',
-        'docker_host': 'http://10.20.193.32:2375',
-        'dicom_to_nifti_command_id': 1,
-        'dicom_to_nifti_wrapper_id':'dcm2niix-scan',
-        'dicom_to_nifti_transfer_command_id': 23,
+        #'docker_host': , 'http://10.20.193.32:2375'
+        'docker_host': env.str('XNAT_DOCKER_HOST','unix:///var/run/docker.sock'),
+        'dicom_to_nifti_command_id': 1, # DEPRECATED
+        'dicom_to_nifti_wrapper_id':'dcm2niix-scan', # DEPRECATED
+        'dicom_to_nifti_transfer_command_id': env.str('DICOM_TO_NIFTI_TRANSFER_COMMAND_ID',2),
         'dicom_to_nifti_transfer_wrapper_id':'dcm2niix-xfer'
     }
-
-    # XNAT = {
-    #     'user': 'admin',
-    #     'password': 'admin',
-    #     'server': 'http://10.1.1.17',
-    #     'project': 'MBAM_TEST',
-    #     'local_docker': True,
-    #     'docker_host': 'unix:///var/run/docker.sock',
-    #     'dicom_to_nifti_command_id': 2,
-    #     'dicom_to_nifti_wrapper_id':'dcm2niix-scan',
-    #     'dicom_to_nifti_transfer_command_id':3,
-    #     'dicom_to_nifti_transfer_wrapper_id':'dcm2niix-xfer'
-    # }
 
     files = {
         'file_depot': 'static/files/', # this corresponds to /app/static/files ContainerMountPoint
@@ -122,21 +109,6 @@ class DockerConfig(Config):
     broker_url = 'redis://redis:6379'
     results_backend = 'redis://redis:6379'
 
-    XNAT = {
-        # Be sure below XNAT variables are set in your host environment to access the MIND XNAT server.
-        'user': env.str('XNAT_USER','dummy'),
-        'password': env.str('XNAT_PASSWORD','dummy'),
-        'server': env.str('XNAT_HOST','dummy'),
-        'project': env.str('XNAT_PROJECT', 'MBAM_TEST'),
-        'local_docker': False,
-        #'docker_host': 'unix:///var/run/docker.sock',
-        'docker_host': 'http://10.20.193.32:2375',
-        'dicom_to_nifti_command_id': 2,
-        'dicom_to_nifti_wrapper_id':'dcm2niix-scan',
-        'dicom_to_nifti_transfer_command_id': 23,
-        'dicom_to_nifti_transfer_wrapper_id':'dcm2niix-xfer'
-    }
-
 class TestConfig(Config):
     TESTING = True
     SQLALCHEMY_DATABASE_URI = 'sqlite://'
@@ -157,20 +129,6 @@ class DevConfig(Config):
     # Celery settings. App will connect to redis memcache set up in AWS
     broker_url = env.str('broker_url', default='dummy')
     results_backend = broker_url
-
-    XNAT = {
-        'user': env.str('XNAT_USER','mbam'),
-        'password': env.str('XNAT_PASSWORD','dummy'),
-        'server': env.str('XNAT_HOST','dummy'),
-        'project': env.str('XNAT_PROJECT', 'MBAM_STAGING'),
-        'local_docker': False,
-        #'docker_host': 'unix:///var/run/docker.sock',
-        'docker_host': 'http://10.20.193.32:2375',
-        'dicom_to_nifti_command_id': 2,
-        'dicom_to_nifti_wrapper_id':'dcm2niix-scan',
-        'dicom_to_nifti_transfer_command_id': 23,
-        'dicom_to_nifti_transfer_wrapper_id':'dcm2niix-xfer'
-    }
 
 config_by_name = dict(
     local=LocalConfig,

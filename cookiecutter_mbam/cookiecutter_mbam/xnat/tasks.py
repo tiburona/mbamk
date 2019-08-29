@@ -148,8 +148,6 @@ def launch_command(self, data, xnat_credentials, project, command_ids):
     command_id, wrapper_id = command_ids
     url = '/xapi/projects/{}/commands/{}/wrappers/{}/launch'.format(project, command_id, wrapper_id)
     with init_session(user, password) as s:
-        print(data)
-        print(server + url)
         r = s.post(server + url, data)
         if r.ok:
             return r.json()['container-id']
@@ -171,9 +169,6 @@ def poll_cs(self, container_id, xnat_credentials, interval):
         server, user, password = xnat_credentials
         with init_session(user, password) as s:
             while True:
-                print(container_id)
-                print(server + '/xapi/containers/{}'.format(container_id))
-
                 r = s.get(server + '/xapi/containers/{}'.format(container_id))
                 if r.ok:
                     status = r.json()['status']

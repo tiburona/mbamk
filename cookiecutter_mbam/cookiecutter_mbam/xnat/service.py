@@ -6,9 +6,6 @@ from flask import current_app
 def debug():
     assert current_app.debug == False, "Don't panic! You're here by request of debug()"
 
-
-
-
 class XNATConnection:
 
     def __init__(self, config, set_docker_host=False):
