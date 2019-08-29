@@ -4,7 +4,7 @@
 
 set -e
 
-REV_TAG=$(git log -1 --pretty=format:%h)
+REV_TAG=$(git describe --tags)-$(git log -1 --pretty=format:%h)
 
 cd ./cookiecutter_mbam
 
