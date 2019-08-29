@@ -1,8 +1,8 @@
 from flask import Flask
 from scratch import celery
-from .init_celery import init_celery
+from scratch.init_celery import init_celery
 
-from .config import LocalConfig, config_by_name, config_name
+from scratch.config import config_by_name, config_name
 
 def create_app():
     app = Flask(__name__)

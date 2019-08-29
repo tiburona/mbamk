@@ -47,18 +47,17 @@ class Config:
     # Logging Settings
     LOG_FILENAME = 'static/logs/log.txt'
 
-    task_serializer = 'json'
-    result_serializer = 'json'
-    accept_content = ['json']
-    enable_utc = True
-    enable_utc = True
-    broker_url = 'redis://localhost:6379'
-    result_backend = 'redis://localhost:6379'
-    celery_ignore_result = False
+    # task_serializer = 'json'
+    # result_serializer = 'json'
+    # accept_content = ['json']
+    # enable_utc = True
+    # enable_utc = True
+    # broker_url = 'redis://localhost:6379'
+    # result_backend = 'redis://localhost:6379'
+    # celery_ignore_result = False
 
 
-    # include = ['cookiecutter_mbam.xnat.tasks', 'cookiecutter_mbam.storage.tasks', 'cookiecutter_mbam.derivation.tasks',
-    #            'cookiecutter_mbam.scan.tasks', 'cookiecutter_mbam.base.tasks']
+    include = ['scratch.tasks']
 
     XNAT = {
         'user': 'admin',
