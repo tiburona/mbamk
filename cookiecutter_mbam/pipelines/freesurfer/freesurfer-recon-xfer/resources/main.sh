@@ -2,11 +2,15 @@
 
 echo "downloading structural NIFTI files"
 
+
+subject=$1
+shift
 experiment=$1
 shift
+
 for i
 do
-   python3 download.py $experiment $i $XNAT_USER $XNAT_PASS $XNAT_HOST
+   python3 download.py $subject $experiment $i $XNAT_USER $XNAT_PASS $XNAT_HOST
 done
 
 echo "done downloading files"

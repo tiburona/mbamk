@@ -5,7 +5,8 @@
 from celery import group, chain
 from .models import Experiment
 from cookiecutter_mbam.base import BaseService
-from .tasks import set_experiment_attribute, get_experiment_attribute, gen_fs_recon_data
+from .tasks import set_experiment_attribute, get_experiment_attribute, gen_freesurfer_data
+from cookiecutter_mbam.scan.tasks import get_scan_attribute
 from cookiecutter_mbam.scan import ScanService
 from cookiecutter_mbam.derivation import DerivationService
 from cookiecutter_mbam.user import UserService
@@ -40,7 +41,11 @@ class ExperimentService(BaseService):
         self.experiment = Experiment.create(date=date, scanner=scanner, field_strength=field_strength, user_id=user.id)
         self.xnat_ids, self.existing_ids = self.xc.sub_exp_ids(self.user, self.experiment)
         header = group([self._add_scan(file) for file in files])
-        callback = chain(self._update_database_objects(), self._run_freesurfer())
+        callback = chain(
+            self._update_database_objects(),
+            self._get_scans(),
+            self._run_freesurfer()
+        )
         job = header | callback
         job.apply_async()
 
@@ -50,8 +55,16 @@ class ExperimentService(BaseService):
         return ss.upload_and_convert_scan()
 
     def _gen_fs_recon_data(self):
+        # TODO: BIG NOTE TO SELF.  THIS WILL NOT WORK.  WHAT I AM CALLING XNAT_ID IS, IN THE CASE OF EXPERIMENT, REALLY
+        # xnat_label and does not work to retrieve the experiment.
+        # I need project and subject if I want to use the label!!
+        ids = [self.existing_ids[level]['xnat_id'] if len(self.existing_ids[level]['xnat_id']) \
+            else self.xnat_ids[level]['xnat_id'] for level in ['subject', 'experiment']]
+        return gen_freesurfer_data.s(ids)
+
+    def _get_scans(self):
         scan_ids = [scan.id for scan in self.experiment.scans]
-        return gen_fs_recon_data.si(scan_ids)
+        return group([get_scan_attribute.si('xnat_id', scan_id) for scan_id in scan_ids])
 
     def _run_freesurfer(self):
         self.ds = DerivationService(self.experiment.scans)

@@ -2,9 +2,10 @@ import requests
 import sys
 import os
 
-experiment, scan, user, password, host = sys.argv[1:]
+subject, experiment, scan, user, password, host = sys.argv[1:]
 
-url = os.path.join(host, 'data', 'experiments', experiment, 'scans', scan, 'resources', 'NIFTI', 'files')
+url = os.path.join(host, 'data', 'projects', 'MBAM_TEST', 'subjects', subject, 'experiments', experiment, 'scans', scan,
+                   'resources', 'NIFTI', 'files')
 
 def init_session(user, password):
     s = requests.Session()

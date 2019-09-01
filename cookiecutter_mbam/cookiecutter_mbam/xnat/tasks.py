@@ -126,7 +126,7 @@ def gen_dicom_conversion_data(self, uri):
     :return: a dictionary with the payload to be included with the post request to launch dicom conversion
     """
 
-    return {'scan': crop(uri, '/experiments')}
+    return {'scan': crop(uri, '/data')}
 
 
 
@@ -170,6 +170,7 @@ def poll_cs(container_id, xnat_credentials, interval):
             if r.ok:
                 status = r.json()['status']
                 if status in ['Complete', 'Failed', 'Killed', 'Killed (Out of Memory)']:
+                    # Todo: is this really correctly returning when 'Failed'?
                     return status
                 time.sleep(interval)
             else:

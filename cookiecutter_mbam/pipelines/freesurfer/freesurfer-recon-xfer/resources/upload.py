@@ -1,6 +1,11 @@
 import sys
 import os
-from .utils import init_session
+import requests
+
+def init_session(user, password):
+    s = requests.Session()
+    s.auth = (user, password)
+    return s
 
 experiment, user, password, host = sys.argv[1:]
 

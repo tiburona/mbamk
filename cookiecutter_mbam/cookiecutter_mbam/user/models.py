@@ -52,6 +52,7 @@ class User(UserMixin, SurrogatePK, Model):
 
     is_admin = Column(db.Boolean(), default=False)
     xnat_id = Column(db.String(80), nullable=True)
+    xnat_uri = Column(db.String(255), nullable=True)
     num_experiments = Column(db.Integer(), default=0)
     roles = db.relationship(
         'Role', secondary=roles_users,

@@ -90,6 +90,7 @@ class XNATConnection:
 
         if not dcm:
             xnat_ids['resource'] = {'xnat_id': 'NIFTI'}
+            xnat_ids['file'] = {'xnat_id': 'T1.nii.gz', 'query_string': '?xsi:type=xnat:mrScanData'}
 
         return xnat_ids
 
@@ -104,14 +105,10 @@ class XNATConnection:
         objs = {'subject': user, 'experiment': experiment}
         keys = ['xnat_id', 'xnat_uri']
 
-        # sub, exp = [{obj: {key: getattr(objs[obj], key) if hasattr(objs[obj], key) else '' for key in keys}}
-        #             for obj in ['subject', 'experiment']]
+        sub, exp = [
+            {obj:{key: getattr(objs[obj], key) if getattr(objs[obj], key) else '' for key in keys}} for obj in objs
+        ]
 
-
-        sub = {'subject': {key: getattr(objs['subject'], key) if hasattr(objs['subject'], key) else '' for key in keys}}
-        exp = {'experiment': {key: getattr(objs['experiment'], key) if hasattr(objs['experiment'], key) else '' for key in keys}}
-        #             for obj in ['subject', 'experiment']]
-        debug()
         sub.update(exp)
         return sub
 

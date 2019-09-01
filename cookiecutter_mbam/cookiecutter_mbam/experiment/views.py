@@ -22,7 +22,6 @@ blueprint = Blueprint('experiment', __name__, url_prefix='/experiments', static_
 def add_experiment(form, files):
     """Add an experiment"""
     es = ExperimentService(current_user)
-    debug()
     es.add(date=form.date.data, scanner=form.scanner.data, field_strength=form.field_strength.data,
                  user=current_user, files=files)
 

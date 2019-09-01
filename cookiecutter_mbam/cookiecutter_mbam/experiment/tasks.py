@@ -19,12 +19,12 @@ def get_scan_xnat_ids(scan_ids):
     return group([get_scan_attribute.s('xnat_id', scan_id) for scan_id in scan_ids])()
 
 @cel.task
-def gen_fs_recon_data(exp_id, scan_ids):
-    scan_xnat_ids = group([get_scan_attribute.s('xnat_id', scan_id) for scan_id in scan_ids])()
-    experiment_xnat_id = get_experiment_attribute.s('xnat_id', exp_id)()
+def gen_freesurfer_data(scan_id, sub_and_exp_ids):
+    sub_id, exp_id = sub_and_exp_ids
     return {
-            'scans': ' '.join(scan_xnat_ids),
-            'experiment_id': experiment_xnat_id
-        }
+        'scans': scan_id,
+        'experiment': exp_id,
+        'subject': sub_id
+    }
 
 
