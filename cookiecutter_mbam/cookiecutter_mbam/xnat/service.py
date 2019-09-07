@@ -52,25 +52,28 @@ class XNATConnection:
         pass
 
 
-    def sub_exp_ids(self, user, experiment):
-        xnat_ids = self._generate_sub_exp_ids(user, experiment)
-        existing_ids = self._check_for_existing_xnat_ids(user, experiment)
-        return xnat_ids, existing_ids
+    def sub_exp_labels(self, user, experiment):
+        # todo: consider renaming all these "XNAT ids" "xnat labels"  this is more accurate to what they are called in
+        # XNAT and may aid future clarity
+        xnat_labels = self._generate_sub_exp_labels(user, experiment)
+        existing_labels = self._check_for_existing_xnat_labels(user, experiment)
+        return xnat_labels, existing_labels
 
 
-    def _generate_sub_exp_ids(self, user, experiment):
-        xnat_ids = {}
+    def _generate_sub_exp_labels(self, user, experiment):
+        xnat_labels = {}
 
-        xnat_ids['subject'] = {'xnat_id': str(user.id).zfill(6)}
+        xnat_labels['subject'] = {'xnat_label': str(user.id).zfill(6)}
 
-        xnat_exp_id = '{}_MR{}'.format(xnat_ids['subject']['xnat_id'], user.num_experiments)
+        xnat_exp_label = '{}_MR{}'.format(xnat_labels['subject']['xnat_label'], user.num_experiments)
         exp_date = experiment.date.strftime('%m-%d-%Y')
-        xnat_ids['experiment'] = {'xnat_id': xnat_exp_id,
+        xnat_labels['experiment'] = {'xnat_label': xnat_exp_label,
                                   'query_string': '?xnat:mrSessionData/date={}'.format(exp_date)}
 
-        return xnat_ids
+        return xnat_labels
 
-    def scan_ids(self, experiment, dcm=False):
+    # todo: check whether bug here is causing both scans to have the same id
+    def scan_labels(self, experiment, dcm=False):
         """Generate object ids for use in XNAT
 
         Creates a dictionary with keys for type of XNAT object, including subject, experiment, scan, resource and file.
@@ -82,19 +85,19 @@ class XNATConnection:
         :rtype: dict
         """
 
-        xnat_ids = {}
+        xnat_labels = {}
 
         scan_number = experiment.num_scans + 1
-        xnat_scan_id = 'T1_{}'.format(scan_number)
-        xnat_ids['scan'] = {'xnat_id': xnat_scan_id, 'query_string': '?xsiType=xnat:mrScanData'}
+        xnat_scan_label = 'T1_{}'.format(scan_number)
+        xnat_labels['scan'] = {'xnat_label': xnat_scan_label, 'query_string': '?xsiType=xnat:mrScanData'}
 
         if not dcm:
-            xnat_ids['resource'] = {'xnat_id': 'NIFTI'}
-            xnat_ids['file'] = {'xnat_id': 'T1.nii.gz', 'query_string': '?xsi:type=xnat:mrScanData'}
+            xnat_labels['resource'] = {'xnat_label': 'NIFTI'}
+            xnat_labels['file'] = {'xnat_label': 'T1.nii.gz', 'query_string': '?xsi:type=xnat:mrScanData'}
 
-        return xnat_ids
+        return xnat_labels
 
-    def _check_for_existing_xnat_ids(self, user, experiment):
+    def _check_for_existing_xnat_labels(self, user, experiment):
         """Check for existing attributes on the user and experiment
         Generates a dictionary with current xnat_id for the user and the experiment as
         values if they exist (empty string if they do not exist).
@@ -103,7 +106,7 @@ class XNATConnection:
         """
 
         objs = {'subject': user, 'experiment': experiment}
-        keys = ['xnat_id', 'xnat_uri']
+        keys = ['xnat_label', 'xnat_uri']
 
         sub, exp = [
             {obj:{key: getattr(objs[obj], key) if getattr(objs[obj], key) else '' for key in keys}} for obj in objs
@@ -112,7 +115,66 @@ class XNATConnection:
         sub.update(exp)
         return sub
 
-    def upload_scan_file(self, file_path, xnat_ids, existing_xnat_ids, import_service=False):
+    # no matter what happens I have to generate the experiment uri so I can give it to other, later tasks
+    # but if the experiment already exists I don't have to *send* it as a put request.
+
+    def _generate_uris(self, xnat_labels, existing_xnat_labels, import_service):
+        levels = ['subject', 'experiment', 'scan', 'resource', 'file']
+        uris = {}
+        urls = {}
+
+        uri = self.archive_prefix
+
+        if import_service:
+            levels = levels[:-3]
+
+        for level in levels:
+
+            # Check if resources have already been created in XNAT
+            exists_already = level in ['subject', 'experiment'] and len(existing_xnat_labels[level]['xnat_label'])
+            d = existing_xnat_labels if exists_already else xnat_labels
+
+            # Construct the uris for each level and add them to the dictionary this task returns
+            uri = os.path.join(uri, level + 's', d[level]['xnat_label'])
+            uris[level] = uri
+
+            # Check if a query must be added to the uri
+            try:
+                query = xnat_labels[level]['query_string']
+            except KeyError:  # A KeyError will occur when there's no query, which is expected for some levels (like Resource)
+                query = ''
+
+            url = self.server + uri + query
+
+            urls[level] = url
+        return uris, urls
+
+
+    def _create_resources(self, urls, import_service, first_scan):
+
+        resources_to_create = ['subject', 'experiment', 'scan', 'resource']
+
+        if not first_scan:
+            resources_to_create = resources_to_create[2:]
+        if import_service:
+            resources_to_create = resources_to_create[:-2]
+
+        if len(resources_to_create):
+
+            create_resources_signature = create_resources.si(
+                xnat_credentials=self.auth,
+                to_create=resources_to_create,
+                urls=urls
+            )
+
+            return (True, create_resources_signature)
+
+        else:
+            return (False, None)
+
+    # if this is the first scan, the urls need to be all the urls
+    # if it is not the first scan, it does not.
+    def upload_scan_file(self, file_path, xnat_labels, existing_xnat_labels, import_service=False, first_scan=True):
         """ Create the XNAT upload chain
         Creates, but does not execute, the Celery chain that creates the XNAT subject and experiment, if necessary, then
         either uploads or imports (for non-dicoms and dicoms, respectively) a dicom file to XNAT.  This chain eventually
@@ -123,27 +185,32 @@ class XNATConnection:
         :return: Celery upload chain
         """
 
-        create_resources_signature = create_resources.s(
-            xnat_credentials=self.auth,
-            ids=(xnat_ids, existing_xnat_ids),
-            levels=['subject', 'experiment', 'scan', 'resource', 'file'],
-            import_service=import_service,
-            archive_prefix=self.archive_prefix
-        )
+        uris, urls = self._generate_uris(xnat_labels, existing_xnat_labels, import_service)
+
+        do_create_resources, create_resources_signature = self._create_resources(urls, import_service, first_scan)
 
         if import_service:
             upload_task = import_scan_to_xnat
+            url = self.server + '/data/services/import'
         else:
             upload_task = upload_scan_to_xnat
+            url = urls['file']
 
-        upload_signature = upload_task.s(
+        upload_signature = upload_task.si(
             xnat_credentials=self.auth,
-            file_path=file_path
+            file_path=file_path,
+            url = url,
+            exp_uri = uris['experiment']
         )
 
         get_latest_scan_info_signature = get_latest_scan_info.s(xnat_credentials=self.auth)
 
-        return create_resources_signature | upload_signature | get_latest_scan_info_signature
+        upload_chain = upload_signature | get_latest_scan_info_signature
+
+        if do_create_resources:
+            upload_chain = create_resources_signature | upload_chain
+
+        return upload_chain
 
     def launch_and_poll_for_completion(self, process_name, data=None):
 

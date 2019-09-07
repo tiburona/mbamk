@@ -16,7 +16,7 @@ class Scan(SurrogatePK, Model):
     xnat_status = db.Column(db.String(80))
     aws_status = db.Column(db.String(80))
     xnat_uri = db.Column(db.String(255))
-    xnat_id = db.Column(db.String(80))
+    xnat_label = db.Column(db.String(80))
     orig_aws_key = db.Column(db.String(255))
     experiment_id = reference_col('experiment', nullable=True)
 

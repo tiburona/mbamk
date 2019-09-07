@@ -2,7 +2,8 @@
 """Experiment service.
 """
 
-from celery import group, chain
+from functools import reduce
+from celery import group, chain, chord
 from .models import Experiment
 from cookiecutter_mbam.base import BaseService
 from .tasks import set_experiment_attribute, get_experiment_attribute, gen_freesurfer_data
@@ -18,6 +19,8 @@ def debug():
     assert current_app.debug == False, "Don't panic! You're here by request of debug()"
 
 tasks = {'set_attribute': set_experiment_attribute, 'get_attribute': get_experiment_attribute}
+
+# Todo: figure out why I'm seeing the date query set as an experiment attribute in Celery
 
 
 class ExperimentService(BaseService):
@@ -39,32 +42,43 @@ class ExperimentService(BaseService):
 
     def add(self, user, date, scanner, field_strength, files=None):
         self.experiment = Experiment.create(date=date, scanner=scanner, field_strength=field_strength, user_id=user.id)
-        self.xnat_ids, self.existing_ids = self.xc.sub_exp_ids(self.user, self.experiment)
-        header = group([self._add_scan(file) for file in files])
-        callback = chain(
-            self._update_database_objects(),
-            self._get_scans(),
-            self._run_freesurfer()
-        )
-        job = header | callback
+        self.xnat_labels, self.existing_labels = self.xc.sub_exp_labels(self.user, self.experiment)
+        # header = group([self._add_scan(file) for file in files])
+        # callback = chain(
+        #     self._update_database_objects(),
+        #     self._get_scans(),
+        #     self._run_freesurfer()
+        # )
+        # job = header | callback
+
+        add_scans =  chord(self._add_scans(files), self._update_database_objects())
+        run_freesurfer = chord(self._get_scans(), self._run_freesurfer())
+
+        job = add_scans | run_freesurfer
+
         job.apply_async()
 
-    def _add_scan(self, file):
+    def _add_scans(self, files):
+        add_first_scan = self._add_scan(files[0], first_scan=True)
+        if len(files) == 1:
+            return add_first_scan
+        else:
+            add_rest_of_scans = [self._add_scan(file, first_scan=False) for file in files[1:]]
+            return add_first_scan | reduce((lambda x, y: chain(x, y)), add_rest_of_scans)
+
+    def _add_scan(self, file, first_scan):
         ss = ScanService(self.user, self.experiment)
-        ss.add(file, self.xnat_ids, self.existing_ids)
-        return ss.upload_and_convert_scan()
+        ss.add(file, self.xnat_labels, self.existing_labels)
+        return ss.upload_and_convert_scan(first_scan)
 
     def _gen_fs_recon_data(self):
-        # TODO: BIG NOTE TO SELF.  THIS WILL NOT WORK.  WHAT I AM CALLING XNAT_ID IS, IN THE CASE OF EXPERIMENT, REALLY
-        # xnat_label and does not work to retrieve the experiment.
-        # I need project and subject if I want to use the label!!
-        ids = [self.existing_ids[level]['xnat_id'] if len(self.existing_ids[level]['xnat_id']) \
-            else self.xnat_ids[level]['xnat_id'] for level in ['subject', 'experiment']]
-        return gen_freesurfer_data.s(ids)
+        labels = [self.existing_labels[level]['xnat_label'] if len(self.existing_labels[level]['xnat_label']) \
+            else self.xnat_labels[level]['xnat_label'] for level in ['subject', 'experiment']]
+        return gen_freesurfer_data.s(labels)
 
     def _get_scans(self):
         scan_ids = [scan.id for scan in self.experiment.scans]
-        return group([get_scan_attribute.si('xnat_id', scan_id) for scan_id in scan_ids])
+        return group([get_scan_attribute.si('xnat_label', scan_id) for scan_id in scan_ids])
 
     def _run_freesurfer(self):
         self.ds = DerivationService(self.experiment.scans)
@@ -78,9 +92,16 @@ class ExperimentService(BaseService):
 
     def _update_database_objects(self):
 
+        # todo: add setting the uris.
+        # todo: think about whether we want the uri as XNAT defines it or the alternate project/label uri
+        # also do we want xnat id (and can we get it?) versus xnat label
+
         us = UserService()
 
-        subj_attrs, exp_attrs = [self.xnat_ids[level] for level in ['subject', 'experiment']]
+
+
+        subj_attrs, exp_attrs = \
+            [{'xnat_label': self.xnat_labels[level]['xnat_label']} for level in ['subject', 'experiment']]
 
         return chain(
             us.set_attributes(self.user.id, subj_attrs),

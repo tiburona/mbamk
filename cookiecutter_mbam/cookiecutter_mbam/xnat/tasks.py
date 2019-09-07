@@ -6,54 +6,32 @@ from cookiecutter_mbam.utils.request_utils import init_session
 from .utils import crop
 from cookiecutter_mbam.mbam_logging import celery_logger
 
+# TODO: experiment is possibly not being created correctly.  Investigate.
+# Hypothesis: it looks like my experiment is not being created because xnat_ids does not actually contain the url.
+# So my clever solution to pass xnat id's as existing ids doesn't work.
+# Solution: url construction really doesn't need to be celery's job.
+# Also these upload tasks don't have to pass experiment uri to get latest scan info
+# experiment uri is known ahead of time.
 @celery.task
-def create_resources(xnat_credentials, ids, levels, import_service, archive_prefix):
+def create_resources(xnat_credentials, to_create, urls):
     """ Create XNAT resources (subject, experiment, scan, resource, and file) as necessary
     :param tuple xnat_credentials: a three-tuple of the server, username, and password to log into XNAT
-    :param tuple ids: a two-tuple consisting of two dictionaries, both with levels as keys, the first that contains xnat
     ids and queries for each level, and the second that supplies existing XNAT ids, if any
     :param list levels: the levels of the XNAT hierarchy
-    :param bool import_service: whether to invoke the import service (true if the file is a DICOM, false otherwise)
-    :param str archive_prefix: the first component of the uris after the server
-    :return: uris
-    :rtype: dict
     """
     server, user, password = xnat_credentials
-    xnat_ids, existing_xnat_ids = ids
-    uri = archive_prefix
-    uris = {}
-
-    if import_service:
-        levels = levels[:-3]
 
     with init_session(user, password) as s:
-        for level in levels:
+        for level in to_create:
+            url = urls[level]
+            r = s.put(url)
+            print(r.text)
+            if not r.ok:
+                raise ValueError(f'Unexpected status code: {r.status_code} Response: {r.text}')
 
-            # Check if resources have already been created in XNAT
-            exists_already = level in ['subject', 'experiment'] and len(existing_xnat_ids[level]['xnat_id'])
-            d = existing_xnat_ids if exists_already else xnat_ids
-
-            # Construct the uris for each level and add them to the dictionary this task returns
-            uri = os.path.join(uri, level + 's', d[level]['xnat_id'])
-            uris[level] = uri
-
-            # Check if a query must be added to the uri
-            try:
-                query = xnat_ids[level]['query_string']
-            except KeyError:  # A KeyError will occur when there's no query, which is expected for some levels (like Resource)
-                query = ''
-
-            # Create the resource in XNAT
-            if not exists_already and level != 'file':
-                url = server + uri + query
-                r = s.put(url)
-                if not r.ok:
-                    raise ValueError(f'Unexpected status code: {r.status_code} Response: {r.text}')
-
-        return uris
 
 @celery.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5})
-def upload_scan_to_xnat(self, uris, xnat_credentials, file_path):
+def upload_scan_to_xnat(self, xnat_credentials, file_path, url, exp_uri):
     """ Upload a NIFTI format scan to XNAT
     :param self: the task object
     :param dict uris: a dictionary with levels as keys that contains the path for the file to upload (as well as the
@@ -62,18 +40,19 @@ def upload_scan_to_xnat(self, uris, xnat_credentials, file_path):
     :param str file_path: the location of the file on the local disk
     :return: uris
     """
-    url = uris['file']
     server, user, password = xnat_credentials
     files = {'file': ('T1.nii.gz', open(file_path, 'rb'), 'application/octet-stream')}
     with init_session(user, password) as s:
-        r = s.put(server + url, files=files)
+        print(url)
+        r = s.put(url, files=files)
+        print(r.text)
         if r.ok:
-            return uris['experiment']
+            return exp_uri
         else:
-            raise ValueError(f'Unexpected status code: {r.status_code}  Response: /n {r.text}')
+            raise ValueError(f'Unexpected status code: {r.status_code}  Response: \n {r.text}')
 
 @celery.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5})
-def import_scan_to_xnat(self, uris, xnat_credentials, file_path):
+def import_scan_to_xnat(self, xnat_credentials, file_path, url, exp_uri):
     """Import a DICOM format scan to XNAT
     :param self: the task object
     :param dict uris: a dictionary with levels as keys that contains the experiment uri, the import destination
@@ -83,15 +62,16 @@ def import_scan_to_xnat(self, uris, xnat_credentials, file_path):
     This is the task invoked when the scan is in DICOM format.
     """
     server, user, password = xnat_credentials
-    url = uris['experiment']
     files = {'file': ('DICOMS.zip', open(file_path, 'rb'), 'application/octet-stream')}
     with init_session(user, password) as s:
-        r = s.post(server + '/data/services/import', files=files, data={'dest': url, 'overwrite':'delete'})
+        r = s.post(url, files=files, data={'dest': exp_uri, 'overwrite':'delete'})
+        print(r.text)
         if r.ok:
-            return uris['experiment']
+            return exp_uri
         else:
-            raise ValueError(f'Unexpected status code: {r.status_code}  Response: /n {r.text}')
+            raise ValueError(f'Unexpected status code: {r.status_code}  Response: \n {r.text}')
 
+#todo: *this* is the problem.  this no longer works if there's more than one scan.
 @celery.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5})
 def get_latest_scan_info(self, experiment_uri, xnat_credentials):
     """ Get XNAT uri and id of the last uploaded scan for the current experiment
@@ -113,9 +93,9 @@ def get_latest_scan_info(self, experiment_uri, xnat_credentials):
             scans = sorted(scans, key=lambda scan: int(scan['xnat_imagescandata_id']))
             scan_uri = scans[-1]['URI']
             scan_id = scans[-1]['ID']
-            return {'xnat_id': scan_id, 'xnat_uri': scan_uri}
+            return {'xnat_label': scan_id, 'xnat_uri': scan_uri}
         else:
-            raise ValueError(f'Unexpected status code: {r.status_code}  Response: /n {r.text}')
+            raise ValueError(f'Unexpected status code: {r.status_code}  Response: \n {r.text}')
 
 @celery.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5})
 def gen_dicom_conversion_data(self, uri):
@@ -151,7 +131,7 @@ def launch_command(self, data, xnat_credentials, project, command_ids):
         if r.ok:
             return r.json()['container-id']
         else:
-            raise ValueError(f'Unexpected status code: {r.status_code}  Response: /n {r.text}')
+            raise ValueError(f'Unexpected status code: {r.status_code}  Response: \n {r.text}')
 
 # todo: can I dynamically set soft timeout?
 def poll_cs(container_id, xnat_credentials, interval):
@@ -174,7 +154,7 @@ def poll_cs(container_id, xnat_credentials, interval):
                     return status
                 time.sleep(interval)
             else:
-                raise ValueError(f'Unexpected status code: {r.status_code}  Response: /n {r.text}')
+                raise ValueError(f'Unexpected status code: {r.status_code}  Response: \n {r.text}')
 
 @celery.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5}, soft_time_limit=10000)
 def poll_cs_dcm2nii(self, container_id, xnat_credentials, interval):
@@ -215,7 +195,7 @@ def dl_file_from_xnat(self, scan_uri, xnat_credentials, file_path):
             else:
                 raise ValueError(f'Unexpected status code: {response.status_code}  Response: /n {r.text}')
         else:
-            raise ValueError(f'Unexpected status code: {r.status_code}  Response: /n {r.text}')
+            raise ValueError(f'Unexpected status code: {r.status_code}  Response: \n {r.text}')
     return r
 
 
