@@ -4,14 +4,7 @@ from celery.exceptions import SoftTimeLimitExceeded
 from cookiecutter_mbam import celery
 from cookiecutter_mbam.utils.request_utils import init_session
 from .utils import crop
-from cookiecutter_mbam.mbam_logging import celery_logger
 
-# TODO: experiment is possibly not being created correctly.  Investigate.
-# Hypothesis: it looks like my experiment is not being created because xnat_ids does not actually contain the url.
-# So my clever solution to pass xnat id's as existing ids doesn't work.
-# Solution: url construction really doesn't need to be celery's job.
-# Also these upload tasks don't have to pass experiment uri to get latest scan info
-# experiment uri is known ahead of time.
 @celery.task
 def create_resources(xnat_credentials, to_create, urls):
     """ Create XNAT resources (subject, experiment, scan, resource, and file) as necessary
@@ -21,14 +14,18 @@ def create_resources(xnat_credentials, to_create, urls):
     """
     server, user, password = xnat_credentials
 
+    responses = {}
+
     with init_session(user, password) as s:
         for level in to_create:
             url = urls[level]
             r = s.put(url)
-            print(r.text)
+            if level in ['subject', 'experiment']:
+                responses[level] = r.text
             if not r.ok:
-                raise ValueError(f'Unexpected status code: {r.status_code} Response: {r.text}')
-
+                raise ValueError(f'Unexpected status code: {r.status_code} Response: \n {r.text}')
+            
+    return responses
 
 @celery.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5})
 def upload_scan_to_xnat(self, xnat_credentials, file_path, url, exp_uri):
@@ -43,9 +40,7 @@ def upload_scan_to_xnat(self, xnat_credentials, file_path, url, exp_uri):
     server, user, password = xnat_credentials
     files = {'file': ('T1.nii.gz', open(file_path, 'rb'), 'application/octet-stream')}
     with init_session(user, password) as s:
-        print(url)
         r = s.put(url, files=files)
-        print(r.text)
         if r.ok:
             return exp_uri
         else:
@@ -107,8 +102,6 @@ def gen_dicom_conversion_data(self, uri):
     """
 
     return {'scan': crop(uri, '/data')}
-
-
 
 @celery.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5})
 def launch_command(self, data, xnat_credentials, project, command_ids):

@@ -6,7 +6,7 @@ from functools import reduce
 from celery import group, chain, chord
 from .models import Experiment
 from cookiecutter_mbam.base import BaseService
-from .tasks import set_experiment_attribute, get_experiment_attribute, gen_freesurfer_data
+from .tasks import set_experiment_attribute, get_experiment_attribute, gen_freesurfer_data, set_sub_and_exp_xnat_attrs
 from cookiecutter_mbam.scan.tasks import get_scan_attribute
 from cookiecutter_mbam.scan import ScanService
 from cookiecutter_mbam.derivation import DerivationService
@@ -19,9 +19,6 @@ def debug():
     assert current_app.debug == False, "Don't panic! You're here by request of debug()"
 
 tasks = {'set_attribute': set_experiment_attribute, 'get_attribute': get_experiment_attribute}
-
-# Todo: figure out why I'm seeing the date query set as an experiment attribute in Celery
-
 
 class ExperimentService(BaseService):
 
@@ -43,19 +40,9 @@ class ExperimentService(BaseService):
     def add(self, user, date, scanner, field_strength, files=None):
         self.experiment = Experiment.create(date=date, scanner=scanner, field_strength=field_strength, user_id=user.id)
         self.xnat_labels, self.existing_labels = self.xc.sub_exp_labels(self.user, self.experiment)
-        # header = group([self._add_scan(file) for file in files])
-        # callback = chain(
-        #     self._update_database_objects(),
-        #     self._get_scans(),
-        #     self._run_freesurfer()
-        # )
-        # job = header | callback
-
-        add_scans =  chord(self._add_scans(files), self._update_database_objects())
+        add_scans =  self._add_scans(files)
         run_freesurfer = chord(self._get_scans(), self._run_freesurfer())
-
         job = add_scans | run_freesurfer
-
         job.apply_async()
 
     def _add_scans(self, files):
@@ -69,7 +56,10 @@ class ExperimentService(BaseService):
     def _add_scan(self, file, first_scan):
         ss = ScanService(self.user, self.experiment)
         ss.add(file, self.xnat_labels, self.existing_labels)
-        return ss.upload_and_convert_scan(first_scan)
+        experiment_exists_in_xnat = len(self.existing_labels['experiment']['xnat_label'])
+        do_set_attrs = first_scan and not experiment_exists_in_xnat
+        set_attrs = self._set_subject_and_experiment_attributes() if do_set_attrs else None
+        return ss.upload_and_convert_scan(first_scan, set_attrs)
 
     def _gen_fs_recon_data(self):
         labels = [self.existing_labels[level]['xnat_label'] if len(self.existing_labels[level]['xnat_label']) \
@@ -90,21 +80,8 @@ class ExperimentService(BaseService):
             self.ds.update_derivation_model('status', exception_on_failure=True)
         )
 
-    def _update_database_objects(self):
-
-        # todo: add setting the uris.
-        # todo: think about whether we want the uri as XNAT defines it or the alternate project/label uri
-        # also do we want xnat id (and can we get it?) versus xnat label
-
-        us = UserService()
+    def _set_subject_and_experiment_attributes(self):
+        return set_sub_and_exp_xnat_attrs.s(self.xnat_labels, self.user.id, self.experiment.id)
 
 
-
-        subj_attrs, exp_attrs = \
-            [{'xnat_label': self.xnat_labels[level]['xnat_label']} for level in ['subject', 'experiment']]
-
-        return chain(
-            us.set_attributes(self.user.id, subj_attrs),
-            self.set_attributes(self.experiment.id, exp_attrs)
-        )
 

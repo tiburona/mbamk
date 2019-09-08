@@ -9,15 +9,18 @@ from flask import current_app
 def debug():
     assert current_app.debug == False, "Don't panic! You're here by request of debug()"
 
+
+# Todo: figure out model validation in Flask
 class Scan(SurrogatePK, Model):
     """A user's scan."""
 
     __tablename__ = 'scan'
-    xnat_status = db.Column(db.String(80))
-    aws_status = db.Column(db.String(80))
-    xnat_uri = db.Column(db.String(255))
-    xnat_label = db.Column(db.String(80))
-    orig_aws_key = db.Column(db.String(255))
+    xnat_status = db.Column(db.String(80), nullable=False, default='Pending')
+    aws_status = db.Column(db.String(80), nullable=False, default='Pending')
+    xnat_id = db.Column(db.String(80), nullable=True)
+    xnat_uri = db.Column(db.String(255), nullable=True)
+    xnat_label = db.Column(db.String(80), nullable=True)
+    orig_aws_key = db.Column(db.String(255), nullable=True)
     experiment_id = reference_col('experiment', nullable=True)
 
     def __init__(self, experiment_id, **kwargs):

@@ -59,7 +59,6 @@ class ScanService(BaseService):
         self.xc = XNATConnection(config=config.XNAT)
         self.csc = CloudStorageConnection(config=config.AWS)
 
-    # todo: a question.  if I put a scan to XNAT are subject and experiment automatically created
     def add(self, image_file, xnat_labels, existing_xnat_labels):
         """The top level public method for adding a scan
 
@@ -133,7 +132,7 @@ class ScanService(BaseService):
         filename = filename + '.gz'
         return image_file, local_path, filename
 
-    def upload_and_convert_scan(self, first_scan):
+    def upload_and_convert_scan(self, first_scan, set_attrs):
         """Start the Celery chain that uploads scans to XNAT and cloud storage
 
         Calls the methods to construct the chain that uploads the file to cloud storage and the chain that uploads the
@@ -141,7 +140,7 @@ class ScanService(BaseService):
 
         :return: None
         """
-        return group([self._cloud_storage_chain(), self._xnat_chain(first_scan)])
+        return group([self._cloud_storage_chain(), self._xnat_chain(first_scan, set_attrs)])
 
     def _cloud_storage_chain(self):
         """Construct the celery chain to upload an original scan file to cloud storage
@@ -153,7 +152,7 @@ class ScanService(BaseService):
             self.set_attribute(self.scan.id, 'orig_aws_key', passed_val=True)
         )
 
-    def _xnat_chain(self, first_scan):
+    def _xnat_chain(self, first_scan, set_attrs):
         """Construct the celery chain that performs XNAT functions and updates MBAM database with XNAT IDs
 
         Constructs the chain to upload a file to XNAT and update user, experiment, and scan representations in the MBAM
@@ -164,15 +163,15 @@ class ScanService(BaseService):
         """
 
         if self.dcm:
-            xnat_chain = self._upload_file_to_xnat(first_scan) | self._convert_dicom()
+            xnat_chain = self._upload_file_to_xnat(first_scan, set_attrs) | self._convert_dicom()
         else:
-            xnat_chain = self._upload_file_to_xnat(first_scan)
+            xnat_chain = self._upload_file_to_xnat(first_scan, set_attrs)
 
         return xnat_chain.set(link_error=self._error_handler(log_message='generic_message',
                                                              user_message='user_external_uploads',
                                                              email_admin=True))
 
-    def _upload_file_to_xnat(self, first_scan):
+    def _upload_file_to_xnat(self, first_scan, set_attrs):
         """Construct a Celery chain to upload a file to XNAT
 
         Constructs a chain that uploads the scan file to XNAT, updates the user, experiment, and subject in the MBAM
@@ -187,7 +186,7 @@ class ScanService(BaseService):
 
         return chain(
             self.xc.upload_scan_file(self.local_path, self.xnat_labels, self.existing_xnat_labels,
-                                     import_service=self.dcm, first_scan=first_scan),
+                                     import_service=self.dcm, first_scan=first_scan, set_attrs=set_attrs),
             self.set_attributes(self.scan.id, passed_val=True),
             self.set_attribute(self.scan.id, 'xnat_status', val='Uploaded'),
             self.get_attribute(self.scan.id, attr='xnat_uri')

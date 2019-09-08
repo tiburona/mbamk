@@ -1,19 +1,18 @@
 import xnat
 from .tasks import *
 from celery import chain
+from functools import reduce
 
 from flask import current_app
 def debug():
     assert current_app.debug == False, "Don't panic! You're here by request of debug()"
 
-from .tasks import poll_cs_dcm2nii, poll_cs_fsrecon
-
-from cookiecutter_mbam.mbam_logging import app_logger
-
 poll_tasks = {
     'dicom_to_nifti': poll_cs_dcm2nii,
     'freesurfer_recon_all': poll_cs_fsrecon
 }
+
+#todo: arguably there should be two separate classes here, XNAT Connection and XNAT service
 
 class XNATConnection:
 
@@ -53,8 +52,6 @@ class XNATConnection:
 
 
     def sub_exp_labels(self, user, experiment):
-        # todo: consider renaming all these "XNAT ids" "xnat labels"  this is more accurate to what they are called in
-        # XNAT and may aid future clarity
         xnat_labels = self._generate_sub_exp_labels(user, experiment)
         existing_labels = self._check_for_existing_xnat_labels(user, experiment)
         return xnat_labels, existing_labels
@@ -72,7 +69,6 @@ class XNATConnection:
 
         return xnat_labels
 
-    # todo: check whether bug here is causing both scans to have the same id
     def scan_labels(self, experiment, dcm=False):
         """Generate object ids for use in XNAT
 
@@ -172,9 +168,8 @@ class XNATConnection:
         else:
             return (False, None)
 
-    # if this is the first scan, the urls need to be all the urls
-    # if it is not the first scan, it does not.
-    def upload_scan_file(self, file_path, xnat_labels, existing_xnat_labels, import_service=False, first_scan=True):
+    def upload_scan_file(self, file_path, xnat_labels, existing_xnat_labels,
+                         import_service=False, first_scan=True, set_attrs=None):
         """ Create the XNAT upload chain
         Creates, but does not execute, the Celery chain that creates the XNAT subject and experiment, if necessary, then
         either uploads or imports (for non-dicoms and dicoms, respectively) a dicom file to XNAT.  This chain eventually
@@ -205,12 +200,12 @@ class XNATConnection:
 
         get_latest_scan_info_signature = get_latest_scan_info.s(xnat_credentials=self.auth)
 
-        upload_chain = upload_signature | get_latest_scan_info_signature
+        tasks = [(create_resources_signature, do_create_resources),
+                 (set_attrs, set_attrs),
+                 (upload_signature, True),
+                 (get_latest_scan_info_signature, True)]
 
-        if do_create_resources:
-            upload_chain = create_resources_signature | upload_chain
-
-        return upload_chain
+        return reduce((lambda x, y: chain(x, y)), [task for task, perform_task in tasks if perform_task])
 
     def launch_and_poll_for_completion(self, process_name, data=None):
 
@@ -268,16 +263,9 @@ class XNATConnection:
             except Exception as e:
                 pass
 
-
     def xnat_post(self, url, data=None):
         with init_session(self.user, self.password) as session:
             return session.post(self.server + url, data=data)
-
-    def xnat_experiment_uri(self, exp_id):
-        return f'/data/experiments/{exp_id}'
-
-    def xnat_subject_uri(self, sub_id):
-        return f'/data/subjects/{sub_id}'
 
     def xnat_delete(self, url):
         """ Delete an item from XNAT

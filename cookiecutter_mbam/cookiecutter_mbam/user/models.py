@@ -51,6 +51,7 @@ class User(UserMixin, SurrogatePK, Model):
     parent_email = Column(db.String(80), unique=False, nullable=True)
 
     is_admin = Column(db.Boolean(), default=False)
+    xnat_id = Column(db.String(80), nullable=True)
     xnat_label = Column(db.String(80), nullable=True)
     xnat_uri = Column(db.String(255), nullable=True)
     num_experiments = Column(db.Integer(), default=0)
