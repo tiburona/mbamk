@@ -44,10 +44,11 @@ def create_resources(xnat_credentials, ids, levels, import_service, archive_pref
                 query = ''
 
             # Create the resource in XNAT
-            if not exists_already:
-                r = s.put(url = server + uri + query)
+            if not exists_already and level != 'file':
+                url = server + uri + query
+                r = s.put(url)
                 if not r.ok:
-                    raise ValueError(f'Unexpected status code: {r.status_code}')
+                    raise ValueError(f'Unexpected status code: {r.status_code} Response: {r.text}')
 
         return uris
 
@@ -121,14 +122,14 @@ def get_latest_scan_info(self, uris, xnat_credentials):
 
 @celery.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5})
 def gen_dicom_conversion_data(self, uri):
-    """ Generate the payload for the post request that launches the DICOM converstion command
+    """ Generate the payload for the post request that launches the DICOM conversion command
 
     :param self: the task object
     :param str uri: the uri of a scan
     :return: a dictionary with the payload to be included with the post request to launch dicom conversion
     """
-
-    return {'scan': crop(uri, '/experiments')}
+    return {'scan': uri}
+    #return {'scan': crop(uri, '/experiment')}
 
 @celery.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5})
 def launch_command(self, data, xnat_credentials, project, command_ids):
@@ -217,6 +218,3 @@ def create_freesurfer_resource(xnat_credentials, archive_prefix, experiment_xnat
             if not r.ok:
                 raise ValueError(f'Unexpected status code: {r.status_code}')
     return freesurfer_uri
-
-
-

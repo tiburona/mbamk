@@ -56,7 +56,6 @@
         </div>
 
         <div class="container-fluid transbox teaser">
-          <!-- <div class="welcome-link transbox container-fluid"><a id="welcome-link"></a></div> -->
             <div class="value-props row">
               <ul class="value-prop column" id="see-col"><li><p>See inside your own brain.</p></li></ul>
               <ul class="value-prop column" id="participate-col"><li><p>Participate in neuroscience and mental health research.</p></li></ul>
@@ -68,8 +67,8 @@
               <ul class="value-prop" id="learn"><li><p>Learn about your mind and body.</p></li></ul>
             </div>
             <hr>
+
             <div class="learn-more row">
-              <!-- <a class="btn btn-primary" id="find-out-more" href=#welcome-link>Find Out More</a> -->
               <div id="welcome-text" class="link-spacing">
               <p>Welcome! We are a group of Columbia University neuroscientists passionate
                 about accelerating scientific research and helping everyone learn from psychology
@@ -102,23 +101,33 @@
         <div class="container-fluid repeat-section">
           <h3>We want your help. Contribute to mental health research.</h3>
             <div class="buttons">
-              <div><a class="btn btn-primary survey-button" id="tell-us" href=#survey-form>Participate</a></div>
+              <div><a class="btn btn-primary survey-button" id="participate-survey" href=#survey-form>Participate</a></div>
             </div>
-        </div>
 
-        <div class="container-fluid google-form survey" >
-          <a id="survey-form">
-            <iframe class="iframe" src="https://docs.google.com/forms/d/e/1FAIpQLSeUwtxk2TAg2Mbs__tAZqwrYfXwu-4EeREyQkRRsBbDPYnRHw/viewform?embedded=true" height="720px" frameborder="0" marginheight="0" marginwidth="0">Loading...</iframe>
-          </a>
         </div>
 
         <div class="container-fluid google-form email" >
-          <a id="email-form">
+          <div id="email-form"></div>
+          <div class="whitespace form-space"></div>
+          <a>
             <iframe class="iframe" src="https://docs.google.com/forms/d/e/1FAIpQLScD4V3w25sARJ3GlPLe5wgBr8XSjmW6eXT7JcWm7mSfyO9KOA/viewform?embedded=true" height="720px" frameborder="0" marginheight="0" marginwidth="0">Loading...</iframe>
           </a>
         </div>
 
-        <div class="media-section link-spacing" id="media-content">
+
+        <div class="container-fluid google-form survey" >
+          <div id="survey-form"></div>
+          <div class="whitespace form-space"></div>
+          <a>
+            <iframe class="iframe iframe-survey" src="https://docs.google.com/forms/d/e/1FAIpQLSeUwtxk2TAg2Mbs__tAZqwrYfXwu-4EeREyQkRRsBbDPYnRHw/viewform?embedded=true" height="720px" frameborder="0" marginheight="0" marginwidth="0">Loading...</iframe>
+          </a>
+        </div>
+
+
+        <div id="media-content"></div>
+        <div class="whitespace"></div>
+
+        <div class="media-section link-spacing" >
               <div class="article-image">
                 <img src="../assets/images/article/columbia.jpg" class="spiro-columbia"></img>
               </div>
@@ -155,75 +164,73 @@
           <div class="container-fluid row team">
             <div class="team-member">
               <img class="team-image" src="../assets/images/team/spiro.png">
-                <p class="member-name">Spiro Pantazatos, PhD</p>
-                <p class="member-title">Position Title</p>
+                <a href="https://www.columbiapsychiatry.org/profile/spiro-pantazatos-phd" target="_blank"><p class="member-name">Spiro Pantazatos, PhD</p></a>
+                <p class="member-title">Founder and Team Lead <br>Neuroinformatics</p>
             </div>
 
             <div class="team-member">
               <img class="team-image" src="../assets/images/team/katie.png">
-                <p class="member-name">Katie Surrence, MS</p>
-                <p class="member-title">Position Title</p>
+                <a href="https://www.columbiapsychiatry.org/research-labs/brain-imaging-lab" target="_blank"><p class="member-name">Katie Surrence, MS</p></a>
+                <p class="member-title">Web Development</p>
             </div>
 
             <div class="team-member">
               <img class="team-image" src="../assets/images/team/mike.png">
-                <p class="member-name">Mike Schmidt, PhD</p>
-                <p class="member-title">Position Title</p>
+                <a href="https://www.columbiapsychiatry.org/research-labs/brain-imaging-lab" target="_blank"><p class="member-name">Mike Schmidt, PhD</p></a>
+                <p class="member-title">Computational Neuroanatomy</p>
+            </div>
+
+            <div class="team-member">
+              <img class="team-image" src="../assets/images/team/barsha.jpg">
+                <a href="https://www.baarshaa.com/" target="_blank"><p class="member-name">Barsha Maharjan, MFA</p><a/>
+                <p class="member-title">UI Designer</p>
             </div>
 
           </div>
         </div>
 
-        <div class="container-fluid team-section team-supporters" id="team-content">
+<!--         <div class="container-fluid team-section team-supporters" id="team-content">
           <div class="row partner-text">
             <span>Designer</span>
           </div>
           <div class="container-fluid row team">
             <div class="team-member">
               <img class="team-image" src="../assets/images/team/barsha.jpg">
-                <p class="member-name">Barsha Maharjan, MA</p>
+                <a href=https://www.baarshaa.com/><p class="member-name">Barsha Maharjan, MA</p><a/>
                 <p class="member-title">UI Designer</p>
             </div>
           </div>
-        </div>
+        </div> -->
 
-        <!-- team three -->
-        <div class="container-fluid team-section team-supporters" id="team-content">
-          <div class="row partner-text">
-            <span>Collaborators</span>
-          </div>
-          <div class="container-fluid row team">
-            <div class="team-member">
-              <img class="team-image" src="../assets/images/team/spiro.png">
-                <p class="member-name">Spiro</p>
-                <p class="member-title">Position Title</p>
+       <!--<div class="container-fluid team-section team-supporters" id="team-content">
+            <div class="row partner-text">
+              <span>Research Collaborators and Partners</span>
             </div>
+            <div class="container-fluid row team">
+                <div class="team-member">
+                    <a href=https://www.columbiapsychiatry.org/profile/jeffrey-m-miller-md><p class="member-name">Jeffrey Miller, MD</p></a>
+                    <p class="member-title">Associate Professor of Clinical Psychiatry, Columbia University Department of Psychiatry</p>
+                </div>
+                <div class="team-member">
+                    <a href=https://www.linkedin.com/in/chris-stanley-156a9011><p class="member-name">Chris Stanley</p></a>
+                    <p class="member-title">Chief Security Information Officer, NYS Office of Information Technology</p>
+                </div>
+                <div class="team-member team-member-third">
+                    <a href=https://www.columbiapsychiatry.org/profile/theodorus-g-sandfort-phd><p class="member-name">Theo Sandfort, PhD</p></a>
+                    <p class="member-title">Professor of Clinical Sociomedical Science, Columbia University Department of Psychiatry</p>
+                </div>
 
-            <div class="team-member">
-              <img class="team-image" src="../assets/images/team/mike.png">
-                <p class="member-name">Spiro</p>
-                <p class="member-title">Position Title</p>
+                <div class="team-member">
+                    <a href=https://www.researchgate.net/profile/Robert-Paul_Juster><p class="member-name">Robert-Paul Juster, PhD</p></a>
+                    <p class="member-title">Assistant Research Professor, Department of Psychiatry & Addiction, Université de Montréal</p>
+                </div>
+
             </div>
-
-            <div class="team-member">
-              <img class="team-image" src="../assets/images/team/katie.png">
-                <p class="member-name">spiro</p>
-                <p class="member-title">Position Title</p>
-            </div>
-
-            <div class="team-member">
-              <img class="team-image" src="../assets/images/team/katie.png">
-                <p class="member-name">spiro</p>
-                <p class="member-title">Position Title</p>
-            </div>
-
-          </div>
-        </div>
+        </div>-->
 
         <div class="footer row" id="contact-content">
             <div class="footer-content">
-              <p>Want to be a part of our research group?</p>
-              <p> Write to us</p>
+              <p class="foot-para">Want to collaborate with us, provide feedback, or ask a question? Write to us<p>
               <p><a class="contact-link" href="mailto:mbaminfo@gmail.com" target="_blank">mbaminfo@gmail.com</a> &nbsp;&nbsp;&nbsp;&nbsp; <a href="https://twitter.com/MyBrainandMeOrg" target="_blank"><i class="fab fa-twitter contact-link"></i></a></p>
             </div>
         </div>

@@ -6,9 +6,6 @@ from flask import current_app
 def debug():
     assert current_app.debug == False, "Don't panic! You're here by request of debug()"
 
-
-
-
 class XNATConnection:
 
     def __init__(self, config, set_docker_host=False):
@@ -131,12 +128,13 @@ class XNATConnection:
 
     def launch_and_poll_for_completion(self, process_name):
 
-        intervals =  {'dicom_to_nifti': 5,  'freesurfer_recon_all': 172800}
+        intervals =  {'dicom_to_nifti_transfer': 5,  'freesurfer_recon_all': 172800}
+        interval = intervals[process_name]
 
         return chain(
             self.gen_dicom_conversion_data(),
             self.launch_command(process_name),
-            self.poll_container_service(interval)
+            self.poll_container_service(5)
         )
 
     def gen_dicom_conversion_data(self):
@@ -209,9 +207,3 @@ class XNATConnection:
             resource_url = resource_url[5:]
         refresh_url = '/data/services/refresh/catalog?resource=' + resource_url
         return self.xnat_post(refresh_url)
-
-
-
-
-
-

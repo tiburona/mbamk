@@ -75,7 +75,6 @@ To run all tests, run ::
 
     flask test
 
-
 Migrations
 ----------
 
@@ -123,35 +122,3 @@ and invoke it with the command ``redis-server``.
 You also must invoke a Celery worker in a different process.  In the current development environment, this the command to do so:
 
     celery -A cookiecutter_mbam.run_celery:celery worker --loglevel info``
-
-Setup.cfg File
---------------
-
-To configure the app for XNAT include the below parameters in the setup.cfg file
-and store it in the 'cookiecutter_mbam' folder. VAR are parameters that
-need to set by each developer.
-
-  [flake8]
-  ignore = D401
-  max-line-length=120
-
-  [XNAT]
-  user = admin
-  password = admin
-  server = http://10.1.1.17
-  project = MBAM_TEST
-  local_docker = True
-  docker_host = unix:///var/run/docker.sock
-  dicom_to_nifti_command_id = VAR
-  dicom_to_nifti_wrapper_id = dcm2niix-scan
-  dicom_to_nifti_transfer_command_id = VAR
-  dicom_to_nifti_transfer_wrapper_id = dcm2niix-xfer
-
-  [AWS]
-  access_key_id = VAR
-  secret_access_key = VAR
-  bucket_name = VAR
-
-  [files]
-  file_depot = static/files/
-  file_depot_url = http://0.0.0.0:8081/static/files/  

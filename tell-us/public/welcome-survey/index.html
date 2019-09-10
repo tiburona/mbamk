@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>My Brain and Me</title>
+
+    <!-- Default stylesheets-->
+    <link href="../assets/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Font awesome (The local asset is a full Pro version of font-awesome 5.8.1, no need to load remote. -->
+    <!-- link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous" -->
+    <link href="../assets/css/all.css" rel="stylesheet" />
+    <!-- Main stylesheet and color file-->
+    <link href="../assets/css/style3.css" rel="stylesheet" />
+
+    <!-- Icon for browser-->
+    <link rel="shortcut icon" type="image/x-icon" sizes="32x32" href="../assets/images/favicon.png" />
+  </head>
+
+  <body>
+    <main>
+      <section class="main">
+        <video autoplay muted loop id="brainvideo">
+          <source src="../assets/images/mbam3d_newblue_hippocampus.mp4" type="video/mp4">
+        </video>
+
+        <nav class="navbar navbar-expand-lg navbar-inverse">
+          <a class="navbar-brand" id="mbam-logo" href="#"><img src="../assets/images/mbam-logo-v2-white.png" id="brain-icon"></a>
+          <div class="collapse navbar-collapse" id="myNavbar">
+            <ul class="nav navbar-nav navbar-right">
+              <li class="nav-item navbar-link"><a href="#welcome-text">About</a></li>
+              <li class="nav-item navbar-link"><a href="#media-content">Media</a></li>
+              <li class="nav-item navbar-link"><a href="#team-content">Team</a></li>
+              <li class="nav-item"><a href="mailto:mbaminfo@gmail.com">Contact</a></li>
+              <!-- <li class="nav-item"><a href="https://twitter.com/MyBrainandMeOrg"><i class="fab fa-twitter"></i></a></li> -->
+            </ul>
+          </div>
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+        </nav>
+
+        <div class="brain-background">
+          <div class="container header-text">
+            <!-- <h1>My Brain and Me</h1> -->
+            <h2>Your Neuroscience and Psychology Portal</h2>
+            <h3>See yourself like never before. Contribute to mental health research.</h3>
+            <div class="buttons">
+              <div><a class="btn btn-primary survey-button" id="tell-us" href=#survey-form>Tell Us What You Think</a></div>
+              <div><a id="get-updates" href=#email-form>Get Updates</a></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="container-fluid transbox teaser">
+          <!-- <div class="welcome-link transbox container-fluid"><a id="welcome-link"></a></div> -->
+            <div class="value-props row">
+              <ul class="value-prop column" id="see-col"><li><p>See inside your own brain.</p></li></ul>
+              <ul class="value-prop column" id="participate-col"><li><p>Participate in neuroscience and mental health research.</p></li></ul>
+              <ul class="value-prop column" id="learn-col"><li><p>Learn about your mind and body.</p></li></ul>
+            </div>
+            <div id="stacked" class"value-props-stacked">
+              <ul class="value-prop" id="see"><li><p>See inside your own brain.</p></li></ul>
+              <ul class="value-prop" id="participate"><li><p>Participate in neuroscience and mental health research.</p></li></ul>
+              <ul class="value-prop" id="learn"><li><p>Learn about your mind and body.</p></li></ul>
+            </div>
+            <hr>
+
+            <div class="learn-more row">
+              <!-- <a class="btn btn-primary" id="find-out-more" href=#welcome-link>Find Out More</a> -->
+              <div id="welcome-text" class="link-spacing">
+              <p>Welcome! We are a group of Columbia University neuroscientists passionate
+                about accelerating scientific research and helping everyone learn from psychology
+                and neuroscience discoveries. We want to help you to use science to improve your life
+                and give you opportunities to contribute to research.
+                Our flagship service, now in development, is a tool to help you upload a brain scan
+                and get a beautiful, interactive, 3D visualization of your own brain.
+                If you don’t have a brain scan, we’ll help you look for a research study you
+                can participate in to get one for free.</p>
+              <p>Below you can leave your email for an update on when we're ready to release our
+                brain visualization tool.  But that's not all! We have a lot of ideas about where to go from here, and we want to know what’s
+                important to you, so we’re opening the floor. Tell us what you think we
+                should work on next, and if you like, sign up to get updates on our projects.</p>
+              <!-- <p style="text-align: center;"><a class="btn btn-primary survey-button" id="survey" href=#subscribe-form>Take a Survey</a></p> -->
+            </div>
+          </div> <!-- /welcome-link -->
+        </div>
+
+        <div class="container-fluid partner-section">
+          <div class="row partner-text">
+            <span>our partners</span>
+          </div>
+          <div class="container-fluid row partners">
+            <img class="footer-image" src="../assets/images/nyspi_logo.png">
+            <img class="footer-image" src="../assets/images/media_lab_logo.png">
+            <img class="footer-image" src="../assets/images/columbia_logo_white.png">
+          </div>
+        </div>
+
+        <div class="container-fluid repeat-section">
+          <h3>We want your help. Contribute to mental health research.</h3>
+            <div class="buttons">
+              <div><a class="btn btn-primary survey-button" id="tell-us" href=#survey-form>Participate</a></div>
+            </div>
+            
+        </div>
+
+        <div class="container-fluid google-form email" >
+          <div id="email-form"></div>
+          <div class="whitespace form-space"></div>
+          <a>
+            <iframe class="iframe" src="https://docs.google.com/forms/d/e/1FAIpQLScD4V3w25sARJ3GlPLe5wgBr8XSjmW6eXT7JcWm7mSfyO9KOA/viewform?embedded=true" height="720px" frameborder="0" marginheight="0" marginwidth="0">Loading...</iframe>
+          </a>
+        </div>
+
+
+        <div class="container-fluid google-form survey" >
+          <div id="survey-form"></div>
+          <div class="whitespace form-space"></div>
+          <a id="survey-form">
+            <iframe class="iframe" src="https://docs.google.com/forms/d/e/1FAIpQLSeUwtxk2TAg2Mbs__tAZqwrYfXwu-4EeREyQkRRsBbDPYnRHw/viewform?embedded=true" height="720px" frameborder="0" marginheight="0" marginwidth="0">Loading...</iframe>
+          </a>
+        </div>
+
+
+        <div id="media-content"></div>
+        <div class="whitespace"></div>
+
+        <div class="media-section link-spacing" >
+              <div class="article-image">
+                <img src="../assets/images/article/columbia.jpg" class="spiro-columbia"></img>
+              </div>
+              <div class="article-wrapper">
+                <div class="article-description">
+                  <p class="article-title">Spiro Pantazatos Presents 'My Brain and Me' at the 2019 NYC Media Lab Combine</p>
+                  <p class="article-date">April 24, 2019</p>
+                  <p class="article-para">In April, Spiro Pantazatos, PhD, Assistant Professor of Clinical Neurobiology in Psychiatry, presented his lab’s project, My Brain and Me, at the 2019 NYC Media Lab Combine (Demo Day). We spoke with Pantazatos about how he found his way to Columbia Psychiatry, his My Brain and Me project, and his experience at the NYC Media Lab Combine. </p>
+                  <a class="article-button" href="https://www.columbiapsychiatry.org/news/spiro-pantazatos-presents-my-brain-and-me-2019-nyc-media-lab-combine" target="_blank">Full Article</a>
+                </div>
+              </div>
+        </div>
+
+        <div class="media-section">
+              <div class="article-image image-brain">
+                <img src="../assets/images/article/brain.jpg" class="combine-brain"></img>
+              </div>
+              <div class="article-wrapper">
+                <div class="article-description article-description2">
+                  <p class="article-title">My Brain and Me</p>
+                  <p class="article-date">January 2, 2019</p>
+                  <p class="article-para">We want to help you see yourself like never before, and in the process, move scientific research forward, enabling discovery that will ease the burden of physical and mental illness.  </p>
+                  <a class="article-button" href="https://www.thecombine.nyc/my-brain-and-me" target="_blank">Full Article</a>
+                </div>
+              </div>
+        </div>
+
+
+        <!-- team one -->
+        <div class="container-fluid team-section" id="team-content">
+          <div class="row partner-text">
+            <span>Our team</span>
+          </div>
+          <div class="container-fluid row team">
+            <div class="team-member">
+              <img class="team-image" src="../assets/images/team/spiro.png">
+                <a href="https://www.columbiapsychiatry.org/profile/spiro-pantazatos-phd" target="_blank"><p class="member-name">Spiro Pantazatos, PhD</p></a>
+                <p class="member-title">Founder and Team Lead <br> Translational Neuroinformatics</p>
+            </div>
+
+            <div class="team-member">
+              <img class="team-image" src="../assets/images/team/katie.png">
+                <a href="https://www.columbiapsychiatry.org/research-labs/brain-imaging-lab" target="_blank"><p class="member-name">Katie Surrence, MS</p></a>
+                <p class="member-title">Web Development</p>
+            </div>
+
+            <div class="team-member">
+              <img class="team-image" src="../assets/images/team/mike.png">
+                <a href="https://www.columbiapsychiatry.org/research-labs/brain-imaging-lab" target="_blank"><p class="member-name">Mike Schmidt, PhD</p></a>
+                <p class="member-title">Computational Neuroanatomy</p>
+            </div>
+
+            <div class="team-member">
+              <img class="team-image" src="../assets/images/team/barsha.jpg">
+                <a href="https://www.baarshaa.com/" target="_blank"><p class="member-name">Barsha Maharjan, MFA</p><a/>
+                <p class="member-title">UI Designer</p>
+            </div>
+
+          </div>
+        </div>
+
+<!--         <div class="container-fluid team-section team-supporters" id="team-content">
+          <div class="row partner-text">
+            <span>Designer</span>
+          </div>
+          <div class="container-fluid row team">
+            <div class="team-member">
+              <img class="team-image" src="../assets/images/team/barsha.jpg">
+                <a href=https://www.baarshaa.com/><p class="member-name">Barsha Maharjan, MA</p><a/>
+                <p class="member-title">UI Designer</p>
+            </div>
+          </div>
+        </div> -->
+
+<!--         <div class="container-fluid team-section team-supporters" id="team-content">
+            <div class="row partner-text">
+              <span>Research Collaborators and Partners</span>
+            </div>
+            <div class="container-fluid row team">
+                <div class="team-member">
+                    <a href=https://www.columbiapsychiatry.org/profile/jeffrey-m-miller-md><p class="member-name">Jeffrey Miller, MD</p></a>
+                    <p class="member-title">Associate Professor of Clinical Psychiatry, Columbia University Department of Psychiatry</p>
+                </div>
+                <div class="team-member">
+                    <a href=https://www.linkedin.com/in/chris-stanley-156a9011><p class="member-name">Chris Stanley</p></a>
+                    <p class="member-title">Chief Security Information Officer, NYS Office of Information Technology</p>
+                </div>
+                <div class="team-member team-member-third">
+                    <a href=https://www.columbiapsychiatry.org/profile/theodorus-g-sandfort-phd><p class="member-name">Theo Sandfort, PhD</p></a>
+                    <p class="member-title">Professor of Clinical Sociomedical Science, Columbia University Department of Psychiatry</p>
+                </div>
+
+                <div class="team-member">
+                    <a href=https://www.researchgate.net/profile/Robert-Paul_Juster><p class="member-name">Robert-Paul Juster, PhD</p></a>
+                    <p class="member-title">Assistant Research Professor, Department of Psychiatry & Addiction, Université de Montréal</p>
+                </div>
+
+            </div>
+        </div> -->
+
+        <div class="footer row" id="contact-content">
+            <div class="footer-content">
+              <p>Want to collaborate with us, provide feedback, or ask a question? Write to us</p>
+              <p><a class="contact-link" href="mailto:mbaminfo@gmail.com" target="_blank">mbaminfo@gmail.com</a> &nbsp;&nbsp;&nbsp;&nbsp; <a href="https://twitter.com/MyBrainandMeOrg" target="_blank"><i class="fab fa-twitter contact-link"></i></a></p>
+            </div>
+        </div>
+
+      </section>
+    </main>
+
+    <!-- Javascript -->
+    <script src="../assets/lib/jquery/dist/jquery.js"></script>
+    <script src="../assets/js/clickhandlers.js"></script>
+    <script src="../assets/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+
+  </body>
+</html>

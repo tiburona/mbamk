@@ -239,10 +239,10 @@ class ScanService(BaseService):
         :return: a chain of Celery tasks to convert a DICOM file to NIFTI
         """
         self.ds = DerivationService([self.scan])
-        self.ds.create('dicom_to_nifti')
+        self.ds.create('dicom_to_nifti_transfer')
 
         return chain(
-            self.xc.launch_and_poll_for_completion('dicom_to_nifti'),
+            self.xc.launch_and_poll_for_completion('dicom_to_nifti_transfer'),
             self.ds.update_derivation_model('status', exception_on_failure=True),
         )
 
@@ -294,10 +294,3 @@ class ScanService(BaseService):
             self.xc.xnat_delete(scan.xnat_uri)
             self.experiment.update(num_scans=self.experiment.num_scans - 1)
         scan.delete()
-
-
-
-
-
-
-

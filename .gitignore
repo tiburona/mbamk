@@ -1,14 +1,15 @@
 *.pyc
 /cookiecutter_mbam/cookiecutter_mbam/node_modules
-/app_config.env
-/web/flask_brain_db/app_config.py
-/web/venv/
-/web/flask_brain_db/xnat.cfg
-/web/flask_brain_db/xnat_c9.cfg
 /.semaphore-cache
-.DS_Store
+/cookiecutter_mbam/cookiecutter_mbam/webpack/manifest.json
+/cookiecutter_mbam/mbam.log
+
+._.DS_Store
+**/.DS_Store
+**/._.DS_Store
 /landing_page/.firebase
 /landing_page/.DS_Store
 /cookiecutter_mbam/setup.cfg
 /landing_page/public/returned-brain-demo/
+/mbam-cfn-templates/._*
 

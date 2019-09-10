@@ -1,8 +1,6 @@
 from celery import Celery
 import functools
 
-
-
 def get_celery_worker_status(app):
  i = app.control.inspect()
  stats = i.stats()
@@ -25,6 +23,3 @@ def unpack_tuple(f):
             args = args[0] + args[1:]
         return f(*args, **kwargs)
     return _wrapper
-
-
-

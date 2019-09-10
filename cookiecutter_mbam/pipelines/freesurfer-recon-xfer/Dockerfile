@@ -4,7 +4,7 @@ COPY resources /usr/local/src
 
 WORKDIR /usr/local/src
 
-RUN mkdir /input && mkdir /output
+RUN mkdir /input && mkdir /output && mkdir /output/uploads && mkdir /output/uploads/stats && mkdir /output/uploads/surf
 
 ENV SUBJECTS_DIR=/output
 
