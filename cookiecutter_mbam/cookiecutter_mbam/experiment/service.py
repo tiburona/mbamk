@@ -40,9 +40,9 @@ class ExperimentService(BaseService):
     def add(self, user, date, scanner, field_strength, files=None):
         self.experiment = Experiment.create(date=date, scanner=scanner, field_strength=field_strength, user_id=user.id)
         self.xnat_labels, self.existing_labels = self.xc.sub_exp_labels(self.user, self.experiment)
-        add_scans =  self._add_scans(files)
+        add_scans = self._add_scans(files)
         run_freesurfer = chord(self._get_scans(), self._run_freesurfer())
-        job = add_scans | run_freesurfer
+        job = chain(add_scans, run_freesurfer)
         job.apply_async()
 
     def _add_scans(self, files):
@@ -51,7 +51,12 @@ class ExperimentService(BaseService):
             return add_first_scan
         else:
             add_rest_of_scans = [self._add_scan(file, first_scan=False) for file in files[1:]]
-            return add_first_scan | reduce((lambda x, y: chain(x, y)), add_rest_of_scans)
+            add_chain = add_first_scan | reduce((lambda x, y: chain(x, y)), add_rest_of_scans)
+            # I've tried generating add_chain a couple ways; both are equivalent and work how I expect afaict
+            add_chain = add_first_scan
+            for add_scan in add_rest_of_scans:
+                add_chain |= add_scan
+            return add_chain
 
     def _add_scan(self, file, first_scan):
         ss = ScanService(self.user, self.experiment)
@@ -68,7 +73,7 @@ class ExperimentService(BaseService):
 
     def _get_scans(self):
         scan_ids = [scan.id for scan in self.experiment.scans]
-        return group([get_scan_attribute.si('xnat_label', scan_id) for scan_id in scan_ids])
+        return group([get_scan_attribute.si('xnat_id', scan_id) for scan_id in scan_ids])
 
     def _run_freesurfer(self):
         self.ds = DerivationService(self.experiment.scans)

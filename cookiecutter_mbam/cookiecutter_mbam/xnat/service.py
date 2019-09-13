@@ -111,9 +111,6 @@ class XNATConnection:
         sub.update(exp)
         return sub
 
-    # no matter what happens I have to generate the experiment uri so I can give it to other, later tasks
-    # but if the experiment already exists I don't have to *send* it as a put request.
-
     def _generate_uris(self, xnat_labels, existing_xnat_labels, import_service):
         levels = ['subject', 'experiment', 'scan', 'resource', 'file']
         uris = {}
@@ -194,7 +191,7 @@ class XNATConnection:
         upload_signature = upload_task.si(
             xnat_credentials=self.auth,
             file_path=file_path,
-            url = url,
+            url=url,
             exp_uri = uris['experiment']
         )
 
@@ -205,7 +202,9 @@ class XNATConnection:
                  (upload_signature, True),
                  (get_latest_scan_info_signature, True)]
 
-        return reduce((lambda x, y: chain(x, y)), [task for task, perform_task in tasks if perform_task])
+        upload_chain = reduce((lambda x, y: chain(x, y)), [task for task, perform_task in tasks if perform_task])
+
+        return upload_chain
 
     def launch_and_poll_for_completion(self, process_name, data=None):
 

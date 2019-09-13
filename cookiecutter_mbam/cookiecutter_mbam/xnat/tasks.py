@@ -7,10 +7,12 @@ from .utils import crop
 
 @celery.task
 def create_resources(xnat_credentials, to_create, urls):
-    """ Create XNAT resources (subject, experiment, scan, resource, and file) as necessary
+    """ Create XNAT resources (subject, experiment, scan, resource) as necessary
     :param tuple xnat_credentials: a three-tuple of the server, username, and password to log into XNAT
     ids and queries for each level, and the second that supplies existing XNAT ids, if any
-    :param list levels: the levels of the XNAT hierarchy
+    :param list to_create: the levels (among subject, experiment, scan, resource) that should be created
+    :param dict urls: a dictionary of urls for each put request
+    :return: responses
     """
     server, user, password = xnat_credentials
 
@@ -19,22 +21,24 @@ def create_resources(xnat_credentials, to_create, urls):
     with init_session(user, password) as s:
         for level in to_create:
             url = urls[level]
+            print(level, url)
             r = s.put(url)
             if level in ['subject', 'experiment']:
                 responses[level] = r.text
             if not r.ok:
-                raise ValueError(f'Unexpected status code: {r.status_code} Response: \n {r.text}')
-            
+                print("ERROR", url)
+                print(r.text)
+                #raise ValueError(f'Unexpected status code: {r.status_code} Response: \n {r.text}')
+
     return responses
 
 @celery.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5})
 def upload_scan_to_xnat(self, xnat_credentials, file_path, url, exp_uri):
     """ Upload a NIFTI format scan to XNAT
     :param self: the task object
-    :param dict uris: a dictionary with levels as keys that contains the path for the file to upload (as well as the
-    uris for subject, experiment, etc.)
     :param tuple xnat_credentials: a three-tuple of the server, username, and password to log into XNAT
     :param str file_path: the location of the file on the local disk
+    :param str url:
     :return: uris
     """
     server, user, password = xnat_credentials
@@ -66,7 +70,6 @@ def import_scan_to_xnat(self, xnat_credentials, file_path, url, exp_uri):
         else:
             raise ValueError(f'Unexpected status code: {r.status_code}  Response: \n {r.text}')
 
-#todo: *this* is the problem.  this no longer works if there's more than one scan.
 @celery.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5})
 def get_latest_scan_info(self, experiment_uri, xnat_credentials):
     """ Get XNAT uri and id of the last uploaded scan for the current experiment
@@ -88,7 +91,7 @@ def get_latest_scan_info(self, experiment_uri, xnat_credentials):
             scans = sorted(scans, key=lambda scan: int(scan['xnat_imagescandata_id']))
             scan_uri = scans[-1]['URI']
             scan_id = scans[-1]['ID']
-            return {'xnat_label': scan_id, 'xnat_uri': scan_uri}
+            return {'xnat_id': scan_id, 'xnat_uri': scan_uri}
         else:
             raise ValueError(f'Unexpected status code: {r.status_code}  Response: \n {r.text}')
 

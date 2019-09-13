@@ -61,6 +61,7 @@ def scan_number_validation(request, add_exp):
             return 'You can upload up to three files.'
     else:
         pass
+        #todo: put this back!
         # num_scans = Experiment.get_by_id(str(session['curr_experiment'])).num_scans
         # if num_scans + num_scans_to_add > 3:
         #     return "A session can only have three scans.  You already have {}.".format(num2words[num_scans])
@@ -76,6 +77,7 @@ def meta_add(form, request, redirect_route, template, add_exp=False):
             return redirect(url_for(redirect_route))
         if add_exp:
             pass
+            # todo: what is going on here?
             #exp_id = add_experiment(form)
         else:
             exp_id = str(session['curr_experiment'])
