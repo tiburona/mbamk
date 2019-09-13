@@ -59,7 +59,7 @@ class ScanService(BaseService):
         self.xc = XNATConnection(config=config.XNAT)
         self.csc = CloudStorageConnection(config=config.AWS)
 
-    def add(self, image_file, xnat_labels, existing_xnat_labels):
+    def add_to_database(self, image_file, xnat_labels, existing_xnat_labels):
         """The top level public method for adding a scan
 
         Calls methods to infer file type and further process the file, generate xnat identifiers and query strings,
@@ -79,6 +79,7 @@ class ScanService(BaseService):
         self.scan_info = [xnat_labels[level]['xnat_label'] for level in ('subject', 'experiment', 'scan')]
 
         self.scan = self._add_scan_to_database()
+
 
 
     def _update_xnat_labels(self, xnat_labels):
@@ -132,17 +133,7 @@ class ScanService(BaseService):
         filename = filename + '.gz'
         return image_file, local_path, filename
 
-    def upload_and_convert_scan(self, first_scan, set_attrs):
-        """Start the Celery chain that uploads scans to XNAT and cloud storage
-
-        Calls the methods to construct the chain that uploads the file to cloud storage and the chain that uploads the
-        file to XNAT, and runs both these chains in parallel.
-
-        :return: None
-        """
-        return group([self._cloud_storage_chain(), self._xnat_chain(first_scan, set_attrs)])
-
-    def _cloud_storage_chain(self):
+    def add_to_cloud_storage(self):
         """Construct the celery chain to upload an original scan file to cloud storage
 
         :return: Celery chain that uploads a scan to cloud storage
@@ -152,7 +143,7 @@ class ScanService(BaseService):
             self.set_attribute(self.scan.id, 'orig_aws_key', passed_val=True)
         )
 
-    def _xnat_chain(self, first_scan, set_attrs):
+    def add_to_xnat(self, first_scan, set_sub_and_exp_attrs):
         """Construct the celery chain that performs XNAT functions and updates MBAM database with XNAT IDs
 
         Constructs the chain to upload a file to XNAT and update user, experiment, and scan representations in the MBAM
@@ -163,9 +154,9 @@ class ScanService(BaseService):
         """
 
         if self.dcm:
-            xnat_chain = self._upload_file_to_xnat(first_scan, set_attrs) | self._convert_dicom()
+            xnat_chain = self._upload_file_to_xnat(first_scan, set_sub_and_exp_attrs) | self._convert_dicom()
         else:
-            xnat_chain = self._upload_file_to_xnat(first_scan, set_attrs)
+            xnat_chain = self._upload_file_to_xnat(first_scan, set_sub_and_exp_attrs)
 
         return xnat_chain.set(link_error=self._error_handler(log_message='generic_message',
                                                              user_message='user_external_uploads',
@@ -192,6 +183,9 @@ class ScanService(BaseService):
             self.get_attribute(self.scan.id, attr='xnat_uri')
             ).set(link_error=error_proc)
 
+
+    # todo: is there any way to make the download file and upload file independent of the rest of the chain?
+    # probably not.
     def _convert_dicom(self):
         """Construct a chain to perform conversion of dicoms to nifti
 

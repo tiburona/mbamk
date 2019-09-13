@@ -40,31 +40,44 @@ class ExperimentService(BaseService):
     def add(self, user, date, scanner, field_strength, files=None):
         self.experiment = Experiment.create(date=date, scanner=scanner, field_strength=field_strength, user_id=user.id)
         self.xnat_labels, self.existing_labels = self.xc.sub_exp_labels(self.user, self.experiment)
-        add_scans = self._add_scans(files)
+        self.exists_in_xnat = len(self.existing_labels['experiment']['xnat_label'])
+
+        add_scans_to_xnat, add_scans_to_cloud_storage = self._add_scans(files)
+
+        cloud_storage_job = group(add_scans_to_cloud_storage)
+        cloud_storage_job.apply_async()
+
+        xnat_job = reduce((lambda x, y: chain(x, y)), add_scans_to_xnat)
+
         run_freesurfer = chord(self._get_scans(), self._run_freesurfer())
-        job = chord(add_scans, run_freesurfer)
-        job.apply_async()
+        xnat_job = chain(xnat_job, run_freesurfer)
+        xnat_job.apply_async()
 
     def _add_scans(self, files):
-        add_first_scan = self._add_scan(files[0], first_scan=True)
+        add_scans = self._add_scan(files[0], first_scan=True)
         if len(files) == 1:
-            return add_first_scan
+            return add_scans
         else:
-            add_rest_of_scans = [self._add_scan(file, first_scan=False) for file in files[1:]]
-            add_chain = add_first_scan | reduce((lambda x, y: chain(x, y)), add_rest_of_scans)
-            # I've tried generating add_chain a couple ways; both are equivalent and work how I expect afaict
-            add_chain = add_first_scan
-            for add_scan in add_rest_of_scans:
-                add_chain |= add_scan
-            return add_chain
+            [
+                add_scans[i].extend(tasks)
+                for file in files[1:]
+                for i, tasks in enumerate(self._add_scan(file, first_scan=False))
+            ]
+            #for file in files[1:]:
+                # add_scan_to_xnat, add_scan_to_cloud_storage = self._add_scan(file, first_scan=False)
+                # add_scans[0].extend(add_scan_to_xnat)
+                # add_scans[1].extend(add_scan_to_cloud_storage)
+        return add_scans
 
     def _add_scan(self, file, first_scan):
         ss = ScanService(self.user, self.experiment)
-        ss.add(file, self.xnat_labels, self.existing_labels)
-        experiment_exists_in_xnat = len(self.existing_labels['experiment']['xnat_label'])
-        do_set_attrs = first_scan and not experiment_exists_in_xnat
-        set_attrs = self._set_subject_and_experiment_attributes() if do_set_attrs else None
-        return ss.upload_and_convert_scan(first_scan, set_attrs)
+        do_set_attrs = first_scan and not self.exists_in_xnat
+        set_xnat_attrs = self._set_subject_and_experiment_attributes() if do_set_attrs else None
+        ss.add_to_database(file, self.xnat_labels, self.existing_labels)
+        add_to_xnat = ss.add_to_xnat(first_scan, set_xnat_attrs)
+        add_to_cloud_storage = ss.add_to_cloud_storage()
+        return [add_to_xnat], [add_to_cloud_storage]
+
 
     def _gen_fs_recon_data(self):
         labels = [self.existing_labels[level]['xnat_label'] if len(self.existing_labels[level]['xnat_label']) \
