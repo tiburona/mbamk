@@ -42,7 +42,7 @@ class ExperimentService(BaseService):
         self.xnat_labels, self.existing_labels = self.xc.sub_exp_labels(self.user, self.experiment)
         add_scans = self._add_scans(files)
         run_freesurfer = chord(self._get_scans(), self._run_freesurfer())
-        job = chain(add_scans, run_freesurfer)
+        job = chord(add_scans, run_freesurfer)
         job.apply_async()
 
     def _add_scans(self, files):
