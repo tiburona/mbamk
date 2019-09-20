@@ -16,6 +16,7 @@ Todo: consider that the import service leaves a file as a .nii, but upload servi
 
 """
 
+import json
 from celery import group, chain
 from cookiecutter_mbam.config import config_by_name, config_name
 from .models import Scan
@@ -80,6 +81,8 @@ class ScanService(BaseService):
 
         self.scan = self._add_scan_to_database()
 
+        return self.scan
+
 
 
     def _update_xnat_labels(self, xnat_labels):
@@ -143,7 +146,8 @@ class ScanService(BaseService):
             self.set_attribute(self.scan.id, 'orig_aws_key', passed_val=True)
         )
 
-    def add_to_xnat(self, first_scan, set_sub_and_exp_attrs):
+    # todo: answer question about whether you can have separate error procs on two sub chains
+    def add_to_xnat_and_run_freesurfer(self, first_scan, set_sub_and_exp_attrs, labels):
         """Construct the celery chain that performs XNAT functions and updates MBAM database with XNAT IDs
 
         Constructs the chain to upload a file to XNAT and update user, experiment, and scan representations in the MBAM
@@ -154,13 +158,32 @@ class ScanService(BaseService):
         """
 
         if self.dcm:
-            xnat_chain = self._upload_file_to_xnat(first_scan, set_sub_and_exp_attrs) | self._convert_dicom()
+            xnat_chain = chain(self._upload_file_to_xnat(first_scan, set_sub_and_exp_attrs), self._convert_dicom())
         else:
             xnat_chain = self._upload_file_to_xnat(first_scan, set_sub_and_exp_attrs)
 
-        return xnat_chain.set(link_error=self._error_handler(log_message='generic_message',
-                                                             user_message='user_external_uploads',
-                                                             email_admin=True))
+        xnat_chain = xnat_chain | self._trigger_job(json.dumps(self._run_freesurfer_on_scan(labels)))
+
+        return xnat_chain.set(
+            #link=self._run_freesurfer_on_scan(labels),
+            link_error=self._error_handler(log_message='generic_message',
+                                           user_message='user_external_uploads',
+                                           email_admin=True)
+        )
+    # todo: upload to cloud storage
+    # todo:
+    def _run_freesurfer_on_scan(self, labels):
+        ds = DerivationService([self.scan])
+        ds.create('freesurfer_recon_all')
+
+        return chain(
+            self.get_attribute(self.scan.id, attr='xnat_id'),
+            self.xc._gen_fs_recon_data(labels),
+            self.xc.launch_and_poll_for_completion('freesurfer_recon_all'),
+            ds.update_derivation_model('status', exception_on_failure=True)
+        )
+
+
 
     def _upload_file_to_xnat(self, first_scan, set_attrs):
         """Construct a Celery chain to upload a file to XNAT
@@ -231,7 +254,7 @@ class ScanService(BaseService):
         """
         return chain(
             self.get_attribute(self.scan.id, attr='xnat_uri', passed_val=False),
-            self.xc.dl_file_from_xnat(self.file_depot),
+            self.xc.dl_file_from_xnat(self.file_depot)
         )
 
     def _upload_derivation_to_cloud_storage(self):

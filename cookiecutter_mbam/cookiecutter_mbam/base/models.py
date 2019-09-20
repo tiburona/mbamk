@@ -1,4 +1,4 @@
-from .tasks import global_error_handler
+from .tasks import global_error_handler, trigger_job
 from flask import request
 from flask_security import current_user
 import traceback
@@ -10,10 +10,8 @@ from flask import current_app
 def debug():
     assert current_app.debug == False, "Don't panic! You're here by request of debug()"
 
-class BaseService():
-    def __init__(self, cls=None, tasks={}):
-        self.cls = cls
-        self.tasks = tasks
+
+class BaseModel:
 
     @property
     def username(self):
@@ -25,6 +23,11 @@ class BaseService():
         except:
             return ''
 
+    def _trigger_job(self, job, passed_val=False, *args, **kwargs):
+        if passed_val:
+            return trigger_job.s(job)
+        else:
+            return trigger_job.si(job, *args, **kwargs)
 
     def _error_handler(self, log_message, user_message='', email_admin=True):
         return global_error_handler.s(cel=True, log_message=log_message, user_name=self.username,
@@ -35,6 +38,16 @@ class BaseService():
         global_error_handler(request, exc, traceback.format_exc(), cel=False, log_message=log_message, user_name=self._username(),
                              user_email=current_user.email, user_message=user_message, email_user=True,
                              email_admin=email_admin)
+
+    def _send_email(self):
+        #todo: this method should take relevant arguments and return send email signature with arguments
+        pass
+
+
+class BaseService(BaseModel):
+    def __init__(self, cls=None, tasks={}):
+        self.cls = cls
+        self.tasks = tasks
 
     def set_attribute(self, instance_id, key, val='', passed_val=False):
         return self._gen_signature_of_factory_task('set_attribute', val, instance_id, key, passed_val=passed_val)
@@ -68,6 +81,4 @@ class BaseService():
         except:
             pass
 
-    def _send_email(self):
-        #todo: this method should take relevant arguments and return send email signature with arguments
-        pass
+

@@ -23,21 +23,17 @@ def set_experiment_attributes(*args):
 def get_scan_xnat_ids(scan_ids):
     return group([get_scan_attribute.s('xnat_id', scan_id) for scan_id in scan_ids])()
 
-@cel.task
-def gen_freesurfer_data(scan_ids, sub_and_exp_ids):
-    sub_id, exp_id = sub_and_exp_ids
-    return {
-        'scans': scan_ids,
-        'experiment': exp_id,
-        'subject': sub_id
-    }
 
 @cel.task
-def set_sub_and_exp_xnat_attrs(responses, xnat_labels, user_id, exp_id):
+def set_sub_and_exp_xnat_attrs(responses, xnat_labels, user_id, exp_id, attrs_to_set):
+    print(attrs_to_set)
+    print(responses)
     sub, exp = [{'xnat_id': responses[key],
                  'xnat_uri': '/data/experiments/{}'.format(responses[key]),
                  'xnat_label': xnat_labels[key]['xnat_label']}
-                for key in ['subject', 'experiment']]
-    set_subject_attributes(sub, user_id)
-    set_experiment_attributes(exp, exp_id)
+                for key in attrs_to_set]
+    if 'subject' in attrs_to_set:
+        set_subject_attributes(sub, user_id)
+    if 'experiment' in attrs_to_set:
+        set_experiment_attributes(exp, exp_id)
 

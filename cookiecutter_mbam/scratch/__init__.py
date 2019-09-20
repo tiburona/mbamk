@@ -1,5 +1,5 @@
 from celery import Celery
-from .config import LocalConfig
+from .config import Config
 
 celery = Celery(__name__,
                 broker='redis://localhost:6379/0',

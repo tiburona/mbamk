@@ -1,4 +1,5 @@
 import xnat
+from cookiecutter_mbam.base import BaseModel
 from .tasks import *
 from celery import chain
 from functools import reduce
@@ -14,7 +15,7 @@ poll_tasks = {
 
 #todo: arguably there should be two separate classes here, XNAT Connection and XNAT service
 
-class XNATConnection:
+class XNATConnection(BaseModel):
 
     def __init__(self, config, set_docker_host=False):
         self.xnat_config = config
@@ -215,6 +216,12 @@ class XNATConnection:
 
     def gen_dicom_conversion_data(self):
         return gen_dicom_conversion_data.s()
+
+    def _gen_fs_recon_data(self, sub_and_exp_labels, scan_label=None):
+        if scan_label:
+            return gen_freesurfer_data.si(scan_label, sub_and_exp_labels)
+        else:
+            return gen_freesurfer_data.s(sub_and_exp_labels)
 
     def launch_command(self, process_name, data=None):
         xnat_credentials = (self.server, self.user, self.password)

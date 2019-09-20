@@ -21,15 +21,14 @@ def create_resources(xnat_credentials, to_create, urls):
     with init_session(user, password) as s:
         for level in to_create:
             url = urls[level]
-            print(level, url)
             r = s.put(url)
             if level in ['subject', 'experiment']:
                 responses[level] = r.text
             if not r.ok:
-                print("ERROR", url)
-                print(r.text)
+                print("error")
                 #raise ValueError(f'Unexpected status code: {r.status_code} Response: \n {r.text}')
-
+            print(url)
+            print(level)
     return responses
 
 @celery.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5})
@@ -107,6 +106,17 @@ def gen_dicom_conversion_data(self, uri):
     return {'scan': crop(uri, '/data')}
 
 @celery.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5})
+def gen_freesurfer_data(self, scan_id, sub_and_exp_ids):
+    sub_id, exp_id = sub_and_exp_ids
+
+    return {
+            'scans': [scan_id],
+            'experiment': exp_id,
+            'subject': sub_id
+         }
+
+
+@celery.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5})
 def launch_command(self, data, xnat_credentials, project, command_ids):
     """ Launch a command in XNAT
 
@@ -165,7 +175,6 @@ def poll_cs_fsrecon(self, container_id, xnat_credentials, interval):
         return poll_cs(container_id, xnat_credentials, interval)
     except SoftTimeLimitExceeded:
         return 'Timed Out'
-
 
 @celery.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5})
 def dl_file_from_xnat(self, scan_uri, xnat_credentials, file_path):

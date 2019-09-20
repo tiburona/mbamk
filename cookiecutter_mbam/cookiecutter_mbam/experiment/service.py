@@ -6,11 +6,10 @@ from functools import reduce
 from celery import group, chain, chord
 from .models import Experiment
 from cookiecutter_mbam.base import BaseService
-from .tasks import set_experiment_attribute, get_experiment_attribute, gen_freesurfer_data, set_sub_and_exp_xnat_attrs
+from .tasks import set_experiment_attribute, get_experiment_attribute, set_sub_and_exp_xnat_attrs
 from cookiecutter_mbam.scan.tasks import get_scan_attribute
 from cookiecutter_mbam.scan import ScanService
 from cookiecutter_mbam.derivation import DerivationService
-from cookiecutter_mbam.user import UserService
 from cookiecutter_mbam.xnat.service import XNATConnection as XC
 from cookiecutter_mbam.config import config_by_name, config_name
 
@@ -40,7 +39,7 @@ class ExperimentService(BaseService):
     def add(self, user, date, scanner, field_strength, files=None):
         self.experiment = Experiment.create(date=date, scanner=scanner, field_strength=field_strength, user_id=user.id)
         self.xnat_labels, self.existing_labels = self.xc.sub_exp_labels(self.user, self.experiment)
-        self.exists_in_xnat = len(self.existing_labels['experiment']['xnat_label'])
+
 
         add_scans_to_xnat, add_scans_to_cloud_storage = self._add_scans(files)
 
@@ -49,8 +48,6 @@ class ExperimentService(BaseService):
 
         xnat_job = reduce((lambda x, y: chain(x, y)), add_scans_to_xnat)
 
-        run_freesurfer = chord(self._get_scans(), self._run_freesurfer())
-        xnat_job = chain(xnat_job, run_freesurfer)
         xnat_job.apply_async()
 
     def _add_scans(self, files):
@@ -59,47 +56,36 @@ class ExperimentService(BaseService):
             return add_scans
         else:
             [
-                add_scans[i].extend(tasks)
+                add_scans[i].extend(subtasks)
                 for file in files[1:]
-                for i, tasks in enumerate(self._add_scan(file, first_scan=False))
+                for i, subtasks in enumerate(self._add_scan(file, first_scan=False))
             ]
-            #for file in files[1:]:
-                # add_scan_to_xnat, add_scan_to_cloud_storage = self._add_scan(file, first_scan=False)
-                # add_scans[0].extend(add_scan_to_xnat)
-                # add_scans[1].extend(add_scan_to_cloud_storage)
         return add_scans
 
     def _add_scan(self, file, first_scan):
         ss = ScanService(self.user, self.experiment)
-        do_set_attrs = first_scan and not self.exists_in_xnat
-        set_xnat_attrs = self._set_subject_and_experiment_attributes() if do_set_attrs else None
-        ss.add_to_database(file, self.xnat_labels, self.existing_labels)
-        add_to_xnat = ss.add_to_xnat(first_scan, set_xnat_attrs)
+        set_xnat_attrs = self._set_subject_and_experiment_attributes(first_scan)
+
+        labels = [self.existing_labels[level]['xnat_label'] if len(self.existing_labels[level]['xnat_label']) \
+                      else self.xnat_labels[level]['xnat_label'] for level in ['subject', 'experiment']]
+
+        scan = ss.add_to_database(file, self.xnat_labels, self.existing_labels)
+        add_to_xnat = ss.add_to_xnat_and_run_freesurfer(first_scan, set_xnat_attrs, labels)
         add_to_cloud_storage = ss.add_to_cloud_storage()
+
         return [add_to_xnat], [add_to_cloud_storage]
 
+    def _set_subject_and_experiment_attributes(self, first_scan):
 
-    def _gen_fs_recon_data(self):
-        labels = [self.existing_labels[level]['xnat_label'] if len(self.existing_labels[level]['xnat_label']) \
-            else self.xnat_labels[level]['xnat_label'] for level in ['subject', 'experiment']]
-        return gen_freesurfer_data.s(labels)
+        attrs_to_set = [
+            resource for resource in ['subject', 'experiment']
+            if not len(self.existing_labels['experiment']['xnat_label'])
+        ]
 
-    def _get_scans(self):
-        scan_ids = [scan.id for scan in self.experiment.scans]
-        return group([get_scan_attribute.si('xnat_id', scan_id) for scan_id in scan_ids])
-
-    def _run_freesurfer(self):
-        self.ds = DerivationService(self.experiment.scans)
-        self.ds.create('freesurfer_recon_all')
-
-        return chain(
-            self._gen_fs_recon_data(),
-            self.xc.launch_and_poll_for_completion('freesurfer_recon_all'),
-            self.ds.update_derivation_model('status', exception_on_failure=True)
-        )
-
-    def _set_subject_and_experiment_attributes(self):
-        return set_sub_and_exp_xnat_attrs.s(self.xnat_labels, self.user.id, self.experiment.id)
+        if not len(attrs_to_set) or not first_scan:
+            return None
+        else:
+            return set_sub_and_exp_xnat_attrs.s(self.xnat_labels, self.user.id, self.experiment.id, attrs_to_set)
 
 
 

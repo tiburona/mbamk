@@ -61,7 +61,7 @@ class Config:
 
 
     include = ['cookiecutter_mbam.xnat.tasks', 'cookiecutter_mbam.storage.tasks', 'cookiecutter_mbam.derivation.tasks',
-               'cookiecutter_mbam.scan.tasks', 'cookiecutter_mbam.base.tasks']
+               'cookiecutter_mbam.scan.tasks', 'cookiecutter_mbam.base.tasks', 'cookiecutter_mbam.experiment.tasks']
 
     XNAT = {
         'user': 'admin',
