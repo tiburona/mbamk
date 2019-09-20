@@ -411,6 +411,246 @@ div.transbox p {
   color: #F3B131;
 }
 
+.btn:hover {
+  color: #313131;
+  background-color: #f0bc5a!important;
+  text-decoration: none;
+  outline: none;
+}
+
+.google-form {
+  margin-bottom: 5rem;
+}
+
+.footer {
+  background:#14353f;
+  padding: 5rem 10rem 4rem 10rem;
+  position: relative;
+}
+
+.media-section {
+  display: flex;
+}
+
+.article-image > img {
+  object-fit: cover;
+  width: 600px;
+  height: 410px;
+  border-radius: 5px;
+}
+
+.image-brain img{
+  width: 500px;
+}
+
+
+.spiro-columbia {
+  object-position: 100% 0;
+}
+
+.combine-brain {
+  object-position: -50% 0;
+}
+
+.article-wrapper {
+  text-align: center;
+}
+
+.mobile-show {
+  display: none;
+}
+
+.mobile-hide {
+  display: block;
+}
+
+.article-title {
+  font-size: 2rem;
+  font-weight: 500;
+}
+
+.article-date {
+  font-size: 1.3rem;
+  color: #6d6d6d;
+}
+
+.article-1 {
+  margin-left: 15%;
+}
+
+.article-2 {
+  margin-right: 15%;
+}
+
+.article-description {
+    background-color: #ffffff;
+    text-align: left;
+    margin: 8% 0% 5% 0%;
+    padding: 4%;
+    border: 1px solid #eee0;
+    border-radius: 5px;
+    box-shadow: 1px 4px 8px #88888842;
+}
+
+.article-description2 {
+  margin-top: 18%;
+  margin-left: -4%;
+}
+
+
+.article-para {
+    font-size: 1.4rem;
+    letter-spacing: 1px;
+    word-spacing: 1px;
+    line-height: 1.3;
+    margin: 15px 0;
+}
+
+.article-button {
+    color: #e4a52b;
+    font-weight: 500;
+    font-size: 1.3rem;
+    padding: 0.6rem 0rem;
+}
+
+.partners {
+  display: flex;
+  justify-content: space-around;
+  padding: 3rem 5rem 3rem 5rem;
+}
+
+.team{
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0;
+  padding: 4rem 11rem 4rem 12rem;
+}
+
+.team-member {
+  width: 33%;
+  padding: 0 25px;
+}
+
+.team-member:nth-child(n+4) {
+    margin-top: 4%;
+}
+
+
+.team-member-third {
+    margin-top: 0 !important;
+}
+
+.team-image {
+  width: 50%;
+  border-radius: 50%;
+}
+
+.member-name {
+  padding-top: 2rem;
+  margin-bottom: 7px;
+}
+
+.member-title {
+  font-size: 1.6rem;
+  line-height: 1.5;
+  color: #737373;
+}
+
+.partner-section {
+  padding: 50px 0px;
+}
+
+.footer-image {
+  max-width: 25%;
+  max-height: auto;
+  vertical-align: bottom;
+}
+
+.partner-text {
+  text-transform: capitalize;
+  color: #ffb366;
+  line-height: 0.5;
+  text-align: center;
+}
+
+.partner-text span {
+  display: inline-block;
+  position: relative;
+  color: #333;
+  font-size: 1.7rem;
+  letter-spacing: 1px;
+}
+
+.partner-text span:before,
+.partner-text span:after {
+  content: "";
+    position: absolute;
+    height: 5px;
+    border-top: 1px solid #eee;
+    top: 3px;
+    width:490px;
+}
+
+.partner-text span:before {
+  right: 100%;
+  margin-right: 15px;
+}
+
+.partner-text span:after {
+  left: 100%;
+  margin-left: 15px;
+}
+
+.repeat-section {
+  padding: 8rem 0px 6rem 0;
+  background: #f6f6f6;
+}
+
+.repeat-section .survey-button{
+  margin-top: 1rem;
+}
+
+.team-section {
+  padding: 8rem 0px 2rem 0;
+  background: #fff;
+}
+
+.team-supporters{
+  padding-top: 10px;
+}
+
+.icon-credit {
+  font-size: 1rem;
+  color: #1ac9ff;
+  padding-top: 1rem;
+}
+
+.icon-credit a {
+  color: #1ac9ff;
+}
+
+a:hover {
+  color: #ffb366;
+  text-decoration: none;
+  outline: none;
+}
+
+a {
+  transition: all 0.2s cubic-bezier(0.42, 0, 0.58, 1);
+  cursor: pointer;
+  color: #000000;
+}
+
+.whitespace {
+  height: 70px;
+  width: 100%;
+}
+
+.whitespace.form-space {
+    height: 140px;
+}
+
+
 
 @media screen and (max-width: 565px) {
   .navbar-brand>img {
@@ -431,16 +671,20 @@ div.transbox p {
   }
 
 
-  .article-description {
-    margin: 8% 60% 5% -90% !important;
+  .article-title {
+    margin-bottom: 3px;
   }
 
-  .article-description2{
-    margin: 25% -40% 5% 11% !important
+  .article-para {
+    font-size: 1.3rem !important;
+    letter-spacing: 0.5px !important;
+    word-spacing: 0.5px !important;
+    line-height: 1.6 !important;
+    margin: 15px 0;
   }
 
   .spinning-brain {
-    margin-top:0;
+    margin-top: 0;
   }
 
   .btn {
@@ -489,6 +733,22 @@ div.transbox p {
    height: 50%;
 }
 
+
+  .team-member:nth-child(n+4) {
+    margin-top: 0 !important;
+  }
+
+  .member-name {
+    font-size: 1.5rem !important;
+  }
+
+  .member-title {
+    font-size: 1.3rem !important;
+  }
+
+    .spiro-columbia {
+    object-position: 430% 0;
+  }
 
 }
 
@@ -644,9 +904,6 @@ div.transbox p {
     opacity: .8;
   }
 
-/*  .brain-background {
-    margin-left: 1rem;
-  }*/
 
   div.value-props {
     display: none;
@@ -656,6 +913,10 @@ div.transbox p {
     display: block;
     padding: 0 8rem;
   }
+
+/*  .navbar {
+    width: 52%;
+  }*/
 }
 
 @media screen and (max-width: 992px) {
@@ -679,6 +940,27 @@ div.transbox p {
   .value-prop>li p {
     font-size: 1.75rem;
   }
+
+  .mobile-show {
+  display: block;
+  }
+
+  .mobile-hide {
+    display: none;
+  }
+
+  .article-description {
+    margin: -1% 7% 5% 8%;
+  }
+
+  .article-1 {
+  margin-left: 0;
+  }
+
+  .article-2 {
+    margin-right: 0;
+  }
+
 
 }
 
@@ -713,242 +995,6 @@ div.transbox p {
   div.transbox {
   }
 
-}
-
-
-
-
-.btn:hover {
-  color: #313131;
-  background-color: #f0bc5a!important;
-  text-decoration: none;
-  outline: none;
-}
-
-.google-form {
-  margin-bottom: 5rem;
-}
-
-.footer {
-  background:#14353f;
-  padding: 5rem 10rem 4rem 10rem;
-  position: relative;
-}
-
-.media-section {
-  display: flex;
-}
-
-.article-image {
-  width: 50%;
-}
-
-.article-image > img {
-  object-fit: cover;
-  width: 600px;
-  height: 410px;
-  border-radius: 5px;
-}
-
-.image-brain img{
-  width: 500px;
-}
-
-.article-wrapper {
-  width: 50%;
-}
-
-.spiro-columbia {
-  object-position: 100% 0;
-}
-
-.combine-brain {
-  object-position: -50% 0;
-}
-
-.article-wrapper {
-  text-align: center;
-}
-
-.article-title {
-  font-size: 2rem;
-  font-weight: 500;
-}
-
-.article-date {
-  font-size: 1.3rem;
-  color: #6d6d6d;
-}
-
-.article-description {
-    display: inline-block;
-    background-color: #ffffff;
-    text-align: left;
-    margin: 8% 20% 5% -10%;
-    padding: 4%;
-    border: 1px solid #eee0;
-    border-radius: 5px;
-    box-shadow: 1px 4px 8px #88888842;
-}
-
-.media-section:nth-child(odd) {
-  flex-direction: row-reverse;
-}
-
-.media-section:nth-child(odd) .article-description{
-  margin: 10% -10% 5% 20%;
-}
-
-.article-para {
-    font-size: 1.4rem;
-    letter-spacing: 1px;
-    word-spacing: 1px;
-    line-height: 1.3;
-    margin: 15px 0;
-}
-
-.article-button {
-    color: #e4a52b;
-    font-weight: 500;
-    font-size: 1.3rem;
-    padding: 0.6rem 0rem;
-}
-
-.partners {
-  display: flex;
-  justify-content: space-around;
-  padding: 3rem 5rem 3rem 5rem;
-}
-
-.team{
-  display: flex;
-  flex-wrap: wrap;
-  margin: 0;
-  padding: 4rem 11rem 4rem 12rem;
-}
-
-.team-member {
-  width: 33%;
-  padding: 0 25px;
-}
-
-.team-member:nth-child(n+4) {
-    margin-top: 4%;
-}
-
-
-.team-member-third {
-    margin-top: 0 !important;
-}
-
-.team-image {
-  width: 50%;
-  border-radius: 50%;
-}
-
-.member-name {
-  padding-top: 2rem;
-  margin-bottom: 7px;
-}
-
-.member-title {
-  font-size: 1.6rem;
-  line-height: 1.5;
-  color: #737373;
-}
-
-.partner-section {
-  padding: 50px 0px;
-}
-
-.footer-image {
-  max-width: 25%;
-  max-height: auto;
-  vertical-align: bottom;
-}
-
-.partner-text {
-  text-transform: capitalize;
-  color: #ffb366;
-  line-height: 0.5;
-  text-align: center;
-}
-
-.partner-text span {
-  display: inline-block;
-  position: relative;
-  color: #333;
-  font-size: 1.7rem;
-  letter-spacing: 1px;
-}
-
-.partner-text span:before,
-.partner-text span:after {
-  content: "";
-    position: absolute;
-    height: 5px;
-    border-top: 1px solid #eee;
-    top: 3px;
-    width:490px;
-}
-
-.partner-text span:before {
-  right: 100%;
-  margin-right: 15px;
-}
-
-.partner-text span:after {
-  left: 100%;
-  margin-left: 15px;
-}
-
-.repeat-section {
-  padding: 8rem 0px 6rem 0;
-  background: #f6f6f6;
-}
-
-.repeat-section .survey-button{
-  margin-top: 1rem;
-}
-
-.team-section {
-  padding: 8rem 0px 2rem 0;
-  background: #fff;
-}
-
-.team-supporters{
-  padding-top: 10px;
-}
-
-.icon-credit {
-  font-size: 1rem;
-  color: #1ac9ff;
-  padding-top: 1rem;
-}
-
-.icon-credit a {
-  color: #1ac9ff;
-}
-
-a:hover {
-  color: #ffb366;
-  text-decoration: none;
-  outline: none;
-}
-
-a {
-  transition: all 0.2s cubic-bezier(0.42, 0, 0.58, 1);
-  cursor: pointer;
-  color: #000000;
-}
-
-.whitespace {
-  height: 70px;
-  width: 100%;
-}
-
-.whitespace.form-space {
-    height: 140px;
 }
 
 
