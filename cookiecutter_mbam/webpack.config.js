@@ -27,7 +27,6 @@ module.exports = {
       path.join(__dirname, 'node_modules', 'bootstrap', 'dist', 'css', 'bootstrap.css'),
       path.join(__dirname, 'node_modules', 'bootstrap-fileinput', 'css', 'fileinput.min.css'),
       path.join(__dirname, 'assets', 'css', 'style.css'),
-      path.join(__dirname, 'assets', 'css', 'papaya.css'),
       path.join(__dirname, 'assets', 'scss', 'style.scss'),
     ],
   },

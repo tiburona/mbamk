@@ -7,7 +7,7 @@ from flask_security import SQLAlchemyUserDatastore
 from celery import Celery
 from cookiecutter_mbam import celery
 from cookiecutter_mbam.init_celery import init_celery
-from cookiecutter_mbam import commands, public, user, experiment, scan, overlay
+from cookiecutter_mbam import commands, public, user, experiment, scan
 from cookiecutter_mbam.admin import UserAdmin, RoleAdmin
 from cookiecutter_mbam.extensions import admin, cache, csrf_protect, db, debug_toolbar, migrate, \
     security, webpack, mail, jsglue
@@ -57,7 +57,6 @@ def register_blueprints(app):
     app.register_blueprint(user.views.blueprint)
     app.register_blueprint(experiment.views.blueprint)
     app.register_blueprint(scan.views.blueprint)
-    app.register_blueprint(overlay.views.blueprint)
     return None
 
 def register_errorhandlers(app):

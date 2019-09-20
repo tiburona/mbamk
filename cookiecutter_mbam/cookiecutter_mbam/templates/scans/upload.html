@@ -6,16 +6,16 @@
 <br>
 <br>
 <br>
-  <form method="POST" action="{{ url_for('scan.add') }}" enctype="multipart/form-data">
-      {{ form.csrf_token }}
+<form method="POST" action="{{ url_for('scan.add') }}" enctype="multipart/form-data">
+    {{ form.csrf_token }}
 
-      {{ form.hidden_tag()}}
-      {{ form.scan_file(multiple="multiple") }}
-      <br>
-      <br>
-      {{ form.submit }}
+    {{ form.hidden_tag()}}
+    {{ form.scan_file(multiple="multiple") }}
+    <br>
+    <br>
+    {{ form.submit }}
 
-  </form>
-</div>
+</form>
+    </div>
 
 {% endblock %}

@@ -25,7 +25,7 @@
 
   <!-- JSGlue to enable FLask.url_for in javascript -->
   {{ JSGlue.include() }}
-  
+
   <!-- Icon for browser-->
   <link rel="shortcut icon" type="image/x-icon" sizes="32x32" href="{{ asset_url_for('img/favicon_purple.png') }}" />
 
@@ -63,7 +63,6 @@
 <!-- JavaScript at the bottom for fast page loading -->
 {{ javascript_tag('main_js') | safe }}
 {% block js %}{% endblock %}
-
 <!-- define js vars requiring jinja templating (other than url_for which is handled by Flask-JSGlue) below -->
 <script type=text/javascript>
   $AXIAL_SAMPLE = "{{ asset_url_for('img/sample-axial-T1.png') }}";

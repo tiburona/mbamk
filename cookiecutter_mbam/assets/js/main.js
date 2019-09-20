@@ -14,7 +14,6 @@ require('bootstrap');
 require('bootstrap-fileinput');
 require('bootstrap-fileinput/themes/fa/theme');
 require('daikon');
-//require('papaya-viewer');
 require('file-saver');
 
 // Your own code
