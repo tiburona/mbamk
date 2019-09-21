@@ -85,7 +85,11 @@ class Config:
     AWS = {
         'access_key_id': 'AKIAJ3CJ3JWENS3XA6QQ',
         'secret_access_key': '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',
-        'bucket_name' : 'mbam-test'
+        'bucket_name' : 'mbam-test',
+        # Below for Spiro's AWS account and bucket name 'mbam-test-sp'
+        'cloudfront_url' : 'https://dc2khv0msnx9b.cloudfront.net/',
+        'cloudfront_key_id' : 'APKAJZ3J6OMQJKG2PO4Q',
+        'cloudfront_private_key' : env.str('CLOUDFRONT_PRIVATE_KEY', default='none')
     }
 
 
