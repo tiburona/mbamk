@@ -277,7 +277,7 @@ class ScanService(BaseService):
         Creates the scan object, adds it to the database, and sets the initial xnat and cloud storage status
         :return: scan
         """
-        return Scan.create(experiment_id=self.experiment.id, xnat_status=xnat_status, aws_status=aws_status)
+        return Scan.create(experiment_id=self.experiment.id, user_id=self.user_id, xnat_status=xnat_status, aws_status=aws_status)
 
     def delete(self, scan_id, delete_from_xnat=False):
         # todo: add delete listener

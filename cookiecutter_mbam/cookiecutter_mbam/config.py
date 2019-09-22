@@ -83,12 +83,13 @@ class Config:
     }
 
     AWS = {
-        'access_key_id': 'AKIAJ3CJ3JWENS3XA6QQ',
-        'secret_access_key': '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',
-        'bucket_name' : 'mbam-test',
-        # Below for Spiro's AWS account and bucket name 'mbam-test-sp'
-        'cloudfront_url' : 'https://dc2khv0msnx9b.cloudfront.net/',
-        'cloudfront_key_id' : 'APKAJZ3J6OMQJKG2PO4Q',
+        # Grab variables from environment. Default are Katie's dev params
+        'access_key_id': env.str('AWS_KEY_ID','AKIAJ3CJ3JWENS3XA6QQ'),
+        'secret_access_key': env.str('AWS_SECRET_KEY','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'),
+        'bucket_name' : env.str('AWS_S3_BUCKET','mbam-test'),
+        # Below the default values are default cloudfront dev params set up for Spiro's AWS account
+        'cloudfront_url' : env.str('CLOUDFRONT_URL','https://dc2khv0msnx9b.cloudfront.net/'),
+        'cloudfront_key_id' : env.str('CLOUDFRONT_KEY_ID','APKAJZ3J6OMQJKG2PO4Q'),
         'cloudfront_private_key' : env.str('CLOUDFRONT_PRIVATE_KEY', default='none')
     }
 

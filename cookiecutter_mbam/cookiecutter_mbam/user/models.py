@@ -58,7 +58,7 @@ class User(UserMixin, SurrogatePK, Model):
         backref=db.backref('users', lazy='dynamic')
     )
 
-    experiments = relationship('Experiment', backref='user', lazy=True)
+    experiments = relationship('Experiment', backref='user', lazy='dynamic')
 
     def __init__(self, email, password=None, **kwargs):
         """Create instance."""
