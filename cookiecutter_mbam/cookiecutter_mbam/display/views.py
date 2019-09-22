@@ -2,7 +2,6 @@
 """ Displays views. """
 from flask import Blueprint, render_template, request, flash, redirect, url_for, session, current_app
 from flask_security import current_user, login_required
-import rsa
 from datetime import datetime
 from cookiecutter_mbam.utils.error_utils import flash_errors
 
