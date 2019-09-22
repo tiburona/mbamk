@@ -60,7 +60,7 @@ class ScanService(BaseService):
         self.xc = XNATConnection(config=config.XNAT)
         self.csc = CloudStorageConnection(config=config.AWS)
 
-    def add_to_database(self, image_file, xnat_labels, existing_xnat_labels):
+    def add_to_database(self, image_file, xnat_labels):
         """The top level public method for adding a scan
 
         Calls methods to infer file type and further process the file, generate xnat identifiers and query strings,
@@ -75,15 +75,9 @@ class ScanService(BaseService):
 
         self._update_xnat_labels(xnat_labels)
 
-        self.existing_xnat_labels = existing_xnat_labels
-
         self.scan_info = [xnat_labels[level]['xnat_label'] for level in ('subject', 'experiment', 'scan')]
 
         self.scan = self._add_scan_to_database()
-
-        return self.scan
-
-
 
     def _update_xnat_labels(self, xnat_labels):
 
@@ -142,7 +136,7 @@ class ScanService(BaseService):
         :return: Celery chain that uploads a scan to cloud storage
         """
         return chain(
-            self.csc.upload_to_cloud_storage(self.filename, self.file_depot, self.scan_info),
+            self.csc.upload_to_cloud_storage(self.file_depot, self.scan_info, filename=self.filename),
             self.set_attribute(self.scan.id, 'orig_aws_key', passed_val=True)
         )
 
@@ -171,7 +165,6 @@ class ScanService(BaseService):
                                            email_admin=True)
         )
     # todo: upload to cloud storage
-    # todo:
     def _run_freesurfer_on_scan(self, labels):
         ds = DerivationService([self.scan])
         ds.create('freesurfer_recon_all')
@@ -199,16 +192,13 @@ class ScanService(BaseService):
                               self.set_attribute(self.scan.id, 'xnat_status', val='Error')]
 
         return chain(
-            self.xc.upload_scan_file(self.local_path, self.xnat_labels, self.existing_xnat_labels,
-                                     import_service=self.dcm, first_scan=first_scan, set_attrs=set_attrs),
+            self.xc.upload_scan_file(self.local_path, self.xnat_labels, import_service=self.dcm, first_scan=first_scan,
+                                     set_attrs=set_attrs),
             self.set_attributes(self.scan.id, passed_val=True),
             self.set_attribute(self.scan.id, 'xnat_status', val='Uploaded'),
             self.get_attribute(self.scan.id, attr='xnat_uri')
             ).set(link_error=error_proc)
 
-
-    # todo: is there any way to make the download file and upload file independent of the rest of the chain?
-    # probably not.
     def _convert_dicom(self):
         """Construct a chain to perform conversion of dicoms to nifti
 
@@ -266,7 +256,7 @@ class ScanService(BaseService):
         :return: a chain of Celery tasks to upload a scan to cloud storage
         """
         return chain(
-            self.csc.upload_to_cloud_storage(self.filename, self.file_depot, self.scan_info),
+            self.csc.upload_to_cloud_storage(self.file_depot, self.scan_info),
             self.ds.update_derivation_model('cloud_storage_key', exception_on_failure=False)
         )
 

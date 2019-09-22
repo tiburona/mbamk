@@ -34,6 +34,7 @@ def setter_factory(cls):
         instance = cls.get_by_id(instance_id)
         args = {key: val}
         instance.update(**args)
+        print(cls, instance, args)
         return val
     return set_attribute
 

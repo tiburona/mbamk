@@ -54,8 +54,29 @@ class XNATConnection(BaseModel):
 
     def sub_exp_labels(self, user, experiment):
         xnat_labels = self._generate_sub_exp_labels(user, experiment)
-        existing_labels = self._check_for_existing_xnat_labels(user, experiment)
-        return xnat_labels, existing_labels
+        exists_in_xnat = self._check_for_existing_xnat_labels(user, experiment, xnat_labels)
+
+        return xnat_labels, exists_in_xnat
+
+    def _check_for_existing_xnat_labels(self, user, experiment, xnat_labels):
+        """Check for existing attributes on the user and experiment
+        Generates a dictionary with current xnat_id for the user and the experiment as
+        values if they exist (empty string if they do not exist).
+        :return: a dictionary with two keys with the xnat subject id and xnat experiment id.
+        :rtype: dict
+        """
+
+        objs = {'subject': user, 'experiment': experiment}
+        keys = ['xnat_label', 'xnat_uri']
+
+        exists_in_xnat = [obj for obj in ['subject', 'experiment'] if getattr(objs[obj], 'xnat_label')]
+
+        for obj in objs:
+            for key in keys:
+                if getattr(objs[obj], key):
+                    xnat_labels[obj][key] = getattr(objs[obj], key)
+
+        return exists_in_xnat
 
 
     def _generate_sub_exp_labels(self, user, experiment):
@@ -94,25 +115,8 @@ class XNATConnection(BaseModel):
 
         return xnat_labels
 
-    def _check_for_existing_xnat_labels(self, user, experiment):
-        """Check for existing attributes on the user and experiment
-        Generates a dictionary with current xnat_id for the user and the experiment as
-        values if they exist (empty string if they do not exist).
-        :return: a dictionary with two keys with the xnat subject id and xnat experiment id.
-        :rtype: dict
-        """
 
-        objs = {'subject': user, 'experiment': experiment}
-        keys = ['xnat_label', 'xnat_uri']
-
-        sub, exp = [
-            {obj:{key: getattr(objs[obj], key) if getattr(objs[obj], key) else '' for key in keys}} for obj in objs
-        ]
-
-        sub.update(exp)
-        return sub
-
-    def _generate_uris(self, xnat_labels, existing_xnat_labels, import_service):
+    def _generate_uris(self, xnat_labels, import_service):
         levels = ['subject', 'experiment', 'scan', 'resource', 'file']
         uris = {}
         urls = {}
@@ -124,12 +128,8 @@ class XNATConnection(BaseModel):
 
         for level in levels:
 
-            # Check if resources have already been created in XNAT
-            exists_already = level in ['subject', 'experiment'] and len(existing_xnat_labels[level]['xnat_label'])
-            d = existing_xnat_labels if exists_already else xnat_labels
-
             # Construct the uris for each level and add them to the dictionary this task returns
-            uri = os.path.join(uri, level + 's', d[level]['xnat_label'])
+            uri = os.path.join(uri, level + 's', xnat_labels[level]['xnat_label'])
             uris[level] = uri
 
             # Check if a query must be added to the uri
@@ -141,6 +141,7 @@ class XNATConnection(BaseModel):
             url = self.server + uri + query
 
             urls[level] = url
+
         return uris, urls
 
 
@@ -166,8 +167,7 @@ class XNATConnection(BaseModel):
         else:
             return (False, None)
 
-    def upload_scan_file(self, file_path, xnat_labels, existing_xnat_labels,
-                         import_service=False, first_scan=True, set_attrs=None):
+    def upload_scan_file(self, file_path, xnat_labels, import_service=False, first_scan=True, set_attrs=None):
         """ Create the XNAT upload chain
         Creates, but does not execute, the Celery chain that creates the XNAT subject and experiment, if necessary, then
         either uploads or imports (for non-dicoms and dicoms, respectively) a dicom file to XNAT.  This chain eventually
@@ -178,7 +178,7 @@ class XNATConnection(BaseModel):
         :return: Celery upload chain
         """
 
-        uris, urls = self._generate_uris(xnat_labels, existing_xnat_labels, import_service)
+        uris, urls = self._generate_uris(xnat_labels, import_service)
 
         do_create_resources, create_resources_signature = self._create_resources(urls, import_service, first_scan)
 

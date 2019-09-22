@@ -25,10 +25,7 @@ def create_resources(xnat_credentials, to_create, urls):
             if level in ['subject', 'experiment']:
                 responses[level] = r.text
             if not r.ok:
-                print("error")
-                #raise ValueError(f'Unexpected status code: {r.status_code} Response: \n {r.text}')
-            print(url)
-            print(level)
+                raise ValueError(f'Unexpected status code: {r.status_code} Response: \n {r.text}')
     return responses
 
 @celery.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5})
@@ -191,7 +188,7 @@ def dl_file_from_xnat(self, scan_uri, xnat_credentials, file_path):
     with init_session(user, password) as s:
         r = s.get(server + os.path.join(scan_uri, 'resources', 'NIFTI', 'files'))
         if r.ok:
-            result = r.json()['ResultSet']['Result'][0]
+            result = [result for result in r.json()['ResultSet']['Result'] if 'json' not in result['Name']][0]
             response = s.get(server + result['URI'])
             if response.ok:
                 with open(os.path.join(file_path, result['Name']), 'wb') as f:

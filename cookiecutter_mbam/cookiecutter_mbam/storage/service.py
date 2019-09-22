@@ -24,8 +24,11 @@ class CloudStorageConnection:
         user_id, experiment_id, scan_id = scan_info
         return 'user/{}/experiment/{}/scan/{}/file/{}'.format(user_id, experiment_id, scan_id, filename)
 
-    def upload_to_cloud_storage(self, filename, filedir, scan_info):
-        return upload_scan_to_cloud_storage.si(filename, filedir, self.bucket_name, self.auth, scan_info)
+    def upload_to_cloud_storage(self, filedir, scan_info, filename=''):
+        if len(filename):
+            return upload_scan_to_cloud_storage.si(filename, filedir, self.bucket_name, self.auth, scan_info)
+        else:
+            return upload_scan_to_cloud_storage.s(filedir, self.bucket_name, self.auth, scan_info)
 
     def object_exists(self, key):
         """
