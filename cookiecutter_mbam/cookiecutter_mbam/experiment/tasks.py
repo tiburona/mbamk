@@ -26,8 +26,6 @@ def get_scan_xnat_ids(scan_ids):
 
 @cel.task
 def set_sub_and_exp_xnat_attrs(responses, xnat_labels, user_id, exp_id, attrs_to_set):
-    print(attrs_to_set)
-    print(responses)
     sub, exp = [{'xnat_id': responses[key],
                  'xnat_uri': '/data/experiments/{}'.format(responses[key]),
                  'xnat_label': xnat_labels[key]['xnat_label']}

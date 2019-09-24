@@ -141,7 +141,7 @@ class ScanService(BaseService):
         )
 
     # todo: answer question about whether you can have separate error procs on two sub chains
-    def add_to_xnat_and_run_freesurfer(self, first_scan, set_sub_and_exp_attrs, labels):
+    def add_to_xnat_and_run_freesurfer(self, is_first_scan, set_sub_and_exp_attrs, labels):
         """Construct the celery chain that performs XNAT functions and updates MBAM database with XNAT IDs
 
         Constructs the chain to upload a file to XNAT and update user, experiment, and scan representations in the MBAM
@@ -152,9 +152,9 @@ class ScanService(BaseService):
         """
 
         if self.dcm:
-            xnat_chain = chain(self._upload_file_to_xnat(first_scan, set_sub_and_exp_attrs), self._convert_dicom())
+            xnat_chain = chain(self._upload_file_to_xnat(is_first_scan, set_sub_and_exp_attrs), self._convert_dicom())
         else:
-            xnat_chain = self._upload_file_to_xnat(first_scan, set_sub_and_exp_attrs)
+            xnat_chain = self._upload_file_to_xnat(is_first_scan, set_sub_and_exp_attrs)
 
         xnat_chain = xnat_chain | self._trigger_job(json.dumps(self._run_freesurfer_on_scan(labels)))
 
@@ -178,7 +178,7 @@ class ScanService(BaseService):
 
 
 
-    def _upload_file_to_xnat(self, first_scan, set_attrs):
+    def _upload_file_to_xnat(self, is_first_scan, set_attrs):
         """Construct a Celery chain to upload a file to XNAT
 
         Constructs a chain that uploads the scan file to XNAT, updates the user, experiment, and subject in the MBAM
@@ -192,8 +192,8 @@ class ScanService(BaseService):
                               self.set_attribute(self.scan.id, 'xnat_status', val='Error')]
 
         return chain(
-            self.xc.upload_scan_file(self.local_path, self.xnat_labels, import_service=self.dcm, first_scan=first_scan,
-                                     set_attrs=set_attrs),
+            self.xc.upload_scan_file(self.local_path, self.xnat_labels, import_service=self.dcm,
+                                     is_first_scan=is_first_scan, set_attrs=set_attrs),
             self.set_attributes(self.scan.id, passed_val=True),
             self.set_attribute(self.scan.id, 'xnat_status', val='Uploaded'),
             self.get_attribute(self.scan.id, attr='xnat_uri')

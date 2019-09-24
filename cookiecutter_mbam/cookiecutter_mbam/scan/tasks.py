@@ -1,5 +1,4 @@
 from .models import Scan
-from celery import group
 from cookiecutter_mbam.base.tasks import run_task_factories
 from cookiecutter_mbam import celery
 

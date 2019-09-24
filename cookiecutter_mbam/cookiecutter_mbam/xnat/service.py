@@ -167,7 +167,7 @@ class XNATConnection(BaseModel):
         else:
             return (False, None)
 
-    def upload_scan_file(self, file_path, xnat_labels, import_service=False, first_scan=True, set_attrs=None):
+    def upload_scan_file(self, file_path, xnat_labels, import_service=False, is_first_scan=True, set_attrs=None):
         """ Create the XNAT upload chain
         Creates, but does not execute, the Celery chain that creates the XNAT subject and experiment, if necessary, then
         either uploads or imports (for non-dicoms and dicoms, respectively) a dicom file to XNAT.  This chain eventually
@@ -180,7 +180,7 @@ class XNATConnection(BaseModel):
 
         uris, urls = self._generate_uris(xnat_labels, import_service)
 
-        do_create_resources, create_resources_signature = self._create_resources(urls, import_service, first_scan)
+        do_create_resources, create_resources_signature = self._create_resources(urls, import_service, is_first_scan)
 
         if import_service:
             upload_task = import_scan_to_xnat

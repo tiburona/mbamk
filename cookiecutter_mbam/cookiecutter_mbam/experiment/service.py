@@ -74,10 +74,10 @@ class ExperimentService(BaseService):
         return ss
 
     def _gen_xnat_info(self, scan_index):
-        first_scan = not scan_index
-        set_xnat_attributes = self._set_subject_and_experiment_attributes(first_scan)
+        is_first_scan = not scan_index
+        set_xnat_attributes = self._set_subject_and_experiment_attributes(is_first_scan)
         labels = [self.xnat_labels[level]['xnat_label'] for level in ['subject', 'experiment']]
-        return [first_scan, set_xnat_attributes, labels]
+        return [is_first_scan, set_xnat_attributes, labels]
 
 
     def _set_subject_and_experiment_attributes(self, first_scan):
