@@ -2,7 +2,14 @@
 {% extends "layout.html" %}
 {% block content %}
 <!-- Main jumbotron for a primary marketing message or call to action -->
-<div class="jumbotron">
+
+<section role="top-row" class="landing-page">
+  
+    <div class="landing-video">
+      <video autoplay="" loop="" muted="">
+        <source src="{{ asset_url_for('img/mbam3d_newblue_hippocampus.mp4') }}" type="video/mp4">
+      </video>
+    </div>
     <div class="container">
 
       <h1 class="display-3 text-center">Welcome to My Brain and Me!</h1>
@@ -34,7 +41,8 @@
       {% endif %}
 
     </div>
-</div><!-- /.jumbotron -->
+
+</section>
 
 <div class="container">
   <div class="row">

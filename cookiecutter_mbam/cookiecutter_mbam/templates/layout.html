@@ -29,13 +29,16 @@
   <!-- Icon for browser-->
   <link rel="shortcut icon" type="image/x-icon" sizes="32x32" href="{{ asset_url_for('img/favicon_purple.png') }}" />
 
+  <!-- Google Font-->
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,600,700&display=swap" rel="stylesheet">
+
 </head>
-<body class="{% block body_class %}{% endblock %}">
+<body class="{% block body_class %}{% endblock %}" data-gr-c-s-loaded="true">
 {% block body %}
 
 {% include "nav.html" %}
 
-<header>{% block header %}{% endblock %}</header>
+<!-- <header>{% block header %}{% endblock %}</header> -->
 
 <main role="main">
 
