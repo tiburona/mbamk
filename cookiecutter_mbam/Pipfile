@@ -27,6 +27,7 @@ gunicorn = ">=19.1.1"
 flask-webpack = "==0.1.0"
 # Auth
 Flask-Security = "==3.0.0"
+Flask-BasicAuth = "==0.2.0"
 # Admin
 Flask-Admin = "==1.5.2"
 # Caching

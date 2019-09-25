@@ -10,7 +10,7 @@ from cookiecutter_mbam.init_celery import init_celery
 from cookiecutter_mbam import commands, public, user, experiment, scan, display
 from cookiecutter_mbam.admin import UserAdmin, RoleAdmin
 from cookiecutter_mbam.extensions import admin, cache, csrf_protect, db, debug_toolbar, migrate, \
-    security, webpack, mail, jsglue
+    security, webpack, mail, jsglue, basicauth
 from cookiecutter_mbam.user import User, Role
 from .hooks import create_test_users, models_committed_hooks
 from .config import config_by_name, config_name
@@ -45,6 +45,7 @@ def register_extensions(app):
     admin.init_app(app, endpoint='admin')
     mail.init_app(app)
     jsglue.init_app(app)
+    basicauth.init_app(app) # To protect site until it goes live
     return None
 
 def register_hooks(app):

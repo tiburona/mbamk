@@ -93,7 +93,6 @@ class Config:
         'cloudfront_private_key' : env.str('CLOUDFRONT_PRIVATE_KEY', default='none')
     }
 
-
 class LocalConfig(Config):
     """ Class defining configurations for local development. Config_name is 'local'. """
     SQLALCHEMY_DATABASE_URI = 'sqlite:////tmp/dev.db'
@@ -143,6 +142,11 @@ class DevConfig(Config):
     XNAT['dicom_to_nifti_transfer_command_id'] = env.int('DICOM_TO_NIFTI_TRANSFER_COMMAND_ID',23)
     XNAT['project'] = env.str('XNAT_PROJECT', 'MBAM_STAGING')
     XNAT['docker_host'] = env.str('XNAT_DOCKER_HOST','http://10.20.193.32:2375')
+
+    # Protect the staging server until the site goes live
+    BASIC_AUTH_USERNAME='tester'
+    BASIC_AUTH_PASSWORD='mind@nyspi'
+    BASIC_AUTH_FORCE=True
 
 config_by_name = dict(
     local=LocalConfig,
