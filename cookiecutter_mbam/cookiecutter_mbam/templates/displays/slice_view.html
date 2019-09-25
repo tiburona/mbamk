@@ -3,6 +3,7 @@
 {% block content %}
 
     <title>Papaya Viewer</title>
+    <link href="{{ url_for('static',filename='papaya/papaya.css') }}" rel="stylesheet">
 
     <div class="container-narrow">
         <h4 class="mt-5">This is your brain scan.</h4>
@@ -10,7 +11,7 @@
         <div class="papaya" data-params="params"></div>
     </div>
 
-    <script type="text/javascript" src="{{ url_for('static',filename='papaya.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static',filename='papaya/papaya.js') }}"></script>
 
     <script type="text/javascript">
         var params = [];

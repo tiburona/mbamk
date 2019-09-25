@@ -2,16 +2,28 @@
 """ Displays views. """
 from flask import Blueprint, render_template, request, flash, redirect, url_for, session, current_app
 from flask_security import current_user, login_required
-from datetime import datetime
 from cookiecutter_mbam.utils.error_utils import flash_errors
-
-from cookiecutter_mbam.display.utils import cf_signer, cf_base_url
 from cookiecutter_mbam.scan import Scan
+from .service import DisplayService
 
 def debug():
     assert current_app.debug == False, "Don't panic! You're here by request of debug()"
 
 blueprint = Blueprint('display', __name__, url_prefix='/displays', static_folder='../static')
+
+ds=DisplayService() # instantiate the display service
+
+def resource_belongs_to_user(resource_type, instance_id):
+    """ Verify that what the user wants to view belongs to the user
+    :param resource_type class:  The Class (i.e Scan, Derivation, Experiment)
+    :param instance_id int: The id of the resource
+    :return: Boolean
+     """
+    if resource_type.get_by_id(instance_id):
+        check = resource_type.get_by_id(instance_id).user_id == current_user.id
+    else:
+        check = False
+    return check
 
 @blueprint.route('/')
 @login_required
@@ -19,27 +31,27 @@ def displays():
     """ List all displays available for this user. """
     # For now list and pass the scans that have a aws_orig_key until
     # derivation is updated
-    displays = Scan.query.filter(Scan.user_id==current_user.id).all()
+    displays = ds.return_user_scans(current_user.id)
     return render_template('displays/displays.html', displays=displays)
 
-@blueprint.route('/experiment/<exp_id>/scan/<scan_id>/slice_view',methods=['GET'])
+@blueprint.route('/scan/<scan_id>/slice_view',methods=['GET'])
 @login_required
-def slice_view(exp_id,scan_id):
+def slice_view(scan_id):
     """ Display current user's raw NIFTI file """
-    try:
-        url = cf_base_url + Scan.query.filter(Scan.user_id==current_user.id). \
-                                    filter(Scan.experiment_id==exp_id). \
-                                    filter(Scan.id==scan_id).first().orig_aws_key
-        signed_url = cf_signer.generate_presigned_url(url, date_less_than=datetime(2020, 12, 12))
-        return render_template('displays/slice_view.html',url=signed_url)
-    except:
-        return render_template('404.html')
-
+    if resource_belongs_to_user(Scan,scan_id):
+        try:
+            url = ds.return_nifti_url(scan_id)
+            signed_url = ds.sign_url(url)
+            return render_template('displays/slice_view.html',url=signed_url)
+        except:
+            return render_template('404.html')
+    else:
+        return render_template('403.html')
 
 @blueprint.route('/test',methods=['GET'])
 def test():
-    """ Test route to display a NIFTI file in S3 via Cloudfront in papaya """
-    url = base_url + 'user/000001/experiment/000001_MR1/scan/T1_1/file/SPGR01_MNI.nii.gz'
-    signed_url = cf_signer.generate_presigned_url(url, date_less_than=datetime(2020, 12, 12))
+    """ Test route to display a NIFTI file in S3 via Cloudfront signed URL in papaya """
+    url = ds.cf_base_url + 'test/MNI_SPGR01.nii.gz'
+    signed_url = ds.sign_url(url)
 
     return render_template('displays/test.html',url=signed_url)
