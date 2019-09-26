@@ -74,6 +74,7 @@ class ScanService(BaseService):
         self.local_path, self.filename, self.dcm = self._process_file(image_file)
 
         self._update_xnat_labels(xnat_labels)
+        # xnat_labels is correct up to here
 
         self.scan_info = [xnat_labels[level]['xnat_label'] for level in ('subject', 'experiment', 'scan')]
 
@@ -84,7 +85,9 @@ class ScanService(BaseService):
         scan_level_xnat_labels = self.xc.scan_labels(self.experiment, dcm=self.dcm)
         xnat_labels.update(scan_level_xnat_labels)
         self.xnat_labels = xnat_labels
-
+        from cookiecutter_mbam.mbam_logging import app_logger
+        app_logger.error(xnat_labels, extra={'email_admin': False})
+        # This logs correctly.
 
     def _process_file(self, image_file):
         """Prepare file for upload to XNAT and cloud storage
@@ -151,6 +154,9 @@ class ScanService(BaseService):
         :return: Celery chain that performs XNAT functions
         """
 
+        from cookiecutter_mbam.mbam_logging import app_logger
+        #app_logger.error(self.xnat_labels)
+
         if self.dcm:
             xnat_chain = chain(self._upload_file_to_xnat(is_first_scan, set_sub_and_exp_attrs), self._convert_dicom())
         else:
@@ -190,6 +196,8 @@ class ScanService(BaseService):
 
         error_proc = [self._error_handler(log_message='generic_message', user_message='user_external_uploads'),
                               self.set_attribute(self.scan.id, 'xnat_status', val='Error')]
+
+        #self.xnat_labels is wrong here
 
         return chain(
             self.xc.upload_scan_file(self.local_path, self.xnat_labels, import_service=self.dcm,

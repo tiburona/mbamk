@@ -10,6 +10,7 @@ from .tasks import set_experiment_attribute, get_experiment_attribute, set_sub_a
 from cookiecutter_mbam.scan import ScanService
 from cookiecutter_mbam.xnat.service import XNATConnection as XC
 from cookiecutter_mbam.config import config_by_name, config_name
+from cookiecutter_mbam.mbam_logging import app_logger
 
 from flask import current_app
 def debug():
@@ -56,6 +57,9 @@ class ExperimentService(BaseService):
 
         scan_services = [self._init_scan_service_and_add_scan_to_database(file) for file in files]
 
+        app_logger.error([ss.xnat_labels for ss in scan_services], extra={'email_admin': False})
+        # by this point they are both T2
+
         add_scans_to_cloud_storage = [ss.add_to_cloud_storage() for ss in scan_services]
 
         add_scans_to_xnat_and_run_freesurfer = [
@@ -71,6 +75,8 @@ class ExperimentService(BaseService):
     def _init_scan_service_and_add_scan_to_database(self, file):
         ss = ScanService(self.user, self.experiment)
         ss.add_to_database(file, self.xnat_labels)
+        app_logger.error("In _init_scan_service ss.xnat_labels is {}".format(ss.xnat_labels), extra={'email_admin': True})
+        # this is correct
         return ss
 
     def _gen_xnat_info(self, scan_index):

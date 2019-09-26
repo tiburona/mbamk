@@ -31,6 +31,7 @@ class XNATConnection(BaseModel):
 
         :return: None
         """
+
         [setattr(self, k, v) for k, v in self.xnat_config.items()]
         for dest in ['archive', 'prearchive']:
             setattr(self, dest + '_prefix', '/data/{}/projects/{}'.format(dest, self.project))
@@ -178,7 +179,9 @@ class XNATConnection(BaseModel):
         :return: Celery upload chain
         """
 
+        # xnat labels is wrong here
         uris, urls = self._generate_uris(xnat_labels, import_service)
+
 
         do_create_resources, create_resources_signature = self._create_resources(urls, import_service, is_first_scan)
 

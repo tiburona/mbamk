@@ -18,14 +18,24 @@ def create_resources(xnat_credentials, to_create, urls):
 
     responses = {}
 
+    # I see the problem.  Both scans are getting the resource name t1_2
     with init_session(user, password) as s:
+        print(server)
         for level in to_create:
             url = urls[level]
+            if level=='resource':
+                print("I'm in resource")
+                print(url)
+                r = s.get(url)
+                print(r.text)
             r = s.put(url)
             if level in ['subject', 'experiment']:
                 responses[level] = r.text
+
             if not r.ok:
-                raise ValueError(f'Unexpected status code: {r.status_code} Response: \n {r.text}')
+                print("ERROR", level, url)
+                print(r.text)
+                #raise ValueError(f'Unexpected status code: {r.status_code} Response: \n {r.text}')
     return responses
 
 @celery.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5})

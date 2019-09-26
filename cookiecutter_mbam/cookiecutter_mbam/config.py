@@ -64,17 +64,18 @@ class Config:
                'cookiecutter_mbam.scan.tasks', 'cookiecutter_mbam.base.tasks', 'cookiecutter_mbam.experiment.tasks']
 
     XNAT = {
-        'user': 'admin',
-        'password': 'admin',
-        'server': 'http://10.1.1.17',
-        'project': 'MBAM_TEST',
+        'user': env.str('XNAT_USER', default='admin'),
+        'password': env.str('XNAT_PASS', default='admin'),
+        'server': env.str('XNAT_SERVER', default='http://10.1.1.17'),
+        'project': env.str('XNAT_PROJECT', default='MBAM_TEST'),
         'local_docker': False,
-        'docker_host': 'unix:///var/run/docker.sock',
+        'docker_host': env.str('DOCKER_HOST', default='unix:///var/run/docker.sock'),
         'dicom_to_nifti_command_id': 2,
         'dicom_to_nifti_wrapper_id':'dcm2niix-scan',
-        'dicom_to_nifti_transfer_command_id':9,
+        'dicom_to_nifti_transfer_command_id': env.str('DICOM_TO_NIFTI', default='9'),
         'dicom_to_nifti_transfer_wrapper_id':'dcm2niix-xfer',
-        'freesurfer_recon_all_transfer_command_id': 14,
+        #'freesurfer_recon_all_transfer_command_id': 14, #25
+        'freesurfer_recon_all_transfer_command_id': env.str('FREESURFER_RECON', default='14'),
         'freesurfer_recon_all_transfer_wrapper_id': 'freesurfer-recon-all-xfer'
     }
 
