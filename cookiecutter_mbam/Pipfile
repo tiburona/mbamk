@@ -27,6 +27,7 @@ gunicorn = ">=19.1.1"
 flask-webpack = "==0.1.0"
 # Auth
 Flask-Security = "==3.0.0"
+Flask-BasicAuth = "==0.2.0"
 # Admin
 Flask-Admin = "==1.5.2"
 # Caching
@@ -42,6 +43,7 @@ xnat = "==0.3.11"
 pymysql = "==0.9.3"
 bcrypt = "==3.1.7"
 boto3 = "==1.9.86"
+rsa = "==4.0"
 # Async
 celery = "==4.3.0"
 redis = "==3.2.1"

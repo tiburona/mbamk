@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+    <title>Papaya Viewer</title>
+    <link href="{{ url_for('static',filename='papaya/papaya.css') }}" rel="stylesheet">
+
+    <div class="container-narrow">
+        <h4 class="mt-5">This is your brain scan.</h4>
+        <p><a href="{{ url_for('display.displays') }}">Displays menu</a></p>
+        <div class="papaya" data-params="params"></div>
+    </div>
+
+    <script type="text/javascript" src="{{ url_for('static',filename='papaya/papaya.js') }}"></script>
+
+    <script type="text/javascript">
+        var params = [];
+        params["worldSpace"] = true;
+        params["images"] = [ "{{ url|safe }}" ];
+        params["kioskMode"] = true;
+    </script>
+
+{% endblock %}

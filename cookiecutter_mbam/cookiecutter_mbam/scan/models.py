@@ -5,6 +5,7 @@ from cookiecutter_mbam.database import Model, SurrogatePK, db, reference_col, re
 from cookiecutter_mbam.utils.model_utils import make_ins_del_listener
 from cookiecutter_mbam.experiment import Experiment
 from flask_sqlalchemy import event
+from cookiecutter_mbam.user import User
 
 from flask import current_app
 def debug():
@@ -19,11 +20,12 @@ class Scan(SurrogatePK, Model):
     xnat_uri = db.Column(db.String(255))
     xnat_id = db.Column(db.String(80))
     orig_aws_key = db.Column(db.String(255))
+    user_id = reference_col('user', nullable=False)
     experiment_id = reference_col('experiment', nullable=True)
 
-    def __init__(self, experiment_id, **kwargs):
+    def __init__(self, experiment_id, user_id, **kwargs):
         """Create instance."""
-        db.Model.__init__(self, experiment_id=experiment_id, **kwargs)
+        db.Model.__init__(self, experiment_id=experiment_id, user_id=user_id, **kwargs)
 
     def __repr__(self):
         """Represent instance as a unique string."""

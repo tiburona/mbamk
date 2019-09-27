@@ -136,7 +136,10 @@ class ScanService(BaseService):
 
         :return: None
         """
+
+
         job = group([self._cloud_storage_chain(), self._xnat_chain()])
+        #job = chord([self._cloud_storage_chain(), self._xnat_chain()])(success_proc)
         job.apply_async()
 
     def _cloud_storage_chain(self):
@@ -158,6 +161,10 @@ class ScanService(BaseService):
 
         :return: Celery chain that performs XNAT functions
         """
+
+        #success_proc = [self._error_handler(log_message='', user_message='')]
+        # email_info = ('Spiro', 'spiropan@gmail.com', 'Success!')
+        # success_proc = [send_email.s(email_info).apply_async()]
 
         if self.dcm:
             xnat_chain = self._upload_file_to_xnat() | self._convert_dicom()
@@ -277,7 +284,7 @@ class ScanService(BaseService):
         Creates the scan object, adds it to the database, and sets the initial xnat and cloud storage status
         :return: scan
         """
-        return Scan.create(experiment_id=self.experiment.id, xnat_status=xnat_status, aws_status=aws_status)
+        return Scan.create(experiment_id=self.experiment.id, user_id=self.user_id, xnat_status=xnat_status, aws_status=aws_status)
 
     def delete(self, scan_id, delete_from_xnat=False):
         # todo: add delete listener
