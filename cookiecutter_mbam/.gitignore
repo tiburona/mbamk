@@ -25,6 +25,7 @@ mbam.log
 .coverage
 .tox
 nosetests.xml
+cookiecutter_mbam/scan/.pytest_cache/
 
 # Translations
 *.mo

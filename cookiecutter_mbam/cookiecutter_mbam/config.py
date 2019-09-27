@@ -83,11 +83,15 @@ class Config:
     }
 
     AWS = {
-        'access_key_id': 'AKIAJ3CJ3JWENS3XA6QQ',
-        'secret_access_key': '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',
-        'bucket_name' : 'mbam-test'
+        # Grab variables from environment. Default are Katie's dev params
+        'access_key_id': env.str('AWS_KEY_ID','AKIAJ3CJ3JWENS3XA6QQ'),
+        'secret_access_key': env.str('AWS_SECRET_KEY','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'),
+        'bucket_name' : env.str('AWS_S3_BUCKET','mbam-test'),
+        # Below the default values are default cloudfront dev params set up for Spiro's AWS account
+        'cloudfront_url' : env.str('CLOUDFRONT_URL','https://dc2khv0msnx9b.cloudfront.net/'),
+        'cloudfront_key_id' : env.str('CLOUDFRONT_KEY_ID','APKAJZ3J6OMQJKG2PO4Q'),
+        'cloudfront_private_key' : env.str('CLOUDFRONT_PRIVATE_KEY', default='none')
     }
-
 
 class LocalConfig(Config):
     """ Class defining configurations for local development. Config_name is 'local'. """
@@ -138,6 +142,11 @@ class DevConfig(Config):
     XNAT['dicom_to_nifti_transfer_command_id'] = env.int('DICOM_TO_NIFTI_TRANSFER_COMMAND_ID',23)
     XNAT['project'] = env.str('XNAT_PROJECT', 'MBAM_STAGING')
     XNAT['docker_host'] = env.str('XNAT_DOCKER_HOST','http://10.20.193.32:2375')
+
+    # Protect the staging server until the site goes live
+    BASIC_AUTH_USERNAME='tester'
+    BASIC_AUTH_PASSWORD='mind@nyspi'
+    BASIC_AUTH_FORCE=True
 
 config_by_name = dict(
     local=LocalConfig,
