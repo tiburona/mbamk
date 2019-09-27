@@ -37,7 +37,6 @@ class XNATConnection(BaseModel):
             setattr(self, dest + '_prefix', '/data/{}/projects/{}'.format(dest, self.project))
         self.auth = (self.server, self.user, self.password)
 
-
     def _set_docker_host(self):
         """ Set the Docker host
         Reads the desired Docker host from the config file. If XNAT is not currently configured to launch containers on
@@ -179,9 +178,7 @@ class XNATConnection(BaseModel):
         :return: Celery upload chain
         """
 
-        # xnat labels is wrong here
         uris, urls = self._generate_uris(xnat_labels, import_service)
-
 
         do_create_resources, create_resources_signature = self._create_resources(urls, import_service, is_first_scan)
 
@@ -220,11 +217,11 @@ class XNATConnection(BaseModel):
     def gen_dicom_conversion_data(self):
         return gen_dicom_conversion_data.s()
 
-    def _gen_fs_recon_data(self, sub_and_exp_labels, scan_label=None):
-        if scan_label:
-            return gen_freesurfer_data.si(scan_label, sub_and_exp_labels)
+    def gen_fs_recon_data(self, labels, scan_id=None):
+        if scan_id:
+            return gen_freesurfer_data.si(scan_id, labels, self.project)
         else:
-            return gen_freesurfer_data.s(sub_and_exp_labels)
+            return gen_freesurfer_data.s(labels, self.project)
 
     def launch_command(self, process_name, data=None):
         xnat_credentials = (self.server, self.user, self.password)

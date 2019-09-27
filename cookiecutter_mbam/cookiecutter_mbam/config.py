@@ -75,7 +75,7 @@ class Config:
         'dicom_to_nifti_transfer_command_id': env.str('DICOM_TO_NIFTI', default='9'),
         'dicom_to_nifti_transfer_wrapper_id':'dcm2niix-xfer',
         #'freesurfer_recon_all_transfer_command_id': 14, #25
-        'freesurfer_recon_all_transfer_command_id': env.str('FREESURFER_RECON', default='14'),
+        'freesurfer_recon_all_transfer_command_id': env.str('FREESURFER_RECON', default='15'),
         'freesurfer_recon_all_transfer_wrapper_id': 'freesurfer-recon-all-xfer'
     }
 

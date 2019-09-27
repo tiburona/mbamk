@@ -21,6 +21,7 @@ class CloudStorageConnection:
         :param str filename: the name of the file
         :return str: key
         """
+
         user_id, experiment_id, scan_id = scan_info
         return 'user/{}/experiment/{}/scan/{}/file/{}'.format(user_id, experiment_id, scan_id, filename)
 

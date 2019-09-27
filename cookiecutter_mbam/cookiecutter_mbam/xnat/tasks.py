@@ -18,24 +18,17 @@ def create_resources(xnat_credentials, to_create, urls):
 
     responses = {}
 
-    # I see the problem.  Both scans are getting the resource name t1_2
     with init_session(user, password) as s:
-        print(server)
+        print("Using XNAT server {}".format(server))
         for level in to_create:
             url = urls[level]
-            if level=='resource':
-                print("I'm in resource")
-                print(url)
-                r = s.get(url)
-                print(r.text)
             r = s.put(url)
+
             if level in ['subject', 'experiment']:
                 responses[level] = r.text
 
             if not r.ok:
-                print("ERROR", level, url)
-                print(r.text)
-                #raise ValueError(f'Unexpected status code: {r.status_code} Response: \n {r.text}')
+                raise ValueError(f'Unexpected status code: {r.status_code} Response: \n {r.text}')
     return responses
 
 @celery.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5})
@@ -70,7 +63,6 @@ def import_scan_to_xnat(self, xnat_credentials, file_path, url, exp_uri):
     files = {'file': ('DICOMS.zip', open(file_path, 'rb'), 'application/octet-stream')}
     with init_session(user, password) as s:
         r = s.post(url, files=files, data={'dest': exp_uri, 'overwrite':'delete'})
-        print(r.text)
         if r.ok:
             return exp_uri
         else:
@@ -113,13 +105,15 @@ def gen_dicom_conversion_data(self, uri):
     return {'scan': crop(uri, '/data')}
 
 @celery.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5})
-def gen_freesurfer_data(self, scan_id, sub_and_exp_ids):
-    sub_id, exp_id = sub_and_exp_ids
+def gen_freesurfer_data(self, scan_id, sub_and_exp_labels, project_id):
+
+    sub_label, exp_label = sub_and_exp_labels
 
     return {
             'scans': [scan_id],
-            'experiment': exp_id,
-            'subject': sub_id
+            'experiment': exp_label,
+            'subject': sub_label,
+            'project': project_id
          }
 
 

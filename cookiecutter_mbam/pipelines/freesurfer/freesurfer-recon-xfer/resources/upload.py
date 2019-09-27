@@ -7,9 +7,9 @@ def init_session(user, password):
     s.auth = (user, password)
     return s
 
-experiment, user, password, host = sys.argv[1:]
+project, subject, experiment, user, password, host = sys.argv[1:]
 
-url = os.path.join(host, 'data', 'experiments', experiment, 'resources/FSv6/files')
+url = os.path.join(host, 'data', 'project', project, 'subject', subject, 'experiments', experiment, 'resources/FSv6/files')
 
 with init_session(user, password) as s:
     for z_name in ['stats.zip', 'surf.zip']:

@@ -74,7 +74,6 @@ class ScanService(BaseService):
         self.local_path, self.filename, self.dcm = self._process_file(image_file)
 
         self._update_xnat_labels(xnat_labels)
-        # xnat_labels is correct up to here
 
         self.scan_info = [xnat_labels[level]['xnat_label'] for level in ('subject', 'experiment', 'scan')]
 
@@ -85,9 +84,6 @@ class ScanService(BaseService):
         scan_level_xnat_labels = self.xc.scan_labels(self.experiment, dcm=self.dcm)
         xnat_labels.update(scan_level_xnat_labels)
         self.xnat_labels = xnat_labels
-        from cookiecutter_mbam.mbam_logging import app_logger
-        app_logger.error(xnat_labels, extra={'email_admin': False})
-        # This logs correctly.
 
     def _process_file(self, image_file):
         """Prepare file for upload to XNAT and cloud storage
@@ -154,9 +150,6 @@ class ScanService(BaseService):
         :return: Celery chain that performs XNAT functions
         """
 
-        from cookiecutter_mbam.mbam_logging import app_logger
-        #app_logger.error(self.xnat_labels)
-
         if self.dcm:
             xnat_chain = chain(self._upload_file_to_xnat(is_first_scan, set_sub_and_exp_attrs), self._convert_dicom())
         else:
@@ -165,7 +158,6 @@ class ScanService(BaseService):
         xnat_chain = xnat_chain | self._trigger_job(json.dumps(self._run_freesurfer_on_scan(labels)))
 
         return xnat_chain.set(
-            #link=self._run_freesurfer_on_scan(labels),
             link_error=self._error_handler(log_message='generic_message',
                                            user_message='user_external_uploads',
                                            email_admin=True)
@@ -175,14 +167,15 @@ class ScanService(BaseService):
         ds = DerivationService([self.scan])
         ds.create('freesurfer_recon_all')
 
+
+        # Looks like the problem is here.  I am passing a combination of xnat_labels and xnat_ids to
+        # gen_fs_recon_data
         return chain(
             self.get_attribute(self.scan.id, attr='xnat_id'),
-            self.xc._gen_fs_recon_data(labels),
+            self.xc.gen_fs_recon_data(labels),
             self.xc.launch_and_poll_for_completion('freesurfer_recon_all'),
             ds.update_derivation_model('status', exception_on_failure=True)
         )
-
-
 
     def _upload_file_to_xnat(self, is_first_scan, set_attrs):
         """Construct a Celery chain to upload a file to XNAT
@@ -196,8 +189,6 @@ class ScanService(BaseService):
 
         error_proc = [self._error_handler(log_message='generic_message', user_message='user_external_uploads'),
                               self.set_attribute(self.scan.id, 'xnat_status', val='Error')]
-
-        #self.xnat_labels is wrong here
 
         return chain(
             self.xc.upload_scan_file(self.local_path, self.xnat_labels, import_service=self.dcm,
