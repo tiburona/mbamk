@@ -119,7 +119,7 @@ Resources:
         HealthCheckPath: /
         ContainerMountPoint: /app/static/files # This should be same as files['files_depot'] in config.py
         HostMountPoint: /efs/mbam/user-data
-        DesiredCount: 1
+        DesiredCount: 2
         TaskRole: ""
         ExecutionRole: "arn:aws:iam::413377292493:role/ecsTaskExecutionRole"
         VolumeName: "EFSVolume"
@@ -144,12 +144,12 @@ Resources:
         ServiceName: celery
         ImageUrl: !Ref 'FlaskAppImageUrl'
         ContainerCpu: 256
-        ContainerMemory: 384
+        ContainerMemory: 256
         ContainerCommand: "celery -A cookiecutter_mbam.run_celery:celery worker --loglevel info"
         ContainerWorkingDirectory: /app
         ContainerMountPoint: /app/static/files # This should be same as files['files_depot'] in config.py
         HostMountPoint: /efs/mbam/user-data
-        DesiredCount: 1
+        DesiredCount: 2
         TaskRole: ""
         ExecutionRole: "arn:aws:iam::413377292493:role/ecsTaskExecutionRole"
         VolumeName: "EFSVolume"

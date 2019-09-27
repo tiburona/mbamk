@@ -229,6 +229,8 @@ Resources:
       HealthCheckTimeoutSeconds: 5
       HealthyThresholdCount: 2
       Name: !Ref 'ServiceName'
+      Matcher:
+        HttpCode: "200,401"
       Port: 81
       Protocol: HTTP
       UnhealthyThresholdCount: 5
