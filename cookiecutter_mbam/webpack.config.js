@@ -52,7 +52,7 @@ module.exports = {
       { test: /\.less$/, loader: ExtractTextPlugin.extract({ fallback: 'style-loader', use: 'css-loader!less-loader' }) },
       { test: /\.(s*)css$/, loader: ExtractTextPlugin.extract({ fallback: 'style-loader', use: ['css-loader','sass-loader'] }) },
       { test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: 'url-loader?limit=10000&mimetype=application/font-woff' },
-      { test: /\.(ttf|eot|svg|png|jpe?g|gif|ico)(\?.*)?$/i,
+      { test: /\.(ttf|eot|svg|png|jpe?g|gif|tif|mp4|ico)(\?.*)?$/i,
         loader: `file-loader?context=${rootAssetPath}&name=[path][name].[hash].[ext]` },
       { test: /\.js$/, exclude: /node_modules/, loader: 'babel-loader', query: { presets: ['env'], cacheDirectory: true } },
     ],
