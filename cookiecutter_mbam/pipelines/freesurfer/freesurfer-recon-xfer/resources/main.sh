@@ -35,6 +35,11 @@ echo ${args[@]}
 
 recon-all "${args[@]}"
 
+
+echo "zipping up outputs"
+zip -r stats.zip /output/currsub/stats/
+zip -r surf.zip /output/currsub/surf/
+
 echo "uploading recon output"
 
 python3 upload.py $project $subject $experiment $XNAT_USER $XNAT_PASS $XNAT_HOST
