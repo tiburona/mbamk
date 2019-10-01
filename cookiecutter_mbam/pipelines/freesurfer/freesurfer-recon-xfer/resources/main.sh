@@ -29,6 +29,7 @@ done
 args+=("-s")
 args+=("currsub")
 args+=("-all")
+args+=("-parallel")
 
 echo "starting freesurfer recon with args:"
 echo ${args[@]}
