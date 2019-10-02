@@ -14,7 +14,7 @@ url = os.path.join(host, 'data', 'projects', project, 'subjects', subject, 'expe
 print(url)
 
 with init_session(user, password) as s:
-    for z_name in ['stats.zip', 'surf.zip']:
+    for z_name in ['stats.zip', 'surf.zip','mri.zip']:
         upload = {'file': (z_name, open('./' + z_name, 'rb'), 'application/octet-stream')}
         r = s.put(url + '?extract=true', files=upload)
 
