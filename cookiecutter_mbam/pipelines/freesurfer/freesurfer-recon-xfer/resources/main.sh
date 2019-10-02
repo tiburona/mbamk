@@ -36,10 +36,11 @@ echo ${args[@]}
 
 recon-all "${args[@]}"
 
-
 echo "zipping up outputs"
-zip -r stats.zip /output/currsub/stats/
-zip -r surf.zip /output/currsub/surf/
+pushd /output/currsub/
+zip -r $(popd)/stats.zip ./stats/
+zip -r $(popd)/surf.zip ./surf/{??.pial,??.sphere.reg,??.thickness,??.volume,??.area,??.sulc,??.curv,??.avg_curv}
+popd
 
 echo "uploading recon output"
 
