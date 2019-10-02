@@ -30,8 +30,8 @@ args+=("-s")
 args+=("currsub")
 args+=("-all")
 args+=("-parallel")
-args+=("-openmp")
-args+=("8")
+#args+=("-openmp")
+#args+=("8")
 
 echo "starting freesurfer recon with args:"
 echo ${args[@]}
