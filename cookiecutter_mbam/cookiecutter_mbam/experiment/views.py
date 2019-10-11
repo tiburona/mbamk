@@ -37,7 +37,6 @@ def experiments():
     experiments = Experiment.query.all()
     return render_template('experiments/experiments.html', experiments=experiments)
 
-
 def scan_number_validation(request):
     """Validate that the number of scan files for a given experiment is at least one and no more than three"""
 

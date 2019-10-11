@@ -57,7 +57,6 @@ class ExperimentService(BaseService):
 
         scan_services = [self._init_scan_service_and_add_scan_to_database(file) for file in files]
 
-
         add_scans_to_cloud_storage = [ss.add_to_cloud_storage() for ss in scan_services]
 
         add_scans_to_xnat_and_run_freesurfer = [

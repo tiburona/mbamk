@@ -136,7 +136,10 @@ def launch_command(self, data, xnat_credentials, project, command_ids):
     with init_session(user, password) as s:
         r = s.post(server + url, data)
         if r.ok:
-            return r.json()['container-id']
+            if 'container-id' in r.json():
+                return r.json()['container-id']
+            else:
+                return r.json()['service-id']
         else:
             raise ValueError(f'Unexpected status code: {r.status_code}  Response: \n {r.text}')
 
@@ -158,6 +161,7 @@ def poll_cs(container_id, xnat_credentials, interval):
                 status = r.json()['status']
                 if status in ['Complete', 'Failed', 'Killed', 'Killed (Out of Memory)']:
                     # Todo: is this really correctly returning when 'Failed'?
+                    # Todo: write logic to check for rejected container
                     return status
                 time.sleep(interval)
             else:
@@ -191,8 +195,11 @@ def dl_file_from_xnat(self, scan_uri, xnat_credentials, file_path):
     server, user, password = xnat_credentials
     with init_session(user, password) as s:
         r = s.get(server + os.path.join(scan_uri, 'resources', 'NIFTI', 'files'))
+        print(os.path.join(scan_uri, 'resources', 'NIFTI', 'files'))
         if r.ok:
+            print(r.json())
             result = [result for result in r.json()['ResultSet']['Result'] if 'json' not in result['Name']][0]
+            print(result)
             response = s.get(server + result['URI'])
             if response.ok:
                 with open(os.path.join(file_path, result['Name']), 'wb') as f:
