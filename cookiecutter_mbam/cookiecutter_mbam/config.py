@@ -47,7 +47,7 @@ class Config:
     MAIL_USE_TLS = True
 
     # File upload settings
-    MAX_CONTENT_LENGTH = 300 * 1024 * 1024
+    MAX_CONTENT_LENGTH = 2048 * 1024 * 1024
 
     # Logging Settings
     LOG_FILENAME = 'static/logs/log.txt'

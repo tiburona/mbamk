@@ -71,13 +71,15 @@ class ScanService(BaseService):
         :return: None
 
         """
+
+        self.scan = self._add_scan_to_database()
+
         self.local_path, self.filename, self.dcm = self._process_file(image_file)
 
         self._update_xnat_labels(xnat_labels)
 
         self.scan_info = [xnat_labels[level]['xnat_label'] for level in ('subject', 'experiment', 'scan')]
 
-        self.scan = self._add_scan_to_database()
 
     def _update_xnat_labels(self, xnat_labels):
 

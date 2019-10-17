@@ -8,5 +8,7 @@ celery = Celery(__name__,
                 backend='redis://localhost:6379/1')
 
 
-
-
+from cookiecutter_mbam.user import User, Role
+from cookiecutter_mbam.scan import Scan
+from cookiecutter_mbam.experiment import Experiment
+from cookiecutter_mbam.derivation import Derivation

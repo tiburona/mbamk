@@ -14,6 +14,7 @@ def init_session(user, password):
 with init_session(user, password) as s:
     r = s.get(url)
     for file in r.json()['ResultSet']['Result']:
+        print("NAME IS", file['Name'])
         if 'json' not in file['Name']:
             r = s.get(host + file['URI'])
             if r.status_code == 200:
