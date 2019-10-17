@@ -84,7 +84,7 @@ class XNATConnection(BaseModel):
 
         xnat_labels['subject'] = {'xnat_label': str(user.id).zfill(6)}
 
-        xnat_exp_label = '{}_MR{}'.format(xnat_labels['subject']['xnat_label'], user.num_experiments)
+        xnat_exp_label = '{}_MR{}'.format(xnat_labels['subject']['xnat_label'], user.experiment_counter)
         exp_date = experiment.date.strftime('%m-%d-%Y')
         xnat_labels['experiment'] = {'xnat_label': xnat_exp_label,
                                   'query_string': '?xnat:mrSessionData/date={}'.format(exp_date)}
@@ -105,8 +105,8 @@ class XNATConnection(BaseModel):
 
         xnat_labels = {}
 
-        scan_number = experiment.num_scans + 1
-        xnat_scan_label = 'T1_{}'.format(scan_number)
+        scan_number = experiment.scan_counter
+        xnat_scan_label = 'T1_{}'.format(str(scan_number).zfill(2))
         xnat_labels['scan'] = {'xnat_label': xnat_scan_label, 'query_string': '?xsiType=xnat:mrScanData'}
 
         if not dcm:

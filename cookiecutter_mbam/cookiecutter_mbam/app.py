@@ -2,8 +2,6 @@
 """The app module, containing the app factory function."""
 import logging
 from flask import Flask, render_template
-import cookiecutter_mbam.mbam_logging
-from cookiecutter_mbam.mbam_logging import app_logger
 from flask_security import SQLAlchemyUserDatastore
 from celery import Celery
 from cookiecutter_mbam import celery

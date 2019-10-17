@@ -25,6 +25,8 @@ class Experiment(SurrogatePK, Model):
     xnat_uri = Column(db.String(255), nullable=True)
     user_id = reference_col('user', nullable=False)
     scans = relationship('Scan', backref='experiment')
+    scan_counter = Column(db.Integer(), default=0)
+
 
     def __init__(self, date, scanner, user_id, **kwargs):
         """Create instance."""
@@ -39,12 +41,14 @@ class Experiment(SurrogatePK, Model):
 def after_insert_listener(mapper, connection, target):
     user = User.get_by_id(target.user_id)
     num_experiments = user.num_experiments + 1
+    experiment_counter = User.experiment_counter + 1
     user_table = User.__table__
-    connection.execute(
-        user_table
-        .update()
-        .where(user_table.c.id == target.user_id)
-        .values(num_experiments=num_experiments)
+    for attr in [{'num_experiments': num_experiments}, {'experiment_counter': experiment_counter}]:
+        connection.execute(
+            user_table
+            .update()
+            .where(user_table.c.id == target.user_id)
+            .values(**attr)
     )
 
 
@@ -65,12 +69,14 @@ def after_insert_listener(mapper, connection, target):
 def after_insert_listener(mapper, connection, target):
     experiment = Experiment.get_by_id(target.experiment_id)
     num_scans = experiment.num_scans + 1
+    scan_counter = Experiment.scan_counter + 1
     experiment_table = Experiment.__table__
-    connection.execute(
-        experiment_table
-        .update()
-        .where(experiment_table.c.id == target.experiment_id)
-        .values(num_scans=num_scans)
+    for attr in [{'num_scans': num_scans}, {'scan_counter': scan_counter}]:
+        connection.execute(
+            experiment_table
+            .update()
+            .where(experiment_table.c.id == target.experiment_id)
+            .values(**attr)
     )
 
 delete_listener = make_ins_del_listener(Scan, Experiment, 'scan', 'experiment', 'after_delete', -1)
