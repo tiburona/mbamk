@@ -10,7 +10,8 @@ services:
    volumes:
      - user-data:/app/static/files
      - assets-data:/app/cookiecutter_mbam/static/build
-   command: bash -c "cp .docker_env .env && npm run build && flask run"
+     - static-data:/app/cookiecutter_mbam/static
+   command: bash -c "cp .docker_env .env && npm run build && flask db upgrade && flask run"
    depends_on:
      - jatos
    environment:
@@ -48,6 +49,7 @@ services:
    volumes:
      - user-data:/app/static/files
      - assets-data:/app/cookiecutter_mbam/static/build
+     - static-data:/app/cookiecutter_mbam/static
    depends_on:
      - web
 
@@ -84,3 +86,4 @@ volumes:
   user-data:
   assets-data:
   redis-data:
+  static-data:

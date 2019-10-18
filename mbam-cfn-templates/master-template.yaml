@@ -113,7 +113,7 @@ Resources:
         ContainerPort: 8000
         ContainerCpu: 256
         ContainerMemory: 384
-        ContainerCommand: "bash,-c,cp .dev_env .env && flask run"
+        ContainerCommand: "bash,-c,cp .dev_env .env && flask db upgrade && flask run"
         Path: "*"
         Priority: 2 # This must NOT be set to 1 due to downstream IF statements to check.
         HealthCheckPath: /
