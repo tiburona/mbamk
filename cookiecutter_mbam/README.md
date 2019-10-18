@@ -78,15 +78,15 @@ To run all tests, run ::
 Migrations
 ----------
 
-Whenever a database migration needs to be made. Run the following commands ::
+If you add or delete columns in the database in a models.py file, then a database migration needs to be made. Whenever a database migration needs to be made. Run the following commands ::
 
     flask db migrate
 
-This will generate a new migration script. Then run ::
+This will generate a new migration script in cookiecutter_mbam/migrations/versions folder. Make sure to check this file and edit it manually if need be, because Alembic does not detect every change automatically. Then run ::
 
     flask db upgrade
 
-To apply the migration.
+To apply the migration and change the underlying database. If this is not successful, you may need to go back and edit the migration file. When successful (and the changes are applied to your local database), then be sure to commit the alembic migration file (in cookiecutter_mbam/migrations/versions folder) to git. 
 
 For a full migration command reference, run ``flask db --help``.
 
