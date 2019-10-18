@@ -137,34 +137,6 @@ section{
     	border-top: 1px solid #eee;
 	}
 
-	span{
-		&.s-head {
-			display: inline-block;
-			position: relative;
-			font-size: 17px;
-			margin-bottom: 3%;
-				&:before, &:after {
-					content: "";
-				    position: absolute;
-				    height: 5px;
-				    border-top: 1px solid #eee;
-				    top: 12px;
-				    width: 490px;
-				}
-
-				&:before {
-					right: 100%;
-	    			margin-right: 15px;
-				}
-
-				&:after {
-					left: 100%;
-    				margin-left: 15px;
-				}
-			}
-		}
-		
-
 
 
 // intro section
@@ -193,7 +165,30 @@ section{
 		}
 
 		.partners {
-		
+			span {
+				display: inline-block;
+    			position: relative;
+    			font-size: 17px;
+					&:before, &:after {
+						content: "";
+					    position: absolute;
+					    height: 5px;
+					    border-top: 1px solid #eee;
+					    top: 12px;
+					    width: 490px;
+					}
+
+					&:before {
+						right: 100%;
+		    			margin-right: 15px;
+					}
+
+					&:after {
+						left: 100%;
+	    				margin-left: 15px;
+					}
+			}
+
 			.row {
 				padding: 2%;
 			}
@@ -223,7 +218,6 @@ section{
 
 	section[role="media"] {
 		.article-wrapper {
-			background: #ffffff;
 			.article-description {
 				text-align: left;
 			    margin: 8% 0% 5% 0%;
@@ -278,18 +272,8 @@ section{
 		.row {
 			margin: 5% 0;
 		}
-
-		.mob-show {
-		  display: none;
-		}
-
-		.mob-hide {
-		  display: block;
-		}
 		
 	}
-
-
 
 
 	// Section team
@@ -330,28 +314,6 @@ section{
 		}
 	}
 	
-
-
-	@media screen and (max-width: 992px) {
-		section[role="media"] {
-			.mob-show {
-			  	display: block;
-			}
-
-			.mob-hide {
-			    display: none;
-			}
-		}
-	}
-
-
-
-	// Footer
-	.footer {
-		background: #17333F;
-		color: #9AA3A6;
-		font-style: normal;
-	}
 
 
 
