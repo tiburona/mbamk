@@ -2,7 +2,6 @@
 """The app module, containing the app factory function."""
 import logging
 from flask import Flask, render_template
-import cookiecutter_mbam.mbam_logging
 from flask_security import SQLAlchemyUserDatastore
 from celery import Celery
 from cookiecutter_mbam import celery
@@ -15,6 +14,10 @@ from cookiecutter_mbam.user import User, Role
 from .hooks import create_test_users, models_committed_hooks
 from .config import config_by_name, config_name
 
+from flask import current_app
+def debug():
+    assert current_app.debug == False, "Don't panic! You're here by request of debug()"
+
 def create_app(config_name=config_name):
     """An application factory, as explained here: http://flask.pocoo.org/docs/patterns/appfactories/.
     :param config_object: The configuration object to use.
@@ -23,6 +26,7 @@ def create_app(config_name=config_name):
     app.config.from_object(config_by_name[config_name])
 
     init_celery(app, celery=celery)
+
     register_extensions(app)
     register_hooks(app)
     register_blueprints(app)

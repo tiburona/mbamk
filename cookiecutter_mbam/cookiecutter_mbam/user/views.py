@@ -38,7 +38,7 @@ def consent():
         current_user.update(consented=form.consented.data)
         if current_user.consented:
             flash('Consent for participation in research provided','success')
-            return redirect(url_for('scan.add_experiment_and_scans'))
+            return redirect(url_for('experiment.add'))
         else:
             flash('Consent for participation in research NOT provided','alert')
             return redirect(url_for('public.home'))
@@ -71,7 +71,7 @@ def parent_permission():
         # minor
         if current_user.consented:
             flash('Parent permission provided','success')
-            return redirect(url_for('scan.add_experiment_and_scans'))
+            return redirect(url_for('experiment.add'))
         else:
             flash('Parent permission NOT provided','alert')
             return redirect(url_for('public.home'))
