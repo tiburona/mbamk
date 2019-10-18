@@ -138,7 +138,8 @@ class ScanService(BaseService):
         """
         return chain(
             self.csc.upload_to_cloud_storage(self.file_depot, self.scan_info, filename=self.filename),
-            self.set_attribute(self.scan.id, 'orig_aws_key', passed_val=True)
+            self.set_attribute(self.scan.id, 'orig_aws_key', passed_val=True),
+            self.set_attribute(self.scan.id, 'aws_status', val='Uploaded')
         )
 
     # todo: answer question about whether you can have separate error procs on two sub chains

@@ -54,9 +54,9 @@ class XNATConnection(BaseModel):
 
     def sub_exp_labels(self, user, experiment):
         xnat_labels = self._generate_sub_exp_labels(user, experiment)
-        exists_in_xnat = self._check_for_existing_xnat_labels(user, experiment, xnat_labels)
+        not_in_xnat = self._check_for_existing_xnat_labels(user, experiment, xnat_labels)
 
-        return xnat_labels, exists_in_xnat
+        return xnat_labels, not_in_xnat
 
     def _check_for_existing_xnat_labels(self, user, experiment, xnat_labels):
         """Check for existing attributes on the user and experiment
@@ -69,14 +69,14 @@ class XNATConnection(BaseModel):
         objs = {'subject': user, 'experiment': experiment}
         keys = ['xnat_label', 'xnat_uri']
 
-        exists_in_xnat = [obj for obj in ['subject', 'experiment'] if getattr(objs[obj], 'xnat_label')]
+        not_in_xnat = [obj for obj in ['subject', 'experiment'] if not getattr(objs[obj], 'xnat_label')]
 
         for obj in objs:
             for key in keys:
                 if getattr(objs[obj], key):
                     xnat_labels[obj][key] = getattr(objs[obj], key)
 
-        return exists_in_xnat
+        return not_in_xnat
 
 
     def _generate_sub_exp_labels(self, user, experiment):
