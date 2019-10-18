@@ -10,6 +10,7 @@ from flask_wtf.csrf import CSRFProtect
 from flask_admin import Admin
 from flask_mail import Mail
 from flask_jsglue import JSGlue
+from flask_basicauth import BasicAuth # To protect the staging server until it goes live
 
 admin = Admin()
 csrf_protect = CSRFProtect()
@@ -21,3 +22,4 @@ debug_toolbar = DebugToolbarExtension()
 webpack = Webpack()
 mail = Mail()
 jsglue = JSGlue()
+basicauth = BasicAuth()

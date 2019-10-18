@@ -296,10 +296,8 @@ section{
 	
 	section[role="team"] {
 		.team-wrapper {
-			display: flex;
-    		flex-wrap: wrap;
+			margin-bottom: 5%;
     		.team-member {
-    			width: 33%;
     			padding: 10px 25px 30px 25px;
     			a {
     				color: #484848;
@@ -327,6 +325,7 @@ section{
 		}
 
 		img {
+			width: 50%;
 			border-radius: 50%;
 		}
 	}

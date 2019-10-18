@@ -21,7 +21,7 @@ class Experiment(SurrogatePK, Model):
     xnat_id = Column(db.String(80), nullable=True)
     xnat_uri = Column(db.String(80), nullable=True)
     user_id = reference_col('user', nullable=False)
-    scans = relationship('Scan', backref='experiment')
+    scans = relationship('Scan', backref='experiment',lazy='dynamic')
 
     def __init__(self, date, scanner, user_id, **kwargs):
         """Create instance."""

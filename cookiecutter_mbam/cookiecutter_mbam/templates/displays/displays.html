@@ -1,0 +1,13 @@
+{% extends "layout.html" %}
+{% block content %}
+    <div class="container-narrow">
+        <h4 class="mt-5">These are your available displays.</h4>
+        <ul>
+        {% for display in displays %}
+            <li>Experiment: {{ display.experiment_id }}  |  Scan: {{ display.id }}
+              <span><a href="{{ url_for('display.slice_view',scan_id=display.id) }}">View</a></span>
+            </li>
+        {% endfor %}
+        </ul>
+    </div>
+{% endblock %}
