@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: d2b8bd915c88
-Revises: 
-Create Date: 2019-09-08 13:05:55.938380
+Revision ID: 4268b3e24840
+Revises:
+Create Date: 2019-07-21 11:24:05.948814
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'd2b8bd915c88'
+revision = '4268b3e24840'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -54,8 +54,6 @@ def upgrade():
     sa.Column('parent_email', sa.String(length=80), nullable=True),
     sa.Column('is_admin', sa.Boolean(), nullable=True),
     sa.Column('xnat_id', sa.String(length=80), nullable=True),
-    sa.Column('xnat_label', sa.String(length=80), nullable=True),
-    sa.Column('xnat_uri', sa.String(length=255), nullable=True),
     sa.Column('num_experiments', sa.Integer(), nullable=True),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('email')
@@ -68,8 +66,7 @@ def upgrade():
     sa.Column('field_strength', sa.String(length=80), nullable=True),
     sa.Column('num_scans', sa.Integer(), nullable=True),
     sa.Column('xnat_id', sa.String(length=80), nullable=True),
-    sa.Column('xnat_label', sa.String(length=80), nullable=True),
-    sa.Column('xnat_uri', sa.String(length=255), nullable=True),
+    sa.Column('xnat_uri', sa.String(length=80), nullable=True),
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
     sa.PrimaryKeyConstraint('id')
@@ -85,9 +82,8 @@ def upgrade():
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('xnat_status', sa.String(length=80), nullable=False),
     sa.Column('aws_status', sa.String(length=80), nullable=False),
-    sa.Column('xnat_id', sa.String(length=80), nullable=True),
     sa.Column('xnat_uri', sa.String(length=255), nullable=True),
-    sa.Column('xnat_label', sa.String(length=80), nullable=True),
+    sa.Column('xnat_id', sa.String(length=80), nullable=True),
     sa.Column('orig_aws_key', sa.String(length=255), nullable=True),
     sa.Column('experiment_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['experiment_id'], ['experiment.id'], ),
