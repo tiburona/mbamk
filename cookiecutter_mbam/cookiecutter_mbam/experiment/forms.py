@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 """Experiment forms."""
 from flask_wtf import FlaskForm
-from wtforms import IntegerField, SelectField
+from flask_wtf.file import FileField, FileAllowed, FileRequired
+from wtforms import IntegerField, SelectField, FileField, SubmitField
 from wtforms.fields.html5 import DateField
 
 from flask import current_app
@@ -20,3 +21,18 @@ class ExperimentForm(FlaskForm):
     def __init__(self, *args, **kwargs):
         """Create instance."""
         super(ExperimentForm, self).__init__(*args, **kwargs)
+
+
+class ScanForm(FlaskForm):
+    scan_file = FileField(validators=[FileAllowed(['nii', 'nii.gz', 'zip'])])
+    submit = SubmitField('Submit')
+
+    def __init__(self, *args, **kwargs):
+        """Create instance."""
+        super(ScanForm, self).__init__(*args, **kwargs)
+
+class ExperimentAndScanForm(ExperimentForm, ScanForm):
+
+    def __init__(self, *args, **kwargs):
+        """Create instance."""
+        super(ExperimentAndScanForm, self).__init__(*args, **kwargs)

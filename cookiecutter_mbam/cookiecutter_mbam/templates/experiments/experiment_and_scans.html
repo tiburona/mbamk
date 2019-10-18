@@ -79,7 +79,7 @@
                   <div class="modal-body">
                       <p>If it's not already filled in, please provide the date of the scan before clicking the upload button. You also have the option to provide the model and
                       field strength of the scanner if you know them.</p>
-                      <form method="POST" action="{{ url_for('scan.add_experiment_and_scans') }}" enctype="multipart/form-data" role="form" id="uploadForm">
+                      <form method="POST" action="{{ url_for('experiment.add') }}" enctype="multipart/form-data" role="form" id="uploadForm">
                       {% from "security/_macros.html" import render_field, render_field_with_errors %}
                       {{ form.hidden_tag() }}
                       {{ render_field_with_errors(form.date, class='form-control') }}
@@ -100,7 +100,7 @@
     {% elif request.args.get('action') == "old" %}
         <div>
             <h3>New Scan Upload</h3>
-            <form method="POST" action="{{ url_for('scan.add_experiment_and_scans', action=['old']) }}" enctype="multipart/form-data" role="form" id="uploadForm">
+            <form method="POST" action="{{ url_for('experiment.add', action=['old']) }}" enctype="multipart/form-data" role="form" id="uploadForm">
             {% from "security/_macros.html" import render_field, render_field_with_errors %}
             {{ form.hidden_tag() }}
             {{ render_field_with_errors(form.date, class='form-control') }}
@@ -144,7 +144,7 @@
                 <div class="modal-header">
                     <!--<h2 class="text-center">Error</h2>-->
                     <h4>Oops! Something went wrong, try starting over.</h4>
-                    <a href="{{ url_for('scan.add_experiment_and_scans') }}" class="btn btn-primary">OK</a>
+                    <a href="{{ url_for('experiment.add') }}" class="btn btn-primary">OK</a>
                 </div>
             </div>
         </div>

@@ -15,3 +15,4 @@ def get_scan_attribute(*args):
 @celery.task
 def set_scan_attributes(*args):
     return set_attributes(*args)
+
