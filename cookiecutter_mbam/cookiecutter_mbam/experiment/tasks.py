@@ -26,12 +26,13 @@ def get_scan_xnat_ids(scan_ids):
 
 @cel.task
 def set_sub_and_exp_xnat_attrs(responses, xnat_labels, user_id, exp_id, attrs_to_set):
-    sub, exp = [{'xnat_id': responses[key],
-                 'xnat_uri': '/data/experiments/{}'.format(responses[key]),
-                 'xnat_label': xnat_labels[key]['xnat_label']}
-                for key in attrs_to_set]
+    attrs = {key: {
+        'xnat_id': responses[key],
+        'xnat_uri': '/data/{}s/{}'.format(key, responses[key]),
+        'xnat_label': xnat_labels[key]['xnat_label']}
+        for key in attrs_to_set}
     if 'subject' in attrs_to_set:
-        set_subject_attributes(sub, user_id)
+        set_subject_attributes(attrs['subject'], user_id)
     if 'experiment' in attrs_to_set:
-        set_experiment_attributes(exp, exp_id)
+        set_experiment_attributes(attrs['experiment'], exp_id)
 

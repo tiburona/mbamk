@@ -19,7 +19,6 @@ class Scan(SurrogatePK, Model):
     aws_status = db.Column(db.String(80), nullable=False, default='Pending')
     xnat_id = db.Column(db.String(80), nullable=True)
     xnat_uri = db.Column(db.String(255), nullable=True)
-    xnat_label = db.Column(db.String(80), nullable=True)
     orig_aws_key = db.Column(db.String(255), nullable=True)
     experiment_id = reference_col('experiment', nullable=True)
 
