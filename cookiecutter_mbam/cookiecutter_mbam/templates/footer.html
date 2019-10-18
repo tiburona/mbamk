@@ -1,14 +1,29 @@
 <footer>
-  <small>
-  <ul class="company">
-    <li><a href="">© MBaM Development Team</a></li>
-  </ul>
+  <article class="container">
+  <div>
+    <p class="f-head r-group">What to be a part of our research group?</p>
 
-  <ul class="footer-nav">
-    <li><a href="{{ url_for('public.home') }}">Home</a></li>
-    <li><a href="{{ url_for('public.about') }}">About</a></li>
-    <li><a href="{{ url_for('public.FAQ') }}">FAQ</a></li>
-    <li><a href="{{ url_for('public.contact') }}">Contact</a></li>
-  </ul>
-  </small>
+    <div class="row">
+      <div class="col-md-6">
+        <p class="f-head">Write to us</p>
+        <p class="f-info">mbaminfo@gmail.com</p>
+      </div>
+
+      <div class="col-md-6">
+        <p>Follow</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="f-lower">  
+    <ul class="footer-nav f-info">
+      <li><a href="{{ url_for('public.home') }}">Home</a></li>
+      <li><a href="{{ url_for('public.about') }}">About</a></li>
+      <li><a href="{{ url_for('public.FAQ') }}">FAQ</a></li>
+      <li><a href="{{ url_for('public.contact') }}">Contact</a></li>
+    </ul>
+    <p class="c-right">&copy; My Brain and Me 2019</p>
+  </div>
+</article>
+
 </footer>
