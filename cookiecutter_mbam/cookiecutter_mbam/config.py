@@ -63,8 +63,8 @@ class Config:
                'cookiecutter_mbam.scan.tasks', 'cookiecutter_mbam.base.tasks']
 
     XNAT = {
-        # Be sure below XNAT variables are set in your host environment to access the MIND XNAT server.
-        # Default values assume you are using a local VM XNAT
+        # Default XNAT variables below are to access the MIND XNAT server.
+        # Otherwise set different variables in your host environment if are using a local VM XNAT
         'user': env.str('XNAT_USER','admin'),
         'password': env.str('XNAT_PASSWORD','admin'),
         'server': env.str('XNAT_HOST','http://10.1.1.17'),
@@ -73,9 +73,9 @@ class Config:
         'docker_host': env.str('XNAT_DOCKER_HOST','unix:///var/run/docker.sock'),
         'dicom_to_nifti_command_id': 1, # DEPRECATED
         'dicom_to_nifti_wrapper_id':'dcm2niix-scan', # DEPRECATED
-        'dicom_to_nifti_transfer_command_id': env.int('DICOM_TO_NIFTI_TRANSFER_COMMAND_ID',2),
+        'dicom_to_nifti_transfer_command_id': env.int('DICOM_TO_NIFTI_TRANSFER_COMMAND_ID',29),
         'dicom_to_nifti_transfer_wrapper_id':'dcm2niix-xfer',
-        'freesurfer_recon_all_transfer_command_id': env.str('FREESURFER_RECON', default='15'),
+        'freesurfer_recon_all_transfer_command_id': env.str('FREESURFER_RECON', default='31'),
         'freesurfer_recon_all_transfer_wrapper_id': 'freesurfer-recon-all-xfer'
     }
 
