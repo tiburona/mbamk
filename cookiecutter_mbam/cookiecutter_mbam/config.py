@@ -137,8 +137,8 @@ class DevConfig(Config):
     SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://{}:{}@{}/brain_db'.format(DB_USER,DB_PASSWORD,DB_URI)
 
     # Celery settings. App will connect to redis memcache set up in AWS
-    broker_url = env.str('broker_url', default='dummy')
-    results_backend = broker_url
+    broker_url = env.str('broker_url', default='dummy') + '/0'
+    results_backend = env.str('broker_url', default='dummy') + '/1'
 
     XNAT=Config.XNAT
     XNAT['dicom_to_nifti_transfer_command_id'] = env.int('DICOM_TO_NIFTI_TRANSFER_COMMAND_ID',23)
