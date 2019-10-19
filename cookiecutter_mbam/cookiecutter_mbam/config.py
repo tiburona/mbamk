@@ -74,7 +74,9 @@ class Config:
         'dicom_to_nifti_command_id': 1, # DEPRECATED
         'dicom_to_nifti_wrapper_id':'dcm2niix-scan', # DEPRECATED
         'dicom_to_nifti_transfer_command_id': env.int('DICOM_TO_NIFTI_TRANSFER_COMMAND_ID',2),
-        'dicom_to_nifti_transfer_wrapper_id':'dcm2niix-xfer'
+        'dicom_to_nifti_transfer_wrapper_id':'dcm2niix-xfer',
+        'freesurfer_recon_all_transfer_command_id': env.str('FREESURFER_RECON', default='15'),
+        'freesurfer_recon_all_transfer_wrapper_id': 'freesurfer-recon-all-xfer'
     }
 
     files = {

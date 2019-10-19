@@ -38,9 +38,9 @@ class TlsSMTPHandler(SMTPHandler):
                 self.getSubject(record),
                 formatdate(), msg)
             if self.username:
-                smtp.ehlo()  # for tls add this line
-                smtp.starttls()  # for tls add this line
-                smtp.ehlo()  # for tls add this line
+                smtp.ehlo()
+                smtp.starttls()
+                smtp.ehlo()
                 smtp.login(self.username, self.password)
             smtp.sendmail(self.fromaddr, self.toaddrs, msg)
             smtp.quit()

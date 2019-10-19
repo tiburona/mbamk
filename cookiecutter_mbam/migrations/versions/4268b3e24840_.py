@@ -1,7 +1,7 @@
 """empty message
 
 Revision ID: 4268b3e24840
-Revises: 
+Revises:
 Create Date: 2019-07-21 11:24:05.948814
 
 """
@@ -80,8 +80,8 @@ def upgrade():
     op.create_table('scan',
     sa.Column('created_at', sa.DateTime(), nullable=True),
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
-    sa.Column('xnat_status', sa.String(length=80), nullable=True),
-    sa.Column('aws_status', sa.String(length=80), nullable=True),
+    sa.Column('xnat_status', sa.String(length=80), nullable=False),
+    sa.Column('aws_status', sa.String(length=80), nullable=False),
     sa.Column('xnat_uri', sa.String(length=255), nullable=True),
     sa.Column('xnat_id', sa.String(length=80), nullable=True),
     sa.Column('orig_aws_key', sa.String(length=255), nullable=True),

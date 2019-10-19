@@ -1,5 +1,7 @@
 from celery.signals import after_setup_logger, after_setup_task_logger
-from cookiecutter_mbam import celery
+import json
+from celery import signature
+from cookiecutter_mbam import celery as cel
 import ssl
 import smtplib
 from email.message import EmailMessage
@@ -71,7 +73,7 @@ def run_task_factories(cls):
     """
     return setter_factory(cls), multi_setter_factory(cls), getter_factory(cls)
 
-@celery.task
+@cel.task
 def send_email(email_info):
     """ Send an email
 
@@ -113,7 +115,7 @@ def format_email(sender_email, email_info):
     return msg
 
 
-@celery.task
+@cel.task
 def global_error_handler(req, exc, tb, cel, log_message='generic_message', user_name='', user_email='',
                          user_message='generic_message', email_user=True, email_admin=False):
     """
@@ -136,3 +138,9 @@ def global_error_handler(req, exc, tb, cel, log_message='generic_message', user_
         email_info = (user_name, user_email, textbank.messages[user_message])
         send_email.s(email_info).apply_async()
     logger.error(textbank.messages[log_message]['subject'], exc_info=True, extra={'email_admin': email_admin})
+
+
+@cel.task
+def trigger_job(serialized_job, *args, **kwargs):
+    canvas = signature(json.loads(serialized_job))
+    canvas.apply_async(*args, **kwargs)
