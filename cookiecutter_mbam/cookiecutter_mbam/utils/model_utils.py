@@ -1,5 +1,7 @@
 from flask_sqlalchemy import event
 
+
+#todo: add counter incrementing to this!
 def make_ins_del_listener(child_model, parent_model, child_model_str, parent_model_str,
                                       event_type, inc_quant):
 

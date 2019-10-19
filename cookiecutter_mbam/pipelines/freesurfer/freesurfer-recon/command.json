@@ -1,0 +1,223 @@
+{ "name": "freesurfer-recon",
+  "label": null,
+  "description": "runs Freesurfer's recon-all on a scan",
+  "version": null,
+  "schema-version": null,
+  "info-url": null,
+  "image": "freesurfer_image:latest",
+  "type": "docker",
+  "index": null,
+  "working-directory": null,
+  "command-line": "./main.sh #scan1",
+  "override-entrypoint": null,
+  "mounts": [
+        {
+            "name": "dicom-in",
+            "writable": "false",
+            "path": "/input"
+        },
+        {
+            "name": "fs-out",
+            "writable": "true",
+            "path": "/output"
+        }
+    ],
+  "environment-variables": {},
+  "ports": {},
+  "inputs": [
+     {
+       "name": "scan-1",
+       "description": "first input scan",
+       "type": "string",
+       "required": true,
+       "default-value": false,
+       "replacement-key": null,
+       "command-line-flag": "-i"
+        },
+     {
+       "name": "scan-2",
+       "description": "second input scan",
+       "type": "string",
+       "required": false,
+       "default-value": false,
+       "replacement-key": null,
+       "command-line-flag": "-i"
+        },
+    {
+       "name": "scan-3",
+       "description": "third input scan",
+       "type": "string",
+       "required": false,
+       "default-value": false,
+       "replacement-key": null,
+       "command-line-flag": "-i"
+        }
+
+  ],
+  "outputs": [
+      {
+            "name": "fs",
+            "description": "Selected freesurfer files",
+            "mount": "fs-out",
+            "required": "true"
+        }
+  ],
+  "xnat": [
+    {
+      "name": "freesurfer-recon-all",
+      "description": "run freesurfer recon",
+      "contexts": [],
+      "external-inputs": [],
+      "derived-inputs": [
+        {
+          "name": "nifti-resource-1",
+          "description": "The nifti resource on the scan",
+          "type": "Resource",
+          "matcher": "@.label == 'NIFTI'",
+          "default-value": null,
+          "required": true,
+          "replacement-key": null,
+          "provides-value-for-command-input": "",
+          "provides-files-for-command-mount": "nifti-in-1",
+          "user-settable": null,
+          "load-children": true,
+          "derived-from-wrapper-input": "scan1",
+          "derived-from-xnat-object-property": null,
+          "via-setup-command": null
+        },
+        {
+          "name": "nifti-file-1",
+          "description": "The nifti file in the resource",
+          "type": "File",
+          "matcher": "",
+          "default-value": null,
+          "required": true,
+          "replacement-key": null,
+          "provides-value-for-command-input": "",
+          "provides-files-for-command-mount": "",
+          "user-settable": null,
+          "load-children": true,
+          "derived-from-wrapper-input": "nifti-resource-1",
+          "derived-from-xnat-object-property": null,
+          "via-setup-command": null
+        },
+        {
+          "name": "nifti-filename-1",
+          "description": "The name of the nifti file on the resource",
+          "type": "string",
+          "matcher": "@.name =~ /.*nii/",
+          "default-value": null,
+          "required": true,
+          "replacement-key": null,
+          "provides-value-for-command-input": "infilename-1",
+          "provides-files-for-command-mount": "",
+          "user-settable": null,
+          "load-children": false,
+          "derived-from-wrapper-input": "nifti-file-1",
+          "derived-from-xnat-object-property": "name",
+          "via-setup-command": null
+        },
+        {
+          "name": "nifti-resource-2",
+          "description": "The nifti resource on the scan",
+          "type": "Resource",
+          "matcher": "@.label == 'NIFTI'",
+          "default-value": null,
+          "required": true,
+          "replacement-key": null,
+          "provides-value-for-command-input": "",
+          "provides-files-for-command-mount": "nifti-in-2",
+          "user-settable": null,
+          "load-children": true,
+          "derived-from-wrapper-input": "scan-2",
+          "derived-from-xnat-object-property": null,
+          "via-setup-command": null
+        },
+        {
+          "name": "nifti-file-2",
+          "description": "The nifti file in the resource",
+          "type": "File",
+          "matcher": "",
+          "default-value": null,
+          "required": true,
+          "replacement-key": null,
+          "provides-value-for-command-input": "",
+          "provides-files-for-command-mount": "",
+          "user-settable": null,
+          "load-children": true,
+          "derived-from-wrapper-input": "nifti-resource-2",
+          "derived-from-xnat-object-property": null,
+          "via-setup-command": null
+        },
+        {
+          "name": "nifti-filename-2",
+          "description": "The name of the nifti file on the resource",
+          "type": "string",
+          "matcher": "@.name =~ /.*nii/",
+          "default-value": null,
+          "required": true,
+          "replacement-key": null,
+          "provides-value-for-command-input": "infilename-2",
+          "provides-files-for-command-mount": "",
+          "user-settable": null,
+          "load-children": false,
+          "derived-from-wrapper-input": "nifti-file-2",
+          "derived-from-xnat-object-property": "name",
+          "via-setup-command": null
+        },
+        {
+          "name": "nifti-resource-3",
+          "description": "The nifti resource on the scan",
+          "type": "Resource",
+          "matcher": "@.label == 'NIFTI'",
+          "default-value": null,
+          "required": true,
+          "replacement-key": null,
+          "provides-value-for-command-input": "",
+          "provides-files-for-command-mount": "nifti-in-3",
+          "user-settable": null,
+          "load-children": true,
+          "derived-from-wrapper-input": "scan3",
+          "derived-from-xnat-object-property": null,
+          "via-setup-command": null
+        },
+        {
+          "name": "nifti-file-3",
+          "description": "The nifti file in the resource",
+          "type": "File",
+          "matcher": "",
+          "default-value": null,
+          "required": true,
+          "replacement-key": null,
+          "provides-value-for-command-input": "",
+          "provides-files-for-command-mount": "",
+          "user-settable": null,
+          "load-children": true,
+          "derived-from-wrapper-input": "nifti-resource-3",
+          "derived-from-xnat-object-property": null,
+          "via-setup-command": null
+        },
+        {
+          "name": "nifti-filename-3",
+          "description": "The name of the nifti file on the resource",
+          "type": "string",
+          "matcher": "@.name =~ /.*nii/",
+          "default-value": null,
+          "required": true,
+          "replacement-key": null,
+          "provides-value-for-command-input": "infilename-3",
+          "provides-files-for-command-mount": "",
+          "user-settable": null,
+          "load-children": false,
+          "derived-from-wrapper-input": "nifti-file-3",
+          "derived-from-xnat-object-property": "name",
+          "via-setup-command": null
+        }
+      ],
+      "output-handlers": []
+    }
+  ],
+  "reserve-memory": null,
+  "limit-memory": null,
+  "limit-cpu": null
+}

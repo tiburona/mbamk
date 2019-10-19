@@ -1,4 +1,4 @@
-FROM python:3
+FROM python:3.7
 
 # Install node and npm
 RUN apt-get install -y curl \
