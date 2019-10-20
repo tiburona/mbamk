@@ -106,6 +106,9 @@ class TestCreateResources(TestXNATTasks):
 
 class TestUploadsAndImports(TestXNATTasks):
 
+
+    #  xnat_credentials, file_path, url, exp_uri
+
     @pytest.fixture(
         autouse=True,
         params=[('T1.nii.gz', upload_scan_to_xnat, '/resources/NIFTI/files/T1.nii.gz', 'PUT'),
@@ -115,16 +118,14 @@ class TestUploadsAndImports(TestXNATTasks):
         filename, celery_task, uri, method = request.param
         if filename == 'T1.nii.gz':
             uri = self.scan_uri + uri
-            self.uris['resource'] = os.path.join(self.scan_uri, 'resources', 'NIFTI')
-            self.uris['file'] = uri
-        self.mocked_uri = self.server + uri
+        self.mocked_url = self.server + uri
         self.method = method
         dir_path = os.path.dirname(os.path.realpath(__file__))
         par_path = os.path.abspath(os.path.join(dir_path, os.pardir, os.pardir))
         local_path = os.path.join(par_path, 'test_files', filename)
         self.files =  {'file': (filename, open(local_path, 'rb'), 'application/octet-stream')}
         self.mocked_json_response = {}
-        self.signature = celery_task.s(self.uris, self.xnat_credentials, local_path)
+        self.signature = celery_task.s(self.xnat_credentials, local_path, self.mocked_url, self.uris['experiment'])
         self.assertions = [self.assert_request_type, self.assert_request_size]
 
     def assert_request_type(self, req):
@@ -134,9 +135,9 @@ class TestUploadsAndImports(TestXNATTasks):
         return int(req.headers['Content-Length']) > 1000
 
     def test_scan_to_xnat(self):
-        task = self.success_response(self.mocked_uri, self.mocked_json_response, self.signature,
+        task = self.success_response(self.mocked_url, self.mocked_json_response, self.signature,
                               method=self.method, assertions=self.assertions)
-        assert task.result == self.uris
+        assert task.result == self.uris['experiment']
 
     def test_scan_to_xnat_raises_error_if_failure_response(self):
         self.failure_response(self.mocked_uri, self.signature, method=self.method)
