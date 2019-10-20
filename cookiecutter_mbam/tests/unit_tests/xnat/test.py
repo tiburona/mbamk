@@ -22,6 +22,10 @@ class TestXNATTasks:
         self.command_ids = (self.xnat_config['dicom_to_nifti_command_id'], self.xnat_config['dicom_to_nifti_wrapper_id'])
         self.command_id, self.wrapper_id = self.command_ids
         self.scan_uri = '/data/experiments/XNAT_E00001/scans/10'
+        self.ids = {
+            'subject': 'XNAT_S00001',
+            'experiment': 'XNAT_E00001'
+        }
         self.uris = {
             'subject': '/data/subjects/XNAT_S00001',
             'experiment': '/data/experiments/XNAT_E00001',
@@ -45,56 +49,57 @@ class TestXNATTasks:
 
 class TestCreateResources(TestXNATTasks):
 
-    @pytest.fixture(autouse=True, params=[True, False])
+    @pytest.fixture(autouse=True, params=[range(4)])
     def setup_tests(self, setup_xnat_tests, request):
-        dcm = request.param
 
-        User = collections.namedtuple('User', 'id num_experiments xnat_id')
-        Experiment = collections.namedtuple('Experiment', 'id date num_scans xnat_id')
+        to_create = [
+            ['subject', 'experiment'],
+            ['scan', 'resource'],
+            ['experiment', 'scan', 'resource'],
+            ['subject', 'experiment', 'scan', 'resource']
+        ]
 
-        user = User(id=1, num_experiments=1, xnat_id=None)
+        to_create_responses = [{level: self.ids[level]} for l in to_create for level in l if
+                               level in ['subject', 'experiment']]
+
+        ind = request.param
+
+        self.to_create = to_create[ind]
+        self.responses = responses[ind]
+
+        prefix = self.server + '/data/archive/projects/MBAM_TEST'
+        subject_url = prefix + '/subjects/000001'
+        experiment_url = subject_url + '/experiments/000001_MR1'
+        scan_url = experiment_url + '/scans/T1_1'
+        resource_url = scan_url + '/resources/NIFTI'
+        file_url = resource_url + '/files/T1.nii.gz'
+        urls = [subject_url, experiment_url, scan_url, resource_url, file_url]
+
+        self.signature = create_resources.s(self.xnat_credentials, to_create, urls)
+
         date = datetime.now()
-        experiment = Experiment(id=1, num_scans=0, date=date, xnat_id=None)
+        queries = ['', '?xnat:mrSessionData/date={}'.format(date.strftime('%m/%d/%Y')), '?xsiType=xnat:mrScanData', '',
+                   '?xsi:type=xnat:mrScanData']
 
-        xc = XNATConnection(self.xnat_config, set_docker_host=False)
-        xc.generate_xnat_identifiers(user, experiment, dcm=dcm)
-
-        levels = ['subject', 'experiment', 'scan', 'resource', 'file']
-
-        self.signature = create_resources.s(self.xnat_credentials, (xc.xnat_ids, xc.existing_xnat_ids), levels, dcm,
-                                            xc.archive_prefix)
-
-        prefix = '/data/archive/projects/MBAM_TEST'
-        subject_uri = prefix + '/subjects/000001'
-        experiment_uri = subject_uri + '/experiments/000001_MR1'
-        scan_uri = experiment_uri + '/scans/T1_1'
-        resource_uri = scan_uri + '/resources/NIFTI'
-        file_uri = resource_uri + '/files/T1.nii.gz'
-        uris = [subject_uri, experiment_uri, scan_uri, resource_uri, file_uri]
-
-        queries= ['', '?xnat:mrSessionData/date={}'.format(date.strftime('%m/%d/%Y')), '?xsiType=xnat:mrScanData', '',
-                  '?xsi:type=xnat:mrScanData']
-
-        if dcm:
-            levels = levels[:-3]
-            uris = uris[:-3]
-            queries = queries[:-3]
-
-        self.num_expected_calls = 2 if dcm else 5
-
-        self.mocked_uris = zip(levels, uris, queries)
-
-        self.uris = {level[0]:level[1] for level in zip(levels, uris, queries)}
+        self.mocked_urls = zip(urls, queries)
 
     @responses.activate
     def test_create_resources(self):
 
-        for _, uri, query in self.mocked_uris:
-            responses.add('PUT', self.server + uri + query, status=200, json={})
+        for url, query in self.mocked_urls:
+            responses.add('PUT', url + query, status=200, json=self.responses)
 
         task = self.signature.apply()
-        assert len(responses.calls) == self.num_expected_calls
-        assert task.result == self.uris
+        assert len(responses.calls) == len(self.to_create)
+        assert task.result == self.responses
+
+    def test_create_resources_raises_error_if_failure_response(self):
+        pass
+
+class TestGetLatestScanInfo(TestXNATTasks):
+
+    def test_get_latest_scan_info(self):
+        pass
 
     @responses.activate
     def test_get_latest_scan_info_raises_error_if_failure_response(self):
