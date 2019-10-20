@@ -86,7 +86,7 @@ class ScanService(BaseService):
 
         :param xnat_labels: the XNAT labels for the subject and experiment the scan belongs to
         :type xnat_labels: dict
-        :return:
+        :return: None
         """
 
         scan_level_xnat_labels = self.xc.scan_labels(self.experiment, dcm=self.dcm)
@@ -100,6 +100,7 @@ class ScanService(BaseService):
         :type image_file: werkzeug.datastructures.FileStorage
         :return: three-tuple of the path to the file on local disk, the name of the file and a boolean indicating if the
         file is a zip file
+        :rtype: tuple
         """
 
         ext, filename, local_path = self._process_filename(image_file.filename)
@@ -133,6 +134,7 @@ class ScanService(BaseService):
         :param str local_path: the path to the uncompressed file
         :param str filename: the name of the uncompressed file
         :return: a three-tuple of the compressed file, the path to that file, and its name
+        :rtype: tuple
         """
         image_file, gz_path = gzip_file(local_path)
         os.remove(local_path)
@@ -146,11 +148,12 @@ class ScanService(BaseService):
         :return: Celery chain that uploads a scan to cloud storage
         :rtype: celery.canvas.Signature
         """
+
         return chain(
             self.csc.upload_to_cloud_storage(self.file_depot, self.scan_info, filename=self.filename),
             self.set_attribute(self.scan.id, 'orig_aws_key', passed_val=True),
             self.set_attribute(self.scan.id, 'aws_status', val='Uploaded')
-        )
+        ).set(link_error=self._error_handler(log_message='generic_message', email_admin=True, email_user=False))
 
     # todo: answer question about whether you can have separate error procs on two sub chains
     # start adding custom error messages for errors at different parts of the process
@@ -182,6 +185,7 @@ class ScanService(BaseService):
                                            user_message='user_external_uploads',
                                            email_admin=True)
         )
+
     # todo: upload to cloud storage
     def _run_freesurfer_on_scan(self, labels):
         ds = DerivationService([self.scan])
@@ -230,6 +234,7 @@ class ScanService(BaseService):
         with the new cloud storage key.
 
         :return: the chain to be executed
+        :rtype: celery.canvas.Signature
         """
 
         return chain(
@@ -247,6 +252,7 @@ class ScanService(BaseService):
         (and the larger XNAT chain) if dicom conversion was not successful.
 
         :return: a chain of Celery tasks to convert a DICOM file to NIFTI
+        :rtype: celery.canvas.Signature
         """
         self.ds = DerivationService([self.scan])
         self.ds.create('dicom_to_nifti')
@@ -263,6 +269,7 @@ class ScanService(BaseService):
          Chains together the task to fetch the XNAT uri and the task to download a nifti file from XNAT
 
         :return: a chain of Celery tasks to download a file from XNAT
+        :rtype: celery.canvas.Signature
         """
         return chain(
             self.get_attribute(self.scan.id, attr='xnat_uri', passed_val=False),
@@ -276,6 +283,7 @@ class ScanService(BaseService):
         from self._cloud_storage_upload_chain only in including the derivation model updating.
 
         :return: a chain of Celery tasks to upload a scan to cloud storage
+        :rtype: celery.canvas.Signature
         """
         return chain(
             self.csc.upload_to_cloud_storage(self.file_depot, self.scan_info),
@@ -286,8 +294,11 @@ class ScanService(BaseService):
         """Add a scan to the database
 
         Creates the scan object, adds it to the database, and sets the initial xnat and cloud storage status
+
         :return: scan
+        :rtype: cookiecutter_mbam.scan.models.Scan
         """
+
         return Scan.create(experiment_id=self.experiment.id, xnat_status=xnat_status, aws_status=aws_status,
                            user_id=self.experiment.user_id)
 

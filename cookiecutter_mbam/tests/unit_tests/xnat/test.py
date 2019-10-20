@@ -6,7 +6,6 @@ import collections
 import random
 from datetime import datetime
 from cookiecutter_mbam.xnat.tasks import *
-from cookiecutter_mbam.xnat.service import XNATConnection
 from cookiecutter_mbam.config import config_by_name, config_name
 
 
@@ -49,7 +48,7 @@ class TestXNATTasks:
 
 class TestCreateResources(TestXNATTasks):
 
-    @pytest.fixture(autouse=True, params=[range(4)])
+    @pytest.fixture(autouse=True, params=range(4))
     def setup_tests(self, setup_xnat_tests, request):
 
         to_create = [
@@ -59,13 +58,11 @@ class TestCreateResources(TestXNATTasks):
             ['subject', 'experiment', 'scan', 'resource']
         ]
 
-        to_create_responses = [{level: self.ids[level]} for l in to_create for level in l if
-                               level in ['subject', 'experiment']]
-
         ind = request.param
 
         self.to_create = to_create[ind]
-        self.responses = responses[ind]
+
+        self.responses = {level: self.ids[level] for level in self.to_create if level in ['subject', 'experiment']}
 
         prefix = self.server + '/data/archive/projects/MBAM_TEST'
         subject_url = prefix + '/subjects/000001'
@@ -73,43 +70,40 @@ class TestCreateResources(TestXNATTasks):
         scan_url = experiment_url + '/scans/T1_1'
         resource_url = scan_url + '/resources/NIFTI'
         file_url = resource_url + '/files/T1.nii.gz'
-        urls = [subject_url, experiment_url, scan_url, resource_url, file_url]
-
-        self.signature = create_resources.s(self.xnat_credentials, to_create, urls)
 
         date = datetime.now()
-        queries = ['', '?xnat:mrSessionData/date={}'.format(date.strftime('%m/%d/%Y')), '?xsiType=xnat:mrScanData', '',
-                   '?xsi:type=xnat:mrScanData']
 
-        self.mocked_urls = zip(urls, queries)
+        self.mocked_urls = {
+            'subject': subject_url,
+            'experiment': experiment_url + '?xnat:mrSessionData/date={}'.format(date.strftime('%m/%d/%Y')),
+            'scan': scan_url + '?xsiType=xnat:mrScanData',
+            'resource': resource_url,
+            'file':file_url + '?xsi:type=xnat:mrScanData'
+        }
+
+        self.signature = create_resources.s(self.xnat_credentials, self.to_create, self.mocked_urls)
+
 
     @responses.activate
     def test_create_resources(self):
 
-        for url, query in self.mocked_urls:
-            responses.add('PUT', url + query, status=200, json=self.responses)
+        for key in self.mocked_urls:
+            body = self.responses[key] if key in self.responses else None
+            responses.add('PUT', self.mocked_urls[key], status=200, body=body)
 
         task = self.signature.apply()
         assert len(responses.calls) == len(self.to_create)
         assert task.result == self.responses
 
-    def test_create_resources_raises_error_if_failure_response(self):
-        pass
-
-class TestGetLatestScanInfo(TestXNATTasks):
-
-    def test_get_latest_scan_info(self):
-        pass
-
     @responses.activate
-    def test_get_latest_scan_info_raises_error_if_failure_response(self):
-        failure = random.randint(0, self.num_expected_calls - 1)
-        for i, (_, uri, query) in enumerate(self.mocked_uris):
-            kw = {'status': 404, 'json':{'error': 'not found'}} if i is failure else {'status': 200, 'json':{}}
-            responses.add('PUT', self.server + uri + query, **kw)
-
-        with pytest.raises(ValueError):
-            self.signature.apply(throw=True)
+    def test_create_resources_raises_error_if_failure_response(self):
+        failure = random.randint(0, len(self.to_create) - 1)
+        for i, (url, query) in enumerate(self.mocked_urls):
+            kw = {
+                'status': 404,
+                'json': {'error': 'not found'} if i is failure else {'status': 200, 'body': self.responses}
+            }
+            responses.add('PUT', url + query, **kw)
 
 
 class TestUploadsAndImports(TestXNATTasks):
