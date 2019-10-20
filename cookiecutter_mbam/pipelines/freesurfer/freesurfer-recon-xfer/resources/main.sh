@@ -41,7 +41,7 @@ recon-all "${args[@]}"
 echo "zipping up outputs"
 pushd /output/currsub/
 zip -r $(popd)/stats.zip ./stats/
-zip -r $(popd)/mri.zip ./mri/{aseg.mgz}
+zip -r $(popd)/mri.zip ./mri/aseg.mgz
 zip -r $(popd)/surf.zip ./surf/{??.pial,??.sphere.reg,??.thickness,??.volume,??.area,??.sulc,??.curv,??.avg_curv}
 popd
 
