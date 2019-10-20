@@ -167,7 +167,8 @@ class XNATConnection(BaseModel):
         else:
             return (False, None)
 
-    def upload_scan_file(self, file_path, xnat_labels, import_service=False, is_first_scan=True, set_attrs=None):
+    def upload_scan_file(self, file_path, xnat_labels, import_service=False, is_first_scan=True,
+                         set_sub_and_exp_attrs=None):
         """ Create the XNAT upload chain
         Creates, but does not execute, the Celery chain that creates the XNAT subject and experiment, if necessary, then
         either uploads or imports (for non-dicoms and dicoms, respectively) a dicom file to XNAT.  This chain eventually
@@ -199,7 +200,7 @@ class XNATConnection(BaseModel):
         get_latest_scan_info_signature = get_latest_scan_info.s(xnat_credentials=self.auth)
 
         tasks = [(create_resources_signature, do_create_resources),
-                 (set_attrs, set_attrs),
+                 (set_sub_and_exp_attrs, set_sub_and_exp_attrs),
                  (upload_signature, True),
                  (get_latest_scan_info_signature, True)]
 

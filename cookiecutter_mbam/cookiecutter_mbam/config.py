@@ -48,7 +48,7 @@ class Config:
     MAIL_USE_TLS = True
 
     # File upload settings
-    MAX_CONTENT_LENGTH = 30 * 1024 * 1024
+    MAX_CONTENT_LENGTH = 75 * 1024 * 1024
 
     # Logging Settings
     LOG_FILENAME = 'static/logs/log.txt'
@@ -86,8 +86,8 @@ class Config:
 
     AWS = {
         # Grab variables from environment. Default are Katie's dev params
-        'access_key_id': env.str('AWS_KEY_ID','AKIAJ3CJ3JWENS3XA6QQ'),
-        'secret_access_key': env.str('AWS_SECRET_KEY','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'),
+        'access_key_id': env.str('AWS_KEY_ID','AKIAIVQJJVB4M7IAKUPA'),
+        'secret_access_key': env.str('AWS_SECRET_KEY','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'),
         'bucket_name' : env.str('AWS_S3_BUCKET','mbam-test'),
         # Below the default values are default cloudfront dev params set up for Spiro's AWS account
         'cloudfront_url' : env.str('CLOUDFRONT_URL','https://dc2khv0msnx9b.cloudfront.net/'),
