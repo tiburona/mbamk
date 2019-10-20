@@ -26,7 +26,7 @@ def upgrade():
     op.add_column('user', sa.Column('xnat_uri', sa.String(length=255), nullable=True))
 
     op.add_column('scan', sa.Column('user_id', sa.Integer(), nullable=True))
-    op.create_foreign_key(None, 'scan', 'user', ['user_id'], ['id'])
+    op.create_foreign_key('scan_user_id_fk', 'scan', 'user', ['user_id'], ['id'])
     # ### end Alembic commands ###
 
 
@@ -39,6 +39,6 @@ def downgrade():
     op.drop_column('experiment', 'xnat_label')
     op.drop_column('experiment', 'scan_counter')
 
-    op.drop_constraint(None, 'scan', type_='foreignkey')
+    op.drop_constraint('scan_user_id_fk', 'scan', type_='foreignkey')
     op.drop_column('scan', 'user_id')
     # ### end Alembic commands ###

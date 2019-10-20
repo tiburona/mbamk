@@ -86,9 +86,11 @@ This will generate a new migration script in cookiecutter_mbam/migrations/versio
 
     flask db upgrade
 
-To apply the migration and change the underlying database. If this is not successful, you may need to go back and edit the migration file. When successful (and the changes are applied to your local database), then be sure to commit the alembic migration file (in cookiecutter_mbam/migrations/versions folder) to git. 
+To apply the migration and change the underlying database. If this is not successful, you may need to go back and edit the migration file. When successful (and the changes are applied to your local database), then be sure to commit the alembic migration file (in cookiecutter_mbam/migrations/versions folder) to git.
 
 For a full migration command reference, run ``flask db --help``.
+
+There are some catches. Flask migrate doesn't work 100% with SQLite, and contraints need to be named for upgrades and downgrades to work as expected (i.e. op.create_foreign_key('scan_user_id_fk', 'scan', 'user', ['user_id'], ['id']) instead of op.create_foreign_key(None, 'scan', 'user', ['user_id'], ['id']))
 
 
 Asset Management
