@@ -8,10 +8,15 @@ from .utils import crop
 @celery.task
 def create_resources(xnat_credentials, to_create, urls):
     """ Create XNAT resources (subject, experiment, scan, resource) as necessary
-    :param tuple xnat_credentials: a three-tuple of the server, username, and password to log into XNAT
-    :param list to_create: the levels (among subject, experiment, scan, resource) that should be created
-    :param dict urls: a dictionary of urls for each put request
-    :return: responses
+
+    :param xnat_credentials: a three-tuple of the server, username, and password to log into XNAT
+    :type xnat_credentials: tuple
+    :param to_create: the levels (among subject, experiment, scan, resource) that should be created
+    :type to_create: list
+    :param urls: a dictionary of urls for each put request
+    :type urls: dict
+    :return: a dictionary of the values XNAT returned for subject and experimenet id
+    :rtype: dict
     """
     server, user, password = xnat_credentials
 
