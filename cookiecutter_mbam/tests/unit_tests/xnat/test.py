@@ -98,12 +98,10 @@ class TestCreateResources(TestXNATTasks):
     @responses.activate
     def test_create_resources_raises_error_if_failure_response(self):
         failure = random.randint(0, len(self.to_create) - 1)
-        for i, (url, query) in enumerate(self.mocked_urls):
-            kw = {
-                'status': 404,
-                'json': {'error': 'not found'} if i is failure else {'status': 200, 'body': self.responses}
-            }
-            responses.add('PUT', url + query, **kw)
+        for i, key in enumerate(self.mocked_urls.keys()):
+            body = self.responses[key] if key in self.responses else None
+            kw = {'status': 404, 'json': {'error': 'not found'}} if i == failure else {'status': 200, 'body': body}
+            responses.add('PUT', self.mocked_urls[key], **kw)
 
 
 class TestUploadsAndImports(TestXNATTasks):
