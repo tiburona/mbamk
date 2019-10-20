@@ -9,7 +9,6 @@ from .utils import crop
 def create_resources(xnat_credentials, to_create, urls):
     """ Create XNAT resources (subject, experiment, scan, resource) as necessary
     :param tuple xnat_credentials: a three-tuple of the server, username, and password to log into XNAT
-    ids and queries for each level, and the second that supplies existing XNAT ids, if any
     :param list to_create: the levels (among subject, experiment, scan, resource) that should be created
     :param dict urls: a dictionary of urls for each put request
     :return: responses
@@ -29,6 +28,8 @@ def create_resources(xnat_credentials, to_create, urls):
 
             if not r.ok:
                 raise ValueError(f'Unexpected status code: {r.status_code} Response: \n {r.text}')
+
+
     return responses
 
 @celery.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5})

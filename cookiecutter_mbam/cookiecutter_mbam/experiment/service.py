@@ -37,6 +37,8 @@ class ExperimentService(BaseService):
         self.xc = XC(config=config.XNAT)
 
     # todo: questions to answer.  1) what happens when you've already called a link_error task on a sub proc
+    # todo: idea: rather than email the user on error, email user one summary email with success or failure of upload
+    # process
     def add(self, user, date, scanner, field_strength, files=None):
         """ The top level public method for adding an experiment and scans
 
@@ -60,11 +62,7 @@ class ExperimentService(BaseService):
 
         add_scans_to_cloud_storage, add_scans_to_xnat_and_run_freesurfer = self._add_scans(files)
 
-        add_scans_to_cloud_storage.apply_async(
-            link_error=self._error_handler(log_message='generic_message',
-                                           user_message='user_external_uploads',
-                                           email_admin=True)
-        )
+        add_scans_to_cloud_storage.apply_async()
 
         add_scans_to_xnat_and_run_freesurfer.apply_async(
             link_error=self._error_handler(log_message='generic_message',
@@ -119,9 +117,10 @@ class ExperimentService(BaseService):
         experiment, the signature of the task to set subject and experiment attributes (or None if those attributes
         don't need to be set), and
 
-        :param scan_index:
+        :param scan_index: the position of the current scan among scans being currently uploaded
         :type scan_index: int
-        :return:
+        :return: a boolean indicating whether the scan is the first scan, the signature of task to set subject and
+        experiment XNAT attributes (or None), and a list of subject and experiment XNAT labels
         :rtype: list
         """
         first_scan = not scan_index
@@ -131,6 +130,13 @@ class ExperimentService(BaseService):
 
 
     def _set_subject_and_experiment_attributes(self, first_scan):
+        """
+
+        :param first_scan: whether the scan is the first to be uploaded for this experiment
+        :type first_scan: bool
+        :return: the signature of the task to set XNAT and experiment attributes (or None)
+        :rtype: Union([None, celery.canvas.Signature])
+        """
 
         if not len(self.attrs_to_set) or not first_scan:
             return None

@@ -67,7 +67,10 @@ request_and_task_formatter = RequestandTaskFormatter(
 
 class MailFilter(logging.Filter):
     def filter(self, rec):
-        return rec.email_admin
+        try:
+            return rec.email_admin
+        except:
+            return False
 
 config = config_by_name[config_name]
 
