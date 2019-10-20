@@ -29,15 +29,15 @@ class BaseModel:
         else:
             return trigger_job.si(job, *args, **kwargs)
 
-    def _error_handler(self, log_message, user_message='', email_admin=True):
+    def _error_handler(self, log_message, user_message='', email_admin=True, email_user=True):
         return global_error_handler.s(cel=True, log_message=log_message, user_name=self.username,
-                                      user_email=current_user.email, user_message=user_message,  email_user=True,
+                                      user_email=current_user.email, user_message=user_message,  email_user=email_user,
                                       email_admin=email_admin)
 
-    def _call_error_handler(self, exc, log_message, user_message='', email_admin=True):
-        global_error_handler(request, exc, traceback.format_exc(), cel=False, log_message=log_message, user_name=self._username(),
-                             user_email=current_user.email, user_message=user_message, email_user=True,
-                             email_admin=email_admin)
+    def _call_error_handler(self, exc, log_message, user_message='', email_admin=True, email_user=True):
+        global_error_handler(request, exc, traceback.format_exc(), cel=False, log_message=log_message,
+                             user_name=self._username(), user_email=current_user.email, user_message=user_message,
+                             email_user=email_user, email_admin=email_admin)
 
     def _send_email(self):
         #todo: this method should take relevant arguments and return send email signature with arguments

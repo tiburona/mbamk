@@ -195,11 +195,8 @@ def dl_file_from_xnat(self, scan_uri, xnat_credentials, file_path):
     server, user, password = xnat_credentials
     with init_session(user, password) as s:
         r = s.get(server + os.path.join(scan_uri, 'resources', 'NIFTI', 'files'))
-        print(os.path.join(scan_uri, 'resources', 'NIFTI', 'files'))
         if r.ok:
-            print(r.json())
             result = [result for result in r.json()['ResultSet']['Result'] if 'json' not in result['Name']][0]
-            print(result)
             response = s.get(server + result['URI'])
             if response.ok:
                 with open(os.path.join(file_path, result['Name']), 'wb') as f:

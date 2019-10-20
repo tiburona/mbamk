@@ -81,7 +81,6 @@ def send_email(email_info):
     with two keys, 'subject' and 'body'
     :return:
     """
-    #message = format_email(UNAME, email_info)
     context = ssl.create_default_context()
     user_name, user_email, message = email_info
 

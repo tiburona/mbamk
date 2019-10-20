@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 """Scan service.
 
-This module implements uploading a scan file to XNAT and adding a scan to the database.
+This module implements adding a scan to the database, and setting up Celery chains to upload a scan to cloud storage
+backup, upload the scan to XNAT, and start the Freesurfer recon process.
 
 Todo: do we want to infer file type from extension?  Or use some other method?
 
@@ -61,17 +62,17 @@ class ScanService(BaseService):
         self.csc = CloudStorageConnection(config=config.AWS)
 
     def add_to_database(self, image_file, xnat_labels):
-        """The top level public method for adding a scan
+        """Add a scan to the database
 
-        Calls methods to infer file type and further process the file, generate xnat identifiers and query strings,
-        check what XNAT identifiers objects have, add the scan to the database, and finally begin the process of
-        uploading the file to external sites.
+        Calls methods to add the scan to the MBAM database, infer file type, add scan level XNAT id to the XNAT labels
+        dictionary, and set the scan_info attribute
 
-        :param file_object image_file: the file object
+        :param image_file: the file object
+        :type image_file: werkzeug.datastructures.FileStorage
+        :param xnat_labels: the XNAT labels for the subject and experiment the scan belongs to
+        :type xnat_labels: dict
         :return: None
-
         """
-
         self.scan = self._add_scan_to_database()
 
         self.local_path, self.filename, self.dcm = self._process_file(image_file)
@@ -80,8 +81,13 @@ class ScanService(BaseService):
 
         self.scan_info = [xnat_labels[level]['xnat_label'] for level in ('subject', 'experiment', 'scan')]
 
-
     def _update_xnat_labels(self, xnat_labels):
+        """Add scan level xnat id to the xnat_labels dictionary
+
+        :param xnat_labels: the XNAT labels for the subject and experiment the scan belongs to
+        :type xnat_labels: dict
+        :return:
+        """
 
         scan_level_xnat_labels = self.xc.scan_labels(self.experiment, dcm=self.dcm)
         xnat_labels.update(scan_level_xnat_labels)
@@ -90,9 +96,12 @@ class ScanService(BaseService):
     def _process_file(self, image_file):
         """Prepare file for upload to XNAT and cloud storage
 
-        :param file_object image_file:
-        :return: two-tuple of the path to the file on local disk and a boolean indicating if the file is a zip file
+        :param image_file: the file object
+        :type image_file: werkzeug.datastructures.FileStorage
+        :return: three-tuple of the path to the file on local disk, the name of the file and a boolean indicating if the
+        file is a zip file
         """
+
         ext, filename, local_path = self._process_filename(image_file.filename)
         image_file.save(local_path)
 
@@ -108,8 +117,8 @@ class ScanService(BaseService):
         """Derive information from the filename
 
         :param str filename: the name of the file as stored on the image_file object
-        :return: the extension of the file, the basename of the file, and the path to write the file to in local storage
-        :rtype: tuple
+        :return: a three-tuple of the extension of the file, the basename of the file, and the path to write the file to
+        in local storage
         """
         _, ext = os.path.splitext(filename)
         filename = os.path.basename(filename)
@@ -135,6 +144,7 @@ class ScanService(BaseService):
         """Construct the celery chain to upload an original scan file to cloud storage
 
         :return: Celery chain that uploads a scan to cloud storage
+        :rtype: celery.canvas.Signature
         """
         return chain(
             self.csc.upload_to_cloud_storage(self.file_depot, self.scan_info, filename=self.filename),
@@ -143,14 +153,21 @@ class ScanService(BaseService):
         )
 
     # todo: answer question about whether you can have separate error procs on two sub chains
+    # start adding custom error messages for errors at different parts of the process
     def add_to_xnat_and_run_freesurfer(self, is_first_scan, set_sub_and_exp_attrs, labels):
-        """Construct the celery chain that performs XNAT functions and updates MBAM database with XNAT IDs
+        """Construct the celery chain that performs XNAT functions
 
         Constructs the chain to upload a file to XNAT and update user, experiment, and scan representations in the MBAM
         database, and if the file is a dicom, appends to that chain a chain that runs dicom conversion, and finally
         sets the error handler on the chain.
 
+        :param is_first_scan: whether this scan is the first to be uploaded for this experiment
+        :type is_first_scan: bool
+        :param set_sub_and_exp_attrs: None or the signature of the task to set subject and/or experiment XNAT attributes
+        :type set_sub_and_exp_attrs: Union([NoneType, celery.canvas.Signature]
+        :param labels:
         :return: Celery chain that performs XNAT functions
+        :rtype: celery.canvas.Signature
         """
 
         if self.dcm:
@@ -170,9 +187,6 @@ class ScanService(BaseService):
         ds = DerivationService([self.scan])
         ds.create('freesurfer_recon_all')
 
-
-        # Looks like the problem is here.  I am passing a combination of xnat_labels and xnat_ids to
-        # gen_fs_recon_data
         return chain(
             self.get_attribute(self.scan.id, attr='xnat_id'),
             self.xc.gen_fs_recon_data(labels),
@@ -180,22 +194,28 @@ class ScanService(BaseService):
             ds.update_derivation_model('status', exception_on_failure=True)
         )
 
-    def _upload_file_to_xnat(self, is_first_scan, set_attrs):
+    def _upload_file_to_xnat(self, is_first_scan, set_sub_and_exp_attrs):
         """Construct a Celery chain to upload a file to XNAT
 
-        Constructs a chain that uploads the scan file to XNAT, updates the user, experiment, and subject in the MBAM
-        database with their XNAT attributes, updates the status of the scan object to affirm that it was successfully
-        uploaded, and gets the scan URI to pass to the dicom conversion chain.
+        Constructs a chain that uploads the scan file to XNAT, sets XNAT-relevant attributes of the scan object, and
+        gets the scan URI to pass to the dicom conversion chain.
 
-        :return: the chain to upload a file to XNAT
+        :param is_first_scan: whether the current scan is the first to be uploaded for the current experiment
+        :type is_first_scan: bool
+        :param set_sub_and_exp_attrs: either None or the signature of the task that updates subject and/or experiment with their
+        XNAT attributes
+        :type set_sub_and_exp_attrs: Union([NoneType, celery.canvas.Signature])
+        :return: the signature of the chain to upload a file to XNAT
+        :rtype: celery.canvas.Signature
         """
+
 
         error_proc = [self._error_handler(log_message='generic_message', user_message='user_external_uploads'),
                               self.set_attribute(self.scan.id, 'xnat_status', val='Error')]
 
         return chain(
             self.xc.upload_scan_file(self.local_path, self.xnat_labels, import_service=self.dcm,
-                                     is_first_scan=is_first_scan, set_attrs=set_attrs),
+                                     is_first_scan=is_first_scan, set_sub_and_exp_attrs=set_sub_and_exp_attrs),
             self.set_attributes(self.scan.id, passed_val=True),
             self.set_attribute(self.scan.id, 'xnat_status', val='Uploaded'),
             self.get_attribute(self.scan.id, attr='xnat_uri')
