@@ -7,7 +7,7 @@ from functools import reduce
 from celery import group, chain
 from .models import Experiment
 from cookiecutter_mbam.base import BaseService
-from .tasks import set_experiment_attribute, get_experiment_attribute, set_sub_and_exp_xnat_attrs
+from .tasks import set_experiment_attribute, get_experiment_attribute, set_sub_and_exp_xnat_attrs, construct_status_email
 from cookiecutter_mbam.scan import ScanService
 from cookiecutter_mbam.xnat.service import XNATConnection as XC
 from cookiecutter_mbam.config import config_by_name, config_name
@@ -43,10 +43,27 @@ class ExperimentService(BaseService):
         add_scans_to_cloud_storage, add_scans_to_xnat_and_run_freesurfer = self._add_scans(files)
 
         #todo: add error handling here.  there already is some error handling on xnat job
-        add_scans_to_cloud_storage.apply_async()
+        header = group([add_scans_to_cloud_storage, add_scans_to_xnat_and_run_freesurfer])
+        callback = self._send_upload_status_email()
+        callback.set(link_error=self._send_upload_status_email())
+        job = chain(header, callback)
 
-        add_scans_to_xnat_and_run_freesurfer.apply_async()
+        job.apply_async()
 
+    def _construct_status_email(self):
+        return construct_status_email.si(self.experiment.id)
+
+    def _send_upload_status_email(self):
+
+        # return chain(
+        #     self.xc.gen_dicom_conversion_data(),
+        #     self.xc.launch_and_poll_for_completion('dicom_to_nifti'),
+        #     self.ds.update_derivation_model('status', exception_on_failure=True),
+        # )
+        return chain(
+            self._construct_status_email(),
+            self._send_email()
+        )
 
     # todo: think about whether it would be simpler to call create resources once for sub and exp
     # and then later for scan, resource.  It avoids one of the reasons for these first_scan calculations
@@ -87,6 +104,3 @@ class ExperimentService(BaseService):
             return None
         else:
             return set_sub_and_exp_xnat_attrs.s(self.xnat_labels, self.user.id, self.experiment.id, self.attrs_to_set)
-
-
-
