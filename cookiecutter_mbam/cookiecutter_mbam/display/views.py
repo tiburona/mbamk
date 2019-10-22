@@ -11,7 +11,6 @@ def debug():
 
 blueprint = Blueprint('display', __name__, url_prefix='/displays', static_folder='../static')
 
-ds=DisplayService() # instantiate the display service
 
 def resource_belongs_to_user(resource_type, instance_id):
     """ Verify that what the user wants to view belongs to the user
@@ -20,10 +19,8 @@ def resource_belongs_to_user(resource_type, instance_id):
     :return: Boolean
      """
     if resource_type.get_by_id(instance_id):
-        check = resource_type.get_by_id(instance_id).user_id == current_user.id
-    else:
-        check = False
-    return check
+        return resource_type.get_by_id(instance_id).user_id == current_user.id
+    return False
 
 @blueprint.route('/')
 @login_required
@@ -31,18 +28,19 @@ def displays():
     """ List all displays available for this user. """
     # For now list and pass the scans that have a aws_orig_key until
     # derivation is updated
-    displays = ds.return_user_scans(current_user.id)
+    displays = DisplayService(user=current_user).get_user_scans()
     return render_template('displays/displays.html', displays=displays)
 
 @blueprint.route('/scan/<scan_id>/slice_view',methods=['GET'])
 @login_required
 def slice_view(scan_id):
     """ Display current user's raw NIFTI file """
-    if resource_belongs_to_user(Scan,scan_id):
+    if resource_belongs_to_user(Scan, scan_id):
         try:
-            url = ds.return_nifti_url(scan_id)
+            ds = DisplayService(user=current_user)
+            url = ds.get_nifti_url(scan_id)
             signed_url = ds.sign_url(url)
-            return render_template('displays/slice_view.html',url=signed_url)
+            return render_template('displays/slice_view.html', url=signed_url)
         except:
             return render_template('404.html')
     else:
@@ -51,7 +49,7 @@ def slice_view(scan_id):
 @blueprint.route('/test',methods=['GET'])
 def test():
     """ Test route to display a NIFTI file in S3 via Cloudfront signed URL in papaya """
-    url = ds.cf_base_url + 'test/MNI_SPGR01.nii.gz'
-    signed_url = ds.sign_url(url)
+    url = DisplayService(user=current_user).cf_base_url + 'test/MNI_SPGR01.nii.gz'
+    signed_url = DisplayService(user=current_user).sign_url(url)
 
     return render_template('displays/test.html',url=signed_url)
