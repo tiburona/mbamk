@@ -70,7 +70,6 @@ class ExperimentService(BaseService):
                                            email_admin=True)
         )
 
-
     def _add_scans(self, files):
         """Construct the cloud storage and XNAT celery jobs for all scans
 

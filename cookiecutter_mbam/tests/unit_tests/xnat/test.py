@@ -140,13 +140,14 @@ class TestUploadsAndImports(TestXNATTasks):
         assert task.result == self.uris['experiment']
 
     def test_scan_to_xnat_raises_error_if_failure_response(self):
-        self.failure_response(self.mocked_uri, self.signature, method=self.method)
+        self.failure_response(self.mocked_url, self.signature, method=self.method)
 
 
 class TestGetLatestScanInfo(TestXNATTasks):
+
     @pytest.fixture(autouse=True)
     def set_up(self, setup_xnat_tests):
-        self.mocked_uri = self.server + self.uris['experiment'] + '/scans'
+        self.mocked_url = self.server + self.uris['experiment'] + '/scans'
         self.mocked_json_response = {
             'ResultSet':{
                 'Result':
@@ -155,14 +156,14 @@ class TestGetLatestScanInfo(TestXNATTasks):
                      ]
             }
         }
-        self.signature = get_latest_scan_info.s(self.uris, self.xnat_credentials)
+        self.signature = get_latest_scan_info.s(self.uris['experiment'], self.xnat_credentials)
 
     def test_get_latest_scan_info(self):
-        task = self.success_response(self.mocked_uri, json=self.mocked_json_response, signature=self.signature)
+        task = self.success_response(self.mocked_url, json=self.mocked_json_response, signature=self.signature)
         assert task.result == {'xnat_id': '10', 'xnat_uri': self.scan_uri}
 
     def test_get_latest_scan_info_raises_error_if_failure_response(self):
-        self.failure_response(self.mocked_uri, self.signature)
+        self.failure_response(self.mocked_url, self.signature)
 
 
 class TestGenDicomConversionData(TestXNATTasks):

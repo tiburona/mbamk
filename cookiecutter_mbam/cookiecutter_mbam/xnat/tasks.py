@@ -34,7 +34,6 @@ def create_resources(xnat_credentials, to_create, urls):
             if not r.ok:
                 raise ValueError(f'Unexpected status code: {r.status_code} Response: \n {r.text}')
 
-
     return responses
 
 @celery.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5})
@@ -65,6 +64,7 @@ def import_scan_to_xnat(self, xnat_credentials, file_path, url, exp_uri):
     :return: uris
     This is the task invoked when the scan is in DICOM format.
     """
+
     server, user, password = xnat_credentials
     files = {'file': ('DICOMS.zip', open(file_path, 'rb'), 'application/octet-stream')}
     with init_session(user, password) as s:
@@ -121,7 +121,6 @@ def gen_freesurfer_data(self, scan_id, sub_and_exp_labels, project_id):
             'subject': sub_label,
             'project': project_id
          }
-
 
 @celery.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5})
 def launch_command(self, data, xnat_credentials, project, command_ids):
