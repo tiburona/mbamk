@@ -1,4 +1,4 @@
-from .tasks import global_error_handler, trigger_job
+from .tasks import global_error_handler, trigger_job, send_email
 from flask import request
 from flask_security import current_user
 import traceback
@@ -39,9 +39,7 @@ class BaseModel:
                              user_email=current_user.email, user_message=user_message, email_user=True,
                              email_admin=email_admin)
 
-    def _send_email(self):
-        #todo: this method should take relevant arguments and return send email signature with arguments
-        pass
+
 
 
 class BaseService(BaseModel):
@@ -81,4 +79,12 @@ class BaseService(BaseModel):
         except:
             pass
 
+    def _send_email(self):
+        #todo: this method should take relevant arguments and return send email signature with arguments
 
+        #return a three-tuple of the recipient's name and email address, as well as message, a dictionary
+        #with two keys, 'subject' and 'body'
+
+        # todo put in if statement allowing this to be immutable
+
+        return send_email.s()
