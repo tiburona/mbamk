@@ -1,5 +1,7 @@
 from celery.signals import after_setup_logger, after_setup_task_logger
 import json
+import zipfile
+import os
 from celery import signature
 from cookiecutter_mbam import celery as cel
 import ssl
@@ -143,3 +145,11 @@ def global_error_handler(req, exc, tb, cel, log_message='generic_message', user_
 def trigger_job(serialized_job, *args, **kwargs):
     canvas = signature(json.loads(serialized_job))
     canvas.apply_async(*args, **kwargs)
+
+@cel.task
+def zipdir(path, name='file.zip'):
+    with zipfile.ZipFile(name, 'w', zipfile.ZIP_DEFLATED) as zipf:
+        for root, dirs, files in os.walk(path):
+            for file in files:
+                zipf.write(os.path.join(root, file))
+    return path, name, zipf

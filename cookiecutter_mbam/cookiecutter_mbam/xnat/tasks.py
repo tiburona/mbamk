@@ -100,27 +100,13 @@ def get_latest_scan_info(self, experiment_uri, xnat_credentials):
             raise ValueError(f'Unexpected status code: {r.status_code}  Response: \n {r.text}')
 
 @celery.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5})
-def gen_dicom_conversion_data(self, uri):
-    """ Generate the payload for the post request that launches the DICOM converstion command
-
-    :param self: the task object
-    :param str uri: the uri of a scan
-    :return: a dictionary with the payload to be included with the post request to launch dicom conversion
-    """
-
-    return {'scan': uri}
-
-@celery.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5})
-def gen_freesurfer_data(self, scan_id, sub_and_exp_labels, project_id):
-
-    sub_label, exp_label = sub_and_exp_labels
-
+def gen_container_data(self, uri, xnat_credentials, download_suffix, upload_suffix):
+    server, _, _ = xnat_credentials
     return {
-            'scans': [scan_id],
-            'experiment': exp_label,
-            'subject': sub_label,
-            'project': project_id
-         }
+        'download-url': server + uri + download_suffix,
+        'upload-url': server + uri + upload_suffix
+    }
+
 
 @celery.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5})
 def launch_command(self, data, xnat_credentials, project, command_ids):
@@ -187,7 +173,7 @@ def poll_cs_fsrecon(self, container_id, xnat_credentials, interval):
         return 'Timed Out'
 
 @celery.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5})
-def dl_file_from_xnat(self, scan_uri, xnat_credentials, file_path):
+def dl_files_from_xnat(self, uri, xnat_credentials, file_path, suffix='', single_file=True, conditions=[]):
     """Download a file from XNAT
 
     :param self: the task object
@@ -197,18 +183,28 @@ def dl_file_from_xnat(self, scan_uri, xnat_credentials, file_path):
     :return: the name of the file in XNAT
     :rtype: str
     """
+
+    if not os.isdir(file_path):
+        os.mkdir(file_path)
+
     server, user, password = xnat_credentials
+
     with init_session(user, password) as s:
-        r = s.get(server + os.path.join(scan_uri, 'resources', 'NIFTI', 'files'))
+        r = s.get(server + os.path.join(uri, suffix))
         if r.ok:
-            result = [result for result in r.json()['ResultSet']['Result'] if 'json' not in result['Name']][0]
-            response = s.get(server + result['URI'])
-            if response.ok:
-                with open(os.path.join(file_path, result['Name']), 'wb') as f:
-                    f.write(response.content)
-                    return result['Name']
+            results = [result for result in r.json()['ResultSet']['Result']
+                       if all([condition(result) for condition in conditions])]
+            for result in results:
+                response = s.get(server + result['URI'])
+                if response.ok:
+                    with open(os.path.join(file_path, result['Name']), 'wb') as f:
+                        f.write(response.content)
             else:
                 raise ValueError(f'Unexpected status code: {response.status_code}  Response: /n {r.text}')
+            if single_file:
+                return results[0]['Name']
+            else:
+                [result['Name'] for result in results]
         else:
             raise ValueError(f'Unexpected status code: {r.status_code}  Response: \n {r.text}')
     return r

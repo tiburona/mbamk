@@ -49,6 +49,7 @@ class ScanService(BaseService):
         self.instance_path = current_app.instance_path[:-8]
         self._config_read()
         self.tasks = tasks
+        self.derivation_services = {}
 
     def _config_read(self):
         """Scan service configuration
@@ -79,7 +80,7 @@ class ScanService(BaseService):
 
         self._update_xnat_labels(xnat_labels)
 
-        self.scan_info = [xnat_labels[level]['xnat_label'] for level in ('subject', 'experiment', 'scan')]
+        self.scan_info = [self.user.id, self.experiment.id, self.scan.id]
 
     def _update_xnat_labels(self, xnat_labels):
         """Add scan level xnat id to the xnat_labels dictionary
@@ -142,6 +143,15 @@ class ScanService(BaseService):
         filename = filename + '.gz'
         return image_file, local_path, filename
 
+    def _error_proc(self, status_type=''):
+
+        error_proc = self._error_handler(log_message='generic_message', email_admin=True, email_user=False)
+
+        if len(status_type):
+            error_proc = error_proc | self.set_attribute(self.scan.id, status_type, 'Error')
+
+        return error_proc
+
     def add_to_cloud_storage(self):
         """Construct the celery chain to upload an original scan file to cloud storage
 
@@ -153,10 +163,8 @@ class ScanService(BaseService):
             self.csc.upload_to_cloud_storage(self.file_depot, self.scan_info, filename=self.filename),
             self.set_attribute(self.scan.id, 'orig_aws_key', passed_val=True),
             self.set_attribute(self.scan.id, 'aws_status', val='Uploaded')
-        ).set(link_error=self._error_handler(log_message='generic_message', email_admin=True, email_user=False))
+        ).set(link_error=self._error_proc('aws_status'))
 
-    # todo: answer question about whether you can have separate error procs on two sub chains
-    # start adding custom error messages for errors at different parts of the process
     def add_to_xnat_and_run_freesurfer(self, is_first_scan, set_sub_and_exp_attrs, labels):
         """Construct the celery chain that performs XNAT functions
 
@@ -178,24 +186,70 @@ class ScanService(BaseService):
         else:
             xnat_chain = self._upload_file_to_xnat(is_first_scan, set_sub_and_exp_attrs)
 
-        xnat_chain = xnat_chain | self._trigger_job(json.dumps(self._run_freesurfer_on_scan(labels)))
+            debug()
 
-        return xnat_chain.set(
-            link_error=self._error_handler(log_message='generic_message',
-                                           user_message='user_external_uploads',
-                                           email_admin=True)
-        )
+        xnat_chain = xnat_chain | self._trigger_job(json.dumps(self._run_freesurfer()))
 
-    # todo: upload to cloud storage
-    def _run_freesurfer_on_scan(self, labels):
-        ds = DerivationService([self.scan])
-        ds.create('freesurfer_recon_all')
+        return xnat_chain.set(link_error=self._error_proc())
+
+    def _run_container(self, process_name, download_suffix, upload_suffix, ds):
 
         return chain(
-            self.get_attribute(self.scan.id, attr='xnat_id'),
-            self.xc.gen_fs_recon_data(labels),
-            self.xc.launch_and_poll_for_completion('freesurfer_recon_all'),
+            self.get_attribute(self.scan.id, attr='xnat_uri'),
+            self.xc.gen_container_data(download_suffix=download_suffix, upload_suffix=upload_suffix),
+            self.xc.launch_and_poll_for_completion(process_name),
             ds.update_derivation_model('status', exception_on_failure=True)
+        )
+
+    def _download_files_from_xnat(self, local_path, suffix, conditions=[], single_file=True):
+
+        return chain(
+            self.get_attribute(self.scan.id, attr='xnat_uri'),
+            self.xc.dl_files_from_xnat(local_path, suffix=suffix, conditions=conditions, single_file=single_file),
+        )
+
+    # todo: the last piece of this should be deleting the directory from the web server
+    def _upload_derivation_to_cloud_storage(self, local_path, filename, ds):
+        return chain(
+            self.csc.upload_to_cloud_storage(local_path, self.scan_info, filename=filename),
+            ds.update_derivation_model('cloud_storage_key')
+        )
+
+    def _run_container_retrieve_and_store_files(self, process_name, download_suffix, upload_suffix, filename,
+                                                    dl_conditions=[], single_file=True, zip=False):
+        ds = DerivationService([self.scan])
+        ds.create(process_name)
+
+        local_path = os.path.join(self.file_depot, str(self.scan.id))
+
+        run_container = self._run_container(process_name, download_suffix, upload_suffix, ds)
+        download_files = self._download_files_from_xnat(local_path, upload_suffix,
+                                                        conditions=dl_conditions, single_file=single_file)
+        upload_to_cloud_storage = self._upload_derivation_to_cloud_storage(local_path, filename, ds)
+
+        if zip:
+            upload_to_cloud_storage = self.zipdir(path=local_path, name=filename) | upload_to_cloud_storage
+
+        return chain(run_container, download_files, upload_to_cloud_storage)
+
+    def _run_freesurfer(self):
+
+        return self._run_container_retrieve_and_store_files(
+            process_name='freesurfer_recon_all',
+            download_suffix='/resources/NIFTI/files',
+            upload_suffix='/resources/FSv6/files',
+            filename='freesurfer.zip',
+            single_file=False,
+            dl_conditions=[lambda result: 'json' not in result['Name']]
+        )
+
+    def _convert_dicom(self):
+
+        return self._run_container_retrieve_and_store_files(
+            process_name='dicom_to_nifti',
+            download_suffix='/resources/DICOM/files',
+            upload_suffix='/resources/NIFTI/files',
+            filename=self.xnat_labels['scan']['xnat_label']
         )
 
     def _upload_file_to_xnat(self, is_first_scan, set_sub_and_exp_attrs):
@@ -213,82 +267,14 @@ class ScanService(BaseService):
         :rtype: celery.canvas.Signature
         """
 
-
-        error_proc = [self._error_handler(log_message='generic_message', user_message='user_external_uploads'),
-                              self.set_attribute(self.scan.id, 'xnat_status', val='Error')]
-
         return chain(
             self.xc.upload_scan_file(self.local_path, self.xnat_labels, import_service=self.dcm,
                                      is_first_scan=is_first_scan, set_sub_and_exp_attrs=set_sub_and_exp_attrs),
             self.set_attributes(self.scan.id, passed_val=True),
             self.set_attribute(self.scan.id, 'xnat_status', val='Uploaded'),
             self.get_attribute(self.scan.id, attr='xnat_uri')
-            ).set(link_error=error_proc)
+            ).set(link_error=self._error_proc('xnat_status'))
 
-    def _convert_dicom(self):
-        """Construct a chain to perform conversion of dicoms to nifti
-
-        Constructs a chain that launches the dicom conversion command, polls the container service to check for
-        completed dicom conversion, and on completion updates the derivation model with the new derivation status,
-        downloads the completed nifti file from XNAT, uploads it to the cloud storage, and updates the derivation model
-        with the new cloud storage key.
-
-        :return: the chain to be executed
-        :rtype: celery.canvas.Signature
-        """
-
-        return chain(
-            self._convert_dicom_to_nifti(),
-            self._download_file(),
-            self._upload_derivation_to_cloud_storage()
-        )
-
-    def _convert_dicom_to_nifti(self):
-        """Construct a chain to convert dicom files to NIFTI
-
-        Chains together a chain generated by XNATConnection (which launches the task for dicom to nifti conversion and
-        polls the container service to check whether it is complete) and a derivation service task (which updates the
-        derivation model with its status). The derivation service task will raise an exception and interrupt the chain
-        (and the larger XNAT chain) if dicom conversion was not successful.
-
-        :return: a chain of Celery tasks to convert a DICOM file to NIFTI
-        :rtype: celery.canvas.Signature
-        """
-        self.ds = DerivationService([self.scan])
-        self.ds.create('dicom_to_nifti')
-
-        return chain(
-            self.xc.gen_dicom_conversion_data(),
-            self.xc.launch_and_poll_for_completion('dicom_to_nifti'),
-            self.ds.update_derivation_model('status', exception_on_failure=True),
-        )
-
-    def _download_file(self):
-        """Construct a chain to download converted nifti file from XNAT
-
-         Chains together the task to fetch the XNAT uri and the task to download a nifti file from XNAT
-
-        :return: a chain of Celery tasks to download a file from XNAT
-        :rtype: celery.canvas.Signature
-        """
-        return chain(
-            self.get_attribute(self.scan.id, attr='xnat_uri', passed_val=False),
-            self.xc.dl_file_from_xnat(self.file_depot)
-        )
-
-    def _upload_derivation_to_cloud_storage(self):
-        """Construct a chain to upload a derivation to cloud storage
-
-        Constructs a chain to upload a scan to cloud storage and update the derivation model. This method differs
-        from self._cloud_storage_upload_chain only in including the derivation model updating.
-
-        :return: a chain of Celery tasks to upload a scan to cloud storage
-        :rtype: celery.canvas.Signature
-        """
-        return chain(
-            self.csc.upload_to_cloud_storage(self.file_depot, self.scan_info),
-            self.ds.update_derivation_model('cloud_storage_key', exception_on_failure=False)
-        )
 
     def _add_scan_to_database(self, xnat_status='Pending', aws_status='Pending'):
         """Add a scan to the database

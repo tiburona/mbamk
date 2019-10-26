@@ -107,8 +107,6 @@ class TestCreateResources(TestXNATTasks):
 class TestUploadsAndImports(TestXNATTasks):
 
 
-    #  xnat_credentials, file_path, url, exp_uri
-
     @pytest.fixture(
         autouse=True,
         params=[('T1.nii.gz', upload_scan_to_xnat, '/resources/NIFTI/files/T1.nii.gz', 'PUT'),

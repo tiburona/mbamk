@@ -1,4 +1,4 @@
-from .tasks import global_error_handler, trigger_job
+from .tasks import global_error_handler, trigger_job, zipdir
 from flask import request
 from flask_security import current_user
 import traceback
@@ -48,6 +48,10 @@ class BaseService(BaseModel):
     def __init__(self, cls=None, tasks={}):
         self.cls = cls
         self.tasks = tasks
+
+    def zipdir(self, path='', name=''):
+        if len(path):
+            return zipdir.si(path)
 
     def set_attribute(self, instance_id, key, val='', passed_val=False):
         return self._gen_signature_of_factory_task('set_attribute', val, instance_id, key, passed_val=passed_val)
