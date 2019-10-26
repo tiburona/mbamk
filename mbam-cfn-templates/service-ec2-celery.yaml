@@ -130,6 +130,14 @@ Resources:
               ValueFrom: !Sub
                 - ${PREPEND}/MYSQL_USERNAME
                 - { PREPEND: !Ref ParameterStore }
+            - Name: AWS_KEY_ID
+              ValueFrom: !Sub
+                - ${PREPEND}/AMAZON_KEY_ID
+                - { PREPEND: !Ref ParameterStore }
+            - Name: AWS_SECRET_KEY
+              ValueFrom: !Sub
+                - ${PREPEND}/AMAZON_SECRET_KEY
+                - { PREPEND: !Ref ParameterStore }
           Environment:
           # Pass the same environment variables to JATOS and MBaM app.
           - Name: CONFIG_NAME
@@ -140,6 +148,8 @@ Resources:
           # Access to XNAT
           - Name: XNAT_HOST
             Value: '{{resolve:ssm:XNAT_HOST:1}}'
+          - Name: AWS_S3_BUCKET
+            Value: '{{resolve:ssm:AMAZON_S3_BUCKET:1}}'
           # Access to Redis
           - Name: broker_url
             Value:
