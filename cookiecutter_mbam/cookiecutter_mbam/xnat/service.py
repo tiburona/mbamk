@@ -215,14 +215,11 @@ class XNATConnection(BaseModel):
             self.poll_container_service(process_name)
         )
 
-    def gen_dicom_conversion_data(self):
-        return gen_dicom_conversion_data.s()
-
-    def gen_fs_recon_data(self, labels, scan_id=None):
-        if scan_id:
-            return gen_freesurfer_data.si(scan_id, labels, self.project)
+    def gen_container_data(self, download_suffix, upload_suffix, uri=None):
+        if uri:
+            return gen_container_data.si(uri, self.auth, download_suffix, upload_suffix)
         else:
-            return gen_freesurfer_data.s(labels, self.project)
+            return gen_container_data.s(self.auth, download_suffix, upload_suffix)
 
     def launch_command(self, process_name, data=None):
         xnat_credentials = (self.server, self.user, self.password)
@@ -245,8 +242,8 @@ class XNATConnection(BaseModel):
 
         return poll_task.s(xnat_credentials, intervals[process_name])
 
-    def dl_file_from_xnat(self, file_depot):
-        return dl_file_from_xnat.s(self.auth, file_depot)
+    def dl_files_from_xnat(self, file_depot, suffix='', single_file=True, conditions=[]):
+        return dl_files_from_xnat.s(self.auth, file_depot, suffix=suffix, single_file=single_file, conditions=conditions)
 
     def generate_container_service_ids(self, process_name):
         return (

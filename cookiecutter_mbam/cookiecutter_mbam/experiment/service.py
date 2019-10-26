@@ -18,6 +18,9 @@ def debug():
 
 tasks = {'set_attribute': set_experiment_attribute, 'get_attribute': get_experiment_attribute}
 
+# TODO!!!!!!! the way upload of Freesurfer output to XNAT is set up is dramatically wrong right now.  Subsequent scans
+# will overwrite prior ones.  Fix this.
+
 class ExperimentService(BaseService):
 
     def __init__(self, user, tasks=tasks):
@@ -104,6 +107,7 @@ class ExperimentService(BaseService):
         :return: the scan service
         :rtype: cookiecutter_mbam.scan.service.ScanService
         """
+
         ss = ScanService(self.user, self.experiment)
         ss.add_to_database(file, deepcopy(self.xnat_labels))
 
