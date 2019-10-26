@@ -15,9 +15,17 @@
 
     <script type="text/javascript">
         var params = [];
-        params["worldSpace"] = true;
         params["images"] = [ "{{ url|safe }}" ];
-        params["kioskMode"] = true;
+        params["worldSpace"] = false; // Doesn't seem to work.
+        params["smoothDisplay"] = false; // Doesn't seem to work. Can only apply when clicking Globe in top right
+        params["kioskMode"] = false;
+
+        // Below will pull the filename along with the Cloudfront signature, but
+        // it doesn't seem to work in terms of apply parameters to the image instance
+        // Should fix this at some point. See Papaya docs at https://github.com/rii-mango/Papaya/wiki/Configuration
+        //var filename = "{{ url|safe }}".substring("{{ url|safe}}".lastIndexOf('/')+1)
+        //params[filename] = {"interpolation": false, "min": 20, "max": 200}
+
     </script>
 
 {% endblock %}
