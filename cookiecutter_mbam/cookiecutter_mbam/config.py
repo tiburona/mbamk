@@ -73,9 +73,9 @@ class Config:
         'docker_host': env.str('XNAT_DOCKER_HOST','unix:///var/run/docker.sock'),
         'dicom_to_nifti_command_id': 1, # DEPRECATED
         'dicom_to_nifti_wrapper_id':'dcm2niix-scan', # DEPRECATED
-        'dicom_to_nifti_transfer_command_id': env.int('DICOM_TO_NIFTI_TRANSFER_COMMAND_ID',29),
+        'dicom_to_nifti_transfer_command_id': env.int('DICOM_TO_NIFTI_TRANSFER_COMMAND_ID', 18),
         'dicom_to_nifti_transfer_wrapper_id':'dcm2niix-xfer',
-        'freesurfer_recon_all_transfer_command_id': env.str('FREESURFER_RECON', default='31'),
+        'freesurfer_recon_all_transfer_command_id': env.str('FREESURFER_RECON', '17'),
         'freesurfer_recon_all_transfer_wrapper_id': 'freesurfer-recon-all-xfer'
     }
 
@@ -177,3 +177,5 @@ def guess_environment():
 
 # Guess the config_names for dev and testing configurations
 config_name = guess_environment()
+
+config_name = 'local'

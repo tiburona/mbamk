@@ -186,8 +186,6 @@ class ScanService(BaseService):
         else:
             xnat_chain = self._upload_file_to_xnat(is_first_scan, set_sub_and_exp_attrs)
 
-            debug()
-
         xnat_chain = xnat_chain | self._trigger_job(json.dumps(self._run_freesurfer()))
 
         return xnat_chain.set(link_error=self._error_proc())
@@ -201,11 +199,11 @@ class ScanService(BaseService):
             ds.update_derivation_model('status', exception_on_failure=True)
         )
 
-    def _download_files_from_xnat(self, local_path, suffix, conditions=[], single_file=True):
+    def _download_files_from_xnat(self, local_path, suffix, exclusions=[], single_file=True):
 
         return chain(
             self.get_attribute(self.scan.id, attr='xnat_uri'),
-            self.xc.dl_files_from_xnat(local_path, suffix=suffix, conditions=conditions, single_file=single_file),
+            self.xc.dl_files_from_xnat(local_path, suffix=suffix, exclusions=exclusions, single_file=single_file),
         )
 
     # todo: the last piece of this should be deleting the directory from the web server
@@ -216,7 +214,7 @@ class ScanService(BaseService):
         )
 
     def _run_container_retrieve_and_store_files(self, process_name, download_suffix, upload_suffix, filename,
-                                                    dl_conditions=[], single_file=True, zip=False):
+                                                    dl_exclusions=[], single_file=True, zip=False):
         ds = DerivationService([self.scan])
         ds.create(process_name)
 
@@ -224,7 +222,7 @@ class ScanService(BaseService):
 
         run_container = self._run_container(process_name, download_suffix, upload_suffix, ds)
         download_files = self._download_files_from_xnat(local_path, upload_suffix,
-                                                        conditions=dl_conditions, single_file=single_file)
+                                                        exclusions=dl_exclusions, single_file=single_file)
         upload_to_cloud_storage = self._upload_derivation_to_cloud_storage(local_path, filename, ds)
 
         if zip:
@@ -240,7 +238,7 @@ class ScanService(BaseService):
             upload_suffix='/resources/FSv6/files',
             filename='freesurfer.zip',
             single_file=False,
-            dl_conditions=[lambda result: 'json' not in result['Name']]
+            dl_exclusions={'Name': 'json'}
         )
 
     def _convert_dicom(self):

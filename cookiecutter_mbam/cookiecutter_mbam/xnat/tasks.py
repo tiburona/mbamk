@@ -28,6 +28,8 @@ def create_resources(xnat_credentials, to_create, urls):
             url = urls[level]
             r = s.put(url)
 
+            print(url)
+
             if level in ['subject', 'experiment']:
                 responses[level] = r.text
 
@@ -173,7 +175,7 @@ def poll_cs_fsrecon(self, container_id, xnat_credentials, interval):
         return 'Timed Out'
 
 @celery.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5})
-def dl_files_from_xnat(self, uri, xnat_credentials, file_path, suffix='', single_file=True, conditions=[]):
+def dl_files_from_xnat(self, uri, xnat_credentials, file_path, suffix='', single_file=True, exclusions={}):
     """Download a file from XNAT
 
     :param self: the task object
@@ -184,7 +186,7 @@ def dl_files_from_xnat(self, uri, xnat_credentials, file_path, suffix='', single
     :rtype: str
     """
 
-    if not os.isdir(file_path):
+    if not os.path.isdir(file_path):
         os.mkdir(file_path)
 
     server, user, password = xnat_credentials
@@ -193,7 +195,7 @@ def dl_files_from_xnat(self, uri, xnat_credentials, file_path, suffix='', single
         r = s.get(server + os.path.join(uri, suffix))
         if r.ok:
             results = [result for result in r.json()['ResultSet']['Result']
-                       if all([condition(result) for condition in conditions])]
+                       if all([excluded not in result[attr] for attr, excluded in exclusions.items()])]
             for result in results:
                 response = s.get(server + result['URI'])
                 if response.ok:
