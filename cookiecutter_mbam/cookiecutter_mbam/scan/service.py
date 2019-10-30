@@ -160,7 +160,7 @@ class ScanService(BaseService):
         """
 
         return chain(
-            self.csc.upload_to_cloud_storage(self.file_depot, self.scan_info, filename=self.filename),
+            self.csc.upload_to_cloud_storage(self.local_path, self.scan_info, filename=self.filename),
             self.set_attribute(self.scan.id, 'orig_aws_key', passed_val=True),
             self.set_attribute(self.scan.id, 'aws_status', val='Uploaded')
         ).set(link_error=self._error_proc('aws_status'))
@@ -199,22 +199,22 @@ class ScanService(BaseService):
             ds.update_derivation_model('status', exception_on_failure=True)
         )
 
-    def _download_files_from_xnat(self, local_path, suffix, exclusions=[], single_file=True):
+    def _download_files_from_xnat(self, local_path, suffix, conditions=[], single_file=True):
 
         return chain(
             self.get_attribute(self.scan.id, attr='xnat_uri'),
-            self.xc.dl_files_from_xnat(local_path, suffix=suffix, exclusions=exclusions, single_file=single_file),
+            self.xc.dl_files_from_xnat(local_path, suffix=suffix, conditions=conditions, single_file=single_file),
         )
 
     # todo: the last piece of this should be deleting the directory from the web server
-    def _upload_derivation_to_cloud_storage(self, local_path, filename, ds):
+    def _upload_derivation_to_cloud_storage(self, local_path, filename, ds, delete=True):
         return chain(
-            self.csc.upload_to_cloud_storage(local_path, self.scan_info, filename=filename),
+            self.csc.upload_to_cloud_storage(local_path, self.scan_info, filename=filename, delete=delete),
             ds.update_derivation_model('cloud_storage_key')
         )
 
     def _run_container_retrieve_and_store_files(self, process_name, download_suffix, upload_suffix, filename,
-                                                    dl_exclusions=[], single_file=True, zip=False):
+                                                    dl_conditions=[], single_file=True, zip=False):
         ds = DerivationService([self.scan])
         ds.create(process_name)
 
@@ -222,8 +222,8 @@ class ScanService(BaseService):
 
         run_container = self._run_container(process_name, download_suffix, upload_suffix, ds)
         download_files = self._download_files_from_xnat(local_path, upload_suffix,
-                                                        exclusions=dl_exclusions, single_file=single_file)
-        upload_to_cloud_storage = self._upload_derivation_to_cloud_storage(local_path, filename, ds)
+                                                        conditions=dl_conditions, single_file=single_file)
+        upload_to_cloud_storage = self._upload_derivation_to_cloud_storage(local_path, filename, ds, delete=True)
 
         if zip:
             upload_to_cloud_storage = self.zipdir(path=local_path, name=filename) | upload_to_cloud_storage
@@ -237,8 +237,7 @@ class ScanService(BaseService):
             download_suffix='/resources/NIFTI/files',
             upload_suffix='/resources/FSv6/files',
             filename='freesurfer.zip',
-            single_file=False,
-            dl_exclusions={'Name': 'json'}
+            single_file=False
         )
 
     def _convert_dicom(self):
@@ -247,7 +246,8 @@ class ScanService(BaseService):
             process_name='dicom_to_nifti',
             download_suffix='/resources/DICOM/files',
             upload_suffix='/resources/NIFTI/files',
-            filename=self.xnat_labels['scan']['xnat_label']
+            filename='T1.nii.gz',
+            dl_conditions=['json_exclusion']
         )
 
     def _upload_file_to_xnat(self, is_first_scan, set_sub_and_exp_attrs):

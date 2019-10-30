@@ -175,7 +175,7 @@ def poll_cs_fsrecon(self, container_id, xnat_credentials, interval):
         return 'Timed Out'
 
 @celery.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5})
-def dl_files_from_xnat(self, uri, xnat_credentials, file_path, suffix='', single_file=True, exclusions={}):
+def dl_files_from_xnat(self, uri, xnat_credentials, file_path, suffix='', single_file=True, conditions=[]):
     """Download a file from XNAT
 
     :param self: the task object
@@ -192,17 +192,17 @@ def dl_files_from_xnat(self, uri, xnat_credentials, file_path, suffix='', single
     server, user, password = xnat_credentials
 
     with init_session(user, password) as s:
-        r = s.get(server + os.path.join(uri, suffix))
+        r = s.get(server + uri + suffix)
         if r.ok:
             results = [result for result in r.json()['ResultSet']['Result']
-                       if all([excluded not in result[attr] for attr, excluded in exclusions.items()])]
+                       if all([dl_conditions[condition] for condition in conditions])]
             for result in results:
                 response = s.get(server + result['URI'])
                 if response.ok:
                     with open(os.path.join(file_path, result['Name']), 'wb') as f:
                         f.write(response.content)
-            else:
-                raise ValueError(f'Unexpected status code: {response.status_code}  Response: /n {r.text}')
+                else:
+                    raise ValueError(f'Unexpected status code: {response.status_code}  Response: /n {r.text}')
             if single_file:
                 return results[0]['Name']
             else:
@@ -211,6 +211,10 @@ def dl_files_from_xnat(self, uri, xnat_credentials, file_path, suffix='', single
             raise ValueError(f'Unexpected status code: {r.status_code}  Response: \n {r.text}')
     return r
 
+
+dl_conditions={
+    'json_exclusion': lambda result: 'json' not in result['Name']
+}
 
 
 
