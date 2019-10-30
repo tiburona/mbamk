@@ -242,8 +242,8 @@ class XNATConnection(BaseModel):
 
         return poll_task.s(xnat_credentials, intervals[process_name])
 
-    def dl_files_from_xnat(self, file_depot, suffix='', single_file=True, exclusions={}):
-        return dl_files_from_xnat.s(self.auth, file_depot, suffix=suffix, single_file=single_file, exclusions=exclusions)
+    def dl_files_from_xnat(self, file_depot, suffix='', single_file=True, conditions=[]):
+        return dl_files_from_xnat.s(self.auth, file_depot, suffix=suffix, single_file=single_file, conditions=conditions)
 
     def generate_container_service_ids(self, process_name):
         return (
