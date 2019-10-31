@@ -20,7 +20,8 @@ class Derivation(SurrogatePK, Model):
     process_name = db.Column(db.String(255), nullable=False)
     xnat_container_id = db.Column(db.String(80), nullable=True)
     xnat_uri = db.Column(db.String(255), nullable=True, unique=True)
-    cloud_storage_key = db.Column(db.String(255), nullable=True, unique=True)
+    aws_key = db.Column(db.String(255), nullable=False, unique=True, default='Pending')
+    aws_status = db.Column(db.String(255), nullable=True, unique=True)
     status = db.Column(db.String(255), nullable=False)
     scans = db.relationship(
         'Scan', secondary=derivations_scans,
