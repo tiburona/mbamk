@@ -63,7 +63,7 @@ services:
 
  celery:
    image: mbam_web
-   command: bash -c "celery -A cookiecutter_mbam.run_celery:celery worker --loglevel info"
+   command: bash -c "celery -A cookiecutter_mbam.run_celery:celery worker --pool=gevent --concurrency=500 --loglevel info"
    volumes:
      - user-data:/app/static/files
    links:

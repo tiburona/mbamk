@@ -123,4 +123,8 @@ and invoke it with the command ``redis-server``.
 
 You also must invoke a Celery worker in a different process.  In the current development environment, this the command to do so:
 
-    celery -A cookiecutter_mbam.run_celery:celery worker --loglevel info``
+    celery -A cookiecutter_mbam.run_celery:celery worker --pool=gevent --concurrency=500 --loglevel info
+
+During development it might be helpful to see a graphic display of what the celery workers are up to. For this run the below command and open http://0.0.0.0:5555 in your web browser
+
+    flower -A cookiecutter_mbam.run_celery:celery --port=5555
