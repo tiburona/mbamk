@@ -78,7 +78,7 @@ class ScanService(BaseService):
         """
         self.scan = self._add_scan_to_database()
 
-        self.local_path, self.orig_filename, self.dcm = self._process_file(image_file)
+        self.local_path, self.filename, self.orig_filename, self.ext, self.dcm = self._process_file(image_file)
 
         self._update_xnat_labels(xnat_labels)
 
@@ -108,12 +108,14 @@ class ScanService(BaseService):
 
         ext, orig_filename = self._process_filename(image_file.filename)
 
-        local_path = os.path.join(self.file_depot, self.scan.id)
+        local_path = os.path.join(self.file_depot, str(self.scan.id))
+
+        if not os.path.isdir(local_path): os.mkdir(local_path)
 
         for dest in ['cloud', 'xnat']:
             path = os.path.join(local_path, dest)
             if not os.path.isdir(path): os.mkdir(path)
-            filename = 'T1' + '.' + ext
+            filename = 'T1' + ext
             path = os.path.join(path, filename)
             image_file.save(path)
 
@@ -123,7 +125,7 @@ class ScanService(BaseService):
         image_file.close()
         dcm = ext == '.zip'
 
-        return filename, dcm
+        return local_path, filename, orig_filename, ext, dcm
 
     def _process_filename(self, filename):
         """Derive information from the filename
@@ -166,8 +168,10 @@ class ScanService(BaseService):
         :rtype: celery.canvas.Signature
         """
 
+        local_path = os.path.join(self.local_path, 'cloud')
+
         return chain(
-            self.csc.upload_to_cloud_storage(self.local_path, self.scan_info, filename=self.filename),
+            self.csc.upload_to_cloud_storage(local_path, self.scan_info, filename=self.filename),
             self.set_attribute(self.scan.id, 'orig_aws_key', passed_val=True),
             self.set_attribute(self.scan.id, 'aws_status', val='Uploaded')
         ).set(link_error=self._error_proc('aws_status'))
@@ -257,112 +261,112 @@ class ScanService(BaseService):
         )
 
 
-def _run_container_retrieve_and_store_files(self, process_name, download_suffix, upload_suffix, filename,
-                                            dl_conditions=[], single_file=True, zip=False):
-    """Construct a celery chain to run an XNAT container, download the output, and back it up to cloud storage
+    def _run_container_retrieve_and_store_files(self, process_name, download_suffix, upload_suffix, filename,
+                                                dl_conditions=[], single_file=True, zip=False):
+        """Construct a celery chain to run an XNAT container, download the output, and back it up to cloud storage
 
-    :param process_name: identifier for the process
-    :type process_name: str
-    :param download_suffix:
-    :param upload_suffix:
-    :param filename:
-    :param dl_conditions: keys to a dictionary of optional conditions to put on whether to download a file
-    :type dl_conditions: list
-    :param single_file:
-    :type single_file: bool
-    :param zip: whether the downloaded files will need to be zipped before upload
-    :return: the celery chain to execute the entire derivation process
-    """
-    ds = DerivationService([self.scan])
-    ds.create(process_name)
+        :param process_name: identifier for the process
+        :type process_name: str
+        :param download_suffix:
+        :param upload_suffix:
+        :param filename:
+        :param dl_conditions: keys to a dictionary of optional conditions to put on whether to download a file
+        :type dl_conditions: list
+        :param single_file:
+        :type single_file: bool
+        :param zip: whether the downloaded files will need to be zipped before upload
+        :return: the celery chain to execute the entire derivation process
+        """
+        ds = DerivationService([self.scan])
+        ds.create(process_name)
 
-    local_path = os.path.join(self.file_depot, str(self.scan.id))
+        local_path = os.path.join(self.file_depot, str(self.scan.id))
 
-    run_container = self._run_container(process_name, download_suffix, upload_suffix, ds)
-    download_files = self._download_files_from_xnat(local_path, upload_suffix, conditions=dl_conditions,
-                                                    single_file=single_file)
-    upload_to_cloud_storage = self._upload_derivation_to_cloud_storage(local_path, filename, ds, delete=True)
+        run_container = self._run_container(process_name, download_suffix, upload_suffix, ds)
+        download_files = self._download_files_from_xnat(local_path, upload_suffix, conditions=dl_conditions,
+                                                        single_file=single_file)
+        upload_to_cloud_storage = self._upload_derivation_to_cloud_storage(local_path, filename, ds, delete=True)
 
-    if zip:
-        upload_to_cloud_storage = self.zipdir(path=local_path, name=filename) | upload_to_cloud_storage
+        if zip:
+            upload_to_cloud_storage = self.zipdir(path=local_path, name=filename) | upload_to_cloud_storage
 
-    return run_container | download_files | upload_to_cloud_storage
-
-
-def _run_freesurfer(self):
-    return self._run_container_retrieve_and_store_files(
-        process_name='freesurfer_recon_all',
-        download_suffix='/resources/NIFTI/files',
-        upload_suffix='/resources/FSv6/files',
-        filename='freesurfer.zip',
-        single_file=False
-    )
+        return run_container | download_files | upload_to_cloud_storage
 
 
-def _convert_dicom(self):
-    """Construct a chain to convert dicom to niftiÍ
-    
-    :return: the celery chain
-    """
-
-    return self._run_container_retrieve_and_store_files(
-        process_name='dicom_to_nifti',
-        download_suffix='/resources/DICOM/files',
-        upload_suffix='/resources/NIFTI/files',
-        filename='T1.nii.gz',
-        dl_conditions=['json_exclusion']
-    )
+    def _run_freesurfer(self):
+        return self._run_container_retrieve_and_store_files(
+            process_name='freesurfer_recon_all',
+            download_suffix='/resources/NIFTI/files',
+            upload_suffix='/resources/FSv6/files',
+            filename='freesurfer.zip',
+            single_file=False
+        )
 
 
-def _upload_file_to_xnat(self, is_first_scan, set_sub_and_exp_attrs):
-    """Construct a Celery chain to upload a file to XNAT
+    def _convert_dicom(self):
+        """Construct a chain to convert dicom to niftiÍ
 
-    Constructs a chain that uploads the scan file to XNAT, sets XNAT-relevant attributes of the scan object, and
-    gets the scan URI to pass to the dicom conversion chain.
+        :return: the celery chain
+        """
 
-    :param is_first_scan: whether the current scan is the first to be uploaded for the current experiment
-    :type is_first_scan: bool
-    :param set_sub_and_exp_attrs: either None or the signature of the task that updates subject and/or experiment with their
-    XNAT attributes
-    :type set_sub_and_exp_attrs: Union([NoneType, celery.canvas.Signature])
-    :return: the signature of the chain to upload a file to XNAT
-    :rtype: celery.canvas._chain
-    """
-
-    return chain(
-        self.xc.upload_scan_file(self.local_path, self.xnat_labels, import_service=self.dcm,
-                                 is_first_scan=is_first_scan, set_sub_and_exp_attrs=set_sub_and_exp_attrs),
-        self.set_attributes(self.scan.id, passed_val=True),
-        self.set_attribute(self.scan.id, 'xnat_status', val='Uploaded'),
-        self.get_attribute(self.scan.id, attr='xnat_uri')
-    ).set(link_error=self._error_proc('xnat_status'))
+        return self._run_container_retrieve_and_store_files(
+            process_name='dicom_to_nifti',
+            download_suffix='/resources/DICOM/files',
+            upload_suffix='/resources/NIFTI/files',
+            filename='T1.nii.gz',
+            dl_conditions=['json_exclusion']
+        )
 
 
-def _add_scan_to_database(self, xnat_status='Pending', aws_status='Pending'):
-    """Add a scan to the database
+    def _upload_file_to_xnat(self, is_first_scan, set_sub_and_exp_attrs):
+        """Construct a Celery chain to upload a file to XNAT
 
-    Creates the scan object, adds it to the database, and sets the initial xnat and cloud storage status
+        Constructs a chain that uploads the scan file to XNAT, sets XNAT-relevant attributes of the scan object, and
+        gets the scan URI to pass to the dicom conversion chain.
 
-    :return: scan
-    :rtype: cookiecutter_mbam.scan.models.Scan
-    """
+        :param is_first_scan: whether the current scan is the first to be uploaded for the current experiment
+        :type is_first_scan: bool
+        :param set_sub_and_exp_attrs: either None or the signature of the task that updates subject and/or experiment with their
+        XNAT attributes
+        :type set_sub_and_exp_attrs: Union([NoneType, celery.canvas.Signature])
+        :return: the signature of the chain to upload a file to XNAT
+        :rtype: celery.canvas._chain
+        """
 
-    return Scan.create(experiment_id=self.experiment.id, xnat_status=xnat_status, aws_status=aws_status,
-                       user_id=self.experiment.user_id)
+        return chain(
+            self.xc.upload_scan_file(self.local_path, self.xnat_labels, import_service=self.dcm,
+                                     is_first_scan=is_first_scan, set_sub_and_exp_attrs=set_sub_and_exp_attrs),
+            self.set_attributes(self.scan.id, passed_val=True),
+            self.set_attribute(self.scan.id, 'xnat_status', val='Uploaded'),
+            self.get_attribute(self.scan.id, attr='xnat_uri')
+        ).set(link_error=self._error_proc('xnat_status'))
 
 
-def delete(self, scan_id, delete_from_xnat=False):
-    # todo: add delete listener
-    """ Delete a scan from the database
+    def _add_scan_to_database(self, xnat_status='Pending', aws_status='Pending'):
+        """Add a scan to the database
 
-    Deletes a scan from the database and optionally deletes it from XNAT. Only admins should delete a scan from XNAT.
+        Creates the scan object, adds it to the database, and sets the initial xnat and cloud storage status
 
-    :param int scan_id: the database id of the scan to delete
-    :param bool delete_from_xnat: whether to delete the scan file from XNAT, default False
-    :return: None
-    """
-    scan = Scan.get_by_id(scan_id)
-    if delete_from_xnat:
-        self.xc.xnat_delete(scan.xnat_uri)
-        self.experiment.update(num_scans=self.experiment.num_scans - 1)
-    scan.delete()
+        :return: scan
+        :rtype: cookiecutter_mbam.scan.models.Scan
+        """
+
+        return Scan.create(experiment_id=self.experiment.id, xnat_status=xnat_status, aws_status=aws_status,
+                           user_id=self.experiment.user_id)
+
+
+    def delete(self, scan_id, delete_from_xnat=False):
+        # todo: add delete listener
+        """ Delete a scan from the database
+
+        Deletes a scan from the database and optionally deletes it from XNAT. Only admins should delete a scan from XNAT.
+
+        :param int scan_id: the database id of the scan to delete
+        :param bool delete_from_xnat: whether to delete the scan file from XNAT, default False
+        :return: None
+        """
+        scan = Scan.get_by_id(scan_id)
+        if delete_from_xnat:
+            self.xc.xnat_delete(scan.xnat_uri)
+            self.experiment.update(num_scans=self.experiment.num_scans - 1)
+        scan.delete()
