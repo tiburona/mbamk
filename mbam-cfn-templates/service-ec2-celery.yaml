@@ -25,7 +25,7 @@ Parameters:
     Description: How much memory in megabytes to give the container
   ContainerCommand:
     Type: CommaDelimitedList
-    Default: "celery -A cookiecutter_mbam.run_celery:celery worker --loglevel info"
+    Default: "celery -A cookiecutter_mbam.run_celery:celery worker --pool=gevent --concurrency=500 --loglevel info"
     Description: The command to run in the container upon initiation.
   ContainerWorkingDirectory:
     Type: String
