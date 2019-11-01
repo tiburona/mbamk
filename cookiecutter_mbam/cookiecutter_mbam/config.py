@@ -73,9 +73,9 @@ class Config:
         'docker_host': env.str('XNAT_DOCKER_HOST','unix:///var/run/docker.sock'),
         'dicom_to_nifti_command_id': 1, # DEPRECATED
         'dicom_to_nifti_wrapper_id':'dcm2niix-scan', # DEPRECATED
-        'dicom_to_nifti_transfer_command_id': env.int('DICOM_TO_NIFTI_TRANSFER_COMMAND_ID',29),
+        'dicom_to_nifti_transfer_command_id': env.int('DICOM_TO_NIFTI_TRANSFER_COMMAND_ID',34),
         'dicom_to_nifti_transfer_wrapper_id':'dcm2niix-xfer',
-        'freesurfer_recon_all_transfer_command_id': env.str('FREESURFER_RECON', default='31'),
+        'freesurfer_recon_all_transfer_command_id': env.str('FREESURFER_RECON', default='35'),
         'freesurfer_recon_all_transfer_wrapper_id': 'freesurfer-recon-all-xfer'
     }
 
@@ -95,6 +95,8 @@ class Config:
         'cloudfront_private_key' : env.str('CLOUDFRONT_PRIVATE_KEY', default='none')
     }
 
+
+
 class LocalConfig(Config):
     """ Class defining configurations for local development. Config_name is 'local'. """
     SQLALCHEMY_DATABASE_URI = 'sqlite:////tmp/dev.db'
@@ -107,6 +109,10 @@ class LocalConfig(Config):
     broker_url = 'redis://localhost:6379'
     results_backend = broker_url
 
+    # Set server name
+    SERVER_NAME = '0.0.0.0:8000'
+    PREFERRED_URL_SCHEME ='http'
+
 class DockerConfig(Config):
     """ Class defining configurations for docker development. Config_name is 'docker'. This is the
     environment used for build testing in SemaphoreCI"""
@@ -118,6 +124,10 @@ class DockerConfig(Config):
     XNAT=Config.XNAT
     XNAT['dicom_to_nifti_transfer_command_id'] = env.int('DICOM_TO_NIFTI_TRANSFER_COMMAND_ID',23)
     XNAT['docker_host'] = env.str('XNAT_DOCKER_HOST','http://10.20.193.32:2375')
+
+    # Set server name
+    SERVER_NAME = '0.0.0.0'
+    PREFERRED_URL_SCHEME ='http'
 
 class TestConfig(Config):
     TESTING = True
@@ -149,6 +159,10 @@ class DevConfig(Config):
     BASIC_AUTH_USERNAME='tester'
     BASIC_AUTH_PASSWORD='mind@nyspi'
     BASIC_AUTH_FORCE=True
+
+    # Set server name
+    SERVER_NAME = 'staging.mybrainandme.org'
+    PREFERRED_URL_SCHEME ='https'
 
 config_by_name = dict(
     local=LocalConfig,
