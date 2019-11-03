@@ -8,7 +8,7 @@
   "type": "docker",
   "index": null,
   "working-directory": null,
-  "command-line": "./main.sh #download-url# #upload-url#",
+  "command-line": "./main.sh #download-url# #upload-url# #xnat-host#",
   "override-entrypoint": null,
   "mounts": [],
   "environment-variables": {},
@@ -39,7 +39,21 @@
       "command-line-separator": null,
       "true-value": null,
       "false-value": null
+    },
+    {
+      "name": "xnat-host",
+      "description": "XNAT host",
+      "type": "string",
+      "matcher": null,
+      "default-value": "",
+      "required": false,
+      "replacement-key": null,
+      "command-line-flag": null,
+      "command-line-separator": null,
+      "true-value": null,
+      "false-value": null
     }
+
   ],
   "outputs": [],
   "xnat": [
