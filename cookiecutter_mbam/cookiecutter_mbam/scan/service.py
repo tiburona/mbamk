@@ -18,6 +18,7 @@ Todo: consider that the import service leaves a file as a .nii, but upload servi
 """
 
 import json
+import shutil
 from celery import group, chain
 from cookiecutter_mbam.config import config_by_name, config_name
 from .models import Scan
@@ -78,7 +79,7 @@ class ScanService(BaseService):
         """
         self.scan = self._add_scan_to_database()
 
-        self.local_path, self.filename, self.orig_filename, self.ext, self.dcm = self._process_file(image_file)
+        self.local_dir, self.filename, self.orig_filename, self.ext, self.dcm = self._process_file(image_file)
 
         self._update_xnat_labels(xnat_labels)
 
@@ -108,16 +109,20 @@ class ScanService(BaseService):
 
         ext, orig_filename = self._process_filename(image_file.filename)
 
-        local_path = os.path.join(self.file_depot, str(self.scan.id))
+        local_dir = os.path.join(self.file_depot, str(self.scan.id))
 
-        if not os.path.isdir(local_path): os.mkdir(local_path)
+        if not os.path.isdir(local_dir): os.mkdir(local_dir)
 
         for dest in ['cloud', 'xnat']:
-            path = os.path.join(local_path, dest)
-            if not os.path.isdir(path): os.mkdir(path)
+            dest_dir = os.path.join(local_dir, dest)
+            if not os.path.isdir(dest_dir): os.mkdir(dest_dir)
             filename = 'T1' + ext
-            path = os.path.join(path, filename)
-            image_file.save(path)
+            file_path = os.path.join(dest_dir, filename)
+
+            if dest == 'cloud':
+                image_file.save(file_path)
+            if dest == 'xnat':
+                shutil.copy(os.path.join(local_dir, 'cloud', filename), file_path)
 
         if ext == '.nii':
             image_file = self._compress_file()
@@ -125,7 +130,7 @@ class ScanService(BaseService):
         image_file.close()
         dcm = ext == '.zip'
 
-        return local_path, filename, orig_filename, ext, dcm
+        return local_dir, filename, orig_filename, ext, dcm
 
     def _process_filename(self, filename):
         """Derive information from the filename
@@ -168,10 +173,10 @@ class ScanService(BaseService):
         :rtype: celery.canvas.Signature
         """
 
-        local_path = os.path.join(self.local_path, 'cloud')
+        local_dir = os.path.join(self.local_dir, 'cloud')
 
         return chain(
-            self.csc.upload_to_cloud_storage(local_path, self.scan_info, filename=self.filename),
+            self.csc.upload_to_cloud_storage(local_dir, self.scan_info, filename=self.filename),
             self.set_attribute(self.scan.id, 'orig_aws_key', passed_val=True),
             self.set_attribute(self.scan.id, 'aws_status', val='Uploaded')
         ).set(link_error=self._error_proc('aws_status'))
@@ -333,8 +338,10 @@ class ScanService(BaseService):
         :rtype: celery.canvas._chain
         """
 
+        local_path = os.path.join(self.local_dir, 'xnat', self.filename)
+
         return chain(
-            self.xc.upload_scan_file(self.local_path, self.xnat_labels, import_service=self.dcm,
+            self.xc.upload_scan_file(local_path, self.xnat_labels, import_service=self.dcm,
                                      is_first_scan=is_first_scan, set_sub_and_exp_attrs=set_sub_and_exp_attrs),
             self.set_attributes(self.scan.id, passed_val=True),
             self.set_attribute(self.scan.id, 'xnat_status', val='Uploaded'),

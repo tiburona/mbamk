@@ -184,17 +184,16 @@ class XNATConnection(BaseModel):
         do_create_resources, create_resources_signature = self._create_resources(urls, import_service, is_first_scan)
 
         if import_service:
-            upload_task = import_scan_to_xnat
             url = self.server + '/data/services/import'
         else:
-            upload_task = upload_scan_to_xnat
             url = urls['file']
 
-        upload_signature = upload_task.si(
+        upload_signature = upload_scan_to_xnat.si(
             xnat_credentials=self.auth,
             file_path=file_path,
             url=url,
-            exp_uri = uris['experiment']
+            exp_uri = uris['experiment'],
+            imp = import_service
         )
 
         get_latest_scan_info_signature = get_latest_scan_info.s(xnat_credentials=self.auth)

@@ -1,5 +1,6 @@
 import time
 import os
+import shutil
 from celery.exceptions import SoftTimeLimitExceeded
 from cookiecutter_mbam import celery
 from cookiecutter_mbam.utils.request_utils import init_session
@@ -39,7 +40,7 @@ def create_resources(xnat_credentials, to_create, urls):
     return responses
 
 @celery.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5})
-def upload_scan_to_xnat(self, xnat_credentials, file_path, url, exp_uri):
+def upload_scan_to_xnat(self, xnat_credentials, file_path, url, exp_uri, imp):
     """ Upload a NIFTI format scan to XNAT
     :param self: the task object
     :param tuple xnat_credentials: a three-tuple of the server, username, and password to log into XNAT
@@ -47,34 +48,43 @@ def upload_scan_to_xnat(self, xnat_credentials, file_path, url, exp_uri):
     :param str url:
     :return: uris
     """
+
     server, user, password = xnat_credentials
-    files = {'file': ('T1.nii.gz', open(file_path, 'rb'), 'application/octet-stream')}
+
+    filename = 'T1.zip' if imp else 'T1.nii.gz'
+    kwargs = {'files': {'file': (filename, open(file_path, 'rb'), 'application/octet-stream')}}
+    if imp: kwargs['data'] = {'dest': exp_uri, 'overwrite': 'delete'}
+
     with init_session(user, password) as s:
-        r = s.put(url, files=files)
+        if imp:
+            r = s.post(url, **kwargs)
+        else:
+            r = s.put(url, **kwargs)
+            shutil.rmtree(os.path.dirname(file_path))
         if r.ok:
             return exp_uri
         else:
             raise ValueError(f'Unexpected status code: {r.status_code}  Response: \n {r.text}')
 
-@celery.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5})
-def import_scan_to_xnat(self, xnat_credentials, file_path, url, exp_uri):
-    """Import a DICOM format scan to XNAT
-    :param self: the task object
-    :param dict uris: a dictionary with levels as keys that contains the experiment uri, the import destination
-    :param tuple xnat_credentials: a three-tuple of the server, username, and password to log into XNAT
-    :param str file_path: the location of the file on the local disk
-    :return: uris
-    This is the task invoked when the scan is in DICOM format.
-    """
-
-    server, user, password = xnat_credentials
-    files = {'file': ('DICOMS.zip', open(file_path, 'rb'), 'application/octet-stream')}
-    with init_session(user, password) as s:
-        r = s.post(url, files=files, data={'dest': exp_uri, 'overwrite':'delete'})
-        if r.ok:
-            return exp_uri
-        else:
-            raise ValueError(f'Unexpected status code: {r.status_code}  Response: \n {r.text}')
+# @celery.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5})
+# def import_scan_to_xnat(self, xnat_credentials, file_path, url, exp_uri):
+#     """Import a DICOM format scan to XNAT
+#     :param self: the task object
+#     :param dict uris: a dictionary with levels as keys that contains the experiment uri, the import destination
+#     :param tuple xnat_credentials: a three-tuple of the server, username, and password to log into XNAT
+#     :param str file_path: the location of the file on the local disk
+#     :return: uris
+#     This is the task invoked when the scan is in DICOM format.
+#     """
+#
+#     server, user, password = xnat_credentials
+#     files = {'file': ('T1.zip', open(file_path, 'rb'), 'application/octet-stream')}
+#     with init_session(user, password) as s:
+#         r = s.post(url, files=files, data={'dest': exp_uri, 'overwrite':'delete'})
+#         if r.ok:
+#             return exp_uri
+#         else:
+#             raise ValueError(f'Unexpected status code: {r.status_code}  Response: \n {r.text}')
 
 @celery.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5})
 def get_latest_scan_info(self, experiment_uri, xnat_credentials):
@@ -106,7 +116,8 @@ def gen_container_data(self, uri, xnat_credentials, download_suffix, upload_suff
     server, _, _ = xnat_credentials
     return {
         'download-url': server + uri + download_suffix,
-        'upload-url': server + uri + upload_suffix
+        'upload-url': server + uri + upload_suffix,
+        'xnat-host': server
     }
 
 

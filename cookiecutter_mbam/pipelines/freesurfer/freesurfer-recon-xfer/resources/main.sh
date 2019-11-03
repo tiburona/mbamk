@@ -2,7 +2,7 @@
 
 echo "downloading structural NIFTI files"
 
-python3 download.py $1 $XNAT_USER $XNAT_PASS $XNAT_HOST
+python3 download.py $1 $XNAT_USER $XNAT_PASS $3
 
 echo "done downloading files"
 
@@ -34,5 +34,5 @@ popd
 
 echo "uploading recon output"
 
-python3 upload.py $2 $XNAT_USER $XNAT_PASS $XNAT_HOST
+python3 upload.py $2 $XNAT_USER $XNAT_PASS $3
 
