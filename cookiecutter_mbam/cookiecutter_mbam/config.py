@@ -30,18 +30,20 @@ class Config:
     SECURITY_RECOVERABLE = True
     SECURITY_SEND_REGISTER_EMAIL = False
     SECURITY_EMAIL_SENDER = '"My Brain and Me" <mbaminfo@gmail.com>'
+    #SECURITY_EMAIL_SENDER = '"My Brain and Me" <info@mybrainandme.org>'
     SECURITY_REGISTERABLE = True
     SECURITY_CHANGEABLE = True
 
     # Flask-Mail Settings
     #MAIL_USERNAME = 'testingmbam@gmail.com'
     #MAIL_PASSWORD='R8S6bSgeqGgknH3'
+
     MAIL_USERNAME = 'mbaminfo@gmail.com'
     # Below is temporary application specific password for gmail smtp. Delete and replace with
     # env variable when repo goes public
     MAIL_PASSWORD='digkexrwzscfpybx'
     # Wait for the fix in flask-security, see https://github.com/mattupstate/flask-security/issues/685
-    #MAIL_DEFAULT_SENDER = '"MyBrainandMe" <mbaminfo@gmail.com>'
+    MAIL_DEFAULT_SENDER = '"My Brain and Me" <mbaminfo@gmail.com>'
     MAIL_SERVER = 'smtp.gmail.com'
     MAIL_PORT = 587
     MAIL_USE_SSL = False
@@ -159,6 +161,18 @@ class DevConfig(Config):
     BASIC_AUTH_USERNAME='tester'
     BASIC_AUTH_PASSWORD='mind@nyspi'
     BASIC_AUTH_FORCE=True
+
+    # Flask security settings
+    SECURITY_SEND_REGISTER_EMAIL = False
+    SECURITY_EMAIL_SENDER = '"My Brain and Me" <info@mybrainandme.org>'
+
+    # Flask-Mail Settings
+    MAIL_USERNAME = env.str('AMAZON_SMTP_USERNAME','dummy')
+    MAIL_PASSWORD = env.str('AMAZON_SMTP_PASSWORD','dummy')
+    MAIL_SERVER = 'email-smtp.us-east-1.amazonaws.com'
+    MAIL_PORT = 587
+    MAIL_USE_SSL = False
+    MAIL_USE_TLS = True
 
     # Set server name
     SERVER_NAME = 'staging.mybrainandme.org'

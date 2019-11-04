@@ -145,7 +145,7 @@ Resources:
         ImageUrl: !Ref 'FlaskAppImageUrl'
         ContainerCpu: 256
         ContainerMemory: 256
-        ContainerCommand: "celery -A cookiecutter_mbam.run_celery:celery worker --loglevel info"
+        ContainerCommand: "celery -A cookiecutter_mbam.run_celery:celery worker --pool=gevent --concurrency=500 --loglevel info"
         ContainerWorkingDirectory: /app
         ContainerMountPoint: /app/static/files # This should be same as files['files_depot'] in config.py
         HostMountPoint: /efs/mbam/user-data
