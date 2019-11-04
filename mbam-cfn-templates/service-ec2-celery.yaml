@@ -138,6 +138,10 @@ Resources:
               ValueFrom: !Sub
                 - ${PREPEND}/AMAZON_SECRET_KEY
                 - { PREPEND: !Ref ParameterStore }
+            - Name: AWS_SMTP_PASSWORD
+              ValueFrom: !Sub
+                - ${PREPEND}/AMAZON_SMTP_USERNAME
+                - { PREPEND: !Ref ParameterStore }
           Environment:
           # Pass the same environment variables to JATOS and MBaM app.
           - Name: CONFIG_NAME
@@ -154,6 +158,9 @@ Resources:
           - Name: broker_url
             Value:
               Fn::ImportValue: !Sub ${EnvironmentName}:RedisEndpoint
+          # Sending email
+          - Name: AWS_SMTP_USERNAME
+            Value: '{{resolve:ssm:AMAZON_SMTP_USERNAME:1}}'
 
   # The service. The service is a resource which allows you to run multiple
   # copies of a type of task, and gather up their logs and metrics, as well
