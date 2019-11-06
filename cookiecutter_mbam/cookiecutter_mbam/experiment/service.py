@@ -128,8 +128,7 @@ class ExperimentService(BaseService):
         """
         first_scan = not scan_index
         set_xnat_attributes = self._set_subject_and_experiment_attributes(first_scan)
-        labels = [self.xnat_labels[level]['xnat_label'] for level in ['subject', 'experiment']]
-        return [first_scan, set_xnat_attributes, labels]
+        return [first_scan, set_xnat_attributes]
 
 
     def _set_subject_and_experiment_attributes(self, first_scan):
