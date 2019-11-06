@@ -140,7 +140,7 @@ Resources:
                 - { PREPEND: !Ref ParameterStore }
             - Name: AWS_SMTP_PASSWORD
               ValueFrom: !Sub
-                - ${PREPEND}/AMAZON_SMTP_USERNAME
+                - ${PREPEND}/AMAZON_SMTP_PASSWORD
                 - { PREPEND: !Ref ParameterStore }
           Environment:
           # Pass the same environment variables to JATOS and MBaM app.

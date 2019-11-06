@@ -167,8 +167,8 @@ class DevConfig(Config):
     SECURITY_EMAIL_SENDER = '"My Brain and Me" <info@mybrainandme.org>'
 
     # Flask-Mail Settings
-    MAIL_USERNAME = env.str('AMAZON_SMTP_USERNAME','dummy')
-    MAIL_PASSWORD = env.str('AMAZON_SMTP_PASSWORD','dummy')
+    MAIL_USERNAME = env.str('AWS_SMTP_USERNAME','dummy')
+    MAIL_PASSWORD = env.str('AWS_SMTP_PASSWORD','dummy')
     MAIL_SERVER = 'email-smtp.us-east-1.amazonaws.com'
     MAIL_PORT = 587
     MAIL_USE_SSL = False
