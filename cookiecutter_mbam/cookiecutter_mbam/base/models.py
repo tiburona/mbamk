@@ -49,9 +49,8 @@ class BaseService(BaseModel):
         self.cls = cls
         self.tasks = tasks
 
-    def zipdir(self, path='', name=''):
-        if len(path):
-            return zipdir.si(path)
+    def zipdir(self, dir_to_zip, dest_dir, name=''):
+        return zipdir.si(dir_to_zip, dest_dir, name=name)
 
     def set_attribute(self, instance_id, key, val='', passed_val=False):
         return self._gen_signature_of_factory_task('set_attribute', val, instance_id, key, passed_val=passed_val)

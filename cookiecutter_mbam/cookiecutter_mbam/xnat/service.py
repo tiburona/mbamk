@@ -233,9 +233,11 @@ class XNATConnection(BaseModel):
         else:
             return launch_command.s(xnat_credentials, self.project, command_ids)
 
+
+    #todo: restore freesurfer interval after testing!
     def poll_container_service(self, process_name):
 
-        intervals = {'dicom_to_nifti': 5, 'freesurfer_recon_all': 172800}
+        intervals = {'dicom_to_nifti': 5, 'freesurfer_recon_all': 5}
         poll_task = poll_tasks[process_name]
         xnat_credentials = (self.server, self.user, self.password)
 

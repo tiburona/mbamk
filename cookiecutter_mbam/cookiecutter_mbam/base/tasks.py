@@ -147,9 +147,10 @@ def trigger_job(serialized_job, *args, **kwargs):
     canvas.apply_async(*args, **kwargs)
 
 @cel.task
-def zipdir(path, name='file.zip'):
-    with zipfile.ZipFile(name, 'w', zipfile.ZIP_DEFLATED) as zipf:
-        for root, dirs, files in os.walk(path):
+def zipdir(dir_to_zip, dest_dir, name='file.zip'):
+    path = os.path.join(dest_dir, name)
+    with zipfile.ZipFile(os.path.join(dest_dir, name), 'w', zipfile.ZIP_DEFLATED) as zipf:
+        for root, dirs, files in os.walk(dir_to_zip):
             for file in files:
                 zipf.write(os.path.join(root, file))
-    return path, name, zipf
+    return path, name

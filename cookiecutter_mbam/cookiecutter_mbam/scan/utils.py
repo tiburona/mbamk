@@ -13,7 +13,7 @@ def gzip_file(file_path):
     with gzip.open(file_path + '.gz', 'wb') as gzipped_file:
         with open(file_path, 'rb') as f:
             gzipped_file.writelines(f)
-    return (gzipped_file, file_path + '.gz')
+    return gzipped_file, file_path + '.gz'
 
 
 

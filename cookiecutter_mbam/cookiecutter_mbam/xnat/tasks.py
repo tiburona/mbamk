@@ -4,7 +4,6 @@ import shutil
 from celery.exceptions import SoftTimeLimitExceeded
 from cookiecutter_mbam import celery
 from cookiecutter_mbam.utils.request_utils import init_session
-from .utils import crop
 
 @celery.task
 def create_resources(xnat_credentials, to_create, urls):
@@ -65,26 +64,6 @@ def upload_scan_to_xnat(self, xnat_credentials, file_path, url, exp_uri, imp):
             return exp_uri
         else:
             raise ValueError(f'Unexpected status code: {r.status_code}  Response: \n {r.text}')
-
-# @celery.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5})
-# def import_scan_to_xnat(self, xnat_credentials, file_path, url, exp_uri):
-#     """Import a DICOM format scan to XNAT
-#     :param self: the task object
-#     :param dict uris: a dictionary with levels as keys that contains the experiment uri, the import destination
-#     :param tuple xnat_credentials: a three-tuple of the server, username, and password to log into XNAT
-#     :param str file_path: the location of the file on the local disk
-#     :return: uris
-#     This is the task invoked when the scan is in DICOM format.
-#     """
-#
-#     server, user, password = xnat_credentials
-#     files = {'file': ('T1.zip', open(file_path, 'rb'), 'application/octet-stream')}
-#     with init_session(user, password) as s:
-#         r = s.post(url, files=files, data={'dest': exp_uri, 'overwrite':'delete'})
-#         if r.ok:
-#             return exp_uri
-#         else:
-#             raise ValueError(f'Unexpected status code: {r.status_code}  Response: \n {r.text}')
 
 @celery.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5})
 def get_latest_scan_info(self, experiment_uri, xnat_credentials):
@@ -215,9 +194,10 @@ def dl_files_from_xnat(self, uri, xnat_credentials, file_path, suffix='', single
                 else:
                     raise ValueError(f'Unexpected status code: {response.status_code}  Response: /n {r.text}')
             if single_file:
+                # todo: is this downloading the json again?
                 return results[0]['Name']
             else:
-                [result['Name'] for result in results]
+                return [result['Name'] for result in results]
         else:
             raise ValueError(f'Unexpected status code: {r.status_code}  Response: \n {r.text}')
     return r
