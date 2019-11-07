@@ -248,8 +248,6 @@ class ScanService(BaseService):
         :rtype: celery.canvas._chain
         """
 
-        if not os.path.isdir(local_dir): os.makedirs(local_dir)
-
         return chain(
             self.get_attribute(self.scan.id, attr='xnat_uri'),
             self.xc.dl_files_from_xnat(local_dir, suffix=suffix, conditions=conditions, single_file=single_file),
@@ -281,9 +279,11 @@ class ScanService(BaseService):
 
         :param process_name: identifier for the process
         :type process_name: str
-        :param download_suffix:
-        :param upload_suffix:
-        :param filename:
+        :param download_suffix: what to append to the scan uri to locate files to download
+        :type download_suffix: str
+        :param upload_suffix: what to append to the scan uri to locate files to upload
+        :type upload_suffix: str
+        :param filename: the name to use when writing the file
         :type filename: str
         :param dl_conditions: keys to a dictionary of optional conditions to put on whether to download a file
         :type dl_conditions: list
@@ -330,7 +330,7 @@ class ScanService(BaseService):
         )
 
     def _convert_dicom(self):
-        """Construct a chain to convert dicom to niftiÍ
+        """Construct a chain to convert dicom to nifti
 
         :return: the celery chain
         :rtype: celery.canvas._chain
