@@ -177,7 +177,9 @@ def dl_files_from_xnat(self, uri, xnat_credentials, file_path, suffix='', single
     """
 
     if not os.path.isdir(file_path):
-        os.mkdir(file_path)
+        os.makedirs(file_path)
+
+    print(file_path)
 
     server, user, password = xnat_credentials
 
@@ -185,7 +187,7 @@ def dl_files_from_xnat(self, uri, xnat_credentials, file_path, suffix='', single
         r = s.get(server + uri + suffix)
         if r.ok:
             results = [result for result in r.json()['ResultSet']['Result']
-                       if all([dl_conditions[condition] for condition in conditions])]
+                       if all([dl_conditions[condition](result) for condition in conditions])]
             for result in results:
                 response = s.get(server + result['URI'])
                 if response.ok:
