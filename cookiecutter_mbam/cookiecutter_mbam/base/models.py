@@ -66,22 +66,17 @@ class BaseService(BaseModel):
         :return:
         """
         if not passed_val:
-            return reduce(chain, [self._gen_signature_of_factory_task('set_attribute', val, instance_id, key)
+            return reduce(chain, [self._gen_signature_of_factory_task('set_attributes', val, instance_id, key)
                                   for key, val in attributes.items()])
         else:
             return self._gen_signature_of_factory_task('set_attributes', attributes, instance_id, passed_val=passed_val)
 
     def _gen_signature_of_factory_task(self, task_key, optional_arg, *args, passed_val=False):
-        try:
-            task = self.tasks[task_key]
-            if passed_val:
-                return task.s(*args)
-            else:
-                return task.si(optional_arg, *args)
-        except KeyError:
-            # todo: do something
-            pass
-        except:
-            pass
+        task = self.tasks[task_key]
+        if passed_val:
+            return task.s(*args)
+        else:
+            return task.si(optional_arg, *args)
+
 
 

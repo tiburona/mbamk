@@ -119,15 +119,21 @@ def launch_command(self, data, xnat_credentials, project, command_ids):
     with init_session(user, password) as s:
         r = s.post(server + url, data)
         if r.ok:
-            if 'container-id' in r.json():
-                return r.json()['container-id']
-            else:
-                return r.json()['service-id']
+            return construct_container_data(r.json(), server)
         else:
             raise ValueError(f'Unexpected status code: {r.status_code}  Response: \n {r.text}')
 
-# todo: can I dynamically set soft timeout?
-def poll_cs(container_id, xnat_credentials, interval):
+
+def construct_container_data(r_json, server):
+    container_key = 'container-id' if 'container-id' in r_json else 'service-id'
+    container_data = {k: r_json[k] for k in [container_key, 'id']}
+    for new, old in [('cs_id', 'id'), ('xnat_container_id', container_key)]:
+        container_data[new] = container_data.pop(old)
+    container_data['xnat_host'] = server
+    return container_data
+
+
+def poll_cs(container_info, xnat_credentials, interval):
     """ Check for completion of a Container Service command
 
     :param str container_id: the id of the launched container
@@ -136,7 +142,10 @@ def poll_cs(container_id, xnat_credentials, interval):
     in the allotted time
     :rtype: str
     """
+
     server, user, password = xnat_credentials
+    container_id = container_info['xnat_container_id']
+
     with init_session(user, password) as s:
         while True:
             r = s.get(server + '/xapi/containers/{}'.format(container_id))
@@ -157,12 +166,14 @@ def poll_cs_dcm2nii(self, container_id, xnat_credentials, interval):
     except SoftTimeLimitExceeded:
         return 'Timed Out'
 
+
 @celery.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5}, soft_time_limit=259200)
 def poll_cs_fsrecon(self, container_id, xnat_credentials, interval):
     try:
         return poll_cs(container_id, xnat_credentials, interval)
     except SoftTimeLimitExceeded:
         return 'Timed Out'
+
 
 @celery.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5})
 def dl_files_from_xnat(self, uri, xnat_credentials, file_path, suffix='', single_file=True, conditions=[]):
@@ -179,8 +190,6 @@ def dl_files_from_xnat(self, uri, xnat_credentials, file_path, suffix='', single
     if not os.path.isdir(file_path):
         os.makedirs(file_path)
 
-    print(file_path)
-
     server, user, password = xnat_credentials
 
     with init_session(user, password) as s:
@@ -196,7 +205,6 @@ def dl_files_from_xnat(self, uri, xnat_credentials, file_path, suffix='', single
                 else:
                     raise ValueError(f'Unexpected status code: {response.status_code}  Response: /n {r.text}')
             if single_file:
-                # todo: is this downloading the json again?
                 return results[0]['Name']
             else:
                 return [result['Name'] for result in results]

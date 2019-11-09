@@ -1,9 +1,10 @@
 from .models import Derivation
-from .tasks import raise_exception, set_derivation_attribute, get_derivation_attribute
+from .tasks import *
 from celery import chain
 from cookiecutter_mbam.base import BaseService
 
-tasks = {'set_attribute': set_derivation_attribute, 'get_attribute': get_derivation_attribute}
+tasks = {'set_attribute': set_derivation_attribute, 'get_attribute': get_derivation_attribute,
+         'set_attributes': set_derivation_attributes}
 
 class DerivationService(BaseService):
 
@@ -27,3 +28,6 @@ class DerivationService(BaseService):
             )
         else:
             return self.set_attribute(self.derivation.id, key, passed_val=True)
+
+    def construct_derivation_uri_from_scan_uri(self, suffix):
+        return construct_derivation_uri_from_scan_uri.si(self.derivation.id, suffix)
