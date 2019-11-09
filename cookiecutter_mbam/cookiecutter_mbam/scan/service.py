@@ -182,7 +182,7 @@ class ScanService(BaseService):
 
         return chain(
             self.csc.upload_to_cloud_storage(local_dir, self.scan_info, filename=self.filename, delete=True),
-            self.set_attribute(self.scan.id, 'orig_aws_key', passed_val=True),
+            self.set_attribute(self.scan.id, 'aws_key', passed_val=True),
             self.set_attribute(self.scan.id, 'aws_status', val='Uploaded')
         ).set(link_error=self._error_proc('aws_status'))
 
@@ -229,10 +229,24 @@ class ScanService(BaseService):
         """
 
         return chain(
+            self._launch_container(process_name, download_suffix, upload_suffix, ds),
+            self._poll_container_service_and_set_derivation_attributes_on_completion(process_name, upload_suffix, ds)
+        )
+
+    def _launch_container(self, process_name, download_suffix, upload_suffix, ds):
+        return chain(
             self.get_attribute(self.scan.id, attr='xnat_uri'),
             self.xc.gen_container_data(download_suffix=download_suffix, upload_suffix=upload_suffix),
-            self.xc.launch_and_poll_for_completion(process_name),
-            ds.update_derivation_model('status', exception_on_failure=True)
+            self.xc.launch_command(process_name),
+            ds.set_attributes(ds.derivation.id, passed_val=True)
+        )
+
+    def _poll_container_service_and_set_derivation_attributes_on_completion(self, process_name, upload_suffix, ds):
+        return chain(
+            self.xc.poll_container_service(process_name),
+            ds.update_derivation_model('container_status', exception_on_failure=True),
+            ds.construct_derivation_uri_from_scan_uri(upload_suffix),
+            ds.set_attribute(ds.derivation.id, 'xnat_uri', passed_val=True)
         )
 
     def _download_files_from_xnat(self, local_dir, suffix, conditions=[], single_file=True):
@@ -269,7 +283,8 @@ class ScanService(BaseService):
 
         return chain(
             self.csc.upload_to_cloud_storage(local_path, self.scan_info, filename=filename, delete=delete),
-            ds.update_derivation_model('cloud_storage_key')
+            ds.update_derivation_model('aws_key'),
+            ds.set_attribute(ds.derivation.id, 'aws_status', 'Uploaded')
         )
 
 

@@ -15,5 +15,12 @@ def gzip_file(file_path):
             gzipped_file.writelines(f)
     return gzipped_file, file_path + '.gz'
 
+def crop(string, pattern, left=True):
+    index = string.find(pattern)
+    if left:
+        return string[index:]
+    else:
+        return string[:pattern]
+
 
 

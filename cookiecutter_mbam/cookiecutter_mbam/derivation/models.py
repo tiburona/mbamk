@@ -19,7 +19,9 @@ class Derivation(SurrogatePK, Model):
     __tablename__ = 'derivation'
     process_name = db.Column(db.String(255), nullable=False)
     xnat_container_id = db.Column(db.String(80), nullable=True)
+    cs_id = db.Column(db.String(80), nullable=True)
     xnat_uri = db.Column(db.String(255), nullable=True, unique=True)
+    xnat_host = db.Column(db.String(255), nullable=True)
     aws_key = db.Column(db.String(255), nullable=True, unique=True)
     aws_status = db.Column(db.String(255), nullable=False, default='Pending')
     container_status = db.Column(db.String(255), nullable=False)
