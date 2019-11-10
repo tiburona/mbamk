@@ -1,3 +1,6 @@
-def crop(string, pattern):
+def crop(string, pattern, left=True):
     index = string.find(pattern)
-    return string[index:]
+    if left:
+        return string[index:]
+    else:
+        return string[:pattern]

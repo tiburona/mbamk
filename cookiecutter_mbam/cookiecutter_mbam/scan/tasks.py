@@ -1,18 +1,22 @@
+import os
+import zipfile
 from .models import Scan
 from cookiecutter_mbam.base.tasks import run_task_factories
-from cookiecutter_mbam import celery
+from cookiecutter_mbam import celery as cel
 
 set_attribute, set_attributes, get_attribute = run_task_factories(Scan)
 
-@celery.task
+@cel.task
 def set_scan_attribute(*args):
     return set_attribute(*args)
 
-@celery.task
+@cel.task
 def get_scan_attribute(*args):
     return get_attribute(*args)
 
-@celery.task
+@cel.task
 def set_scan_attributes(*args):
     return set_attributes(*args)
+
+
 

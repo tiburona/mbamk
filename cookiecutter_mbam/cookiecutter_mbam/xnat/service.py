@@ -167,7 +167,8 @@ class XNATConnection(BaseModel):
         else:
             return (False, None)
 
-    def upload_scan_file(self, file_path, xnat_labels, import_service=False, is_first_scan=True, set_attrs=None):
+    def upload_scan_file(self, file_path, xnat_labels, import_service=False, is_first_scan=True,
+                         set_sub_and_exp_attrs=None):
         """ Create the XNAT upload chain
         Creates, but does not execute, the Celery chain that creates the XNAT subject and experiment, if necessary, then
         either uploads or imports (for non-dicoms and dicoms, respectively) a dicom file to XNAT.  This chain eventually
@@ -183,23 +184,22 @@ class XNATConnection(BaseModel):
         do_create_resources, create_resources_signature = self._create_resources(urls, import_service, is_first_scan)
 
         if import_service:
-            upload_task = import_scan_to_xnat
             url = self.server + '/data/services/import'
         else:
-            upload_task = upload_scan_to_xnat
             url = urls['file']
 
-        upload_signature = upload_task.si(
+        upload_signature = upload_scan_to_xnat.si(
             xnat_credentials=self.auth,
             file_path=file_path,
             url=url,
-            exp_uri = uris['experiment']
+            exp_uri = uris['experiment'],
+            imp = import_service
         )
 
         get_latest_scan_info_signature = get_latest_scan_info.s(xnat_credentials=self.auth)
 
         tasks = [(create_resources_signature, do_create_resources),
-                 (set_attrs, set_attrs),
+                 (set_sub_and_exp_attrs, set_sub_and_exp_attrs),
                  (upload_signature, True),
                  (get_latest_scan_info_signature, True)]
 
@@ -214,14 +214,11 @@ class XNATConnection(BaseModel):
             self.poll_container_service(process_name)
         )
 
-    def gen_dicom_conversion_data(self):
-        return gen_dicom_conversion_data.s()
-
-    def gen_fs_recon_data(self, labels, scan_id=None):
-        if scan_id:
-            return gen_freesurfer_data.si(scan_id, labels, self.project)
+    def gen_container_data(self, download_suffix, upload_suffix, uri=None):
+        if uri:
+            return gen_container_data.si(uri, self.auth, download_suffix, upload_suffix)
         else:
-            return gen_freesurfer_data.s(labels, self.project)
+            return gen_container_data.s(self.auth, download_suffix, upload_suffix)
 
     def launch_command(self, process_name, data=None):
         xnat_credentials = (self.server, self.user, self.password)
@@ -236,16 +233,18 @@ class XNATConnection(BaseModel):
         else:
             return launch_command.s(xnat_credentials, self.project, command_ids)
 
+
+    #todo: restore freesurfer interval after testing!
     def poll_container_service(self, process_name):
 
-        intervals = {'dicom_to_nifti': 5, 'freesurfer_recon_all': 172800}
+        intervals = {'dicom_to_nifti': 5, 'freesurfer_recon_all': 5}
         poll_task = poll_tasks[process_name]
         xnat_credentials = (self.server, self.user, self.password)
 
         return poll_task.s(xnat_credentials, intervals[process_name])
 
-    def dl_file_from_xnat(self, file_depot):
-        return dl_file_from_xnat.s(self.auth, file_depot)
+    def dl_files_from_xnat(self, file_depot, suffix='', single_file=True, conditions=[]):
+        return dl_files_from_xnat.s(self.auth, file_depot, suffix=suffix, single_file=single_file, conditions=conditions)
 
     def generate_container_service_ids(self, process_name):
         return (
