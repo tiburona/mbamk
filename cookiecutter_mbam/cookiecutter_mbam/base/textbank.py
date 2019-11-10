@@ -11,5 +11,4 @@ messages = {
         'subject': "An error occurred",
         'body': "Your scan was uploaded to our site, but something went wrong with the services we use to " \
                 "process it, so it won't be visible until we fix it.  The admins have been notified."}
-
 }
