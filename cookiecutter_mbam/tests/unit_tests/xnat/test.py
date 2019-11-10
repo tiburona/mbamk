@@ -6,6 +6,7 @@ import collections
 import random
 from datetime import datetime
 from cookiecutter_mbam.xnat.tasks import *
+from cookiecutter_mbam.xnat.service import XNATConnection
 from cookiecutter_mbam.config import config_by_name, config_name
 
 
@@ -21,10 +22,6 @@ class TestXNATTasks:
         self.command_ids = (self.xnat_config['dicom_to_nifti_command_id'], self.xnat_config['dicom_to_nifti_wrapper_id'])
         self.command_id, self.wrapper_id = self.command_ids
         self.scan_uri = '/data/experiments/XNAT_E00001/scans/10'
-        self.ids = {
-            'subject': 'XNAT_S00001',
-            'experiment': 'XNAT_E00001'
-        }
         self.uris = {
             'subject': '/data/subjects/XNAT_S00001',
             'experiment': '/data/experiments/XNAT_E00001',
@@ -48,64 +45,69 @@ class TestXNATTasks:
 
 class TestCreateResources(TestXNATTasks):
 
-    @pytest.fixture(autouse=True, params=range(4))
+    @pytest.fixture(autouse=True, params=[True, False])
     def setup_tests(self, setup_xnat_tests, request):
+        dcm = request.param
 
-        to_create = [
-            ['subject', 'experiment'],
-            ['scan', 'resource'],
-            ['experiment', 'scan', 'resource'],
-            ['subject', 'experiment', 'scan', 'resource']
-        ]
+        User = collections.namedtuple('User', 'id num_experiments xnat_id')
+        Experiment = collections.namedtuple('Experiment', 'id date num_scans xnat_id')
 
-        ind = request.param
-
-        self.to_create = to_create[ind]
-
-        self.responses = {level: self.ids[level] for level in self.to_create if level in ['subject', 'experiment']}
-
-        prefix = self.server + '/data/archive/projects/MBAM_TEST'
-        subject_url = prefix + '/subjects/000001'
-        experiment_url = subject_url + '/experiments/000001_MR1'
-        scan_url = experiment_url + '/scans/T1_1'
-        resource_url = scan_url + '/resources/NIFTI'
-        file_url = resource_url + '/files/T1.nii.gz'
-
+        user = User(id=1, num_experiments=1, xnat_id=None)
         date = datetime.now()
+        experiment = Experiment(id=1, num_scans=0, date=date, xnat_id=None)
 
-        self.mocked_urls = {
-            'subject': subject_url,
-            'experiment': experiment_url + '?xnat:mrSessionData/date={}'.format(date.strftime('%m/%d/%Y')),
-            'scan': scan_url + '?xsiType=xnat:mrScanData',
-            'resource': resource_url,
-            'file':file_url + '?xsi:type=xnat:mrScanData'
-        }
+        xc = XNATConnection(self.xnat_config, set_docker_host=False)
+        xc.generate_xnat_identifiers(user, experiment, dcm=dcm)
 
-        self.signature = create_resources.s(self.xnat_credentials, self.to_create, self.mocked_urls)
+        levels = ['subject', 'experiment', 'scan', 'resource', 'file']
 
+        self.signature = create_resources.s(self.xnat_credentials, (xc.xnat_ids, xc.existing_xnat_ids), levels, dcm,
+                                            xc.archive_prefix)
+
+        prefix = '/data/archive/projects/MBAM_TEST'
+        subject_uri = prefix + '/subjects/000001'
+        experiment_uri = subject_uri + '/experiments/000001_MR1'
+        scan_uri = experiment_uri + '/scans/T1_1'
+        resource_uri = scan_uri + '/resources/NIFTI'
+        file_uri = resource_uri + '/files/T1.nii.gz'
+        uris = [subject_uri, experiment_uri, scan_uri, resource_uri, file_uri]
+
+        queries= ['', '?xnat:mrSessionData/date={}'.format(date.strftime('%m/%d/%Y')), '?xsiType=xnat:mrScanData', '',
+                  '?xsi:type=xnat:mrScanData']
+
+        if dcm:
+            levels = levels[:-3]
+            uris = uris[:-3]
+            queries = queries[:-3]
+
+        self.num_expected_calls = 2 if dcm else 5
+
+        self.mocked_uris = zip(levels, uris, queries)
+
+        self.uris = {level[0]:level[1] for level in zip(levels, uris, queries)}
 
     @responses.activate
     def test_create_resources(self):
 
-        for key in self.mocked_urls:
-            body = self.responses[key] if key in self.responses else None
-            responses.add('PUT', self.mocked_urls[key], status=200, body=body)
+        for _, uri, query in self.mocked_uris:
+            responses.add('PUT', self.server + uri + query, status=200, json={})
 
         task = self.signature.apply()
-        assert len(responses.calls) == len(self.to_create)
-        assert task.result == self.responses
+        assert len(responses.calls) == self.num_expected_calls
+        assert task.result == self.uris
 
     @responses.activate
-    def test_create_resources_raises_error_if_failure_response(self):
-        failure = random.randint(0, len(self.to_create) - 1)
-        for i, key in enumerate(self.mocked_urls.keys()):
-            body = self.responses[key] if key in self.responses else None
-            kw = {'status': 404, 'json': {'error': 'not found'}} if i == failure else {'status': 200, 'body': body}
-            responses.add('PUT', self.mocked_urls[key], **kw)
+    def test_get_latest_scan_info_raises_error_if_failure_response(self):
+        failure = random.randint(0, self.num_expected_calls - 1)
+        for i, (_, uri, query) in enumerate(self.mocked_uris):
+            kw = {'status': 404, 'json':{'error': 'not found'}} if i is failure else {'status': 200, 'json':{}}
+            responses.add('PUT', self.server + uri + query, **kw)
+
+        with pytest.raises(ValueError):
+            self.signature.apply(throw=True)
 
 
 class TestUploadsAndImports(TestXNATTasks):
-
 
     @pytest.fixture(
         autouse=True,
@@ -116,14 +118,16 @@ class TestUploadsAndImports(TestXNATTasks):
         filename, celery_task, uri, method = request.param
         if filename == 'T1.nii.gz':
             uri = self.scan_uri + uri
-        self.mocked_url = self.server + uri
+            self.uris['resource'] = os.path.join(self.scan_uri, 'resources', 'NIFTI')
+            self.uris['file'] = uri
+        self.mocked_uri = self.server + uri
         self.method = method
         dir_path = os.path.dirname(os.path.realpath(__file__))
         par_path = os.path.abspath(os.path.join(dir_path, os.pardir, os.pardir))
         local_path = os.path.join(par_path, 'test_files', filename)
         self.files =  {'file': (filename, open(local_path, 'rb'), 'application/octet-stream')}
         self.mocked_json_response = {}
-        self.signature = celery_task.s(self.xnat_credentials, local_path, self.mocked_url, self.uris['experiment'])
+        self.signature = celery_task.s(self.uris, self.xnat_credentials, local_path)
         self.assertions = [self.assert_request_type, self.assert_request_size]
 
     def assert_request_type(self, req):
@@ -133,19 +137,18 @@ class TestUploadsAndImports(TestXNATTasks):
         return int(req.headers['Content-Length']) > 1000
 
     def test_scan_to_xnat(self):
-        task = self.success_response(self.mocked_url, self.mocked_json_response, self.signature,
+        task = self.success_response(self.mocked_uri, self.mocked_json_response, self.signature,
                               method=self.method, assertions=self.assertions)
-        assert task.result == self.uris['experiment']
+        assert task.result == self.uris
 
     def test_scan_to_xnat_raises_error_if_failure_response(self):
-        self.failure_response(self.mocked_url, self.signature, method=self.method)
+        self.failure_response(self.mocked_uri, self.signature, method=self.method)
 
 
 class TestGetLatestScanInfo(TestXNATTasks):
-
     @pytest.fixture(autouse=True)
     def set_up(self, setup_xnat_tests):
-        self.mocked_url = self.server + self.uris['experiment'] + '/scans'
+        self.mocked_uri = self.server + self.uris['experiment'] + '/scans'
         self.mocked_json_response = {
             'ResultSet':{
                 'Result':
@@ -154,14 +157,14 @@ class TestGetLatestScanInfo(TestXNATTasks):
                      ]
             }
         }
-        self.signature = get_latest_scan_info.s(self.uris['experiment'], self.xnat_credentials)
+        self.signature = get_latest_scan_info.s(self.uris, self.xnat_credentials)
 
     def test_get_latest_scan_info(self):
-        task = self.success_response(self.mocked_url, json=self.mocked_json_response, signature=self.signature)
+        task = self.success_response(self.mocked_uri, json=self.mocked_json_response, signature=self.signature)
         assert task.result == {'xnat_id': '10', 'xnat_uri': self.scan_uri}
 
     def test_get_latest_scan_info_raises_error_if_failure_response(self):
-        self.failure_response(self.mocked_url, self.signature)
+        self.failure_response(self.mocked_uri, self.signature)
 
 
 class TestGenDicomConversionData(TestXNATTasks):

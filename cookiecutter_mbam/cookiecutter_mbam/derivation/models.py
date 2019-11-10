@@ -19,12 +19,9 @@ class Derivation(SurrogatePK, Model):
     __tablename__ = 'derivation'
     process_name = db.Column(db.String(255), nullable=False)
     xnat_container_id = db.Column(db.String(80), nullable=True)
-    cs_id = db.Column(db.String(80), nullable=True)
     xnat_uri = db.Column(db.String(255), nullable=True, unique=True)
-    xnat_host = db.Column(db.String(255), nullable=True)
-    aws_key = db.Column(db.String(255), nullable=True, unique=True)
-    aws_status = db.Column(db.String(255), nullable=False, default='Pending')
-    container_status = db.Column(db.String(255), nullable=False)
+    cloud_storage_key = db.Column(db.String(255), nullable=True, unique=True)
+    status = db.Column(db.String(255), nullable=False)
     scans = db.relationship(
         'Scan', secondary=derivations_scans,
         backref = db.backref('derivations', lazy='dynamic')
@@ -35,9 +32,9 @@ class Derivation(SurrogatePK, Model):
     #     {})
 
 
-    def __init__(self, scans, container_status, **kwargs):
+    def __init__(self, scans, status, **kwargs):
         """Create instance."""
-        db.Model.__init__(self, scans=scans, container_status=container_status, **kwargs)
+        db.Model.__init__(self, scans=scans, status=status, **kwargs)
         for scan in scans:
             self.scans.append(scan)
 

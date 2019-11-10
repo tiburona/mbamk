@@ -5,6 +5,8 @@ import gzip
 
 url, user, password, host = sys.argv[1:]
 
+url = os.path.join(host + url, 'resources', 'NIFTI', 'files')
+
 def get_file_by_extension(dir, ext):
     return [file for file in os.listdir(dir) if os.path.splitext(file)[1] == ext][0]
 
