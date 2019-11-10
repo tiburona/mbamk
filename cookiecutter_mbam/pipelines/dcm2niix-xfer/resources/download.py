@@ -4,6 +4,10 @@ import os
 
 url, user, password, host = sys.argv[1:]
 
+
+
+url = os.path.join(host + url, 'resources', 'DICOM', 'files')
+
 def init_session(user, password):
     s = requests.Session()
     s.auth = (user, password)

@@ -7,7 +7,9 @@ def init_session(user, password):
     s.auth = (user, password)
     return s
 
-url, user, password, host = sys.argv[1:]
+project, subject, experiment, user, password, host = sys.argv[1:]
+
+url = os.path.join(host, 'data', 'projects', project, 'subjects', subject, 'experiments', experiment, 'resources/FSv6/files')
 
 print(url)
 
