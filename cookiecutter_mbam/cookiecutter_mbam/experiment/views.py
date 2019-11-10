@@ -34,6 +34,7 @@ def add_experiment(form, files):
 @blueprint.route('/')
 def experiments():
     """List experiments."""
+    # todo: this makes no sense, please eventually change.
     experiments = Experiment.query.all()
     return render_template('experiments/experiments.html', experiments=experiments)
 

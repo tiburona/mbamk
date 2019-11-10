@@ -15,21 +15,11 @@ class CloudStorageConnection:
         self.s3_resource = boto3.resource('s3', **self.auth)
         self.bucket_name = config['bucket_name']
 
-    def _construct_key(self, scan_info, filename):
-        """
-        :param tuple scan_info: a 3-tuple of strings with the XNAT subject, experiment, and scan identifiers
-        :param str filename: the name of the file
-        :return str: key
-        """
-
-        user_id, experiment_id, scan_id = scan_info
-        return 'user/{}/experiment/{}/scan/{}/file/{}'.format(user_id, experiment_id, scan_id, filename)
-
-    def upload_to_cloud_storage(self, filedir, scan_info, filename=''):
+    def upload_to_cloud_storage(self, filedir, scan_info, filename='', delete=False):
         if len(filename):
-            return upload_scan_to_cloud_storage.si(filename, filedir, self.bucket_name, self.auth, scan_info)
+            return upload_to_cloud_storage.si(filename, filedir, self.bucket_name, self.auth, scan_info, delete=delete)
         else:
-            return upload_scan_to_cloud_storage.s(filedir, self.bucket_name, self.auth, scan_info)
+            return upload_to_cloud_storage.s(filedir, self.bucket_name, self.auth, scan_info, delete=delete)
 
     def object_exists(self, key):
         """

@@ -1,5 +1,7 @@
 from celery.signals import after_setup_logger, after_setup_task_logger
 import json
+import zipfile
+import os
 from celery import signature
 from cookiecutter_mbam import celery as cel
 import ssl
@@ -81,7 +83,6 @@ def send_email(email_info):
     with two keys, 'subject' and 'body'
     :return:
     """
-    #message = format_email(UNAME, email_info)
     context = ssl.create_default_context()
     user_name, user_email, message = email_info
 
@@ -144,3 +145,12 @@ def global_error_handler(req, exc, tb, cel, log_message='generic_message', user_
 def trigger_job(serialized_job, *args, **kwargs):
     canvas = signature(json.loads(serialized_job))
     canvas.apply_async(*args, **kwargs)
+
+@cel.task
+def zipdir(dir_to_zip, dest_dir, name='file.zip'):
+    path = os.path.join(dest_dir, name)
+    with zipfile.ZipFile(os.path.join(dest_dir, name), 'w', zipfile.ZIP_DEFLATED) as zipf:
+        for root, dirs, files in os.walk(dir_to_zip):
+            for file in files:
+                zipf.write(os.path.join(root, file))
+    return path, name
