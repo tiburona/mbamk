@@ -53,9 +53,13 @@ class ScanService(BaseService):
         self._config_read()
         self.tasks = tasks
         self.derivation_services = {}
+        self.scan = None
+        self.scan_info = None
+        self.xnat_labels = None
 
     def _config_read(self):
         """Scan service configuration
+
         Obtains the configuration with config_by_name, and sets the upload path and creates XNAT Connection and a Cloud
         Storage Connection instance and attaches them to the scan service object.
         :return: None
@@ -115,7 +119,8 @@ class ScanService(BaseService):
 
         self._write_local_files(image_file)
 
-    def _process_filename(self, filename):
+    @staticmethod
+    def _process_filename(filename):
         """Derive information from the filename
 
         :param str filename: the name of the file as stored on the image_file object
@@ -128,41 +133,38 @@ class ScanService(BaseService):
         return ext, filename
 
     def _write_local_files(self, image_file):
+        """
+        :param image_file:
+        :return:
+        """
 
         self.local_dir = os.path.join(self.file_depot, str(self.scan.id))
-        if not os.path.isdir(self.local_dir): os.mkdir(self.local_dir)
+        if not os.path.isdir(self.local_dir):
+            os.mkdir(self.local_dir)
 
         for dest in ['cloud', 'xnat']:
             dest_dir = os.path.join(self.local_dir, dest)
-            if not os.path.isdir(dest_dir): os.mkdir(dest_dir)
+            if not os.path.isdir(dest_dir):
+                os.mkdir(dest_dir)
             file_path = os.path.join(dest_dir, self.filename)
 
             if dest == 'cloud':
                 image_file.save(file_path)
                 if self.ext == '.nii':
-                    image_file, file_path = self._compress_file(file_path)
+                    image_file, file_path = _compress_file(file_path)
                     self.filename += '.gz'
             if dest == 'xnat':
                 shutil.copy(os.path.join(self.local_dir, 'cloud', self.filename), file_path)
 
         image_file.close()
 
-
-    def _compress_file(self, local_path):
-        """Compress a scan
-
-        Gzips the image file and returns data about the gzipped file.
-
-        :param str local_path: the path to the uncompressed file
-        :param str filename: the name of the uncompressed file
-        :return: a two-tuple of the compressed file and the path to that file
-        :rtype: tuple
-        """
-        image_file, gz_path = gzip_file(local_path)
-        os.remove(local_path)
-        return image_file, gz_path
-
     def _error_proc(self, status_type=''):
+        """Handle errors on upload to AWS or XNAT.
+
+        :param status_type: the attribute that will be set to error on the object
+        :type status_type: str
+        :return:
+        """
 
         error_proc = self._error_handler(log_message='generic_message', email_admin=True, email_user=False)
 
@@ -211,10 +213,7 @@ class ScanService(BaseService):
         return xnat_chain.set(link_error=self._error_proc())
 
     def _run_container(self, process_name, download_suffix, upload_suffix, ds):
-        """Construct a celery chain to run a container
-
-        Constructs the chain to get the uri of the scan, generate the input data for the container, launch the container
-        and poll for completion, and finally update the derivation status when the container is finished.
+        """Construct a celery chain to launch a container and poll for completion.
 
         :param process_name: identifier for the process
         :type process_name: str
@@ -234,6 +233,19 @@ class ScanService(BaseService):
         )
 
     def _launch_container(self, process_name, download_suffix, upload_suffix, ds):
+        """Construct a Celery chain to launch a container and set attributes pertaining to the container service process.
+
+        :param process_name: identifier for the process
+        :type process_name: str
+        :param download_suffix: what to append to the scan uri to locate files to download
+        :type download_suffix: str
+        :param upload_suffix: what to append to the scan uri to locate files to upload
+        :type upload_suffix: str
+        :param ds: derivation service
+        :type ds: cookiecutter_mbam.derivation.service.DerivationService
+        :return: the celery chain to run the container
+        :rtype: celery.canvas._chain
+        """
         return chain(
             self.get_attribute(self.scan.id, attr='xnat_uri'),
             self.xc.gen_container_data(download_suffix=download_suffix, upload_suffix=upload_suffix),
@@ -241,18 +253,30 @@ class ScanService(BaseService):
             ds.set_attributes(ds.derivation.id, passed_val=True)
         )
 
-    def _poll_container_service_and_set_derivation_attributes_on_completion(self, process_name, upload_suffix, ds):
+    def _poll_container_service_and_set_derivation_attributes_on_completion(self, process_name, suffix, ds):
+        """Construct a Celery chain to poll the container service and set derivation attributes
+
+        :param process_name: identifier for the process
+        :type process_name: str
+        :param suffix: the suffix of the XNAT URI of the resulting files
+        :type suffix: str
+        :param ds: derivation service
+        :type ds: cookiecutter_mbam.derivation.service.DerivationService
+        :return: the celery chain to run the container
+        :rtype: celery.canvas._chain
+        """
         return chain(
             self.xc.poll_container_service(process_name),
             ds.update_derivation_model('container_status', exception_on_failure=True),
-            ds.construct_derivation_uri_from_scan_uri(upload_suffix),
+            ds.construct_derivation_uri_from_scan_uri(suffix),
             ds.set_attribute(ds.derivation.id, 'xnat_uri', passed_val=True)
         )
 
     def _download_files_from_xnat(self, local_dir, suffix, conditions=[], single_file=True):
         """Construct a celery chain to download files from xnat
 
-        :param local_path: the path on the webserver where the file will be saved
+        :param local_dir: the directory on the webserver where the file will be saved
+        :type local_dir: str
         :param suffix: suffix to attach to xnat uri in order to locate the files to download
         :param conditions: keys to a dictionary of optional conditions to put on whether to download a file
         :type conditions: list
@@ -287,9 +311,8 @@ class ScanService(BaseService):
             ds.set_attribute(ds.derivation.id, 'aws_status', 'Uploaded')
         )
 
-
     def _run_container_retrieve_and_store_files(self, process_name, download_suffix, upload_suffix, filename, local_dir,
-                                                dl_conditions=[], single_file=True, zip=False, dest_for_zip=''):
+                                                dl_conditions=[], single_file=True, dest_for_zip=''):
         """Construct a celery chain to run an XNAT container, download the output, and back it up to cloud storage
 
         :param process_name: identifier for the process
@@ -304,9 +327,10 @@ class ScanService(BaseService):
         :type dl_conditions: list
         :param single_file: whether one file will be uploaded or more than one
         :type single_file: bool
-        :param zip: whether the downloaded files will need to be zipped before upload
+        :param dest_for_zip: the directory in which to write a zip file (if one is necessary)
         :return: the celery chain to execute the entire derivation process
         """
+
         ds = DerivationService([self.scan])
         ds.create(process_name)
 
@@ -314,17 +338,18 @@ class ScanService(BaseService):
         download_files = self._download_files_from_xnat(local_dir, upload_suffix, conditions=dl_conditions,
                                                         single_file=single_file)
 
-        if zip: local_dir = dest_for_zip
+        if len(dest_for_zip):
+            local_dir = dest_for_zip
 
         upload_to_cloud_storage = self._upload_derivation_to_cloud_storage(local_dir, filename, ds, delete=True)
 
-        if zip: upload_to_cloud_storage = chain(
-            self.zipdir(dir_to_zip=local_dir, dest_dir=dest_for_zip, name=filename),
-            upload_to_cloud_storage
-        )
+        if len(dest_for_zip):
+            upload_to_cloud_storage = chain(
+                self.zipdir(dir_to_zip=local_dir, dest_dir=dest_for_zip, name=filename),
+                upload_to_cloud_storage
+            )
 
         return run_container | download_files | upload_to_cloud_storage
-
 
     def _run_freesurfer(self):
         """Construct a chain to run freesurfer recon-all
@@ -339,7 +364,6 @@ class ScanService(BaseService):
             upload_suffix='/resources/FSv6/files',
             filename='freesurfer.zip',
             single_file=False,
-            zip=True,
             local_dir=os.path.join(self.local_dir, 'freesurfer'),
             dest_for_zip=self.local_dir
         )
@@ -359,7 +383,6 @@ class ScanService(BaseService):
             dl_conditions=['json_exclusion'],
             local_dir=self.local_dir
         )
-
 
     def _upload_file_to_xnat(self, is_first_scan, set_sub_and_exp_attrs):
         """Construct a Celery chain to upload a file to XNAT
@@ -386,7 +409,6 @@ class ScanService(BaseService):
             self.get_attribute(self.scan.id, attr='xnat_uri')
         ).set(link_error=self._error_proc('xnat_status'))
 
-
     def _add_scan_to_database(self, xnat_status='Pending', aws_status='Pending'):
         """Add a scan to the database
 
@@ -404,7 +426,7 @@ class ScanService(BaseService):
         # todo: add delete listener
         """ Delete a scan from the database
 
-        Deletes a scan from the database and optionally deletes it from XNAT. Only admins should delete a scan from XNAT.
+        Deletes a scan from the database and optionally deletes it from XNAT.
 
         :param int scan_id: the database id of the scan to delete
         :param bool delete_from_xnat: whether to delete the scan file from XNAT, default False
@@ -415,3 +437,18 @@ class ScanService(BaseService):
             self.xc.xnat_delete(scan.xnat_uri)
             self.experiment.update(num_scans=self.experiment.num_scans - 1)
         scan.delete()
+
+
+def _compress_file(local_path):
+    """Compress a scan
+
+    Gzips the image file and returns data about the gzipped file.
+
+    :param local_path: the path to the uncompressed file
+    :type local_path: str
+    :return: a two-tuple of the compressed file and the path to that file
+    :rtype: tuple
+    """
+    image_file, gz_path = gzip_file(local_path)
+    os.remove(local_path)
+    return image_file, gz_path
