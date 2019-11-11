@@ -23,7 +23,7 @@ class ExperimentService(BaseService):
     def __init__(self, user, tasks=tasks):
         super().__init__(Experiment)
         self.user = user
-        self.scan_services=[]
+        self.scan_services = []
         self.tasks = tasks
         self._config_read()
 
@@ -133,9 +133,8 @@ class ExperimentService(BaseService):
         set_xnat_attributes = self._set_subject_and_experiment_attributes(first_scan)
         return [first_scan, set_xnat_attributes]
 
-
     def _set_subject_and_experiment_attributes(self, first_scan):
-        """
+        """Generate a signature for the task to set subject and experiment attributes (or None if they won't be set)
 
         :param first_scan: whether the scan is the first to be uploaded for this experiment
         :type first_scan: bool
