@@ -5,22 +5,25 @@ from cookiecutter_mbam import celery as cel
 from celery import group
 from cookiecutter_mbam.scan.tasks import get_scan_attribute
 from cookiecutter_mbam.user.tasks import set_attributes as set_subject_attributes
-from cookiecutter_mbam.config import config_by_name, config_name
 from flask import url_for
 
 set_attribute, set_attributes, get_attribute = run_task_factories(Experiment)
+
 
 @cel.task
 def set_experiment_attribute(*args):
     return set_attribute(*args)
 
+
 @cel.task
 def get_experiment_attribute(*args):
     return get_attribute(*args)
 
+
 @cel.task
 def set_experiment_attributes(*args):
     return set_attributes(*args)
+
 
 @cel.task
 def get_scan_xnat_ids(scan_ids):
@@ -40,21 +43,21 @@ def set_sub_and_exp_xnat_attrs(responses, xnat_labels, user_id, exp_id, attrs_to
         set_experiment_attributes(attrs['experiment'], exp_id)
 
 
-def build_displays_url():
+def displays_url():
     try:
-        displays_url = url_for('display.displays',_external=True)
+        return url_for('display.displays', _external=True)
     except:
-        # Here set a default URL for dev in case SERVER_NAME not set
-        displays_url = 'http://0.0.0.0:8000/displays'
-    return displays_url
+        # Set a default URL for dev in case SERVER_NAME not set
+        return 'http://0.0.0.0:8000/displays'
+
 
 def build_status_message(statuses, user):
-    # email should have a link to the display
+
     ordinal_words = ['first', 'second', 'third']
 
     responses = {
         'YAY': '''scan was successfully uploaded to My Brain and Me!
-                  You can view your scans at {}'''.format(build_displays_url()),
+                  You can view your scans at {}'''.format(displays_url()),
         'meh': '''scan was uploaded to My Brain and Me, but something went wrong
                   and you may not be able to view it yet. The admins have been notified
                   but if you don't hear from us feel free to email at goodluck@chump.com.''',
@@ -73,9 +76,10 @@ def build_status_message(statuses, user):
 
     return message_text
 
+
 @cel.task
 def construct_status_email(experiment_id):
-    """ For a given experiment id, this returns email_info,
+    """ For a given experiment id, this returns email_info
     :param: experiment_id
     :return: tuple a three-tuple of the recipient's name and email address, as well as message, a dictionary
     with two keys, 'subject' and 'body' """
@@ -85,15 +89,14 @@ def construct_status_email(experiment_id):
 
     for scan in experiment.scans:
         statuses = []
-        #import epdb; epdb.serve()
         if scan.aws_status == 'Uploaded' and scan.xnat_status == 'Uploaded':
             statuses.append('YAY')
         elif scan.aws_status != 'Uploaded' and scan.xnat_status != 'Uploaded':
             statuses.append('Boo')
         else:
-            statutes.append('meh')
+            statuses.append('meh')
 
     message = {'subject': 'Upload Status',
                'body': build_status_message(statuses, user)}
 
-    return (user.full_name, user.email, message)
+    return user.full_name, user.email, message

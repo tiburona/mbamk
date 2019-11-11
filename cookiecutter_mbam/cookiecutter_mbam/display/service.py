@@ -7,6 +7,7 @@ from cookiecutter_mbam.scan import Scan
 from cookiecutter_mbam.config import config_by_name, config_name
 from datetime import datetime
 from flask import current_app
+from flask import url_for
 
 def debug():
     assert current_app.debug == False, "Don't panic! You're here by request of debug()"
@@ -25,8 +26,7 @@ class DisplayService(BaseService):
         :param str url: unsigned Cloudfront url
         :return: signed Cloudfront Url """
 
-        signed_url = self._cf_signer().generate_presigned_url(url, date_less_than=datetime(2020, 12, 12))
-        return signed_url
+        return self._cf_signer().generate_presigned_url(url, date_less_than=datetime(2020, 12, 12))
 
     def get_nifti_url(self, scan_id):
         """ Get unsigned cloudfront url for a specific scan
@@ -50,7 +50,6 @@ class DisplayService(BaseService):
 
         return [scan for experiment in self.user.experiments for scan in experiment.scans if scan.aws_key != None]
 
-
     def _rsa_signer(self, message):
         """ Create normalized RSA signer to generate a cloudfront signer
         From https://stackoverflow.com/questions/2573919/creating-signed-urls-for-amazon-cloudfront
@@ -64,3 +63,10 @@ class DisplayService(BaseService):
         """ Return cloudfront signer method """
 
         return CloudFrontSigner(self.key_id, self._rsa_signer)
+
+def displays_url():
+    try:
+        return url_for('display.displays',_external=True)
+    except:
+        # Set a default URL for dev in case SERVER_NAME not set
+        return 'http://0.0.0.0:8000/displays'
