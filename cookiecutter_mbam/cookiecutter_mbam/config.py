@@ -50,7 +50,7 @@ class Config:
     MAIL_USE_TLS = True
 
     # File upload settings
-    MAX_CONTENT_LENGTH = 75 * 1024 * 1024
+    MAX_CONTENT_LENGTH = 30 * 1024 * 1024
 
     # Logging Settings
     LOG_FILENAME = 'static/logs/log.txt'
@@ -67,17 +67,15 @@ class Config:
     XNAT = {
         # Default XNAT variables below are to access the MIND XNAT server.
         # Otherwise set different variables in your host environment if are using a local VM XNAT
-        'user': env.str('XNAT_USER','admin'),
-        'password': env.str('XNAT_PASSWORD','admin'),
-        'server': env.str('XNAT_HOST','http://10.1.1.17'),
+        'user': env.str('XNAT_USER', 'admin'),
+        'password': env.str('XNAT_PASSWORD', 'admin'),
+        'server': env.str('XNAT_HOST', 'http://10.1.1.17'),
         'project': env.str('XNAT_PROJECT', 'MBAM_TEST'),
         'local_docker': False,
         'docker_host': env.str('XNAT_DOCKER_HOST','unix:///var/run/docker.sock'),
-        'dicom_to_nifti_command_id': 1, # DEPRECATED
-        'dicom_to_nifti_wrapper_id':'dcm2niix-scan', # DEPRECATED
-        'dicom_to_nifti_transfer_command_id': env.int('DICOM_TO_NIFTI_TRANSFER_COMMAND_ID',34),
-        'dicom_to_nifti_transfer_wrapper_id':'dcm2niix-xfer',
-        'freesurfer_recon_all_transfer_command_id': env.str('FREESURFER_RECON', default='35'),
+        'dicom_to_nifti_transfer_command_id': env.int('DICOM_TO_NIFTI_TRANSFER_COMMAND_ID', 36),
+        'dicom_to_nifti_transfer_wrapper_id': 'dcm2niix-xfer',
+        'freesurfer_recon_all_transfer_command_id': env.int('FREESURFER_RECON', 37),
         'freesurfer_recon_all_transfer_wrapper_id': 'freesurfer-recon-all-xfer'
     }
 
@@ -88,12 +86,12 @@ class Config:
 
     AWS = {
         # Grab variables from environment. Default are Katie's dev params
-        'access_key_id': env.str('AWS_KEY_ID','AKIAIVQJJVB4M7IAKUPA'),
-        'secret_access_key': env.str('AWS_SECRET_KEY','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'),
-        'bucket_name' : env.str('AWS_S3_BUCKET','mbam-test'),
+        'access_key_id': env.str('AWS_KEY_ID', 'AKIAJ3CJ3JWENS3XA6QQ'),
+        'secret_access_key': env.str('AWS_SECRET_KEY', '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'),
+        'bucket_name' : env.str('AWS_S3_BUCKET', 'mbam-test'),
         # Below the default values are default cloudfront dev params set up for Spiro's AWS account
-        'cloudfront_url' : env.str('CLOUDFRONT_URL','https://dc2khv0msnx9b.cloudfront.net/'),
-        'cloudfront_key_id' : env.str('CLOUDFRONT_KEY_ID','APKAJZ3J6OMQJKG2PO4Q'),
+        'cloudfront_url' : env.str('CLOUDFRONT_URL', 'https://dc2khv0msnx9b.cloudfront.net/'),
+        'cloudfront_key_id' : env.str('CLOUDFRONT_KEY_ID', 'APKAJZ3J6OMQJKG2PO4Q'),
         'cloudfront_private_key' : env.str('CLOUDFRONT_PRIVATE_KEY', default='none')
     }
 
@@ -124,8 +122,8 @@ class DockerConfig(Config):
     results_backend = 'redis://redis:6379'
 
     XNAT=Config.XNAT
-    XNAT['dicom_to_nifti_transfer_command_id'] = env.int('DICOM_TO_NIFTI_TRANSFER_COMMAND_ID',23)
-    XNAT['docker_host'] = env.str('XNAT_DOCKER_HOST','http://10.20.193.32:2375')
+    XNAT['dicom_to_nifti_transfer_command_id'] = env.int('DICOM_TO_NIFTI_TRANSFER_COMMAND_ID', 23)
+    XNAT['docker_host'] = env.str('XNAT_DOCKER_HOST', 'http://10.20.193.32:2375')
 
     # Set server name
     SERVER_NAME = '0.0.0.0'
@@ -143,19 +141,19 @@ class DevConfig(Config):
     """ Class defining configurations for development on AWS. Config_name is 'staging'. """
     # MYSQL parameters are stored in AWS Systems Manager Parameter store and passed
     # as environment variables in the Cloudformation Templates.
-    DB_URI = env.str('MYSQL_HOST','dummy')
-    DB_USER = env.str('MYSQL_USERNAME','dummy')
-    DB_PASSWORD = env.str('MYSQL_PASSWORD','dummy')
-    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://{}:{}@{}/brain_db'.format(DB_USER,DB_PASSWORD,DB_URI)
+    DB_URI = env.str('MYSQL_HOST', 'dummy')
+    DB_USER = env.str('MYSQL_USERNAME', 'dummy')
+    DB_PASSWORD = env.str('MYSQL_PASSWORD', 'dummy')
+    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://{}:{}@{}/brain_db'.format(DB_USER, DB_PASSWORD, DB_URI)
 
     # Celery settings. App will connect to redis memcache set up in AWS
     broker_url = env.str('broker_url', default='dummy') + '/0'
     results_backend = env.str('broker_url', default='dummy') + '/1'
 
     XNAT=Config.XNAT
-    XNAT['dicom_to_nifti_transfer_command_id'] = env.int('DICOM_TO_NIFTI_TRANSFER_COMMAND_ID',23)
+    XNAT['dicom_to_nifti_transfer_command_id'] = env.int('DICOM_TO_NIFTI_TRANSFER_COMMAND_ID', 23)
     XNAT['project'] = env.str('XNAT_PROJECT', 'MBAM_STAGING')
-    XNAT['docker_host'] = env.str('XNAT_DOCKER_HOST','http://10.20.193.32:2375')
+    XNAT['docker_host'] = env.str('XNAT_DOCKER_HOST', 'http://10.20.193.32:2375')
 
     # Protect the staging server until the site goes live
     BASIC_AUTH_USERNAME='tester'
@@ -167,8 +165,8 @@ class DevConfig(Config):
     SECURITY_EMAIL_SENDER = '"My Brain and Me" <info@mybrainandme.org>'
 
     # Flask-Mail Settings
-    MAIL_USERNAME = env.str('AWS_SMTP_USERNAME','dummy')
-    MAIL_PASSWORD = env.str('AWS_SMTP_PASSWORD','dummy')
+    MAIL_USERNAME = env.str('AWS_SMTP_USERNAME', 'dummy')
+    MAIL_PASSWORD = env.str('AWS_SMTP_PASSWORD', 'dummy')
     MAIL_SERVER = 'email-smtp.us-east-1.amazonaws.com'
     MAIL_PORT = 587
     MAIL_USE_SSL = False
@@ -205,5 +203,3 @@ def guess_environment():
 
 # Guess the config_names for dev and testing configurations
 config_name = guess_environment()
-
-config_name = 'local'
