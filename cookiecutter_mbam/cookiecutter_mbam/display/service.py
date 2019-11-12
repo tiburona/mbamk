@@ -33,14 +33,14 @@ class DisplayService(BaseService):
         :param int scan_id: id of the scan
         :return: unsigned Cloudfront url """
 
-        orig_aws_key = Scan.get_by_id(scan_id).orig_aws_key
-        if orig_aws_key.endswith('.zip'):
+        aws_key = Scan.get_by_id(scan_id).aws_key
+        if aws_key.endswith('.zip'):
             # Case where a .zip was uploaded
             der = [d for d in Scan.get_by_id(scan_id).derivations if (d.process_name == 'dicom_to_nifti') & (d.cloud_storage_key != None)]
             url = self.cf_base_url + der[0].cloud_storage_key
         else:
             # Case where a NIFTI was uploaded
-            url = self.cf_base_url + orig_aws_key
+            url = self.cf_base_url + aws_key
         return url
 
     def get_user_scans(self):
@@ -48,7 +48,7 @@ class DisplayService(BaseService):
         :param int user_id:
         :return: list of scan objects """
 
-        return [scan for experiment in self.user.experiments for scan in experiment.scans if scan.orig_aws_key != None]
+        return [scan for experiment in self.user.experiments for scan in experiment.scans if scan.aws_key != None]
 
 
     def _rsa_signer(self, message):
@@ -62,5 +62,5 @@ class DisplayService(BaseService):
 
     def _cf_signer(self):
         """ Return cloudfront signer method """
-        
+
         return CloudFrontSigner(self.key_id, self._rsa_signer)
