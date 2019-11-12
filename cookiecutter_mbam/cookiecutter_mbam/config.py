@@ -207,5 +207,3 @@ def guess_environment():
 
 # Guess the config_names for dev and testing configurations
 config_name = guess_environment()
-
-config_name = 'local'
