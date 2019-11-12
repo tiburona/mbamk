@@ -128,3 +128,26 @@ You also must invoke a Celery worker in a different process.  In the current dev
 During development it might be helpful to see a graphic display of what the celery workers are up to. For this run the below command and open http://0.0.0.0:5555 in your web browser
 
     flower -A cookiecutter_mbam.run_celery:celery --port=5555
+
+
+MYSQL
+-----
+For 'local' development, SQLite is OK. But SQLite has too many issues when using flask db migrate (see https://github.com/miguelgrinberg/Flask-Migrate/issues/97). Therefore if you're making changes to the models.py it's better to test migrations using a local installation of MySQL.
+
+To do this:
+
+  1) If on Mac OS X, install MySQL following https://gist.github.com/operatino/392614486ce4421063b9dece4dfe6c21
+    Briefly, install Homebrew, then run brew install mysql@5.7
+  2) Install MySQL Workbench (https://dev.mysql.com/downloads/workbench/)
+  3) Add below to your .bash_profile (from https://stackoverflow.com/questions/30990488/how-do-i-install-command-line-mysql-client-on-mac)
+
+     export PATH=$PATH:/Applications/MySQLWorkbench.app/Contents/MacOS
+
+  3) Start mysql to connect to the service
+    % brew services start mysql@5.7
+    (note you may need to install services through brew first with "brew tap homebrew/services")
+  4) In terminal type 'mysql -u root' to connect to mysql, then run:
+    mysql> GRANT ALL PRIVILEGES ON *.* TO 'mbam'@'localhost' IDENTIFIED BY 'mbam123';
+    mysql> create database brain_db;
+
+Then you should be able to connect to mysql with "mysql -u mbam -p mbam123"

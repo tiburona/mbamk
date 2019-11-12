@@ -99,7 +99,9 @@ class Config:
 
 class LocalConfig(Config):
     """ Class defining configurations for local development. Config_name is 'local'. """
-    SQLALCHEMY_DATABASE_URI = 'sqlite:////tmp/dev.db'
+    #SQLALCHEMY_DATABASE_URI = 'sqlite:////tmp/dev.db'
+    # Use below line instead if testing flask migratinos with local mysql installation (see MySQL section in the MBaM docs)
+    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://mbam:mbam123@localhost/brain_db'
 
     # Default settings for Flask-Security
     SECURITY_SEND_REGISTER_EMAIL = False
