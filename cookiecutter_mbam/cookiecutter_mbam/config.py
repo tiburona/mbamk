@@ -75,9 +75,9 @@ class Config:
         'docker_host': env.str('XNAT_DOCKER_HOST','unix:///var/run/docker.sock'),
         'dicom_to_nifti_command_id': 1, # DEPRECATED
         'dicom_to_nifti_wrapper_id':'dcm2niix-scan', # DEPRECATED
-        'dicom_to_nifti_transfer_command_id': env.int('DICOM_TO_NIFTI_TRANSFER_COMMAND_ID',34),
+        'dicom_to_nifti_transfer_command_id': env.int('DICOM_TO_NIFTI_TRANSFER_COMMAND_ID',36),
         'dicom_to_nifti_transfer_wrapper_id':'dcm2niix-xfer',
-        'freesurfer_recon_all_transfer_command_id': env.str('FREESURFER_RECON', default='35'),
+        'freesurfer_recon_all_transfer_command_id': env.int('FREESURFER_RECON', default=37),
         'freesurfer_recon_all_transfer_wrapper_id': 'freesurfer-recon-all-xfer'
     }
 
@@ -101,7 +101,9 @@ class Config:
 
 class LocalConfig(Config):
     """ Class defining configurations for local development. Config_name is 'local'. """
-    SQLALCHEMY_DATABASE_URI = 'sqlite:////tmp/dev.db'
+    #SQLALCHEMY_DATABASE_URI = 'sqlite:////tmp/dev.db'
+    # Use below line instead if testing flask migratinos with local mysql installation (see MySQL section in the MBaM docs)
+    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://mbam:mbam123@localhost/brain_db'
 
     # Default settings for Flask-Security
     SECURITY_SEND_REGISTER_EMAIL = False

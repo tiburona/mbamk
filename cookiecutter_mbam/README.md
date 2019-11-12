@@ -149,3 +149,5 @@ To do this:
   4) In terminal type 'mysql -u root' to connect to mysql, then run:
     mysql> GRANT ALL PRIVILEGES ON *.* TO 'mbam'@'localhost' IDENTIFIED BY 'mbam123';
     mysql> create database brain_db;
+
+Then you should be able to connect to mysql with "mysql -u mbam -p mbam123"
