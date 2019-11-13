@@ -7,7 +7,7 @@ Create Date: 2019-10-18 14:55:03.581271
 """
 from alembic import op
 import sqlalchemy as sa
-
+from sqlalchemy.dialects import mysql
 
 # revision identifiers, used by Alembic.
 revision = 'a85058a4a8ae'
@@ -25,7 +25,7 @@ def upgrade():
     op.add_column('user', sa.Column('xnat_label', sa.String(length=80), nullable=True))
     op.add_column('user', sa.Column('xnat_uri', sa.String(length=255), nullable=True))
 
-    op.add_column('scan', sa.Column('user_id', sa.Integer(), nullable=True))
+    op.add_column('scan', sa.Column('user_id', mysql.INTEGER(display_width=11), nullable=False))
     op.create_foreign_key('scan_user_id_fk', 'scan', 'user', ['user_id'], ['id'])
     # ### end Alembic commands ###
 
