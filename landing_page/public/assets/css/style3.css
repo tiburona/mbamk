@@ -206,13 +206,17 @@ a#get-updates:hover {
 
 .subscribe-button {
   background-color: #F3B131 !important;
-  color: #3c2a08;
-  font-weight: 600;
-
+  color: #3c2a08 !important;
+  font-weight: 600 !important;
+  font-size: 1.5rem !important;
+  font-family: 'Montserrat', 'sans-serif' !important;
 }
 
-.button {
-  color: #3c2a08 !important;
+.subscribe-button:hover {
+  color: #313131;
+  background-color: #f0bc5a!important;
+  text-decoration: none;
+  outline: none;
 }
 
 .value-props i {
