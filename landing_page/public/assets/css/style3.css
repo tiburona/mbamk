@@ -204,6 +204,17 @@ a#get-updates:hover {
   margin: 4rem 3rem 0 3rem;
 }
 
+.subscribe-button {
+  background-color: #F3B131 !important;
+  color: #3c2a08;
+  font-weight: 600;
+
+}
+
+.button {
+  color: #3c2a08 !important;
+}
+
 .value-props i {
   margin-right: .7rem;
 }
