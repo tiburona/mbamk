@@ -28,14 +28,14 @@
 
         <nav class="navbar navbar-expand-lg navbar-inverse">
           <a class="navbar-brand" id="mbam-logo" href="#"><img src="../assets/images/mbam-logo-v2-white.png" id="brain-icon"></a>
-          <div class="collapse navbar-collapse" id="myNavbar">
+          <!-- <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="nav navbar-nav navbar-right">
               <li class="nav-item navbar-link"><a href="#welcome-text">About</a></li>
               <li class="nav-item navbar-link"><a href="#media-content">Media</a></li>
               <li class="nav-item navbar-link"><a href="#team-content">Team</a></li>
               <li class="nav-item"><a href="mailto:info@mybrainandme.org">Contact</a></li>
             </ul>
-          </div>
+          </div> -->
 
           <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
             <span class="icon-bar"></span>
@@ -56,9 +56,6 @@
         </div>
 
         <div class="container-fluid partner-section transbox">
-          <!-- <div class="row partner-text">
-            <span>our partners</span>
-          </div> -->
           <div class="container-fluid row partners">
             <img class="footer-image" src="../assets/images/nyspi_logo.png">
             <img class="footer-image" src="../assets/images/media_lab_logo.png">
@@ -106,53 +103,40 @@
                 <div class="indicates-required"><span class="asterisk">*</span> indicates required</div>
 
                 <div class="mc-field-group">
-                  <label for="mce-EMAIL">Email Address  <span class="asterisk">*</span>
+                  <label for="mce-EMAIL"><strong style="font-size: 1.7rem">Email Address  </strong><span class="asterisk">*</span>
                   </label>
                   <input type="email" value="" name="EMAIL" class="required" id="mce-EMAIL">
                 </div>
               </div>
 
               <div class="mc-field-group input-group">
-              <strong>Untitled </strong>
+              <strong style="font-size: 1.7rem">Do you have a brain MRI scan on a CD or file?</strong>
                 <ul>
-                  <li><input type="checkbox" value="First Choice" name="MMERGE6" id="mce-MMERGE6-0"><label for="mce-MMERGE6-0">First Choice</label></li>
-                  <li><input type="checkbox" value="Second Choice" name="MMERGE6" id="mce-MMERGE6-1"><label for="mce-MMERGE6-1">Second Choice</label></li>
-                  <li><input type="checkbox" value="Third Choice" name="MMERGE6" id="mce-MMERGE6-2"><label for="mce-MMERGE6-2">Third Choice</label></li>
+                  <li><input type="checkbox" value="Yes" name="MMERGE6" id="mce-MMERGE6-0"><label for="mce-MMERGE6-0">  Yes</label></li>
+                  <li><input type="checkbox" value="No" name="MMERGE6" id="mce-MMERGE6-1"><label for="mce-MMERGE6-1">  No</label></li>
+                  <li><input type="checkbox" value="Don't know" name="MMERGE6" id="mce-MMERGE6-2"><label for="mce-MMERGE6-2">  Don't know</label></li>
                 </ul>
               </div>
 
               <div id="interestTable" class="mc-field-group input-group">
                 <div id="mergeRow-100-22613">
-                  <label>What would you like to do with My Brain and Me?</label>
+                  <label><strong style="font-size: 1.7rem">What would you like to do with My Brain and Me? (check all that apply)</strong></label>
                   <ul>
                     <!-- Recreation group -->
-                    <li> <label for="group_1"><input type="checkbox" id="group_1" name="group[22613][1]" value="1"><span>  I would like to view by brain for recreation.</span> </label> </li>
+                    <li> <label for="group_1"><input type="checkbox" id="group_1" name="group[22613][1]" value="1">
+                      <span>  Explore or print out a 3D model of your brain.</span> </label> </li>
                     <!-- Patient, data ownership group -->
-                    <li> <label for="group_2"><input type="checkbox" id="group_2" name="group[22613][2]" value="2"><span>  I would like to view and organize my brain scans online.</span> </label> </li>
+                    <li> <label for="group_2"><input type="checkbox" id="group_2" name="group[22613][2]" value="2">
+                      <span>  View and organize your brain scans online.</span> </label> </li>
                     <!-- Health and lifestyle -->
-                    <li> <label for="group_3"><input type="checkbox" id="group_3" name="group[22613][3]" value="3"><span>  I would like health and lifestyle information based on my brain scan.</span> </label> </li>
+                    <li> <label for="group_3"><input type="checkbox" id="group_3" name="group[22613][3]" value="3">
+                      <span>  Receive health and lifestyle-related information based on your brain scan.</span> </label> </li>
+                      <!-- Research -->
+                    <li> <label for="group_4"><input type="checkbox" id="group_4" name="group[22613][4]" value="4">
+                      <span>  Participate in psychology or mental health research.</span> </label> </li>
                   </ul>
                 </div>
               </div>
-
-              <!-- <div id="interestTable" class="mc-field-group input-group">
-                <div id="mergeRow-100-22613" class="mergeRow dojoDndItem mergeRow-interests-checkboxes">
-                  <label>Interest type</label>
-                  <div class="field-group groups">
-                    <ul class="interestgroup_field checkbox-group">
-                      <li class="!margin-bottom--lv2"> <label class="checkbox" for="group_1"><input type="checkbox" id="group_1" name="group[22613][1]" value="1" class="av-checkbox"><span>Recreation</span> </label> </li>
-                      <li class="!margin-bottom--lv2"> <label class="checkbox" for="group_2"><input type="checkbox" id="group_2" name="group[22613][2]" value="2" class="av-checkbox"><span>Clinical use</span> </label> </li>
-                      <li class="!margin-bottom--lv2"> <label class="checkbox" for="group_3"><input type="checkbox" id="group_3" name="group[22613][3]" value="3" class="av-checkbox"><span>Health and lifestyle</span> </label> </li>
-                    </ul>
-                  </div>
-                </div>
-              </div> -->
-
-
-                <div class="mc-field-group">
-                  <label for="mce-FNAME">First Name </label>
-                  <input type="text" value="" name="FNAME" class="" id="mce-FNAME">
-                </div>
 
                 <div id="mce-responses" class="clear">
                   <div class="response" id="mce-error-response" style="display:none"></div>
@@ -166,7 +150,10 @@
           <script type='text/javascript' src='//s3.amazonaws.com/downloads.mailchimp.com/js/mc-validate.js'></script><script type='text/javascript'>(function($) {window.fnames = new Array(); window.ftypes = new Array();fnames[0]='EMAIL';ftypes[0]='email';fnames[1]='FNAME';ftypes[1]='text';fnames[2]='LNAME';ftypes[2]='text';fnames[3]='ADDRESS';ftypes[3]='address';fnames[4]='PHONE';ftypes[4]='phone';fnames[5]='BIRTHDAY';ftypes[5]='birthday';}(jQuery));var $mcj = jQuery.noConflict(true);</script>
           <!--End mc_embed_signup-->
           <!--<iframe class="iframe" src="https://docs.google.com/forms/d/e/1FAIpQLScD4V3w25sARJ3GlPLe5wgBr8XSjmW6eXT7JcWm7mSfyO9KOA/viewform?embedded=true" height="720px" frameborder="0" marginheight="0" marginwidth="0">Loading...</iframe>-->
+        </div>
 
+        <div class="row partner-text">
+          <span>Media</span>
         </div>
 
         <div id="media-content"></div>
@@ -293,7 +280,7 @@
         <div class="footer row" id="contact-content">
             <div class="footer-content">
               <p class="foot-para">Want to collaborate with us, provide feedback, or ask a question? Write to us<p>
-              <p><a class="contact-link" href="mailto:mbaminfo@gmail.com" target="_blank">mbaminfo@gmail.com</a> &nbsp;&nbsp;&nbsp;&nbsp; <a href="https://twitter.com/MyBrainandMeOrg" target="_blank"><i class="fab fa-twitter contact-link"></i></a></p>
+              <p><a class="contact-link" href="mailto:info@mybrainandme.org" target="_blank">info@mybrainandme.org</a> &nbsp;&nbsp;&nbsp;&nbsp; <a href="https://twitter.com/MyBrainandMeOrg" target="_blank"><i class="fab fa-twitter contact-link"></i></a></p>
             </div>
         </div>
 
