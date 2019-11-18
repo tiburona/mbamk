@@ -1,7 +1,7 @@
 
 # My Brain and Me 
 
-My Brain and Me is a website that lets users upload their brain MRI's and get back an interactive visualization of their own brain.
+My Brain and Me is a website that lets users upload their brain MRIs and get back an interactive visualization of their own brain.
   
 ## Setting Up an Environment for Local Development and Testing.  
 
@@ -52,8 +52,8 @@ Back on the command line, upgrade your new database so that it has the MBAM tabl
 
 Finally, check to make sure all your tables were created in MySQL:
 
-    mysql>  USE brain_db
-    mysql> SHOW TABLES;
+    mysql> use brain_db
+    mysql> show tables;
 
 ### 3. Start the webserver
 
@@ -84,7 +84,13 @@ That's it! Now you have a running local installation of MBAM that you can use fo
 
 Thank you for contributing to MBAM!  To contribute, please pull the latest version of the `development` branch and make a branch off of it.  
 
+### What else you need
+
+MBAM uses XNAT, software that orchestrates neuroimaging workflows, to interface with Docker containers.  In order to run MBAM, you must either 
+
 When you have finished your feature or bug fix, first checkout development, pull any changes from the remote, and merge those changes into your local branches.  Be sure to resolve any merge conflicts.  Once you have an unconflicted branch, commit your work and test your branch following the steps in the next section.  If your branch passes automated and manual tests, open a PR and request review.  You should have at least one reviewer who did not contribute to the development of your branch.    
+
+
 
 ## Testing MBAM
 
@@ -94,7 +100,52 @@ From the mbam/cookiecutter_mbam directory run:
 
     flask test
 
-### 2. 
+### 2.  Run automated tests in the docker environment
+
+MBAM must be dockerized to be deployed on Amazon servers.  To run MBAM's test in the docker environment, navigate to the root mbam directory and run:
+
+    docker-compose build && docker-compose -f test.yml up
+
+### 3. Test that migrations work.  
+
+Whether or not you've made changes to any of the MBAM models, you should test that you are committing a series of migration files that are continuous with the migration files in the latest version of development, that run without error, and that bring a new database up-to-date with your current models.
+
+In order to do this, log into MySQL again:
+
+    mysql -u mbam -p
+
+and enter the password `mbam123` at the command prompt.
+
+Then
+
+    mysql> drop database brain_db;
+    mysql> create database brain_db;
+
+Now, back at your command line in mbam/cookiecutter_mbam, run:
+
+    flask db upgrade
+
+Now back at the mysql prompt:
+
+    mysql> use database brain_db;
+    mysql> show tables;
+
+And if you've made changes to the models and you want to make sure that this upgrade is current, you can inspect the tables individually with `show columns from <tablename>;`, for example:
+
+    mysql> show columns from scan;
+
+### 4. Manually test the website
+
+As of this writing, an MBAM user should be able to upload up to 3 scans at a time.  Those files can be in one of three formats: a .zip file of DICOMS, an uncompressed NIFTI file (.nii) and a compressed NIFTI file (.nii.gz).  A users uploaded files should be saved both to an S3 bucket and to an XNAT instance hosted by Columbia.  
+
+Upon upload, MBAM should automatically convert DICOM files to NIFTI, if applicable, and then kick off the Freesurfer reconstruction process, which runs in a Docker container also hosted on a Columbia server.  At the end of this process MBAM should transfer the output files from the Docker container to XNAT and S3.  The MBAM database should be updated with the S3 and XNAT locations of the original uploaded scan, the NIFTI files (but only if a conversion was performed), and the Freesurfer output.
+
+Because Freesurfer reconstruction is a many-hour process in the best case, for testing purposes it is best to use a mock Freesurfer container that provides output as if Freesurfer ran.  
+
+
+
+
+
 
 
 
@@ -242,6 +293,6 @@ To do this:
 Then you should be able to connect to mysql with "mysql -u mbam -p mbam123"
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTkzNjI1MjgxMSwtMTg1MzQyNTk3MiwxMz
-UwNTIxMjIwLDIwODcwMzEwMjZdfQ==
+eyJoaXN0b3J5IjpbOTk2NzYwMzUzLC05MzYyNTI4MTEsLTE4NT
+M0MjU5NzIsMTM1MDUyMTIyMCwyMDg3MDMxMDI2XX0=
 -->
