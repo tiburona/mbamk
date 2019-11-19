@@ -5,18 +5,17 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>My Brain and Me</title>
-
     <!-- Default stylesheets-->
     <link href="../assets/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
     <!-- Font awesome (The local asset is a full Pro version of font-awesome 5.8.1, no need to load remote. -->
     <!-- link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous" -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+
     <link href="../assets/css/all.css" rel="stylesheet" />
     <!-- Main stylesheet and color file-->
     <link href="../assets/css/style3.css" rel="stylesheet" />
-
     <!-- Icon for browser-->
     <link rel="shortcut icon" type="image/x-icon" sizes="32x32" href="../assets/images/favicon.png" />
-    
   </head>
 
   <body>
@@ -33,7 +32,7 @@
               <li class="nav-item navbar-link"><a href="#welcome-text">About</a></li>
               <li class="nav-item navbar-link"><a href="#media-content">Media</a></li>
               <li class="nav-item navbar-link"><a href="#team-content">Team</a></li>
-              <li class="nav-item"><a href="mailto:mbaminfo@gmail.com">Contact</a></li>
+              <li class="nav-item"><a href="mailto:info@mybrainandme.org">Contact</a></li>
               <!-- <li class="nav-item"><a href="https://twitter.com/MyBrainandMeOrg"><i class="fab fa-twitter"></i></a></li> -->
             </ul>
           </div>
@@ -49,9 +48,12 @@
             <!-- <h1>My Brain and Me</h1> -->
             <h2>Your Neuroscience and Psychology Portal</h2>
             <h3>See yourself like never before. Contribute to mental health research.</h3>
-            <div class="buttons">
+            <!-- <div class="buttons">
               <div><a class="btn btn-primary survey-button" id="tell-us" href=#survey-form>Tell Us What You Think</a></div>
               <div><a id="get-updates" href=#email-form>Get Updates</a></div>
+            </div> -->
+            <div class="buttons">
+              <div><a class="btn btn-primary survey-button" id="tell-us" href="#email-form">Get Updates</a></div>
             </div>
           </div>
         </div>
@@ -104,30 +106,26 @@
             <div class="buttons">
               <div><a class="btn btn-primary survey-button" id="participate-survey" href=#survey-form>Participate</a></div>
             </div>
-
         </div>
 
-        <div class="container-fluid google-form email" >
+        <div class="container-fluid google-form" >
           <div id="email-form"></div>
           <div class="whitespace form-space"></div>
-          <a>
-            <iframe class="iframe" src="https://docs.google.com/forms/d/e/1FAIpQLScD4V3w25sARJ3GlPLe5wgBr8XSjmW6eXT7JcWm7mSfyO9KOA/viewform?embedded=true" height="720px" frameborder="0" marginheight="0" marginwidth="0">Loading...</iframe>
-          </a>
+
+          <!-- add Mailchimp signup form -->
+          <script>
+            $(function() {
+              $('#container').load('../mc_embedded_signup.html');
+            });
+          </script>
+          <div id="container"></div>
+          <!-- end Mailchimp signup form -->
+
+          <!--<iframe class="iframe" src="https://docs.google.com/forms/d/e/1FAIpQLScD4V3w25sARJ3GlPLe5wgBr8XSjmW6eXT7JcWm7mSfyO9KOA/viewform?embedded=true" height="720px" frameborder="0" marginheight="0" marginwidth="0">Loading...</iframe>-->
         </div>
-
-
-        <div class="container-fluid google-form survey" >
-          <div id="survey-form"></div>
-          <div class="whitespace form-space"></div>
-          <a>
-            <iframe class="iframe iframe-survey" src="https://docs.google.com/forms/d/e/1FAIpQLSeUwtxk2TAg2Mbs__tAZqwrYfXwu-4EeREyQkRRsBbDPYnRHw/viewform?embedded=true" height="720px" frameborder="0" marginheight="0" marginwidth="0">Loading...</iframe>
-          </a>
-        </div>
-
 
         <div id="media-content"></div>
         <div class="whitespace"></div>
-
 
         <div class= "row">
             <div class="col-md-6 mobile-show">
@@ -154,14 +152,12 @@
             </div>
         </div>
 
-
         <div class= "row">
             <div class="col-md-6">
               <div class="article-image image-brain">
                <img src="../assets/images/article/brain.jpg" class="combine-brain"></img>
               </div>
             </div>
-
             <div class="col-md-6">
               <div class="article-wrapper article-2">
                 <div class="article-description article-description2">
@@ -173,8 +169,6 @@
               </div>
             </div>
         </div>
-
-
         <!-- team one -->
         <div class="container-fluid team-section" id="team-content">
           <div class="row partner-text">
@@ -250,7 +244,7 @@
         <div class="footer row" id="contact-content">
             <div class="footer-content">
               <p class="foot-para">Want to collaborate with us, provide feedback, or ask a question? Write to us<p>
-              <p><a class="contact-link" href="mailto:mbaminfo@gmail.com" target="_blank">mbaminfo@gmail.com</a> &nbsp;&nbsp;&nbsp;&nbsp; <a href="https://twitter.com/MyBrainandMeOrg" target="_blank"><i class="fab fa-twitter contact-link"></i></a></p>
+              <p><a class="contact-link" href="mailto:info@mybrainandme.org" target="_blank">info@mybrainandme.org</a> &nbsp;&nbsp;&nbsp;&nbsp; <a href="https://twitter.com/MyBrainandMeOrg" target="_blank"><i class="fab fa-twitter contact-link"></i></a></p>
             </div>
         </div>
 

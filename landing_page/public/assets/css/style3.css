@@ -191,6 +191,10 @@ a#get-updates:hover {
   color: #f3b132;
 }
 
+#mc_embed_signup_scroll>h2 {
+  color: rgba(0,0,0) !important;
+}
+
 /*.teaser {
   margin-top: 5rem;
 }*/
@@ -210,6 +214,10 @@ a#get-updates:hover {
   font-weight: 600 !important;
   font-size: 1.5rem !important;
   font-family: 'Montserrat', 'sans-serif' !important;
+}
+
+.button {
+  background-color: rgba(0,0,0,0.6) !important;
 }
 
 .subscribe-button:hover {
@@ -372,10 +380,6 @@ div.transbox p {
   overflow: hidden;
   width: 710px;
   display:none;
-}
-
-.button {
-  background-color: #F3B131 !important;
 }
 
 .iframe {
