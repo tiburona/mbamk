@@ -76,9 +76,11 @@ And in a third terminal window, run Celery:
 
     celery -A cookiecutter_mbam.run_celery:celery worker --pool=gevent --concurrency=500 --loglevel info
 
+Now you have a running local installation of MBAM that you can use for development.  (Steps 1 and 2 will not need to be repeated, but 3 and 4 must be performed every time you want to spin up the server.)
 
-That's it! Now you have a running local installation of MBAM that you can use for development.  (Steps 1 and 2 will not need to be repeated, but 3 and 4 must be performed every time you want to spin up the server.)
+### 5. Choose an XNAT instance
 
+MBAM uses XNAT, software that orchestrates neuroimaging workflows, to interface with Docker containers.  In order to run MBAM, you must either set up your own XNAT installation or use one of the Columbia team's XNAT instances.  We have two: MIND XNAT 
 
 ## Contributing
 
@@ -86,7 +88,9 @@ Thank you for contributing to MBAM!  To contribute, please pull the latest versi
 
 ### What else you need
 
-MBAM uses XNAT, software that orchestrates neuroimaging workflows, to interface with Docker containers.  In order to run MBAM, you must either 
+
+
+You must have a Docker installation, either on your own computer, a remote host, or both.  Docker has two 
 
 When you have finished your feature or bug fix, first checkout development, pull any changes from the remote, and merge those changes into your local branches.  Be sure to resolve any merge conflicts.  Once you have an unconflicted branch, commit your work and test your branch following the steps in the next section.  If your branch passes automated and manual tests, open a PR and request review.  You should have at least one reviewer who did not contribute to the development of your branch.    
 
@@ -293,6 +297,7 @@ To do this:
 Then you should be able to connect to mysql with "mysql -u mbam -p mbam123"
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbOTk2NzYwMzUzLC05MzYyNTI4MTEsLTE4NT
-M0MjU5NzIsMTM1MDUyMTIyMCwyMDg3MDMxMDI2XX0=
+eyJoaXN0b3J5IjpbLTEzMDc2MTgxMDAsOTk2NzYwMzUzLC05Mz
+YyNTI4MTEsLTE4NTM0MjU5NzIsMTM1MDUyMTIyMCwyMDg3MDMx
+MDI2XX0=
 -->
