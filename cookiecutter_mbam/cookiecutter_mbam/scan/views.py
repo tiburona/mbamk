@@ -17,10 +17,8 @@ blueprint = Blueprint('scan', __name__, url_prefix='/scans', static_folder='../s
 
 from flask import current_app
 
-
 def debug():
     assert current_app.debug == False, "Don't panic! You're here by request of debug()"
-
 
 def add_scans(request, exp_id):
     """Add scan files"""
@@ -97,7 +95,7 @@ def add():
 def add_experiment_and_scans():
     """Access the add_experiment_and_scans route and form"""
     if not current_user.consented:
-        return redirect(url_for('user.profile'))
+        return redirect(url_for('user.consent'))
 
     return meta_add(ExperimentAndScanForm(request.form), request, 'scan.add_experiment_and_scans',
                     'scans/experiment_and_scans.html', add_exp=True)
