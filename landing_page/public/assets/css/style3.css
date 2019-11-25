@@ -179,6 +179,7 @@ a#get-updates:hover {
 
 #mc_embed_signup_scroll>h2 {
   color: rgba(0,0,0) !important;
+  margin: 5px 0 0 0 !important;
 }
 
 .question-title {
@@ -186,6 +187,9 @@ a#get-updates:hover {
 }
 #mc_embed_signup {
   font-size: 14px !important;
+}
+.mc-field-group {
+  padding: 0 0 10px !important;
 }
 
 /*.teaser {
