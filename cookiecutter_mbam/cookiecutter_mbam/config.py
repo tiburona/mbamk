@@ -33,6 +33,7 @@ class Config:
     #SECURITY_EMAIL_SENDER = '"My Brain and Me" <info@mybrainandme.org>'
     SECURITY_REGISTERABLE = True
     SECURITY_CHANGEABLE = True
+    SECURITY_POST_REGISTER_VIEW = '/users/profile'
 
     # Flask-Mail Settings
     #MAIL_USERNAME = 'testingmbam@gmail.com'

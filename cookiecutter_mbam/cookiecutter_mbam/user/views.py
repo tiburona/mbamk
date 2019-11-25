@@ -1,12 +1,16 @@
 # -*- coding: utf-8 -*-
 """User views."""
-from flask import Blueprint, render_template, flash, redirect, url_for
+from flask import Blueprint, render_template, flash, redirect, url_for, current_app
 from flask_security import login_required, current_user
 
 from cookiecutter_mbam.utils.error_utils import flash_errors
 from .forms import ProfileForm, ConsentForm, AssentForm
 
 blueprint = Blueprint('user', __name__, url_prefix='/users', static_folder='../static')
+
+
+def debug():
+    assert current_app.debug == False, "Don't panic! You're here by request of debug()"
 
 @blueprint.route('/')
 @login_required
@@ -23,7 +27,7 @@ def profile():
         form.populate_obj(current_user)
         current_user.save()
         flash('User profile saved','success')
-        return redirect(url_for('user.consent'))
+        return redirect(url_for('public.home'))
     else:
         flash_errors(form)
 
@@ -33,15 +37,16 @@ def profile():
 @login_required
 def consent():
     """ Consent form for participation in research."""
-    form = ConsentForm()
-    if form.validate_on_submit():
-        current_user.update(consented=form.consented.data)
-        if current_user.consented:
-            flash('Consent for participation in research provided','success')
-            return redirect(url_for('experiment.add'))
-        else:
-            flash('Consent for participation in research NOT provided','alert')
-            return redirect(url_for('public.home'))
+    if isinstance(current_user.sex,str): # Check if user profile was filled out
+        form = ConsentForm()
+        if form.validate_on_submit():
+            current_user.update(consented=form.consented.data)
+            flash('User consent provided','success')
+            return redirect(url_for('scan.add_experiment_and_scans'))
+    else:
+        # Is user profile is not completed, direct the user to the form
+        flash('Please fill out a user profile first','success')
+        return redirect(url_for('user.profile'))
 
     return render_template('users/consent.html',form=form)
 

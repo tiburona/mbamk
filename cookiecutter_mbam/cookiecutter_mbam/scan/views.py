@@ -15,7 +15,6 @@ from flask import current_app
 def debug():
     assert current_app.debug == False, "Don't panic! You're here by request of debug()"
 
-
 def add_scans(request, exp_id):
     """Add scan files"""
     num2words = {
@@ -41,5 +40,11 @@ def add_scans(request, exp_id):
 
 
 
+@blueprint.route('/add_experiment_and_scans', methods=['GET', 'POST'])
+@login_required
+def add_experiment_and_scans():
+    """Access the add_experiment_and_scans route and form"""
+    if not current_user.consented:
+        return redirect(url_for('user.consent'))
 
-
+    
