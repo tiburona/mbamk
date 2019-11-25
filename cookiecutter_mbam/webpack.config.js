@@ -13,7 +13,7 @@ const debug = (process.env.NODE_ENV !== 'production');
 // Development asset host (webpack dev server). PUBLIC_HOST needs to be defined as env variable if developing i.e. on C9 IDE.
 // In this case start both servers with 'PUBLIC=$PUBLIC npm start' instead of just 'npm start'
 const tmp_host = process.env.PUBLIC_HOST ? process.env.PUBLIC_HOST : 'http://localhost'
-const publicHost = debug ? tmp_host + ":8081" : '';
+const publicHost = debug ? tmp_host + ":8082" : '';
 
 const rootAssetPath = path.join(__dirname, 'assets');
 
