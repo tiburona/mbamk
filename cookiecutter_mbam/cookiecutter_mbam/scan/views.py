@@ -37,14 +37,3 @@ def add_scans(request, exp_id):
                              email_admin=True)
 
     return redirect(url_for('experiment.experiments'))
-
-
-
-@blueprint.route('/add_experiment_and_scans', methods=['GET', 'POST'])
-@login_required
-def add_experiment_and_scans():
-    """Access the add_experiment_and_scans route and form"""
-    if not current_user.consented:
-        return redirect(url_for('user.consent'))
-
-    
