@@ -19,7 +19,7 @@
             {% if not current_user.experiments.scans %}
                 <p>First Visit? We will guide you through the steps</p>
                 <p>
-                    <a class="btn btn-primary btn-large" href="{{ url_for( 'scan.add_experiment_and_scans' ) }}" role="button"><i class="fa fa-upload" aria-hidden="true"></i> Upload my scan</a>
+                    <a class="btn btn-primary btn-large" href="{{ url_for( 'experiment.add' ) }}" role="button"><i class="fa fa-upload" aria-hidden="true"></i> Upload my scan</a>
                 </p>
             {% else %}
                 <p>Click below to view your scans or complete a survey.</p>
