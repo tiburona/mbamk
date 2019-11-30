@@ -70,7 +70,7 @@ def add():
     """Access the add an experiment route and form."""
 
     if not current_user.consented:
-        return redirect(url_for('user.profile'))
+        return redirect(url_for('user.consent'))
 
     form = ExperimentAndScanForm(request.form)
 

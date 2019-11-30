@@ -42,7 +42,7 @@ def consent():
         if form.validate_on_submit():
             current_user.update(consented=form.consented.data)
             flash('User consent provided','success')
-            return redirect(url_for('scan.add_experiment_and_scans'))
+            return redirect(url_for('experiment.add'))
     else:
         # Is user profile is not completed, direct the user to the form
         flash('Please fill out a user profile first','success')
