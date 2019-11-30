@@ -37,6 +37,3 @@ def add_scans(request, exp_id):
                              email_admin=True)
 
     return redirect(url_for('experiment.experiments'))
-
-
-    
