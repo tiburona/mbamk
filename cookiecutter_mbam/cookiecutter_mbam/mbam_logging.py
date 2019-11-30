@@ -38,9 +38,9 @@ class TlsSMTPHandler(SMTPHandler):
                 self.getSubject(record),
                 formatdate(), msg)
             if self.username:
-                smtp.ehlo()  # for tls add this line
-                smtp.starttls()  # for tls add this line
-                smtp.ehlo()  # for tls add this line
+                smtp.ehlo()
+                smtp.starttls()
+                smtp.ehlo()
                 smtp.login(self.username, self.password)
             smtp.sendmail(self.fromaddr, self.toaddrs, msg)
             smtp.quit()
@@ -67,7 +67,10 @@ request_and_task_formatter = RequestandTaskFormatter(
 
 class MailFilter(logging.Filter):
     def filter(self, rec):
-        return rec.email_admin
+        try:
+            return rec.email_admin
+        except:
+            return False
 
 config = config_by_name[config_name]
 

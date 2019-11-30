@@ -1,0 +1,80 @@
+{
+  "name": "freesurfer-recon-xfer",
+  "description": "Downloads nifti file(s), runs recon, uploads surf and stats files to XNAT",
+  "image": "mbam/freesurfer-recon:latest",
+  "type": "docker",
+  "command-line": "./main.sh #project# #subject# #experiment# #scans#",
+  "mounts": [],
+  "environment-variables": {},
+  "ports": {},
+  "inputs": [
+    {
+      "name": "project",
+      "description": "XNAT id of the project",
+      "type": "string",
+      "matcher": null,
+      "default-value": "",
+      "required": false,
+      "replacement-key": null,
+      "sensitive": null,
+      "command-line-flag": null,
+      "command-line-separator": null,
+      "true-value": null,
+      "false-value": null
+    },
+     {
+      "name": "subject",
+      "description": "XNAT label of the subject",
+      "type": "string",
+      "matcher": null,
+      "default-value": "",
+      "required": false,
+      "replacement-key": null,
+      "sensitive": null,
+      "command-line-flag": null,
+      "command-line-separator": null,
+      "true-value": null,
+      "false-value": null
+    },
+    {
+      "name": "experiment",
+      "description": "XNAT label of the experiment",
+      "type": "string",
+      "matcher": null,
+      "default-value": "",
+      "required": false,
+      "replacement-key": null,
+      "sensitive": null,
+      "command-line-flag": null,
+      "command-line-separator": null,
+      "true-value": null,
+      "false-value": null
+    },
+    {
+      "name": "scans",
+      "description": "space-delimited XNAT scan ids",
+      "type": "string",
+      "matcher": null,
+      "default-value": "",
+      "required": false,
+      "replacement-key": null,
+      "sensitive": null,
+      "command-line-flag": null,
+      "command-line-separator": null,
+      "true-value": null,
+      "false-value": null
+    }
+  ],
+  "outputs": [],
+  "xnat": [
+    {
+      "name": "freesurfer-recon-all-xfer",
+      "label": null,
+      "description": "download nifti files, run freesurfer recon, reupload files",
+      "contexts": [],
+      "external-inputs": [],
+      "derived-inputs": [],
+      "output-handlers": []
+    }
+  ]
+}

@@ -30,6 +30,7 @@ class Config:
     SECURITY_RECOVERABLE = True
     SECURITY_SEND_REGISTER_EMAIL = False
     SECURITY_EMAIL_SENDER = '"My Brain and Me" <mbaminfo@gmail.com>'
+    #SECURITY_EMAIL_SENDER = '"My Brain and Me" <info@mybrainandme.org>'
     SECURITY_REGISTERABLE = True
     SECURITY_CHANGEABLE = True
     SECURITY_POST_REGISTER_VIEW = '/users/profile'
@@ -37,19 +38,20 @@ class Config:
     # Flask-Mail Settings
     #MAIL_USERNAME = 'testingmbam@gmail.com'
     #MAIL_PASSWORD='R8S6bSgeqGgknH3'
+
     MAIL_USERNAME = 'mbaminfo@gmail.com'
     # Below is temporary application specific password for gmail smtp. Delete and replace with
     # env variable when repo goes public
     MAIL_PASSWORD='digkexrwzscfpybx'
     # Wait for the fix in flask-security, see https://github.com/mattupstate/flask-security/issues/685
-    #MAIL_DEFAULT_SENDER = '"MyBrainandMe" <mbaminfo@gmail.com>'
+    MAIL_DEFAULT_SENDER = '"My Brain and Me" <mbaminfo@gmail.com>'
     MAIL_SERVER = 'smtp.gmail.com'
     MAIL_PORT = 587
     MAIL_USE_SSL = False
     MAIL_USE_TLS = True
 
     # File upload settings
-    MAX_CONTENT_LENGTH = 30 * 1024 * 1024
+    MAX_CONTENT_LENGTH = 75 * 1024 * 1024
 
     # Logging Settings
     LOG_FILENAME = 'static/logs/log.txt'
@@ -64,8 +66,8 @@ class Config:
                'cookiecutter_mbam.scan.tasks', 'cookiecutter_mbam.base.tasks']
 
     XNAT = {
-        # Be sure below XNAT variables are set in your host environment to access the MIND XNAT server.
-        # Default values assume you are using a local VM XNAT
+        # Default XNAT variables below are to access the MIND XNAT server.
+        # Otherwise set different variables in your host environment if are using a local VM XNAT
         'user': env.str('XNAT_USER','admin'),
         'password': env.str('XNAT_PASSWORD','admin'),
         'server': env.str('XNAT_HOST','http://10.1.1.17'),
@@ -74,8 +76,10 @@ class Config:
         'docker_host': env.str('XNAT_DOCKER_HOST','unix:///var/run/docker.sock'),
         'dicom_to_nifti_command_id': 1, # DEPRECATED
         'dicom_to_nifti_wrapper_id':'dcm2niix-scan', # DEPRECATED
-        'dicom_to_nifti_transfer_command_id': env.int('DICOM_TO_NIFTI_TRANSFER_COMMAND_ID',2),
-        'dicom_to_nifti_transfer_wrapper_id':'dcm2niix-xfer'
+        'dicom_to_nifti_transfer_command_id': env.int('DICOM_TO_NIFTI_TRANSFER_COMMAND_ID',36),
+        'dicom_to_nifti_transfer_wrapper_id':'dcm2niix-xfer',
+        'freesurfer_recon_all_transfer_command_id': env.int('FREESURFER_RECON', default=37),
+        'freesurfer_recon_all_transfer_wrapper_id': 'freesurfer-recon-all-xfer'
     }
 
     files = {
@@ -85,8 +89,8 @@ class Config:
 
     AWS = {
         # Grab variables from environment. Default are Katie's dev params
-        'access_key_id': env.str('AWS_KEY_ID','AKIAJ3CJ3JWENS3XA6QQ'),
-        'secret_access_key': env.str('AWS_SECRET_KEY','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'),
+        'access_key_id': env.str('AWS_KEY_ID','AKIAIVQJJVB4M7IAKUPA'),
+        'secret_access_key': env.str('AWS_SECRET_KEY','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'),
         'bucket_name' : env.str('AWS_S3_BUCKET','mbam-test'),
         # Below the default values are default cloudfront dev params set up for Spiro's AWS account
         'cloudfront_url' : env.str('CLOUDFRONT_URL','https://dc2khv0msnx9b.cloudfront.net/'),
@@ -94,9 +98,13 @@ class Config:
         'cloudfront_private_key' : env.str('CLOUDFRONT_PRIVATE_KEY', default='none')
     }
 
+
+
 class LocalConfig(Config):
     """ Class defining configurations for local development. Config_name is 'local'. """
-    SQLALCHEMY_DATABASE_URI = 'sqlite:////tmp/dev.db'
+    #SQLALCHEMY_DATABASE_URI = 'sqlite:////tmp/dev.db'
+    # Use below line instead if testing flask migratinos with local mysql installation (see MySQL section in the MBaM docs)
+    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://mbam:mbam123@localhost/brain_db'
 
     # Default settings for Flask-Security
     SECURITY_SEND_REGISTER_EMAIL = False
@@ -105,6 +113,10 @@ class LocalConfig(Config):
     # Celery local settings
     broker_url = 'redis://localhost:6379'
     results_backend = broker_url
+
+    # Set server name
+    SERVER_NAME = '0.0.0.0:8000'
+    PREFERRED_URL_SCHEME ='http'
 
 class DockerConfig(Config):
     """ Class defining configurations for docker development. Config_name is 'docker'. This is the
@@ -117,6 +129,10 @@ class DockerConfig(Config):
     XNAT=Config.XNAT
     XNAT['dicom_to_nifti_transfer_command_id'] = env.int('DICOM_TO_NIFTI_TRANSFER_COMMAND_ID',23)
     XNAT['docker_host'] = env.str('XNAT_DOCKER_HOST','http://10.20.193.32:2375')
+
+    # Set server name
+    SERVER_NAME = '0.0.0.0'
+    PREFERRED_URL_SCHEME ='http'
 
 class TestConfig(Config):
     TESTING = True
@@ -136,8 +152,8 @@ class DevConfig(Config):
     SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://{}:{}@{}/brain_db'.format(DB_USER,DB_PASSWORD,DB_URI)
 
     # Celery settings. App will connect to redis memcache set up in AWS
-    broker_url = env.str('broker_url', default='dummy')
-    results_backend = broker_url
+    broker_url = env.str('broker_url', default='dummy') + '/0'
+    results_backend = env.str('broker_url', default='dummy') + '/1'
 
     XNAT=Config.XNAT
     XNAT['dicom_to_nifti_transfer_command_id'] = env.int('DICOM_TO_NIFTI_TRANSFER_COMMAND_ID',23)
@@ -148,6 +164,22 @@ class DevConfig(Config):
     BASIC_AUTH_USERNAME='tester'
     BASIC_AUTH_PASSWORD='mind@nyspi'
     BASIC_AUTH_FORCE=True
+
+    # Flask security settings
+    SECURITY_SEND_REGISTER_EMAIL = False
+    SECURITY_EMAIL_SENDER = '"My Brain and Me" <info@mybrainandme.org>'
+
+    # Flask-Mail Settings
+    MAIL_USERNAME = env.str('AWS_SMTP_USERNAME','dummy')
+    MAIL_PASSWORD = env.str('AWS_SMTP_PASSWORD','dummy')
+    MAIL_SERVER = 'email-smtp.us-east-1.amazonaws.com'
+    MAIL_PORT = 587
+    MAIL_USE_SSL = False
+    MAIL_USE_TLS = True
+
+    # Set server name
+    SERVER_NAME = 'staging.mybrainandme.org'
+    PREFERRED_URL_SCHEME ='https'
 
 config_by_name = dict(
     local=LocalConfig,

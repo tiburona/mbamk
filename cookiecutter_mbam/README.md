@@ -78,17 +78,19 @@ To run all tests, run ::
 Migrations
 ----------
 
-Whenever a database migration needs to be made. Run the following commands ::
+If you add or delete columns in the database in a models.py file, then a database migration needs to be made. Whenever a database migration needs to be made. Run the following commands ::
 
     flask db migrate
 
-This will generate a new migration script. Then run ::
+This will generate a new migration script in cookiecutter_mbam/migrations/versions folder. Make sure to check this file and edit it manually if need be, because Alembic does not detect every change automatically. Then run ::
 
     flask db upgrade
 
-To apply the migration.
+To apply the migration and change the underlying database. If this is not successful, you may need to go back and edit the migration file. When successful (and the changes are applied to your local database), then be sure to commit the alembic migration file (in cookiecutter_mbam/migrations/versions folder) to git.
 
 For a full migration command reference, run ``flask db --help``.
+
+There are some catches. Flask migrate doesn't work 100% with SQLite, and contraints need to be named for upgrades and downgrades to work as expected (i.e. op.create_foreign_key('scan_user_id_fk', 'scan', 'user', ['user_id'], ['id']) instead of op.create_foreign_key(None, 'scan', 'user', ['user_id'], ['id']))
 
 
 Asset Management
@@ -121,4 +123,31 @@ and invoke it with the command ``redis-server``.
 
 You also must invoke a Celery worker in a different process.  In the current development environment, this the command to do so:
 
-    celery -A cookiecutter_mbam.run_celery:celery worker --loglevel info``
+    celery -A cookiecutter_mbam.run_celery:celery worker --pool=gevent --concurrency=500 --loglevel info
+
+During development it might be helpful to see a graphic display of what the celery workers are up to. For this run the below command and open http://0.0.0.0:5555 in your web browser
+
+    flower -A cookiecutter_mbam.run_celery:celery --port=5555
+
+
+MYSQL
+-----
+For 'local' development, SQLite is OK. But SQLite has too many issues when using flask db migrate (see https://github.com/miguelgrinberg/Flask-Migrate/issues/97). Therefore if you're making changes to the models.py it's better to test migrations using a local installation of MySQL.
+
+To do this:
+
+  1) If on Mac OS X, install MySQL following https://gist.github.com/operatino/392614486ce4421063b9dece4dfe6c21
+    Briefly, install Homebrew, then run brew install mysql@5.7
+  2) Install MySQL Workbench (https://dev.mysql.com/downloads/workbench/)
+  3) Add below to your .bash_profile (from https://stackoverflow.com/questions/30990488/how-do-i-install-command-line-mysql-client-on-mac)
+
+     export PATH=$PATH:/Applications/MySQLWorkbench.app/Contents/MacOS
+
+  3) Start mysql to connect to the service
+    % brew services start mysql@5.7
+    (note you may need to install services through brew first with "brew tap homebrew/services")
+  4) In terminal type 'mysql -u root' to connect to mysql, then run:
+    mysql> GRANT ALL PRIVILEGES ON *.* TO 'mbam'@'localhost' IDENTIFIED BY 'mbam123';
+    mysql> create database brain_db;
+
+Then you should be able to connect to mysql with "mysql -u mbam -p mbam123"

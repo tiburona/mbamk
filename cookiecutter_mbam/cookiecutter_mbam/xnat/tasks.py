@@ -1,102 +1,72 @@
 import time
 import os
+import shutil
 from celery.exceptions import SoftTimeLimitExceeded
 from cookiecutter_mbam import celery
 from cookiecutter_mbam.utils.request_utils import init_session
-from .utils import crop
 
 @celery.task
-def create_resources(xnat_credentials, ids, levels, import_service, archive_prefix):
-    """ Create XNAT resources (subject, experiment, scan, resource, and file) as necessary
+def create_resources(xnat_credentials, to_create, urls):
+    """ Create XNAT resources (subject, experiment, scan, resource) as necessary
 
-    :param tuple xnat_credentials: a three-tuple of the server, username, and password to log into XNAT
-    :param tuple ids: a two-tuple consisting of two dictionaries, both with levels as keys, the first that contains xnat
-    ids and queries for each level, and the second that supplies existing XNAT ids, if any
-    :param list levels: the levels of the XNAT hierarchy
-    :param bool import_service: whether to invoke the import service (true if the file is a DICOM, false otherwise)
-    :param str archive_prefix: the first component of the uris after the server
-    :return: uris
+    :param xnat_credentials: a three-tuple of the server, username, and password to log into XNAT
+    :type xnat_credentials: tuple
+    :param to_create: the levels (among subject, experiment, scan, resource) that should be created
+    :type to_create: list
+    :param urls: a dictionary of urls for each put request
+    :type urls: dict
+    :return: a dictionary of the values XNAT returned for subject and experimenet id
     :rtype: dict
     """
     server, user, password = xnat_credentials
-    xnat_ids, existing_xnat_ids = ids
-    uri = archive_prefix
-    uris = {}
 
-    if import_service:
-        levels = levels[:-3]
+    responses = {}
 
     with init_session(user, password) as s:
-        for level in levels:
+        print("Using XNAT server {}".format(server))
+        for level in to_create:
+            url = urls[level]
+            r = s.put(url)
 
-            # Check if resources have already been created in XNAT
-            exists_already = level in ['subject', 'experiment'] and len(existing_xnat_ids[level]['xnat_id'])
-            d = existing_xnat_ids if exists_already else xnat_ids
+            print(url)
 
-            # Construct the uris for each level and add them to the dictionary this task returns
-            uri = os.path.join(uri, level + 's', d[level]['xnat_id'])
-            uris[level] = uri
+            if level in ['subject', 'experiment']:
+                responses[level] = r.text
 
-            # Check if a query must be added to the uri
-            try:
-                query = xnat_ids[level]['query_string']
-            except KeyError:  # A KeyError will occur when there's no query, which is expected for some levels (like Resource)
-                query = ''
+            if not r.ok:
+                raise ValueError(f'Unexpected status code: {r.status_code} Response: \n {r.text}')
 
-            # Create the resource in XNAT
-            if not exists_already and level != 'file':
-                url = server + uri + query
-                r = s.put(url)
-                if not r.ok:
-                    raise ValueError(f'Unexpected status code: {r.status_code} Response: {r.text}')
-
-        return uris
+    return responses
 
 @celery.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5})
-def upload_scan_to_xnat(self, uris, xnat_credentials, file_path):
+def upload_scan_to_xnat(self, xnat_credentials, file_path, url, exp_uri, imp):
     """ Upload a NIFTI format scan to XNAT
-
     :param self: the task object
-    :param dict uris: a dictionary with levels as keys that contains the path for the file to upload (as well as the
-    uris for subject, experiment, etc.)
     :param tuple xnat_credentials: a three-tuple of the server, username, and password to log into XNAT
     :param str file_path: the location of the file on the local disk
+    :param str url:
     :return: uris
     """
-    url = uris['file']
+
     server, user, password = xnat_credentials
-    files = {'file': ('T1.nii.gz', open(file_path, 'rb'), 'application/octet-stream')}
+
+    filename = 'T1.zip' if imp else 'T1.nii.gz'
+    kwargs = {'files': {'file': (filename, open(file_path, 'rb'), 'application/octet-stream')}}
+    if imp: kwargs['data'] = {'dest': exp_uri, 'overwrite': 'delete'}
+
     with init_session(user, password) as s:
-        r = s.put(server + url, files=files)
-        if r.ok:
-            return uris
+        if imp:
+            r = s.post(url, **kwargs)
         else:
-            raise ValueError(f'Unexpected status code: {r.status_code}')
+            r = s.put(url, **kwargs)
+            shutil.rmtree(os.path.dirname(file_path))
+        if r.ok:
+            return exp_uri
+        else:
+            raise ValueError(f'Unexpected status code: {r.status_code}  Response: \n {r.text}')
 
 @celery.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5})
-def import_scan_to_xnat(self, uris, xnat_credentials, file_path):
-    """Import a DICOM format scan to XNAT
-
-    :param self: the task object
-    :param dict uris: a dictionary with levels as keys that contains the experiment uri, the import destination
-    :param tuple xnat_credentials: a three-tuple of the server, username, and password to log into XNAT
-    :param str file_path: the location of the file on the local disk
-    :return: uris
-
-    This is the task invoked when the scan is in DICOM format.
-    """
-    server, user, password = xnat_credentials
-    url = uris['experiment']
-    files = {'file': ('DICOMS.zip', open(file_path, 'rb'), 'application/octet-stream')}
-    with init_session(user, password) as s:
-        r = s.post(server + '/data/services/import', files=files, data={'dest': url, 'overwrite':'delete'})
-        if r.ok:
-            return uris
-        else:
-            raise ValueError(f'Unexpected status code: {r.status_code}')
-
-@celery.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5})
-def get_latest_scan_info(self, uris, xnat_credentials):
+def get_latest_scan_info(self, experiment_uri, xnat_credentials):
     """ Get XNAT uri and id of the last uploaded scan for the current experiment
 
      XNAT automatically sets the ID of an imported scan and MBAM makes no attempt to overwrite it.  This function
@@ -110,7 +80,7 @@ def get_latest_scan_info(self, uris, xnat_credentials):
     """
     server, user, password = xnat_credentials
     with init_session(user, password) as s:
-        r = s.get(server + uris['experiment'] + '/scans')
+        r = s.get(server + experiment_uri + '/scans')
         if r.ok:
             scans = r.json()['ResultSet']['Result']
             scans = sorted(scans, key=lambda scan: int(scan['xnat_imagescandata_id']))
@@ -118,18 +88,17 @@ def get_latest_scan_info(self, uris, xnat_credentials):
             scan_id = scans[-1]['ID']
             return {'xnat_id': scan_id, 'xnat_uri': scan_uri}
         else:
-            raise ValueError(f'Unexpected status code: {r.status_code}')
+            raise ValueError(f'Unexpected status code: {r.status_code}  Response: \n {r.text}')
 
 @celery.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5})
-def gen_dicom_conversion_data(self, uri):
-    """ Generate the payload for the post request that launches the DICOM conversion command
+def gen_container_data(self, uri, xnat_credentials, download_suffix, upload_suffix):
+    server, _, _ = xnat_credentials
+    return {
+        'download-url': server + uri + download_suffix,
+        'upload-url': server + uri + upload_suffix,
+        'xnat-host': server
+    }
 
-    :param self: the task object
-    :param str uri: the uri of a scan
-    :return: a dictionary with the payload to be included with the post request to launch dicom conversion
-    """
-    return {'scan': uri}
-    #return {'scan': crop(uri, '/experiment')}
 
 @celery.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5})
 def launch_command(self, data, xnat_credentials, project, command_ids):
@@ -150,38 +119,64 @@ def launch_command(self, data, xnat_credentials, project, command_ids):
     with init_session(user, password) as s:
         r = s.post(server + url, data)
         if r.ok:
-            return r.json()['container-id']
+            return construct_container_data(r.json(), server)
         else:
-            raise ValueError(f'Unexpected status code: {r.status_code}')
+            raise ValueError(f'Unexpected status code: {r.status_code}  Response: \n {r.text}')
 
-@celery.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5}, soft_time_limit=10000)
-def poll_cs(self, container_id, xnat_credentials, interval):
+
+def construct_container_data(r_json, server):
+    container_key = 'container-id' if 'container-id' in r_json else 'service-id'
+    container_data = {k: r_json[k] for k in [container_key, 'id']}
+    for new, old in [('cs_id', 'id'), ('xnat_container_id', container_key)]:
+        container_data[new] = container_data.pop(old)
+    container_data['xnat_host'] = server
+    return container_data
+
+
+def poll_cs(container_info, xnat_credentials, interval):
     """ Check for completion of a Container Service command
 
-    :param self: the task object
     :param str container_id: the id of the launched container
     :param tuple xnat_credentials: a three-tuple of the server, username, and password to log into XNAT
     :return: status of the container if the container has terminated, or 'Timed Out' if the container didn't terminate
     in the allotted time
     :rtype: str
     """
+
+    server, user, password = xnat_credentials
+    container_id = container_info['xnat_container_id']
+
+    with init_session(user, password) as s:
+        while True:
+            r = s.get(server + '/xapi/containers/{}'.format(container_id))
+            if r.ok:
+                status = r.json()['status']
+                if status in ['Complete', 'Failed', 'Killed', 'Killed (Out of Memory)']:
+                    # Todo: is this really correctly returning when 'Failed'?
+                    # Todo: write logic to check for rejected container
+                    return status
+                time.sleep(interval)
+            else:
+                raise ValueError(f'Unexpected status code: {r.status_code}  Response: \n {r.text}')
+
+@celery.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5}, soft_time_limit=10000)
+def poll_cs_dcm2nii(self, container_id, xnat_credentials, interval):
     try:
-        server, user, password = xnat_credentials
-        with init_session(user, password) as s:
-            while True:
-                r = s.get(server + '/xapi/containers/{}'.format(container_id))
-                if r.ok:
-                    status = r.json()['status']
-                    if status in ['Complete', 'Failed', 'Killed', 'Killed (Out of Memory)']:
-                        return status
-                    time.sleep(interval)
-                else:
-                    raise ValueError(f'Unexpected status code: {r.status_code}')
+        return poll_cs(container_id, xnat_credentials, interval)
     except SoftTimeLimitExceeded:
         return 'Timed Out'
 
+
+@celery.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5}, soft_time_limit=259200)
+def poll_cs_fsrecon(self, container_id, xnat_credentials, interval):
+    try:
+        return poll_cs(container_id, xnat_credentials, interval)
+    except SoftTimeLimitExceeded:
+        return 'Timed Out'
+
+
 @celery.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5})
-def dl_file_from_xnat(self, scan_uri, xnat_credentials, file_path):
+def dl_files_from_xnat(self, uri, xnat_credentials, file_path, suffix='', single_file=True, conditions=[]):
     """Download a file from XNAT
 
     :param self: the task object
@@ -191,30 +186,36 @@ def dl_file_from_xnat(self, scan_uri, xnat_credentials, file_path):
     :return: the name of the file in XNAT
     :rtype: str
     """
+
+    if not os.path.isdir(file_path):
+        os.makedirs(file_path)
+
     server, user, password = xnat_credentials
+
     with init_session(user, password) as s:
-        r = s.get(server + os.path.join(scan_uri, 'resources', 'NIFTI', 'files'))
+        r = s.get(server + uri + suffix)
         if r.ok:
-            result = r.json()['ResultSet']['Result'][0]
-            response = s.get(server + result['URI'])
-            if response.ok:
-                with open(os.path.join(file_path, result['Name']), 'wb') as f:
-                    f.write(response.content)
-                    return result['Name']
+            results = [result for result in r.json()['ResultSet']['Result']
+                       if all([dl_conditions[condition](result) for condition in conditions])]
+            for result in results:
+                response = s.get(server + result['URI'])
+                if response.ok:
+                    with open(os.path.join(file_path, result['Name']), 'wb') as f:
+                        f.write(response.content)
+                else:
+                    raise ValueError(f'Unexpected status code: {response.status_code}  Response: /n {r.text}')
+            if single_file:
+                return results[0]['Name']
             else:
-                raise ValueError(f'Unexpected status code: {response.status_code}')
+                return [result['Name'] for result in results]
         else:
-            raise ValueError(f'Unexpected status code: {r.status_code}')
+            raise ValueError(f'Unexpected status code: {r.status_code}  Response: \n {r.text}')
     return r
 
-@celery.task
-def create_freesurfer_resource(xnat_credentials, archive_prefix, experiment_xnat_id):
-    server, user, password = xnat_credentials
-    resources_uri = archive_prefix + f'/experiments/{experiment_xnat_id}/resources'
-    freesurfer_uri = resources_uri + '/fsv6'
-    with init_session(user, password) as s:
-        for uri in [resources_uri, freesurfer_uri]:
-            r = s.put(url=server + uri)
-            if not r.ok:
-                raise ValueError(f'Unexpected status code: {r.status_code}')
-    return freesurfer_uri
+
+dl_conditions={
+    'json_exclusion': lambda result: 'json' not in result['Name']
+}
+
+
+

@@ -44,7 +44,7 @@ MAIL_USE_SSL = False
 MAIL_USE_TLS = True
 
 # File upload settings
-MAX_CONTENT_LENGTH = 30 * 1024 * 1024
+#MAX_CONTENT_LENGTH = 2048 * 1024 * 1024
 
 # Logging Settings
 

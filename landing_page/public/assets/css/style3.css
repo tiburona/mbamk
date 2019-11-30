@@ -177,6 +177,21 @@ a#get-updates:hover {
   color: #f3b132;
 }
 
+#mc_embed_signup_scroll>h2 {
+  color: rgba(0,0,0) !important;
+}
+
+.question-title {
+  font-size: 1.6rem;
+}
+#mc_embed_signup {
+  font-size: 14px !important;
+}
+
+/*.teaser {
+  margin-top: 5rem;
+}*/
+
 .survey-button {
   background-color: #F3B131 !important;
   color: #3c2a08;
@@ -184,6 +199,25 @@ a#get-updates:hover {
   border: none;
   padding: 0rem 2.3rem;
   margin: 4rem 3rem 0 3rem;
+}
+
+.subscribe-button {
+  background-color: #F3B131 !important;
+  color: #3c2a08 !important;
+  font-weight: 600 !important;
+  font-size: 1.5rem !important;
+  font-family: 'Montserrat', 'sans-serif' !important;
+}
+
+.button {
+  background-color: rgba(0,0,0,0.6) !important;
+}
+
+.subscribe-button:hover {
+  color: #313131;
+  background-color: #f0bc5a!important;
+  text-decoration: none;
+  outline: none;
 }
 
 .value-props i {
@@ -232,7 +266,6 @@ ul {
   display:none;
   margin-left: 5rem;
   margin-bottom: 5rem;
-
 }
 
 #stacked {
@@ -242,11 +275,11 @@ ul {
 }
 
 ul#see li:before {
-  content: url('../images/microscope-solid.svg');
+  content: url('../images/brain-solid.svg');
 }
 
 ul#participate li:before {
-  content: url('../images/brain-solid.svg');
+  content: url('../images/microscope-solid.svg');
 }
 
 ul#learn li:before {
@@ -254,11 +287,11 @@ ul#learn li:before {
 }
 
 ul#see-col li:before {
-  content: url('../images/microscope-solid.svg'); /* FontAwesome Unicode */
+  content: url('../images/brain-solid.svg'); /* FontAwesome Unicode */
 }
 
 ul#participate-col li:before {
-  content: url('../images/brain-solid.svg'); /* FontAwesome Unicode */
+  content: url('../images/microscope-solid.svg'); /* FontAwesome Unicode */
 }
 
 ul#learn-col li:before {
@@ -386,7 +419,7 @@ div.transbox p {
 
 .btn:hover {
   color: #313131;
-  background-color: #f0bc5a!important;
+  background-color: #f0bc5a !important;
   text-decoration: none;
   outline: none;
 }
@@ -406,19 +439,26 @@ div.transbox p {
 }
 
 .article-image > img {
-  object-fit: cover;
-  width: 600px;
-  height: 410px;
+  object-fit: fit;
+  width: 440px !important;
+  height: 300px !important;
+  /* width: 600px;
+  height: 410px; */
   border-radius: 5px;
+  margin-top: 35px;
+  margin-left: 20px;
+  margin-bottom: 20px;
+  margin-right: 20px;
 }
 
 .image-brain img{
-  width: 500px;
+  width: 400px !important;
+  height: 350px !important;
 }
 
 
 .spiro-columbia {
-  object-position: 100% 0;
+  object-position: 100% 100%;
 }
 
 .combine-brain {
@@ -531,7 +571,7 @@ div.transbox p {
 }
 
 .partner-section {
-  padding: 50px 0px;
+  padding: 50px 0px 30px 0px;
 }
 
 .footer-image {
@@ -545,6 +585,7 @@ div.transbox p {
   color: #ffb366;
   line-height: 0.5;
   text-align: center;
+  margin-top: 5px;
 }
 
 .partner-text span {
@@ -603,11 +644,11 @@ div.transbox p {
   color: #1ac9ff;
 }
 
-a:hover {
+/* a:hover {
   color: #ffb366;
   text-decoration: none;
   outline: none;
-}
+} */
 
 a {
   transition: all 0.2s cubic-bezier(0.42, 0, 0.58, 1);
@@ -621,11 +662,8 @@ a {
 }
 
 .whitespace.form-space {
-    height: 140px;
+    height: 50px;
 }
-
-
-
 
 ::-webkit-input-placeholder {
   color: #fff !important;
@@ -642,9 +680,6 @@ a {
 :-ms-input-placeholder {
   color: #fff !important;
 }
-
-
-
 
 @media screen and (max-width: 1200px) {
   h2 {
@@ -674,11 +709,7 @@ a {
     margin: 2rem;
   }
 
-  div.transbox {
-  }
-
 }
-
 
 @media screen and (max-width: 992px) {
 
@@ -733,7 +764,6 @@ a {
   }
 
 }
-
 
 @media screen and (max-width: 768px) {
   #brain-gif {
@@ -816,7 +846,6 @@ a {
 }
 
 
-
 @media screen and (max-width: 596px) {
   h1 {
     margin-top: 1rem;
@@ -829,6 +858,7 @@ a {
   #welcome-text p {
     margin-left: 3.5rem;
     margin-right: 2rem;
+    padding: 1rem 0rem 0 0rem;
   }
 
   .value-prop>li p {
@@ -879,7 +909,6 @@ a {
     opacity: .8;
   }
 
-
   div.value-props {
     display: none;
   }
@@ -891,8 +920,18 @@ a {
   .footer-content a {
     font-size: 1.1rem;
   }
-}
 
+  #mc_embed_signup {
+    font-size: 11px !important;
+  }
+  .question-title {
+    font-size: 1.2rem;
+  }
+  .article-image > img {
+    width: 90% !important;
+    height: 40% !important;
+  }
+}
 
 @media screen and (max-width: 565px) {
   .navbar-brand>img {
@@ -953,7 +992,7 @@ a {
 
   div.transbox {
     padding: 5rem 4rem 1rem 4rem;
-}
+  }
 
   hr {
     width: 100%;
@@ -1009,29 +1048,19 @@ a {
     font-size: 1.3rem;
   }
 
-    .spiro-columbia {
+  .spiro-columbia {
     object-position: 430% 0;
   }
 
+  #mc_embed_signup {
+    font-size: 10px !important;
+  }
+  .question-title {
+    font-size: 1.2rem;
+  }
+  .article-image > img {
+    width: 90% !important;
+    height: 40% !important;
+  }
+
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
