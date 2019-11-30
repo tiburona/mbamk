@@ -1,207 +1,113 @@
 # -*- coding: utf-8 -*-
-"""Application configuration.
-Module defining classes for configuring the app across multiple environments.
-Based loosely on https://medium.freecodecamp.org/structuring-a-flask-restplus-web-service-for-production-builds-c2ec676de563
-At the bottom is the config_name which sets the app environment passed on to application factory.
+"""Application configuration
 """
 
 from environs import Env
-import os
 
 env = Env()
 env.read_env()
 
 class Config:
-    """ Base config class the sets variables in common (or default) to all environments."""
-    SECRET_KEY = env.str('SECRET_KEY')
-    ENV = env.str('FLASK_ENV', default='development')
-    DEBUG = ENV == 'development'
+    """ Sets default configuration and reads from environment variables for any overwrites"""
 
-    DEBUG_TB_ENABLED = DEBUG
-    DEBUG_TB_INTERCEPT_REDIRECTS = False
+
+    SECRET_KEY = env.str('SECRET_KEY')
+    ENV = env.str('FLASK_ENV', 'development')
+
     CACHE_TYPE = 'simple'  # Can be "memcached", "redis", etc.
-    SQLALCHEMY_TRACK_MODIFICATIONS = True
     WEBPACK_MANIFEST_PATH = 'webpack/manifest.json'
 
-    # Flask security settings
-    SECURITY_PASSWORD_SALT = 'super-secret-random-salt' # erm, keep out of our repo in real prod version?
+    # Debugging and testing
+
+    DEBUG = True
+    TESTING = env.str('Testing', False)
+    WTF_CSRF_ENABLED = env.str('WTF_CSRF_ENABLED', True)
+    DEBUG_TB_ENABLED = env.str('DEBUG_TB_ENABLED', DEBUG)
+    PRESERVE_CONTEXT_ON_EXCEPTION = True
+    DEBUG_TB_INTERCEPT_REDIRECTS = False
+
+
+    # Server
+
+    SERVER_NAME = env.str('SERVER_NAME', '0.0.0.0:8000')
+    PREFERRED_URL_SCHEME = env.str('PREFFERED_URL_SCHEME', 'http')
+
+    # Flask security
+
+    SECURITY_PASSWORD_SALT = env.str('SECURITY_PASSWORD_SALT')
     SECURITY_PASSWORD_HASH='bcrypt'
     SECURITY_REGISTERABLE = True
     SECURITY_RECOVERABLE = True
-    SECURITY_SEND_REGISTER_EMAIL = False
-    SECURITY_EMAIL_SENDER = '"My Brain and Me" <mbaminfo@gmail.com>'
-    #SECURITY_EMAIL_SENDER = '"My Brain and Me" <info@mybrainandme.org>'
-    SECURITY_REGISTERABLE = True
     SECURITY_CHANGEABLE = True
+    SECURITY_CONFIRMABLE = False
+    SECURITY_SEND_REGISTER_EMAIL = False
+    SECURITY_EMAIL_SENDER = env.str('SECURITY_EMAIL_SENDER', '"My Brain and Me" <mbaminfo@gmail.com>')
 
-    # Flask-Mail Settings
-    #MAIL_USERNAME = 'testingmbam@gmail.com'
-    #MAIL_PASSWORD='R8S6bSgeqGgknH3'
-
-    MAIL_USERNAME = 'mbaminfo@gmail.com'
-    # Below is temporary application specific password for gmail smtp. Delete and replace with
-    # env variable when repo goes public
-    MAIL_PASSWORD='digkexrwzscfpybx'
-    # Wait for the fix in flask-security, see https://github.com/mattupstate/flask-security/issues/685
-    MAIL_DEFAULT_SENDER = '"My Brain and Me" <mbaminfo@gmail.com>'
-    MAIL_SERVER = 'smtp.gmail.com'
-    MAIL_PORT = 587
-    MAIL_USE_SSL = False
-    MAIL_USE_TLS = True
-
-    # File upload settings
+    # File upload
     MAX_CONTENT_LENGTH = 30 * 1024 * 1024
+    FILE_DEPOT = 'static/files/'
 
-    # Logging Settings
-    LOG_FILENAME = 'static/logs/log.txt'
+    # Database
 
-    # Celery settings
+    SQLALCHEMY_TRACK_MODIFICATIONS = True
+    DB_URI = env.str('MYSQL_HOST', 'localhost')
+    DB_USER = env.str('MYSQL_USERNAME', 'mbam')
+    DB_PASSWORD = env.str('MYSQL_PASSWORD', 'mbam123')
+    SQLALCHEMY_DATABASE_URI = env.str('SQLALCHEMY_DATABASE_URI',
+                                      'mysql+pymysql://{}:{}@{}/brain_db'.format(DB_USER, DB_PASSWORD, DB_URI))
+
+    # Auth
+
+    BASIC_AUTH_USERNAME = ''
+    BASIC_AUTH_PASSWORD = ''
+    BASIC_AUTH_FORCE = False
+
+    # Mail
+
+    MAIL_USERNAME = env.str('MAIL_USERNAME')
+    MAIL_PASSWORD = env.str('MAIL_PASSWORD')
+    MAIL_SERVER = env.str('MAIL_SERVER')
+    MAIL_PORT = env.int('MAIL_PORT', 587)
+    MAIL_USE_SSL = env.int('MAIL_USE_SSL', False)
+    MAIL_USE_TLS = env.int('MAIL_USE_TLS', True)
+
+    # XNAT
+
+    XNAT_HOST = env.str('XNAT_HOST', 'http://10.1.1.17'),
+    XNAT_USER = env.str('XNAT_USER', 'admin')
+    XNAT_PASSWORD = env.str('XNAT_PASSWORD', 'admin')
+    XNAT_DOCKER_HOST = env.str('XNAT_DOCKER_HOST','unix:///var/run/docker.sock')
+    XNAT_PROJECT = env.str('XNAT_PROJECT', 'MBAM_TEST'),
+    DICOM_TO_NIFTI_COMMAND = env.int('DICOM_TO_NIFTI_COMMAND')
+    DICOM_TO_NIFTI_WRAPPER = env.str('DICOM_TO_NIFTI_WRAPPER', 'dcm2niix-xfer')
+    FREESURFER_RECON_COMMAND = env.str('FREESURFER_RECON_COMMAND')
+    FREESURFER_RECON_WRAPPER = env.str('FREESURFER_RECON_WRAPPER', 'freesurfer-recon-all-xfer')
+
+
+    # Cloudfront
+
+    CLOUDFRONT_URL = env.str('CLOUDFRONT_URL')
+    CLOUDFRONT_KEY_ID = env.str('CLOUDFRONT_KEY_ID')
+    CLOUDFRONT_PRIVATE_KEY = env.str('CLOUDFRONT_PRIVATE_KEY')
+
+
+    # S3
+
+    CLOUD_STORAGE_ACCESS_KEY_ID = env.str('CLOUD_STORAGE_KEY_ID')
+    CLOUD_STORAGE_SECRET_ACCESS_KEY = env.str('CLOUD_STORAGE_SECRET_KEY')
+    CLOUD_STORAGE_BUCKET_NAME = env.str('AWS_S3_BUCKET', 'mbam-test')
+
+
+    # Celery
+
     task_serializer = 'json'
     result_serializer = 'json'
     accept_content = ['json']
     enable_utc = True
-
-    include = ['cookiecutter_mbam.xnat.tasks', 'cookiecutter_mbam.storage.tasks', 'cookiecutter_mbam.derivation.tasks',
-               'cookiecutter_mbam.scan.tasks', 'cookiecutter_mbam.base.tasks']
-
-    XNAT = {
-        # Default XNAT variables below are to access the MIND XNAT server.
-        # Otherwise set different variables in your host environment if are using a local VM XNAT
-        'user': env.str('XNAT_USER', 'admin'),
-        'password': env.str('XNAT_PASSWORD', 'admin'),
-        'server': env.str('XNAT_HOST', 'http://10.1.1.17'),
-        'project': env.str('XNAT_PROJECT', 'MBAM_TEST'),
-        'local_docker': False,
-        'docker_host': env.str('XNAT_DOCKER_HOST','unix:///var/run/docker.sock'),
-        'dicom_to_nifti_transfer_command_id': env.int('DICOM_TO_NIFTI_TRANSFER_COMMAND_ID', 36),
-        'dicom_to_nifti_transfer_wrapper_id': 'dcm2niix-xfer',
-        'freesurfer_recon_all_transfer_command_id': env.int('FREESURFER_RECON', 37),
-        'freesurfer_recon_all_transfer_wrapper_id': 'freesurfer-recon-all-xfer'
-    }
-
-    files = {
-        'file_depot': 'static/files/', # this corresponds to /app/static/files ContainerMountPoint
-        'file_depot_url': 'http://0.0.0.0:8081/static/files/'
-    }
-
-    AWS = {
-        # Grab variables from environment. Default are Katie's dev params
-        'access_key_id': env.str('AWS_KEY_ID', 'AKIAJ3CJ3JWENS3XA6QQ'),
-        'secret_access_key': env.str('AWS_SECRET_KEY', '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'),
-        'bucket_name' : env.str('AWS_S3_BUCKET', 'mbam-test'),
-        # Below the default values are default cloudfront dev params set up for Spiro's AWS account
-        'cloudfront_url' : env.str('CLOUDFRONT_URL', 'https://dc2khv0msnx9b.cloudfront.net/'),
-        'cloudfront_key_id' : env.str('CLOUDFRONT_KEY_ID', 'APKAJZ3J6OMQJKG2PO4Q'),
-        'cloudfront_private_key' : env.str('CLOUDFRONT_PRIVATE_KEY', default='none')
-    }
+    broker_url = env.str('BROKER_URL', 'redis://localhost:6379')
+    results_backend = env.str('RESULTS_BACKEND', broker_url)
 
 
 
-class LocalConfig(Config):
-    """ Class defining configurations for local development. Config_name is 'local'. """
-    #SQLALCHEMY_DATABASE_URI = 'sqlite:////tmp/dev.db'
-    # Use below line instead if testing flask migratinos with local mysql installation (see MySQL section in the MBaM docs)
-    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://mbam:mbam123@localhost/brain_db'
 
-    # Default settings for Flask-Security
-    SECURITY_SEND_REGISTER_EMAIL = False
-    SECURITY_CONFIRMABLE = False
 
-    # Celery local settings
-    broker_url = 'redis://localhost:6379'
-    results_backend = broker_url
-
-    # Set server name
-    SERVER_NAME = '0.0.0.0:8000'
-    PREFERRED_URL_SCHEME ='http'
-
-class DockerConfig(Config):
-    """ Class defining configurations for docker development. Config_name is 'docker'. This is the
-    environment used for build testing in SemaphoreCI"""
-    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://mbam:mbam123@mysql/brain_db'
-    # Celery cettings
-    broker_url = 'redis://redis:6379'
-    results_backend = 'redis://redis:6379'
-
-    XNAT=Config.XNAT
-    XNAT['dicom_to_nifti_transfer_command_id'] = env.int('DICOM_TO_NIFTI_TRANSFER_COMMAND_ID', 23)
-    XNAT['docker_host'] = env.str('XNAT_DOCKER_HOST', 'http://10.20.193.32:2375')
-
-    # Set server name
-    SERVER_NAME = '0.0.0.0'
-    PREFERRED_URL_SCHEME ='http'
-
-class TestConfig(Config):
-    TESTING = True
-    SQLALCHEMY_DATABASE_URI = 'sqlite://'
-    SECRET_KEY = 'not-so-secret-in-tests'
-    DEBUG_TB_ENABLED = False
-    WTF_CSRF_ENABLED = False  # Allows form testing
-    PRESERVE_CONTEXT_ON_EXCEPTION = False
-
-class DevConfig(Config):
-    """ Class defining configurations for development on AWS. Config_name is 'staging'. """
-    # MYSQL parameters are stored in AWS Systems Manager Parameter store and passed
-    # as environment variables in the Cloudformation Templates.
-    DB_URI = env.str('MYSQL_HOST', 'dummy')
-    DB_USER = env.str('MYSQL_USERNAME', 'dummy')
-    DB_PASSWORD = env.str('MYSQL_PASSWORD', 'dummy')
-    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://{}:{}@{}/brain_db'.format(DB_USER, DB_PASSWORD, DB_URI)
-
-    # Celery settings. App will connect to redis memcache set up in AWS
-    broker_url = env.str('broker_url', default='dummy') + '/0'
-    results_backend = env.str('broker_url', default='dummy') + '/1'
-
-    XNAT=Config.XNAT
-    XNAT['dicom_to_nifti_transfer_command_id'] = env.int('DICOM_TO_NIFTI_TRANSFER_COMMAND_ID', 23)
-    XNAT['project'] = env.str('XNAT_PROJECT', 'MBAM_STAGING')
-    XNAT['docker_host'] = env.str('XNAT_DOCKER_HOST', 'http://10.20.193.32:2375')
-
-    # Protect the staging server until the site goes live
-    BASIC_AUTH_USERNAME='tester'
-    BASIC_AUTH_PASSWORD='mind@nyspi'
-    BASIC_AUTH_FORCE=True
-
-    # Flask security settings
-    SECURITY_SEND_REGISTER_EMAIL = False
-    SECURITY_EMAIL_SENDER = '"My Brain and Me" <info@mybrainandme.org>'
-
-    # Flask-Mail Settings
-    MAIL_USERNAME = env.str('AWS_SMTP_USERNAME', 'dummy')
-    MAIL_PASSWORD = env.str('AWS_SMTP_PASSWORD', 'dummy')
-    MAIL_SERVER = 'email-smtp.us-east-1.amazonaws.com'
-    MAIL_PORT = 587
-    MAIL_USE_SSL = False
-    MAIL_USE_TLS = True
-
-    # Set server name
-    SERVER_NAME = 'staging.mybrainandme.org'
-    PREFERRED_URL_SCHEME ='https'
-
-config_by_name = dict(
-    local=LocalConfig,
-    docker=DockerConfig,
-    test=TestConfig,
-    staging=DevConfig
-    )
-
-def guess_environment():
-    """ This function will guess the config_name. The value can be overridden at the bottom of this file.
-
-    :returns config_name: String specifying the configuration.
-    """
-    # Override the configuration with an environment variable if it's set in the .env file
-    try:
-        config_name = env.str('CONFIG_NAME')
-    except:
-        if os.uname()[1].find('Mac') > -1:
-            config_name='local'
-        elif os.uname()[1].find('ip-') > -1:
-            config_name='staging'
-        else:
-            config_name='docker'
-
-    return config_name
-
-# Guess the config_names for dev and testing configurations
-config_name = guess_environment()

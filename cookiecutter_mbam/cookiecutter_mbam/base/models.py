@@ -82,3 +82,6 @@ class BaseService(BaseModel):
         # todo put in if statement allowing this to be immutable
 
         return send_email.s()
+
+    def _set_config(self, config_vars):
+        [setattr(self, attr, current_app[config_var]) for attr, config_var in config_vars]

@@ -65,10 +65,9 @@ class ScanService(BaseService):
         :return: None
         """
 
-        config = config_by_name[config_name]
-        self.file_depot = os.path.join(self.instance_path, config.files['file_depot'])
-        self.xc = XNATConnection(config=config.XNAT)
-        self.csc = CloudStorageConnection(config=config.AWS)
+        self.file_depot = os.path.join(self.instance_path, current_app.config['FILE_DEPOT'])
+        self.xc = XNATConnection()
+        self.csc = CloudStorageConnection()
 
     def add_to_database(self, image_file, xnat_labels):
         """Add a scan to the database

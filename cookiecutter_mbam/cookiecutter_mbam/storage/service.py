@@ -1,19 +1,27 @@
 from flask import current_app
 from .tasks import *
+from cookiecutter_mbam.base import BaseService
 
 
 def debug():
     assert current_app.debug == False, "Don't panic! You're here by request of debug()"
 
-class CloudStorageConnection:
 
-    def __init__(self, config):
+config_vars = [
+    ('access_key_id', 'CLOUD_STORAGE_ACCESS_KEY_ID'), ('secret_access_key', 'CLOUD_STORAGE_SECRET_ACCESS_KEY'),
+    ('bucket_name', 'CLOUD_STORAGE_BUCKET_NAME')
+]
 
-        self.auth = {'aws_access_key_id': config['access_key_id'],
-                     'aws_secret_access_key': config['secret_access_key']}
+class CloudStorageConnection(BaseService):
+
+    def __init__(self):
+
+        self._set_config(config_vars)
+
+        self.auth = {'aws_access_key_id': self.access_key_id,
+                     'aws_secret_access_key': self.secret_access_key}
         self.s3_client = boto3.client('s3', **self.auth)
         self.s3_resource = boto3.resource('s3', **self.auth)
-        self.bucket_name = config['bucket_name']
 
     def upload_to_cloud_storage(self, filedir, scan_info, filename='', delete=False):
         if len(filename):

@@ -3,8 +3,9 @@ from cookiecutter_mbam.base import BaseModel
 from .tasks import *
 from celery import chain
 from functools import reduce
-
 from flask import current_app
+
+
 def debug():
     assert current_app.debug == False, "Don't panic! You're here by request of debug()"
 
@@ -13,15 +14,20 @@ poll_tasks = {
     'freesurfer_recon_all': poll_cs_fsrecon
 }
 
+config_vars = [
+    ('server', 'XNAT_HOST'), ('user', 'XNAT_USER'), ('password', 'XNAT_PASSWORD'), ('project', 'XNAT_PROJECT'),
+    ('docker_host', 'XNAT_DOCKER_HOST'), ('dicom_to_nifti_wrapper', 'DICOM_TO_NIFTI_WRAPPER'),
+    ('dicom_to_nifti_command', 'DICOM_TO_NIFTI_COMMAND'), ('freesurfer_recon_wrapper', 'FREESURFER_RECON_WRAPPER'),
+    ('freesurfer_recon_command', 'FREESUFER_RECON_COMMAND')
+]
+
 #todo: arguably there should be two separate classes here, XNAT Connection and XNAT service
 
 class XNATConnection(BaseModel):
 
-    def __init__(self, config, set_docker_host=False):
-        self.xnat_config = config
+    def __init__(self):
+        self._set_config_vars(config_vars)
         self._set_attributes()
-        if set_docker_host:
-            self._set_docker_host()
 
     def _set_attributes(self):
         """ Set attributes on self
@@ -32,25 +38,9 @@ class XNATConnection(BaseModel):
         :return: None
         """
 
-        [setattr(self, k, v) for k, v in self.xnat_config.items()]
         for dest in ['archive', 'prearchive']:
             setattr(self, dest + '_prefix', '/data/{}/projects/{}'.format(dest, self.project))
         self.auth = (self.server, self.user, self.password)
-
-    def _set_docker_host(self):
-        """ Set the Docker host
-        Reads the desired Docker host from the config file. If XNAT is not currently configured to launch containers on
-        this Docker host, configures it so.
-        :return: None
-        """
-        docker_host_route = '/xapi/docker/server'
-        if self.xnat_get(docker_host_route).json()['host'] != self.docker_host:
-            self.xnat_post(docker_host_route, data={'host':self.docker_host})
-
-    def _command_config(self):
-        # check that commands exist on XNAT?  do I really need to do this?
-        pass
-
 
     def sub_exp_labels(self, user, experiment):
         xnat_labels = self._generate_sub_exp_labels(user, experiment)
@@ -238,7 +228,7 @@ class XNATConnection(BaseModel):
     def poll_container_service(self, process_name):
 
         intervals = {'dicom_to_nifti': 5, 'freesurfer_recon_all': 5}
-        poll_task = poll_tasks[process_name]
+        poll_task = POLL_TASKS[process_name]
         xnat_credentials = (self.server, self.user, self.password)
 
         return poll_task.s(xnat_credentials, intervals[process_name])
