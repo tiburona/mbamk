@@ -72,20 +72,35 @@
   $COR_SAMPLE = "{{ asset_url_for('img/sample-cor-T1.png') }}";
   $SAG_SAMPLE = "{{ asset_url_for('img/sample-sag-T1.png') }}";
 
-    alert("Hello! I am an alert box!!");
-    $(document).ready(function(){       
-            var scroll_pos = 0;
-            $(document).scroll(function() { 
-                scroll_pos = $(this).scrollTop();
+    // alert("Hello! I am an alert box!!");
+    // $(document).ready(function(){       
+    //         var scroll_pos = 0;
+    //         $(document).scroll(function() { 
+    //             scroll_pos = $(this).scrollTop();
 
-                if(scroll_pos > 850) {
-                    $(“.navbar”).css('background', '#fffffff2');
+    //             if(scroll_pos > 850) {
+    //                 $(“.navbar”).css('background', '#fffffff2');
                     
-                } else {
-                    $(“.navbar”).css('background', 'transparent');
-                }
-            });
-        });
+    //             } else {
+    //                 $(“.navbar”).css('background', 'transparent');
+    //             }
+    //         });
+    //     });
+
+
+//     var scroll_pos = 0;
+// $(document).scroll(function() {
+//    scroll_pos = $(this).scrollTop();
+//    if(scroll_pos > 850) {
+//        alert("hey")
+//        $(".navbar").css('background', '#fff');
+//    } 
+//    else {
+//      alert("hey")
+//        $(".navbar").css('background', 'transparent');
+
+//    }
+// });
 
 </script>
 <!-- end scripts -->
