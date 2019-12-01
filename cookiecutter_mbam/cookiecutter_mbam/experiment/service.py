@@ -23,7 +23,7 @@ class ExperimentService(BaseService):
     def __init__(self, user, tasks=tasks):
         super().__init__(Experiment)
         self.user = user
-        self.scan_services=[]
+        self.scan_services = []
         self.tasks = tasks
         self._config_read()
 
@@ -66,13 +66,15 @@ class ExperimentService(BaseService):
 
         job.apply_async()
 
-    def _construct_status_email(self):
-        return construct_status_email.si(self.experiment.id)
-
     def _send_upload_status_email(self):
+        """ Construct a Celery chain to send the user an email with the status of their scan upload
+
+        :return: the Celery chain that sends the user a status email
+        :rtype:
+        """
 
         return chain(
-            self._construct_status_email(),
+            construct_status_email.si(self.experiment.id),
             self._send_email()
         )
 
@@ -119,9 +121,9 @@ class ExperimentService(BaseService):
     def _gen_xnat_info(self, scan_index):
         """Generate the arguments for the scan service method that adds a scan to XNAT and runs Freesurfer
 
-        Generates three arguments: a boolean indicating whether the scan is the first to be uploaded for this
+        Generates two arguments: a boolean indicating whether the scan is the first to be uploaded for this
         experiment, the signature of the task to set subject and experiment attributes (or None if those attributes
-        don't need to be set), and
+        don't need to be set)
 
         :param scan_index: the position of the current scan among scans being currently uploaded
         :type scan_index: int
@@ -133,9 +135,10 @@ class ExperimentService(BaseService):
         set_xnat_attributes = self._set_subject_and_experiment_attributes(first_scan)
         return [first_scan, set_xnat_attributes]
 
-
+    # XNAT attributes will only be set on subject and experiment attributes at the moment the scan is uploaded, and they
+    # only need to be set if they haven't been already.
     def _set_subject_and_experiment_attributes(self, first_scan):
-        """
+        """Generate a signature for the task to set subject and experiment attributes (or None if they won't be set)
 
         :param first_scan: whether the scan is the first to be uploaded for this experiment
         :type first_scan: bool
