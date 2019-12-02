@@ -379,13 +379,16 @@ section{
 
 
 @media screen and (max-width: 992px) {
-	.mobile-show {
-	  display: block;
+	.rev-art {
+		flex-direction: column-reverse;
 	}
+}
 
-	.mobile-hide {
-	    display: none;
-	}
+
+// Signup Page
+
+.container-narrow {
+    margin: 8% auto;
 }
 	
 
