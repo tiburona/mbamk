@@ -4,14 +4,20 @@
   "description": "Cookiecutter MBAM",
   "scripts": {
     "build": "NODE_ENV=production webpack --progress --colors -p",
-    "start": "concurrently -n \"WEBPACK,FLASK\" -c \"bgBlue.bold,bgMagenta.bold\" \"npm run webpack-dev-server\" \"npm run flask-server\"",
+    "start": "npm run set-trusted-vars-no-force && npm run start-servers",
+    "start-local": "npm run set-local-vars && npm start",
+    "start-servers": "concurrently -n \"WEBPACK,FLASK\" -c \"bgBlue.bold,bgMagenta.bold\" \"npm run webpack-dev-server\" \"npm run flask-server\"",
     "webpack-dev-server": "NODE_ENV=debug webpack-dev-server --port 8081 --hot --inline $PUBLIC",
     "flask-server": "flask run",
-    "lint": "eslint \"assets/js/*.js\""
+    "lint": "eslint \"assets/js/*.js\"",
+    "set-trusted-vars": "python ../config/set_env_vars.py --set T --env trusted'",
+    "set-trusted-vars-no-force": "python ../config/set_env_vars.py --env trusted",
+    "set-local-vars": "python ../config/set_env_vars.py --set T'",
+    "set-local-vars-no-force": "python ../config/set_env_vars.py"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/tiburona/cookiecutter_mbam.git"
+    "url": "git+https://github.com/spiropan/mbam.git"
   },
   "author": "Katie Surrence",
   "license": "BSD-3-Clause",

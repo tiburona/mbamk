@@ -13,3 +13,6 @@
 /landing_page/public/returned-brain-demo/
 /mbam-cfn-templates/._*
 
+
+secrets*
+
