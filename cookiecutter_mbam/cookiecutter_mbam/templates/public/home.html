@@ -1,5 +1,6 @@
 
 {% extends "layout.html" %}
+<div class="l-page">
 {% block content %}
 <!-- Main jumbotron for a primary marketing message or call to action -->
 
@@ -12,15 +13,12 @@
     </div>
 
     <div class="container">
-        <p>Welcome to My Brain and Me!</p>
         <h1>Your Neuroscience and Psychology Portal</h1>
 
         {% if current_user.is_authenticated %}
             {% if not current_user.experiments.scans %}
                 <p>First Visit? We will guide you through the steps</p>
-                <p>
-                    <a class="btn btn-primary btn-large" href="{{ url_for( 'experiment.add' ) }}" role="button"><i class="fa fa-upload" aria-hidden="true"></i> Upload my scan</a>
-                </p>
+                <p class="btn-ca"><a class="btn btn-primary btn-large" href="{{ url_for( 'experiment.add' ) }}" role="button"><i class="fa fa-upload" aria-hidden="true"></i> Upload my scan</a></p>
             {% else %}
                 <p>Click below to view your scans or complete a survey.</p>
 
@@ -205,6 +203,7 @@
     </article>
 
 </section>
+</div>
 
 
 

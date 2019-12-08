@@ -90,10 +90,13 @@
       {% from "security/_macros.html" import render_field %}
       <form method="POST" action="{{ url_for( 'user.consent' ) }}" role="form">
           {{ form.hidden_tag() }}
-          {{ render_field(form.consented) }}
+          <div class="content-check">
+            {{ render_field(form.consented)}}
+            <p>I agree</p>
+          </div>
 
           <button type="submit" class="btn btn-primary">Submit</button>
-          <a href="{{ url_for('public.home') }}" class="btn btn-primary">Cancel</a>
+          <a href="{{ url_for('public.home') }}" class="btn-txt">Cancel</a>
       </form>
 
 </div>

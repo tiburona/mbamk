@@ -5,19 +5,23 @@
 {% block content %}
 
 <div class="container-narrow">
-
-    <h3 class="mt-5">User Profile</h3>
-
-    {% from "security/_macros.html" import render_field, render_field_with_errors %}
-    <form id="profileForm" method="POST" action="{{ url_for( 'user.profile' ) }}" role="form">
-        {{ form.hidden_tag() }}
-        {{ render_field_with_errors(form.first_name, class_='form-control') }}
-        {{ render_field_with_errors(form.last_name, class_='form-control') }}
-        {{ render_field_with_errors(form.sex, class_='form-control') }}
-        {{ render_field_with_errors(form.dob, class_='form-control') }}
-        <button type="submit" class="btn btn-primary">Create</button>
-        <a href="{{ url_for('public.home') }}" class="btn btn-primary">Skip</a>
-    </form>
+    <div class="container-wrapper">
+        <h3>Create your profile</h3>
+        <div class="form-wrapper">
+            {% from "security/_macros.html" import render_field, render_field_with_errors %}
+            <form id="profileForm" method="POST" action="{{ url_for( 'user.profile' ) }}" role="form">
+                {{ form.hidden_tag() }}
+                {{ render_field_with_errors(form.first_name, class_='form-control') }}
+                {{ render_field_with_errors(form.last_name, class_='form-control') }}
+                {{ render_field_with_errors(form.sex, class_='form-control') }}
+                {{ render_field_with_errors(form.dob, class_='form-control') }}
+                <div class="btn-section">
+                    <button type="submit" class="btn btn-primary create-btn">Create</button>
+                    <a href="{{ url_for('public.home') }}">Skip</a>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 
 {% endblock %}
