@@ -2,7 +2,6 @@
 html, body {
     margin: 0;
     padding: 0;
-    // font-family: 'Montserrat', sans-serif;
     font-family: 'Open Sans', sans-serif;
     font-size: 15px;
     line-height: 24px;
@@ -23,13 +22,21 @@ header[role="nav-menu"] {
     border-bottom: 1px solid transparent;
 
     .navbar-custom {
-        background-color: transparent;
-        transition: background-color 500ms ease-in-out;
+        // background-color: transparent;
+        // transition: background-color 500ms ease-in-out;
 	  	padding: 0.4rem 2rem;
 
 	  .navbar-brand {
 	  	padding: 10px 15px;
 	  }
+
+	  img {
+	  	height: 45px;
+	  }
+	}
+
+	.navbar-dark .navbar-toggler:focus {
+		outline: none;
 	}
 }
 
@@ -185,25 +192,17 @@ section{
 	
 	section[role="intro"] {
 		.feature{
-			img {
+			.key-features img {
 				max-height: 23px;
 				max-width: 23px;
 	    		opacity: 0.6;
 			}
 		}
 
-		p {
-			padding: 7px 0 30px 0;
-			font-size: 16px;
-		}
-
 		.welcome-text {
 			text-align: left;
-			p {
-				padding: 7% 3% 7% 6%;
-			    font-size: 15px;
-			    line-height: 1.9;
-			}
+			padding: 7% 3% 7% 6%;
+			line-height: 1.9;
 		}
 
 		.partners {
@@ -235,6 +234,8 @@ section{
 
 
 	section[role="media"] {
+		    padding: 0 7rem 0 7rem;
+
 		.article-wrapper {
 			background: #ffffff;
 			.article-description {
@@ -447,12 +448,19 @@ section{
 	
 
 @media (max-width: 1300px) {
-  
+	  section[role="media"] {
+	    padding: 0 3rem 0 3rem;
+	}
 }
 
 
 
 @media (max-width: 1024px) {
+	.s-head{
+		&:before, &:after {
+	    	width: 400%;
+		}
+	}
    
 }
 
@@ -461,23 +469,138 @@ section{
 }
 
 
-@media (max-width: 992px) {
-	.rev-art {
-		flex-direction: column-reverse;
+@media (max-width: 991px) {
+	body {
+		font-size: 13.5px;
 	}
+
+	article.container {
+	   	padding: 4% 2%;
+	}
+
+	section.landing-page .container {
+    	padding: 20% 0% 10% 0%;
+    }
+
+	section[role="intro"] {
+		.welcome-text {
+			padding: 7% 0% 7% 0%;
+		}
+
+		.partners img {
+			width: 100%;
+		}
+	}
+
+	section[role="participate"] p {
+		font-size: 16px;
+	}
+
+	section[role="media"] .article-image img {
+		width: 410px;
+    	height: 280px;
+	}
+
+	section[role="media"] .article-image.image-brain img {
+    	width: 330px;
+	}
+
+	section[role="media"] {
+		.article-wrapper {
+			.article-description {
+				margin: 0;
+			}
+		}
+	}
+
 }
 
 @media (max-width: 768px) {
-   
+	.rev-art {
+		flex-direction: column-reverse;
+	}
+
+	section[role="media"] .article-image img {
+	    width: 350px;
+	    height: 250px;
+	}
+
+	footer .f-head {
+    	font-size: 14px;
+    }
+	
+}
+
+@media (min-width: 768px) {
+
 }
 
 
 @media (max-width: 590px) {
+	footer {
+		.f-head {
+    		font-size: 12px;
+    		margin-bottom: 0;
+		}
+
+		.f-info {
+			font-size: 12px;
+		}
+
+		ul {
+			font-size: 12px;
+		}
+	}
+
+	section[role="media"] {
+    	padding: 0 1rem 0 1rem;
+	}
    
+    section[role="media"] .article-image img {
+	    width: 270px;
+	    height: 250px;
+	}
+
+	section[role="media"] .article-image.image-brain img {
+	    width: 280px;
+	}
 }
 
-@media (min-width: 576px) {
-  
+@media (max-width: 575px) {
+	header[role="nav-menu"] {
+		.navbar-custom {
+		img { 
+			height: 38px;
+			}
+		}
+	}
+
+
+	article.container {
+	   	padding: 4% 10%;
+	}
+
+	section.landing-page .container {
+    	padding: 20% 10% 10% 10%;
+    	h1 {
+    		font-size: 2rem;
+    		padding: 0 8%;
+    	}
+    }
+    
+
+    section[role="intro"] {
+		.welcome-text {
+			padding: 7% 1% 7% 1%;
+		}  
+
+		.partners img {
+			width: 45%;
+			margin-top: 1rem;
+		}
+	}
+
+
 }
 
 

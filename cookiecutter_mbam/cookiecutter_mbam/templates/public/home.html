@@ -4,6 +4,9 @@
 {% block content %}
 <!-- Main jumbotron for a primary marketing message or call to action -->
 
+<div id="detect-this">
+</div>
+
 <section role="top-row" class="landing-page">
 
     <div class="landing-video">
@@ -41,55 +44,51 @@
 <section role="intro">
 
     <article class="container">
+      
+      <div class="feature">
 
-        <div class="row feature">
+          <div class="row key-features">
+            <div class="col-lg-4 col-sm-4 col-12">
+              <img src="{{ asset_url_for('img/brain.png') }}">
+              <p>See inside your own brain</p>
+            </div>
 
-          <div class="col-lg-4 col-sm-4 col-12">
-            <img src="{{ asset_url_for('img/brain.png') }}">
-            <p>See inside your own brain.</p>
+            <div class="col-lg-4 col-sm-4 col-12">
+              <img src="{{ asset_url_for('img/micro.png') }}">
+              <p>Participate in neuroscience and mental health research</p>
+            </div>
+
+            <div class="col-lg-4 col-sm-4 col-12">
+              <img src="{{ asset_url_for('img/search.png') }}">
+              <p>Learn about your mind and body</p>
+            </div>
           </div>
 
-          <div class="col-lg-4 col-sm-4 col-12">
-            <img src="{{ asset_url_for('img/micro.png') }}">
-            <p>Participate in neuroscience and mental health research.</p>
+          <hr>
+
+            <p class="welcome-text">Welcome! We are a group of Columbia University neuroscientists passionate about accelerating scientific research and helping everyone learn from psychology and neuroscience discoveries. We want to help you to use science to improve your life and give you opportunities to contribute to research. Our flagship service, now in development, is a tool to help you upload a brain scan and get a beautiful, interactive, 3D visualization of your own brain. If you don’t have a brain scan, we’ll help you look for a research study you can participate in to get one for free.
+
+            Below you can leave your email for an update on when we're ready to release our brain visualization tool. But that's not all! We have a lot of ideas about where to go from here, and we want to know what’s important to you, so we’re opening the floor. Tell us what you think we should work on next, and if you like, sign up to get updates on our projects.</p>
+
+
+          <div class="partners">
+            <span class="s-head">Our Partners</span>
+            <div class="row">
+                <div class="col-lg-4 col-sm-4">
+                  <img src="{{ asset_url_for('img/nyspi.png') }}">
+                </div>
+
+                <div class="col-lg-4 col-sm-4">
+                  <img src="{{ asset_url_for('img/nycmedialab.png') }}">
+                </div>
+
+                <div class="col-lg-4 col-sm-4">
+                  <img src="{{ asset_url_for('img/columbia.png') }}">
+                </div>
+            </div>
           </div>
 
-          <div class="col-lg-4 col-sm-4 col-12">
-            <img src="{{ asset_url_for('img/search.png') }}">
-            <p>Learn about your mind and body.</p>
-          </div>
-
-        </div>
-
-        <hr>
-
-        <div class="welcome-text">
-          <p>Welcome! We are a group of Columbia University neuroscientists passionate about accelerating scientific research and helping everyone learn from psychology and neuroscience discoveries. We want to help you to use science to improve your life and give you opportunities to contribute to research. Our flagship service, now in development, is a tool to help you upload a brain scan and get a beautiful, interactive, 3D visualization of your own brain. If you don’t have a brain scan, we’ll help you look for a research study you can participate in to get one for free.
-
-          Below you can leave your email for an update on when we're ready to release our brain visualization tool. But that's not all! We have a lot of ideas about where to go from here, and we want to know what’s important to you, so we’re opening the floor. Tell us what you think we should work on next, and if you like, sign up to get updates on our projects.</p>
-        </div>
-
-
-        <div class="partners">
-          <span class="s-head">Our Partners</span>
-
-          <div class="row">
-
-              <div class="col-lg-4 col-sm-4">
-                <img src="{{ asset_url_for('img/nyspi.png') }}">
-              </div>
-
-              <div class="col-lg-4 col-sm-4">
-                <img src="{{ asset_url_for('img/nycmedialab.png') }}">
-              </div>
-
-              <div class="col-lg-4 col-sm-4">
-                <img src="{{ asset_url_for('img/columbia.png') }}">
-              </div>
-
-          </div>
-        </div>
-
+      </div> <!-- Feature End  -->
     </article>
 </section>
 
@@ -105,7 +104,7 @@
 
 
 <section role="media">
-    <article class="container">
+    <article class="container-fluid">
         <div class= "row rev-art">
 
                   <div class="col-md-6">
