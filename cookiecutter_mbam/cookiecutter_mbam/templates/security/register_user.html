@@ -7,10 +7,11 @@
 
 <div class="container-narrow">
       <div class="container-wrapper">
-        <h3>New User? Please Sign up</h3>
+        
           <div class="form-wrapper">
           {% from "security/_macros.html" import render_field, render_field_with_errors %}
           {% include "security/_messages.html" %}
+          <h3>New User? Please Sign up</h3>
           <form id=registerForm method="POST" action="{{ url_for_security('register') }}" name="register_user_form" role="form">
               {{ register_user_form.hidden_tag() }}
               {{ render_field_with_errors(register_user_form.email, class='form-control') }}

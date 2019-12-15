@@ -21,7 +21,7 @@
         {% if current_user.is_authenticated %}
             {% if not current_user.experiments.scans %}
                 <p>First Visit? We will guide you through the steps</p>
-                <p class="btn-ca"><a class="btn btn-primary btn-large" href="{{ url_for( 'experiment.add' ) }}" role="button"><i class="fa fa-upload" aria-hidden="true"></i> Upload my scan</a></p>
+                <p class="btn-ca"><a class="btn btn-large btn-y" href="{{ url_for( 'experiment.add' ) }}" role="button"><i class="fa fa-upload" aria-hidden="true"></i> Upload my scan</a></p>
             {% else %}
                 <p>Click below to view your scans or complete a survey.</p>
 
@@ -99,6 +99,7 @@
   <div class="buttons">
     <div><a class="btn btn-primary btn-large btn-y" id="participate-survey" href=#survey-form>Participate</a></div>
   </div>
+  <div id="media-section"></div>
 
 </section>
 
@@ -134,6 +135,7 @@
                     </div>
                   </div>
 
+
                   <div class="col-md-6">
                     <div class="article-wrapper article-2">
                       <div class="article-description article-description2">
@@ -143,12 +145,12 @@
                         <a class="article-button" href="https://www.thecombine.nyc/my-brain-and-me" target="_blank">Read Full Article</a>
                       </div>
                     </div>
-                  </div>
+                   </div>
               </div>
     </article>
 </section>
 
-
+<div id="team-section"></div>
 <section role="team">
     <article class="container">
         <span class="s-head">Team</span>

@@ -29,6 +29,9 @@
   <!-- Icon for browser-->
   <link rel="shortcut icon" type="image/x-icon" sizes="32x32" href="{{ asset_url_for('img/favicon_purple.png') }}" />
 
+  <!-- icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
   <!-- Google Font-->
   <!-- <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,600,700&display=swap" rel="stylesheet"> -->
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,600,600i,700&display=swap" rel="stylesheet">
@@ -43,20 +46,7 @@
 
 <main role="main">
 
-{% with messages = get_flashed_messages(with_categories=true) %}
-{% if messages %}
-        <div class="row">
-          <div class="col-md-12 mt-5">
-            {% for category, message in messages %}
-            <div class="alert alert-{{ category }}">
-              <a class="close" title="Close" href="#" data-dismiss="alert">&times;</a>
-             {{message}}
-            </div><!-- end .alert -->
-            {% endfor %}
-          </div><!-- end col-md -->
-        </div><!-- end row -->
-{% endif %}
-{% endwith %}
+
 
 {% block content %}{% endblock %}
 

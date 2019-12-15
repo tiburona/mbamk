@@ -40,6 +40,11 @@ header[role="nav-menu"] {
 	}
 }
 
+h5 {
+	font-size: 1rem;
+    font-weight: 600;
+}
+
 .s-head {
 	display: inline-block;
 	position: relative;
@@ -140,6 +145,16 @@ section{
 		}
 	    
 	}
+}
+
+
+.section-wrapper {
+	width: 75%;
+	margin: 14% auto 16% auto;
+}
+
+.card-body {
+	padding: 2rem;
 }
 
 
@@ -385,6 +400,14 @@ section{
 				margin-right: 0;
 			}
 		}
+
+		.fa {
+			padding-right: 12px;
+			&:hover {
+				color: #fff;
+				opacity: 0.6;
+			}
+		}
 	}
 
 
@@ -400,7 +423,6 @@ section{
     h3 {
     	font-size: 1.5rem;
     	margin-bottom: 1rem;
-    	padding-left: 2rem;
     }
     .form-wrapper {
     	border: 1px solid #ccc;
@@ -445,7 +467,68 @@ section{
 	}
 }
 
+.btn-y{
+	color: #1a1a1a;
+	background: #F3B132;
+	&:hover {
+		color: #353535 !important;
+		background: #f5be53 !important;
+	}
+}
+
+.not-supported{
+	color: #d67f7f;
+}
+
+.scan-head {
+	font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.modal-dialog {
+	margin-top: 8rem;
+}
+
+.modal-lg {
+    max-width: 940px;
+}
+
+.modal-title {
+	font-size: 0.8rem;
+    font-weight: 600;
+    line-height: 1.3rem;
+}
+
+#next-button {
+	float: right;
+	color: #fff;
+    background-color: #5BB470;
+    border-color: #5BB470;
+	&:hover {
+		background: #4e9a60;
+	}
+}
+
+.modal-header, .modal-body {
+	padding: 2rem;
+}
+
+.krajee-default .file-caption-info, .krajee-default .file-size-info {
+	height: 18px !important;
+}
+
+.alert {
+	padding: 1rem 3.5rem;
+}
+
+
 	
+
+@media (max-width: 1685px) {
+	section.landing-page .container {
+    padding: 14% 2% 12% 2%;
+	}
+}
 
 @media (max-width: 1300px) {
 	  section[role="media"] {
@@ -454,6 +537,10 @@ section{
 }
 
 
+@media (max-width: 1099px) {
+   
+}
+
 
 @media (max-width: 1024px) {
 	.s-head{
@@ -461,10 +548,11 @@ section{
 	    	width: 400%;
 		}
 	}
-   
-}
 
-@media (max-width: 1099px) {
+	.container-narrow {
+	    margin: 8% auto 8% auto;
+	    padding: 5% 0;
+	}
    
 }
 
@@ -511,6 +599,11 @@ section{
 				margin: 0;
 			}
 		}
+	}
+
+	.modal-lg {
+	    max-width: 940px;
+	    margin-top:	8rem;
 	}
 
 }
@@ -563,6 +656,23 @@ section{
 
 	section[role="media"] .article-image.image-brain img {
 	    width: 280px;
+	}
+
+	.container-wrapper {
+	    width: 85%;
+	    .form-wrapper {
+	    	padding: 2rem 1.5rem;
+	    }
+
+	    h3 {
+	    	font-size: 1.1rem;
+	    	padding-left: 0;
+	    }
+	}
+
+	.container-narrow {
+	    margin: 20% auto 8% auto;
+	    padding: 8% 0;
 	}
 }
 
