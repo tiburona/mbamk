@@ -524,7 +524,7 @@ section{
 
 	
 
-@media (max-width: 1685px) {
+@media (min-width: 1686px) {
 	section.landing-page .container {
     padding: 14% 2% 12% 2%;
 	}
@@ -534,11 +534,6 @@ section{
 	  section[role="media"] {
 	    padding: 0 3rem 0 3rem;
 	}
-}
-
-
-@media (max-width: 1099px) {
-   
 }
 
 
