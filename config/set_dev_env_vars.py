@@ -27,8 +27,12 @@ def set_secrets(credential_path, params_to_fetch):
         with open(credential_path) as file:
             credentials = yaml.safe_load(file)
 
-        aws_auth = {'aws_access_key_id': credentials['PARAMETER_STORE']['KEY_ID'],
-                    'aws_secret_access_key': credentials['PARAMETER_STORE']['SECRET_KEY']}
+        for key in credentials:
+            for var in credentials[key]:
+                os.environ[var] == credentials[key][var]
+
+        aws_auth = {'aws_access_key_id': os.environ['PARAMETER_STORE_KEY_ID'],
+                    'aws_secret_access_key': os.environ['PARAMETER_STORE_SECRET_KEY']}
 
         ssm_client = boto3.client('ssm', **aws_auth)
 
