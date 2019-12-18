@@ -2,8 +2,11 @@
 """Scan views."""
 import traceback
 
-from flask import Blueprint, flash, redirect, url_for
+from flask import Blueprint, flash, redirect, url_for, render_template
 from flask_security import current_user
+from .models import Scan
+from .forms import EditScanForm
+from cookiecutter_mbam.utils.error_utils import flash_errors
 
 from cookiecutter_mbam.base.tasks import global_error_handler
 from .service import ScanService
@@ -37,3 +40,20 @@ def add_scans(request, exp_id):
                              email_admin=True)
 
     return redirect(url_for('experiment.experiments'))
+
+
+@blueprint.route('/<id>/edit', methods=['GET', 'POST'])
+def edit_scan(id):
+    """Access and edit scan metadata (label)."""
+    scan = Scan.query.filter(Scan.id==id).first_or_404()
+    form = EditScanForm(obj=scan)
+
+    if form.validate_on_submit():
+        form.populate_obj(scan) # update whatever has been changed in the form
+        scan.save()
+        flash('Scan metadata updated','success')
+        return redirect(url_for('display.displays'))
+    else:
+        flash_errors(form)
+
+    return render_template('scans/edit_scan.html',session_form=form, scan=scan)

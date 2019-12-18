@@ -3,7 +3,7 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for, session, current_app
 from flask_security import current_user, login_required
 from cookiecutter_mbam.utils.error_utils import flash_errors
-from cookiecutter_mbam.scan import Scan
+from cookiecutter_mbam.scan.models import Scan
 from .service import DisplayService
 
 def debug():
@@ -28,8 +28,10 @@ def displays():
     """ List all displays available for this user. """
     # For now list and pass the scans that have a aws_orig_key until
     # derivation is updated
-    displays = DisplayService(user=current_user).get_user_scans()
-    return render_template('displays/displays.html', displays=displays)
+    dis = DisplayService(user=current_user).get_user_scans()
+    #dis = DisplayService(user=current_user).get_user_experiments()
+    #debug()
+    return render_template('displays/displays.html', displays=dis)
 
 @blueprint.route('/scan/<scan_id>/slice_view',methods=['GET'])
 @login_required
@@ -40,11 +42,14 @@ def slice_view(scan_id):
             ds = DisplayService(user=current_user)
             url = ds.get_nifti_url(scan_id)
             signed_url = ds.sign_url(url)
-            return render_template('displays/slice_view.html', url=signed_url)
+            scan=Scan.get_by_id(scan_id)
+            return render_template('displays/slice_view.html', url=signed_url, scan=scan)
         except:
             return render_template('404.html')
     else:
         return render_template('403.html')
+
+
 
 @blueprint.route('/test',methods=['GET'])
 def test():

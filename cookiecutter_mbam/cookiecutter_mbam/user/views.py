@@ -22,6 +22,11 @@ def members():
 @login_required
 def profile():
     """ Basic user profile form """
+    if current_user.sex or current_user.dob or current_user.first_name or current_user.last_name:
+        action="edit"
+    else:
+        action="create"
+
     form = ProfileForm(obj=current_user)
     if form.validate_on_submit():
         form.populate_obj(current_user)
@@ -31,7 +36,7 @@ def profile():
     else:
         flash_errors(form)
 
-    return render_template('users/profile.html', form=form)
+    return render_template('users/profile.html', form=form, action=action)
 
 @blueprint.route('/consent', methods=('GET','POST'))
 @login_required

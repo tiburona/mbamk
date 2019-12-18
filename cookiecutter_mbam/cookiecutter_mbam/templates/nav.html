@@ -26,6 +26,10 @@
       <li class="nav-item">
         <a href="{{ url_for_security('logout') }}"><i class="fa fa-sign-out"></i> Logout</a>
       </li>
+      <li class="nav-item">
+        <a href="{{ url_for('user.profile') }}"><i class="fa fa-user"></i> User Profile</a>
+      </li>
+
     </ul>
     {% else %}
     <ul class="navbar-menu">
