@@ -1,3 +1,10 @@
 baz
 
-foo
+fo
+
+
+o
+
+
+
+bar
