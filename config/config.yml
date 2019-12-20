@@ -7,7 +7,7 @@ TEST:
   PRESERVE_CONTEXT_ON_EXCEPTION: False
   SECURITY_PASSWORD_SALT: not-so-secret-in-tests
   FULL_DB_URI: sqlite://
-  TEST_VAR: hello-you
+  TEST_VAR: hello-you-sexy
 
 DOCKER:
   ENV: docker
