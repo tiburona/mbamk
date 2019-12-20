@@ -33,7 +33,7 @@ STAGING:
 TRUSTED:
   ENV: trusted
   SEMAPHORE_HASH_ID: ccb50d9e-4b65-4d19-9c9d-7a9cbe8f26d2
-  CLOUDFRONT_URL:
+  CLOUDFRONT_URL: this-is-the-cloudfront-url
   CFN_TEMPLATE_DIR: ../build/cfn
   CFN_TEMPLATE_BUCKET: s3://mbam-cfn-templates
   CFN_PROFILE: mbam
