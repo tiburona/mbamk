@@ -22,6 +22,16 @@ def about():
     """ About page. """
     return render_template('public/about.html')
 
+@blueprint.route('/media')
+def media():
+    """ Media page. """
+    return render_template('public/media.html')
+
+@blueprint.route('/team')
+def team():
+    """ Team page. """
+    return render_template('public/team.html')
+
 @blueprint.route('/contact', methods=('GET','POST'))
 def contact():
     """ Contact page. """

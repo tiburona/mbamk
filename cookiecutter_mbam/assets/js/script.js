@@ -4,7 +4,10 @@
 //})
 var spiro=1;
 
-
+// $( '.navbar-menu a' ).on( 'click', function () {
+// 	$( '.navbar-menu' ).find( 'li.active' ).removeClass( 'active' );
+// 	$( this ).parent( 'li' ).addClass( 'active' );
+// });
 
 $(document).ready(function() {  
 	 if ($('#detect-this').length) {
@@ -24,6 +27,8 @@ $(document).ready(function() {
 	 }
 
 });
+
+
 
 
 

@@ -90,7 +90,7 @@ h5 {
     }
 
     .navbar-collapse {
-    	flex-grow: inherit;
+    	flex-grow: inherit!important;
     }
 	.nav-item {
 	  	float: left;
@@ -462,6 +462,7 @@ section{
 }
 
 .content-check {
+	padding-bottom: 1rem;
 	p {
 		display: inline-block;
 	}
@@ -510,7 +511,7 @@ section{
 }
 
 .modal-header, .modal-body {
-	padding: 2rem;
+	padding: 2rem 2rem 1.3rem 2rem
 }
 
 .krajee-default .file-caption-info, .krajee-default .file-size-info {
@@ -521,6 +522,21 @@ section{
 	padding: 1rem 3.5rem;
 }
 
+.active {
+	text-decoration: underline!important;;
+}
+
+.header-spacer {
+	padding-top: 3rem !important;
+}
+
+
+.file-input {
+	background: #eaeaea;
+	&.theme-fa {
+		background: #ffffff;
+	}
+}
 
 	
 

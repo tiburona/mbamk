@@ -5,7 +5,11 @@
 {% block content %}
 
 <div class="container-narrow">
-    <h3 class="mt-5">MyBrainandMe.Org: An online resource for user-driven data sharing of structural MRI brain imaging and behavioral data.</h3><br>
+  <div class="card">
+    
+    <div class="card-body">
+      
+      <h3>MyBrainandMe.Org: An online resource for user-driven data sharing of structural MRI brain imaging and behavioral data.</h3><br>
     <h5>Purpose and Overview</h5>
     <p>Thanks for your interest in MyBrainandMe.org. Before you upload your brain scan, we would like to
       inform you about what this research involves and of any potential risks and/or benefits of your
@@ -98,6 +102,9 @@
           <button type="submit" class="btn btn-primary">Submit</button>
           <a href="{{ url_for('public.home') }}" class="btn-txt">Cancel</a>
       </form>
+    </div>
+  </div>
+    
 
 </div>
 
