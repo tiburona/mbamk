@@ -17,10 +17,11 @@ Todo: consider that the import service leaves a file as a .nii, but upload servi
 
 """
 
+
+import os
 import json
 from pathlib import Path
 from celery import chain
-from cookiecutter_mbam.config import config_by_name, config_name
 from .models import Scan
 from cookiecutter_mbam.base.models import BaseService
 from cookiecutter_mbam.xnat import XNATConnection
@@ -50,24 +51,15 @@ class ScanService(BaseService):
         self.user = user
         self.experiment = experiment
         self.instance_path = current_app.instance_path[:-8]
-        self._config_read()
         self.tasks = tasks
         self.derivation_services = {}
         self.scan = None
         self.scan_info = None
         self.xnat_labels = None
-
-    def _config_read(self):
-        """Scan service configuration
-
-        Obtains the configuration with config_by_name, and sets the upload path and creates XNAT Connection and a Cloud
-        Storage Connection instance and attaches them to the scan service object.
-        :return: None
-        """
-
         self.file_depot = os.path.join(self.instance_path, current_app.config['FILE_DEPOT'])
         self.xc = XNATConnection()
         self.csc = CloudStorageConnection()
+
 
     def add_to_database(self, image_file, xnat_labels):
         """Add a scan to the database

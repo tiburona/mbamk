@@ -1,9 +1,9 @@
-from .config import config_by_name, config_name
+from .config import Config as config
 
 def init_celery(app, celery):
     """Add flask app context to celery.Task"""
     # This method taken from this SO answer: https://stackoverflow.com/a/50666542/2066083
-    celery.config_from_object(config_by_name[config_name])
+    celery.config_from_object(config)
 
     TaskBase = celery.Task
     class ContextTask(celery.Task):

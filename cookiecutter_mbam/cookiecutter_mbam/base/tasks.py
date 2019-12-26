@@ -7,13 +7,13 @@ from cookiecutter_mbam import celery as cel
 import ssl
 import smtplib
 from email.message import EmailMessage
-from cookiecutter_mbam.config import config_by_name, config_name
+from cookiecutter_mbam.config import Config as config
 from . import textbank
 from cookiecutter_mbam.mbam_logging import app_logger, celery_logger
 
 # set mail constants
 mail_constants = ['USERNAME', 'SERVER', 'PASSWORD', 'PORT']
-UNAME, SERVER, PASSWORD, PORT = [getattr(config_by_name[config_name], 'MAIL_'+ const) for const in mail_constants]
+UNAME, SERVER, PASSWORD, PORT = [getattr(config, 'MAIL_'+ const) for const in mail_constants]
 
 
 # The following three functions are factory functions.  They generate setter and getter functions for the provided model

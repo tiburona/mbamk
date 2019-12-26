@@ -20,9 +20,9 @@ class Config:
     # Debugging and testing
 
     DEBUG = True
-    TESTING = env.str('Testing', False)
-    WTF_CSRF_ENABLED = env.str('WTF_CSRF_ENABLED', True)
-    DEBUG_TB_ENABLED = env.str('DEBUG_TB_ENABLED', DEBUG)
+    TESTING = env.bool('TESTING', False)
+    WTF_CSRF_ENABLED = env.bool('WTF_CSRF_ENABLED', True)
+    DEBUG_TB_ENABLED = env.bool('DEBUG_TB_ENABLED', DEBUG)
     PRESERVE_CONTEXT_ON_EXCEPTION = True
     DEBUG_TB_INTERCEPT_REDIRECTS = False
 
@@ -66,10 +66,10 @@ class Config:
 
     MAIL_USERNAME = env.str('MAIL_USERNAME')
     MAIL_PASSWORD = env.str('MAIL_PASSWORD')
-    MAIL_SERVER = env.str('MAIL_SERVER')
+    MAIL_SERVER = env.str('MAIL_SERVER', 'smtp.gmail.com')
     MAIL_PORT = env.int('MAIL_PORT', 587)
-    MAIL_USE_SSL = env.int('MAIL_USE_SSL', False)
-    MAIL_USE_TLS = env.int('MAIL_USE_TLS', True)
+    MAIL_USE_SSL = env.bool('MAIL_USE_SSL', False)
+    MAIL_USE_TLS = env.bool('MAIL_USE_TLS', True)
 
     # XNAT
 
@@ -78,9 +78,9 @@ class Config:
     XNAT_PASSWORD = env.str('XNAT_PASSWORD', 'admin')
     XNAT_DOCKER_HOST = env.str('XNAT_DOCKER_HOST','unix:///var/run/docker.sock')
     XNAT_PROJECT = env.str('XNAT_PROJECT', 'MBAM_TEST'),
-    DICOM_TO_NIFTI_COMMAND = env.int('DICOM_TO_NIFTI_COMMAND')
+    DICOM_TO_NIFTI_COMMAND = int(env.str('DICOM_TO_NIFTI_COMMAND'))
     DICOM_TO_NIFTI_WRAPPER = env.str('DICOM_TO_NIFTI_WRAPPER', 'dcm2niix-xfer')
-    FREESURFER_RECON_COMMAND = env.str('FREESURFER_RECON_COMMAND')
+    FREESURFER_RECON_COMMAND = int(env.str('FREESURFER_RECON_COMMAND'))
     FREESURFER_RECON_WRAPPER = env.str('FREESURFER_RECON_WRAPPER', 'freesurfer-recon-all-xfer')
 
 
@@ -88,14 +88,14 @@ class Config:
 
     CLOUDFRONT_URL = env.str('CLOUDFRONT_URL')
     CLOUDFRONT_KEY_ID = env.str('CLOUDFRONT_KEY_ID')
-    CLOUDFRONT_PRIVATE_KEY = env.str('CLOUDFRONT_PRIVATE_KEY')
+    CLOUDFRONT_SECRET_KEY = env.str('CLOUDFRONT_SECRET_KEY')
 
 
     # S3
 
-    CLOUD_STORAGE_ACCESS_KEY_ID = env.str('CLOUD_STORAGE_KEY_ID')
-    CLOUD_STORAGE_SECRET_ACCESS_KEY = env.str('CLOUD_STORAGE_SECRET_KEY')
-    CLOUD_STORAGE_BUCKET_NAME = env.str('AWS_S3_BUCKET', 'mbam-test')
+    CLOUD_STORAGE_ACCESS_KEY_ID = env.str('S3_KEY_ID')
+    CLOUD_STORAGE_SECRET_ACCESS_KEY = env.str('S3_SECRET_KEY')
+    CLOUD_STORAGE_BUCKET_NAME = env.str('S3_BUCKET', 'mbam-test')
 
 
     # Celery

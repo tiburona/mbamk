@@ -1,5 +1,5 @@
 import xnat
-from cookiecutter_mbam.base import BaseModel
+from cookiecutter_mbam.base import BaseService
 from .tasks import *
 from celery import chain
 from functools import reduce
@@ -18,15 +18,15 @@ config_vars = [
     ('server', 'XNAT_HOST'), ('user', 'XNAT_USER'), ('password', 'XNAT_PASSWORD'), ('project', 'XNAT_PROJECT'),
     ('docker_host', 'XNAT_DOCKER_HOST'), ('dicom_to_nifti_wrapper', 'DICOM_TO_NIFTI_WRAPPER'),
     ('dicom_to_nifti_command', 'DICOM_TO_NIFTI_COMMAND'), ('freesurfer_recon_wrapper', 'FREESURFER_RECON_WRAPPER'),
-    ('freesurfer_recon_command', 'FREESUFER_RECON_COMMAND')
+    ('freesurfer_recon_command', 'FREESURFER_RECON_COMMAND')
 ]
 
 #todo: arguably there should be two separate classes here, XNAT Connection and XNAT service
 
-class XNATConnection(BaseModel):
+class XNATConnection(BaseService):
 
     def __init__(self):
-        self._set_config_vars(config_vars)
+        self._set_config(config_vars)
         self._set_attributes()
 
     def _set_attributes(self):

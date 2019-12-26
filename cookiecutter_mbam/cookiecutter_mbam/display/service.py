@@ -4,7 +4,7 @@ import rsa
 from botocore.signers import CloudFrontSigner
 from cookiecutter_mbam.base import BaseService
 from cookiecutter_mbam.scan import Scan
-from cookiecutter_mbam.config import config_by_name, config_name
+from cookiecutter_mbam.config import Config as config
 from datetime import datetime
 from flask import current_app
 from flask import url_for
@@ -16,9 +16,9 @@ class DisplayService(BaseService):
 
     def __init__(self, user):
         # set Cloudfront parameters from config file
-        self.cf_base_url = getattr(config_by_name[config_name], 'AWS')['cloudfront_url']
-        self.private_key = getattr(config_by_name[config_name], 'AWS')['cloudfront_private_key']
-        self.key_id = getattr(config_by_name[config_name], 'AWS')['cloudfront_key_id']
+        self.cf_base_url = config.CLOUDFRONT_URL
+        self.key_id = config.CLOUDFRONT_KEY_ID
+        self.private_key = config.CLOUDFRONT_PRIVATE_KEY
         self.user = user
 
     def sign_url(self, url):

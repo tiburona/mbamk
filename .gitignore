@@ -16,3 +16,7 @@
 
 secrets*
 
+
+.idea*
+.idea/*
+

@@ -4,6 +4,7 @@ from flask_security import current_user
 import traceback
 from functools import reduce
 from celery import chain
+from cookiecutter_mbam.config import Config as config
 
 from flask import current_app
 
@@ -84,4 +85,5 @@ class BaseService(BaseModel):
         return send_email.s()
 
     def _set_config(self, config_vars):
-        [setattr(self, attr, current_app[config_var]) for attr, config_var in config_vars]
+        [setattr(self, attr, getattr(config, config_var)) for attr, config_var in config_vars]
+        debug()

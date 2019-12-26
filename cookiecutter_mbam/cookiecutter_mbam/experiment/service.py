@@ -8,9 +8,10 @@ from celery import group, chain
 from cookiecutter_mbam.base import BaseService
 from cookiecutter_mbam.scan import ScanService
 from cookiecutter_mbam.xnat.service import XNATConnection as XC
-from cookiecutter_mbam.config import config_by_name, config_name
+from cookiecutter_mbam.config import Config as config
 from .models import Experiment
 from .tasks import set_experiment_attribute, get_experiment_attribute, set_sub_and_exp_xnat_attrs, construct_status_email
+
 
 from flask import current_app
 def debug():
@@ -25,16 +26,7 @@ class ExperimentService(BaseService):
         self.user = user
         self.scan_services = []
         self.tasks = tasks
-        self._config_read()
-
-    def _config_read(self):
-        """
-        Obtains the configuration with config_by_name, and sets the upload path and creates XNAT Connection and a Cloud
-        Storage Connection instance and attaches them to the scan service object.
-        :return: None
-        """
-        config = config_by_name[config_name]
-        self.xc = XC(config=config.XNAT)
+        self.xc = XC()
 
     def add(self, user, date, scanner, field_strength, files=None):
         """ The top level public method for adding an experiment and scans

@@ -1,11 +1,11 @@
 """Main application package."""
-from .config import config_by_name, config_name
+from .config import Config as config
 from celery import Celery
 from cookiecutter_mbam.mbam_logging import app_logger
 
 celery = Celery(__name__,
-                broker=config_by_name[config_name].broker_url,
-                backend=config_by_name[config_name].results_backend)
+                broker=config.broker_url,
+                backend=config.results_backend)
 
 from cookiecutter_mbam.user import User, Role
 from cookiecutter_mbam.scan import Scan

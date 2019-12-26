@@ -12,18 +12,18 @@ from cookiecutter_mbam.extensions import admin, cache, csrf_protect, db, debug_t
     security, webpack, mail, jsglue, basicauth
 from cookiecutter_mbam.user import User, Role
 from .hooks import create_test_users, models_committed_hooks
-from .config import config_by_name, config_name
+from .config import Config as config
 
 from flask import current_app
 def debug():
     assert current_app.debug == False, "Don't panic! You're here by request of debug()"
 
-def create_app(config_name=config_name):
+def create_app():
     """An application factory, as explained here: http://flask.pocoo.org/docs/patterns/appfactories/.
     :param config_object: The configuration object to use.
     """
     app = Flask(__name__.split('.')[0])
-    app.config.from_object(config_by_name[config_name])
+    app.config.from_object(config)
 
     init_celery(app, celery=celery)
 

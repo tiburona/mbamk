@@ -4,7 +4,7 @@ from logging import FileHandler
 from flask import request
 from celery.app.log import TaskFormatter
 from celery.utils.log import get_task_logger
-from cookiecutter_mbam.config import config_by_name, config_name
+from cookiecutter_mbam.config import Config as config
 
 app_logger = logging.getLogger()
 celery_logger = get_task_logger(__name__)
@@ -71,8 +71,6 @@ class MailFilter(logging.Filter):
             return rec.email_admin
         except:
             return False
-
-config = config_by_name[config_name]
 
 mail_handler = TlsSMTPHandler(
     mailhost='smtp.gmail.com',
