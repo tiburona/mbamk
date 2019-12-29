@@ -5,7 +5,9 @@ import subprocess
 import os
 import argparse
 import shlex
-from environs import Env
+from environs import Env, EnvError
+from subprocess import PIPE
+from set_env import set_env_vars
 
 env = Env.read_env()
 
@@ -48,25 +50,35 @@ def sync_semaphore(configs):
 
 def run_command(command_string):
     command = shlex.split(command_string)
-    subprocess.run(command)
+    subprocess.run(command, check=True)
+
+def set_s3_credentials():
+    run_command("aws configure set profile.mbam.aws_access_key_id {}".format(os.environ['S3_KEY_ID']))
+    run_command("aws configure set profile.mbam.aws_secret_access_key {}".format(os.environ['S3_SECRET_KEY']))
 
 
 def sync_cloud_formation_templates():
 
-    env = Env()
-    env.read_env()
-
-    os.environ['AWS_ACCESS_KEY_ID'] = env('S3_KEY_ID')
-    os.environ['AWS_SECRET_ACCESS_KEY'] = env('S3_SECRET_KEY')
+    try:
+        os.environ['S3_KEY_ID']
+    except KeyError as e:
+        set_env_vars()
 
     try:
         run_command("aws configure --profile mbam list")
     except subprocess.CalledProcessError:
         run_command("aws configure set region us-east-1 --profile mbam")
+        set_s3_credentials()
 
-    sync_command = "aws s3 sync {} {} --profile mbam".format(env('CFN_TEMPLATE_DIR'), env('CFN_TEMPLATE_BUCKET'))
+    sync_command = "aws s3 sync {} {} --profile mbam".format(
+        os.environ['CFN_TEMPLATE_DIR'], os.environ['CFN_TEMPLATE_BUCKET']
+    )
 
-    run_command(sync_command)
+    try:
+        run_command(sync_command)
+    except subprocess.CalledProcessError:
+        set_s3_credentials()
+        run_command(sync_command)
 
 
 def push_config(sync_ps=False, sync_sem=False, sync_cfn=False):
@@ -103,7 +115,7 @@ if __name__ == '__main__':
     args_to_add = [
         (
             ['--{}'.format(argname)],
-            {'default': 'F', 'help': helptext + " T/F", 'choices': ['T', 'F']}
+            {'action': 'store_true'}
         )
         for argname, helptext in arg_info
     ]
@@ -113,6 +125,6 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    push_config(**{'sync_' + dest: getattr(args, dest) == 'T' for  dest in ['ps', 'sem', 'cfn']})
+    push_config(**{'sync_' + dest: getattr(args, dest) for  dest in ['ps', 'sem', 'cfn']})
 
 

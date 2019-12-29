@@ -36,8 +36,8 @@ def start_redis(npm=False):
 
 
 @thread
-def start_flask(npm=False):
-    execute('flask run', 'FLASK', 'RED', npm=npm)
+def start_flask(dir, npm=False):
+    execute('cd {}; flask run'.format(dir), 'FLASK', 'RED', npm=npm)
 
 
 if __name__ == '__main__':
@@ -149,7 +149,7 @@ if __name__ == '__main__':
         start_redis(npm=args.npm)
 
     if args.flask:
-        start_flask(npm=args.npm)
+        start_flask(args.celery_dir, npm=args.npm)
 
 
 
