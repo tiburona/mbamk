@@ -4,14 +4,17 @@
   "description": "Cookiecutter MBAM",
   "scripts": {
     "build": "NODE_ENV=production webpack --progress --colors -p",
-    "start": "concurrently -n \"WEBPACK,FLASK\" -c \"bgBlue.bold,bgMagenta.bold\" \"npm run webpack-dev-server\" \"npm run start-trusted-vars\"",
-    "start-local": "npm run set-local-vars",
-    "start-servers": "concurrently -n \"WEBPACK,FLASK\" -c \"bgBlue.bold,bgMagenta.bold\" \"npm run webpack-dev-server\" \"npm run flask-server\"",
+    "start": "concurrently -n \"WEBPACK,FLASK,REDIS,CELERY\" -c \"bgBlue.bold,bgMagenta.bold,bgYellow.bold,bgGreen.bold\" \"npm run webpack-dev-server\" \"npm run start-flask\" \"npm run start-redis\" \"npm run start-celery\"",
+    "start-local": "concurrently -n \"WEBPACK,FLASK,REDIS,CELERY\" -c \"bgBlue.bold,bgMagenta.bold,bgYellow.bold,bgGreen.bold\" \"npm run webpack-dev-server\" \"npm run start-flask-local\" \"npm run start-redis-local\" \"npm run start-celery-local\"",
     "webpack-dev-server": "NODE_ENV=debug webpack-dev-server --port 8081 --hot --inline $PUBLIC",
     "flask-server": "flask run",
     "lint": "eslint \"assets/js/*.js\"",
-    "start-trusted-vars": "python ../dev_tools/start.py --env trusted --credentials ../dev_tools/credentials/secrets.yml --config ../dev_tools/config.yml",
-    "start-trusted-vars-reset": "python ../dev_tools/start.py --env trusted --credentials ../dev_tools/credentials/secrets.yml --config ../dev_tools/config.yml --reset T"
+    "start-flask": "python dev_tools/start.py -fn --config_dir dev_tools",
+    "start-celery": "python dev_tools/start.py -cn --config_dir dev_tools",
+    "start-redis": "python dev_tools/start.py -rn --config_dir dev_tools",
+    "start-flask-local": "python dev_tools/start.py -fn --config_dir dev_tools --env local",
+    "start-celery-local": "python dev_tools/start.py -cn --config_dir dev_tools --env local",
+    "start-redis-local": "python dev_tools/start.py -rn --config_dir dev_tools --env local"
   },
   "repository": {
     "type": "git",

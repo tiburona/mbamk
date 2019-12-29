@@ -23,7 +23,6 @@ parameters_to_fetch = [
         ]
 
 
-
 def set_secrets(credential_path, params_to_fetch):
 
     try:
@@ -41,7 +40,6 @@ def set_secrets(credential_path, params_to_fetch):
         ssm_client = boto3.client('ssm', **aws_auth)
 
         for parameter_name in params_to_fetch:
-            print(parameter_name)
             # todo: this would speed up substantially if I used get_parameters.
             # it's just annoying because you can only get ten.
             response = ssm_client.get_parameter(
@@ -50,8 +48,6 @@ def set_secrets(credential_path, params_to_fetch):
             )
 
             parameter = response['Parameter']
-
-            print(parameter['Value'])
 
             os.environ[parameter['Name'][9:]] = parameter['Value']
 
@@ -67,12 +63,12 @@ def set_config(config_path, config_name):
         config = configs[config_name]
         for var in config:
             os.environ[var] = str(config[var])
-            print(var, os.environ[var])
 
-def set_env_vars(credential_path=None, config_path=None, env='trusted', params_to_fetch=parameters_to_fetch):
+def set_env_vars(dir='.', secrets=True, config=True, env='trusted', params_to_fetch=parameters_to_fetch):
 
-    if env == 'trusted' and credential_path:
-        config_type, result = set_secrets(credential_path, params_to_fetch)
+    if env == 'trusted' and secrets:
+
+        config_type, result = set_secrets(os.path.join(dir, 'credentials', 'secrets.yml'), params_to_fetch)
 
         if isinstance(result, Exception):
             print("Received Exception when fetching credentials from the parameter store.  This isn't a problem if "
@@ -82,5 +78,5 @@ def set_env_vars(credential_path=None, config_path=None, env='trusted', params_t
 
             env = 'local'
 
-    if config_path:
-        set_config(config_path, env.upper())
+    if config:
+        set_config(os.path.join(dir, 'config.yml'), env.upper())

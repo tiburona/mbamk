@@ -11,7 +11,7 @@ def debug():
 
 poll_tasks = {
     'dicom_to_nifti': poll_cs_dcm2nii,
-    'freesurfer_recon_all': poll_cs_fsrecon
+    'freesurfer_recon': poll_cs_fsrecon
 }
 
 config_vars = [
@@ -213,9 +213,6 @@ class XNATConnection(BaseService):
     def launch_command(self, process_name, data=None):
         xnat_credentials = (self.server, self.user, self.password)
 
-        if not self.xnat_config['local_docker']:
-            process_name += '_transfer'
-
         command_ids = self.generate_container_service_ids(process_name)
 
         if data:
@@ -227,8 +224,8 @@ class XNATConnection(BaseService):
     #todo: restore freesurfer interval after testing!
     def poll_container_service(self, process_name):
 
-        intervals = {'dicom_to_nifti': 5, 'freesurfer_recon_all': 5}
-        poll_task = POLL_TASKS[process_name]
+        intervals = {'dicom_to_nifti': 5, 'freesurfer_recon': 60*60}
+        poll_task = poll_tasks[process_name]
         xnat_credentials = (self.server, self.user, self.password)
 
         return poll_task.s(xnat_credentials, intervals[process_name])
@@ -237,10 +234,7 @@ class XNATConnection(BaseService):
         return dl_files_from_xnat.s(self.auth, file_depot, suffix=suffix, single_file=single_file, conditions=conditions)
 
     def generate_container_service_ids(self, process_name):
-        return (
-            self.xnat_config[process_name + '_command_id'],
-            self.xnat_config[process_name + '_wrapper_id']
-        )
+        return getattr(self, process_name + '_command'), getattr(self, process_name + '_wrapper')
 
     def xnat_get(self, url):
         """Get a resource from XNAT

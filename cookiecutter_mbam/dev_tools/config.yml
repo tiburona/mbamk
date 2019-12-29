@@ -50,9 +50,11 @@ LOCAL:
   ENV: local
   FLASK_APP: autoapp.py
   FLASK_ENV: development
-  SECRET_KEY: 'not-so-secret'
+  SECRET_KEY: not-so-secret
   FLASK_RUN_PORT: 8000
   FLASK_RUN_HOST: 0.0.0.0
+  SECURITY_PASSWORD_SALT: not_so_secret_salt
+
 
 
 

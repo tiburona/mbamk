@@ -352,7 +352,7 @@ class ScanService(BaseService):
         """
 
         return self._run_container_retrieve_and_store_files(
-            process_name='freesurfer_recon_all',
+            process_name='freesurfer_recon',
             download_suffix='/resources/NIFTI/files',
             upload_suffix='/resources/FSv6/files',
             filename='freesurfer.zip',

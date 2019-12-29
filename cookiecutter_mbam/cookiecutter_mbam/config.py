@@ -7,6 +7,11 @@ from environs import Env
 env = Env()
 env.read_env()
 
+from flask import current_app
+
+def debug():
+    assert current_app.debug == False, "Don't panic! You're here by request of debug()"
+
 class Config:
     """ Sets default configuration and reads from environment variables for any overwrites"""
 
@@ -73,7 +78,7 @@ class Config:
 
     # XNAT
 
-    XNAT_HOST = env.str('XNAT_HOST', 'http://10.1.1.17'),
+    XNAT_HOST = env.str('XNAT_HOST', 'http://10.1.1.17')
     XNAT_USER = env.str('XNAT_USER', 'admin')
     XNAT_PASSWORD = env.str('XNAT_PASSWORD', 'admin')
     XNAT_DOCKER_HOST = env.str('XNAT_DOCKER_HOST','unix:///var/run/docker.sock')
