@@ -7,7 +7,10 @@ TEST:
   PRESERVE_CONTEXT_ON_EXCEPTION: False
   SECURITY_PASSWORD_SALT: not-so-secret-in-tests
   FULL_DB_URI: sqlite://
-  TEST_VAR: hello-you-sexy
+  STACK_NAME: staging
+  IMAGE_REPO: mbam/flask-app
+  AWS_DEFAULT_REGION : us-east-1
+  AWS_ACCOUNT_ID : 413377292493
 
 DOCKER:
   ENV: docker

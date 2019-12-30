@@ -5,12 +5,13 @@ import subprocess
 import os
 import argparse
 import shlex
+import json
 from environs import Env, EnvError
 from subprocess import PIPE
 from set_env import set_env_vars
 
-env = Env.read_env()
-
+env = Env()
+env.read_env()
 
 def sync_parameter_store(configs):
     aws_auth = {'aws_access_key_id': os.environ['PARAMETER_STORE_KEY_ID'],
@@ -33,10 +34,14 @@ def sync_parameter_store(configs):
 
 
 def sync_semaphore(configs):
-    sem_auth_token = env('SEMAPHORE_AUTH_TOKEN')
-    sem_hash_id = env('SEMAPHORE_HASH_ID')
+    try:
+        os.environ['SEMAPHORE_AUTH_TOKEN']
+    except KeyError:
+        set_env_vars()
+        sem_auth_token = os.environ['SEMAPHORE_AUTH_TOKEN']
+        sem_hash_id = os.environ['SEMAPHORE_HASH_ID']
 
-    head = {'Authorization': 'token {}'.format(sem_auth_token)}
+    head = {'Authorization': 'Token {}'.format(sem_auth_token)}
     sem_url = 'https://api.semaphoreci.com/v2/'
 
     get_vars_url = sem_url + 'projects/{}/env_vars'.format(sem_hash_id)
@@ -44,9 +49,21 @@ def sync_semaphore(configs):
     current_vars = requests.get(get_vars_url, headers=head).json()
 
     for var in current_vars:
-        id = var['id']
-        data = {'name': var['name'], 'content': str(configs['Test'][var['name']])}
-        requests.patch(url=sem_url + 'env_vars/{id}'.format(id), data=data)
+        if var['name'] not in configs['TEST']:
+            print("Found variable {} in Semaphore that is not in your configuration. If you would like to control its "
+                  "content add it to dev_tools/config.yml".format(var['name']))
+        else:
+            id = var['id']
+            data = {'name': var['name'], 'content': str(configs['TEST'][var['name']])}
+            response = requests.patch(url=sem_url + 'env_vars/{}'.format(id), data=json.dumps(data), headers=head)
+
+    for var in configs['TEST']:
+        if var not in [v['name'] for v in current_vars]:
+            print("Found variable {} in your configuration file that is not in Semaphore. Due to limitations of the "
+                  "Semaphore API this variable must be added to Semaphore manually before it can be controlled by your "
+                  "configuration file. See here: "
+                  "https://semaphoreci.com/spiropan-29/mbam-2/environment_variables".format(var))
+
 
 def run_command(command_string):
     command = shlex.split(command_string)
