@@ -6,12 +6,8 @@ import os
 import argparse
 import shlex
 import json
-from environs import Env, EnvError
-from subprocess import PIPE
 from set_env import set_env_vars
 
-env = Env()
-env.read_env()
 
 def sync_parameter_store(configs):
     aws_auth = {'aws_access_key_id': os.environ['PARAMETER_STORE_KEY_ID'],
@@ -55,7 +51,7 @@ def sync_semaphore(configs):
         else:
             id = var['id']
             data = {'name': var['name'], 'content': str(configs['TEST'][var['name']])}
-            response = requests.patch(url=sem_url + 'env_vars/{}'.format(id), data=json.dumps(data), headers=head)
+            requests.patch(url=sem_url + 'env_vars/{}'.format(id), data=json.dumps(data), headers=head)
 
     for var in configs['TEST']:
         if var not in [v['name'] for v in current_vars]:

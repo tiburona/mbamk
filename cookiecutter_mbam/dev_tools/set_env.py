@@ -23,7 +23,7 @@ parameters_to_fetch = [
         ]
 
 
-def set_secrets(credential_path, params_to_fetch):
+def set_secrets(credential_path, params_to_fetch, xnat):
 
     try:
         with open(credential_path) as file:
@@ -51,32 +51,41 @@ def set_secrets(credential_path, params_to_fetch):
 
             os.environ[parameter['Name'][9:]] = parameter['Value']
 
+        for var in 'XNAT_USER', 'XNAT_PASSWORD':
+            os.environ[var] = os.environ[xnat.upper() + '_' + var]
+
         return 'TRUSTED', credentials
 
     except Exception as E:
         return 'LOCAL', E
 
 
-def set_config(config_path, config_name):
+def set_config(config_path, config_name, xnat):
     with open(config_path) as file:
         configs = yaml.safe_load(file)
         config = configs[config_name]
         for var in config:
             os.environ[var] = str(config[var])
+        if xnat in ['MIND', 'BACKUP']:
+            for var in 'XNAT_HOST', 'DICOM_TO_NIFTI_COMMAND', 'FREESURFER_RECON_COMMAND':
+                os.environ[var] = os.environ[xnat + '_' + var]
 
-def set_env_vars(dir='.', secrets=True, config=True, env='trusted', params_to_fetch=parameters_to_fetch):
 
-    if env == 'trusted' and secrets:
+def set_env_vars(dir='.', secrets=True, config=True, env='trusted', xnat='mind', params_to_fetch=parameters_to_fetch):
 
-        config_type, result = set_secrets(os.path.join(dir, 'credentials', 'secrets.yml'), params_to_fetch)
+    if env == 'trusted':
+        if secrets:
 
-        if isinstance(result, Exception):
-            print("Received Exception when fetching credentials from the parameter store.  This isn't a problem if "
+            config_type, result = set_secrets(os.path.join(dir, 'credentials', 'secrets.yml'), params_to_fetch, xnat)
+
+            if isinstance(result, Exception):
+                print("Received exception when fetching credentials from the parameter store.  This isn't a problem if "
                   "you're not intending to use MBAM credentials.  If you are running `npm start` and would like to "
                   "suppress this message in the future, use `npm run start-local`.  The exception received was "
                   "{}".format(result))
 
-            env = 'local'
+                xnat = env = 'local'
+
 
     if config:
-        set_config(os.path.join(dir, 'config.yml'), env.upper())
+        set_config(os.path.join(dir, 'config.yml'), env.upper(), xnat.upper())

@@ -23,7 +23,6 @@ def execute(cmd, label, color, npm=False):
             break
         if not npm:
             line = getattr(Fore, color) + '{}'.format(label) + Fore.RESET + ' ' + line
-        print(line)
 
 @thread
 def start_celery(dir, npm=False):
@@ -118,6 +117,14 @@ if __name__ == '__main__':
                 'action': 'store_true',
                 'help': 'script was executed by npm command'
             }
+        ),
+        (
+            ['-x', '--xnat'],
+            {
+                'default': 'mind',
+                'choices': ['mind', 'backup'],
+                'help': 'XNAT instance'
+            }
         )
     ]
 
@@ -129,6 +136,7 @@ if __name__ == '__main__':
     kwargs = {
         'dir': args.config_dir,
         'env': args.env,
+        'xnat': args.xnat,
         'config': not args.noconfig,
         'secrets': not args.nosecrets,
         'params_to_fetch': parameters_to_fetch,
