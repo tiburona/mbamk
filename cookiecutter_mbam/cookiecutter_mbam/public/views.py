@@ -2,15 +2,18 @@
 """Public section, including homepage and signup."""
 from flask import Blueprint, flash, redirect, render_template, url_for
 
-
+from cookiecutter_mbam.utils.error_utils import flash_errors
+from flask_security import current_user
 from cookiecutter_mbam.public.forms import ContactForm
+from cookiecutter_mbam.user.forms import ProfileForm
+
 
 blueprint = Blueprint('public', __name__, static_folder='../static')
 
 @blueprint.route('/')
 def home():
     """ Home page. """
-    return render_template('public/home.html')
+    return render_template('public/home.html', profile_form=None)
 
 @blueprint.route('/FAQ')
 def FAQ():

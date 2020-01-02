@@ -1,0 +1,55 @@
+
+{% extends "public/home.html" %}
+
+{% block content %}
+<!-- Edit profile starts here -->
+<div class="modal fade user-modal" id="myModal">
+    <div class="modal-dialog">
+        <div class="modal-content"> 
+            <div class="modal-header">
+               {% if action == "edit" %}
+                  <h3 class="modal-title">Edit your profile</h3>
+                {% else %}
+                  <h3 class="modal-title">Create your profile</h3>
+                {% endif %}
+                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+            </div>
+            <div class="modal-body">
+              <div class="form-wrapper">
+              {% from "security/_macros.html" import render_field, render_field_with_errors %}
+              <form id="profileForm" method="POST" action="{{ url_for( 'user.profile' ) }}" role="form">
+                  {{ profile_form.hidden_tag() }}
+                  {{ render_field_with_errors(profile_form.first_name, class_='form-control') }}
+                  {{ render_field_with_errors(profile_form.last_name, class_='form-control') }}
+                  {{ render_field_with_errors(profile_form.sex, class_='form-control') }}
+                  {{ render_field_with_errors(profile_form.dob, class_='form-control') }}
+
+                  {% if action == "edit" %}
+                    <div class="btn-section">
+                        <button type="submit" class="btn btn-primary create-btn">Save</button>
+                        <a href="{{ url_for('public.home') }}">Cancel</a>
+                    </div>
+                  {% else %}
+                    <div class="btn-section">
+                        <button type="submit" class="btn btn-primary create-btn">Create</button>
+                        <a href="{{ url_for('public.home') }}">Skip</a>
+                    </div>
+                  {% endif %}
+
+            </form>
+        </div>
+              
+            
+              <!-- form goes here -->
+
+            </div>
+
+            <!-- <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss = "modal">Close</button>
+            </div> -->
+        </div>
+    </div>
+</div>
+{% endblock %}

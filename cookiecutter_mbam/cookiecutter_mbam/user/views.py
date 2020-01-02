@@ -13,10 +13,23 @@ def debug():
     assert current_app.debug == False, "Don't panic! You're here by request of debug()"
 
 @blueprint.route('/')
-@login_required
-def members():
-    """List members."""
-    return render_template('users/members.html')
+def home():
+    """ Home page. """
+    if current_user.sex or current_user.dob or current_user.first_name or current_user.last_name:
+        action="edit"
+    else:
+        action="create"
+
+    form= ProfileForm(obj=current_user)
+    if form.validate_on_submit():
+        form.populate_obj(current_user)
+        current_user.save()
+        flash('User profile saved.','success')
+        return redirect(url_for('users.home'))
+    else:
+        flash_errors(form)
+    return render_template('users/home.html', profile_form=form, action=action)
+
 
 @blueprint.route('/profile', methods=('GET','POST'))
 @login_required
