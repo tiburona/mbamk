@@ -1,13 +1,103 @@
 {% extends "layout.html" %}
 {% block content %}
-    <div class="container-narrow">
+    <div class="container-narrow container-displays">
         <h4 class="mt-5">These are your available displays.</h4>
-        <ul>
-        {% for display in displays %}
-            <li>Experiment: {{ display.experiment_id }}  |  Scan: {{ display.id }}
-              <span><a href="{{ url_for('display.slice_view',scan_id=display.id) }}">View</a></span>
-            </li>
+
+        <table>
+        <thead>
+          <th>Session</th>
+          <th>Scan</th>
+          <th>View 2D</th>
+          <th>View 3D</th>
+        </thead>
+
+        <tbody>
+
+          <!-- initialize list to remember which sessions have been listed to avoid listing date again -->
+        {% set exp_id_list = [] %}
+
+        {% for scan in displays %}
+        {% if scan.experiment_id not in exp_id_list %}
+       <!--  <tr>
+          <td colspan="4"><hr/></td>
+        </tr> -->
+        {% endif %}
+        <tr>
+            {% if scan.experiment_id not in exp_id_list %}
+              <td>{{ scan.parent_experiment.date }}  <a data-toggle= "modal" data-target="#editDateModal" href="{{ url_for('experiment.edit_experiment', id=scan.experiment_id) }}"><i class="fa fa-edit" aria-hidden="true"></i></a></td>
+            {% else %}
+              <td></td>
+            {% endif %}
+            <td>{{ scan.label }} <a data-toggle= "modal" data-target="#editLabelModal" href="{{ url_for('scan.edit_scan', id=scan.id) }}"><i class="fa fa-edit" aria-hidden="true"></i><a/></td>
+            <td>
+                 <span><a href="{{ url_for('display.slice_view',scan_id=scan.id) }}">View</a></span>
+            </td>
+            <td>
+                 <h5>Placeholder</h5>
+            </td>
+        </tr>
+        <!-- increment the list of session ids -->
+        {{ exp_id_list.append(scan.experiment_id) }}
         {% endfor %}
-        </ul>
+        </tbody>
+
+        </table>
     </div>
+
+    <!-- add the edit session form -->
+    <!-- <div id="container"></div>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <script>
+      $(function() {
+        $('#container').load('edit_experiment_model.html');
+      });
+    </script> -->
+    <!-- end the edit session form -->
+    <!-- Edit profile starts here -->
+    <div class="modal fade user-modal" id="editDateModal">
+        <div class="modal-dialog">
+            <div class="modal-content"> 
+                <div class="modal-header">
+                  
+                      <h3 class="modal-title">Edit Date</h3>
+                       <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                </div>
+                <div class="modal-body">
+                
+                  <!-- form goes here -->
+
+                </div>
+                
+                <!-- <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss = "modal">Close</button>
+                </div> -->
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade user-modal" id="editLabelModal">
+        <div class="modal-dialog">
+            <div class="modal-content"> 
+                <div class="modal-header">
+                  
+                      <h3 class="modal-title">Edit Label Title</h3>
+                       <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                </div>
+                <div class="modal-body">
+                
+                  <!-- form goes here -->
+
+                </div>
+                
+                <!-- <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss = "modal">Close</button>
+                </div> -->
+            </div>
+        </div>
+    </div>
+
 {% endblock %}

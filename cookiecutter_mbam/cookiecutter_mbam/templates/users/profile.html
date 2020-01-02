@@ -6,7 +6,11 @@
 
 <div class="container-narrow">
     <div class="container-wrapper">
-        <h3>Create your profile</h3>
+        {% if action == "edit" %}
+          <h3>Edit your profile</h3>
+        {% else %}
+          <h3>Create your profile</h3>
+        {% endif %}
         <div class="form-wrapper">
             {% from "security/_macros.html" import render_field, render_field_with_errors %}
             <form id="profileForm" method="POST" action="{{ url_for( 'user.profile' ) }}" role="form">
@@ -15,10 +19,19 @@
                 {{ render_field_with_errors(form.last_name, class_='form-control') }}
                 {{ render_field_with_errors(form.sex, class_='form-control') }}
                 {{ render_field_with_errors(form.dob, class_='form-control') }}
-                <div class="btn-section">
-                    <button type="submit" class="btn btn-primary create-btn">Create</button>
-                    <a href="{{ url_for('public.home') }}">Skip</a>
-                </div>
+
+                {% if action == "edit" %}
+                  <div class="btn-section">
+                      <button type="submit" class="btn btn-primary create-btn">Save</button>
+                      <a href="{{ url_for('public.home') }}">Cancel</a>
+                  </div>
+                {% else %}
+                  <div class="btn-section">
+                      <button type="submit" class="btn btn-primary create-btn">Create</button>
+                      <a href="{{ url_for('public.home') }}">Skip</a>
+                  </div>
+                {% endif %}
+
             </form>
         </div>
     </div>

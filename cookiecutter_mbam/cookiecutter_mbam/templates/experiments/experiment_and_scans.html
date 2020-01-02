@@ -50,6 +50,9 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h4>Scans we found on your CD or folder.</h4>
+                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
 
                     </div>
                     <div class="modal-body">
@@ -81,6 +84,9 @@
                     <div class="modal-content">
                       <div class="modal-header">
                           <h5 class="modal-title">New Scan Upload</h5>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
                       </div>
                       <div class="modal-body">
                           <p class="modal-tile">If it's not already filled in, please provide the date of the scan before clicking the upload button. You also have the option to provide the model and
@@ -91,12 +97,13 @@
                           {{ render_field_with_errors(form.date, class='form-control') }}
                           {{ render_field_with_errors(form.scanner, class='form-control') }}
                           {{ render_field_with_errors(form.field_strength, class='form-control') }}
+                          <div class="pb-2"></div>
                           <div style="display: none;">
                               {{ render_field(form.scan_file, class='form-control') }}
                           </div>
-                          <button type="submit" class="btn btn-success submit-button" id="upload-toggle">Upload</button>
-                          <button id="go-back" class="btn btn-primary" onclick="return false;">Go Back</button>
-                          <button type="button" class="btn btn-primary start-over" onclick="return false;">Cancel</button>
+                          <button type="submit" class="btn btn-success submit-button" id="upload-toggle" style="float:right;">Upload</button>
+                          <button id="go-back" class="btn btn-outline-secondary" onclick="return false;">Go Back</button>
+                          <!-- <button type="button" class="btn btn-primary start-over" onclick="return false;">Cancel</button> -->
                           </form>
                       </div>
                     </div>
