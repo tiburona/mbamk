@@ -21,7 +21,7 @@
     {% if current_user and current_user.is_authenticated %}
     <ul class="navbar-nav my-auto">
 
-      <li class="nav-item dropdown">
+      <li class="nav-item dropdown mobile-hide">
         {% if current_user.first_name %}
         <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="{{ url_for('user.home') }}">Logged in as {{ current_user.first_name }}</a>
         {% else %}
@@ -34,8 +34,19 @@
           <a class="dropdown-item nav-us-p" href="{{ url_for_security('logout') }}"><i class="fa fa-sign-out"></i>Logout</a>
         </div>
       </li>
-     
-
+    </ul>
+    
+    <!-- for mobile version without dropdown -->
+    <ul class="navbar-nav my-auto mobile-show">
+      <li class="nav-item">
+         {% if current_user.first_name %}
+        <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="{{ url_for('user.home') }}">Logged in as {{ current_user.first_name }}</a>
+        {% else %}
+        <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="{{ url_for('user.home') }}">Logged in as {{ current_user.email }}</a>
+        {% endif %}
+      </li>
+      <li class="nav-item"><a data-toggle = "modal" data-target= "#myModal"><i class="fa fa-user"></i>Edit Profile</a></li>
+      <li class="nav-item"><a href="{{ url_for_security('logout') }}"><i class="fa fa-sign-out"></i>Logout</a></li>
     </ul>
     {% else %}
     <ul class="navbar-menu">
