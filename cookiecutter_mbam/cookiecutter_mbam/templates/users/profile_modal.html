@@ -25,13 +25,13 @@
                   {% if action == "edit" %}
                     <div class="btn-section mt-4">
                         <button type="submit" class="btn btn-primary create-btn float-right">Save</button>
-                        <a class="btn btn-outline-secondary" href="{{ url_for('public.home') }}">Cancel</a>
+                         <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cancel</button>
                         
                     </div>
                   {% else %}
                     <div class="btn-section mt-4">
                         <button type="submit" class="btn btn-primary create-btn float-right">Create</button>
-                        <a class="btn btn-outline-secondary" href="{{ url_for('public.home') }}">Skip</a>
+                        <a class="btn btn-outline-secondary" data-dismiss="modal">Skip</a>
                     </div>
                   {% endif %}
 

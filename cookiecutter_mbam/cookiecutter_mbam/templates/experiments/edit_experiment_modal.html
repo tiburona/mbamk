@@ -17,8 +17,10 @@
                 {{ render_field_with_errors(session_form.date, class='form-control') }}
                 {{ render_field_with_errors(session_form.scanner, class='form-control') }}
                 {{ render_field_with_errors(session_form.field_strength, class='form-control') }}
-                <button type="submit" class="btn btn-success submit-button">Save</button>
-                <button type="button" class="btn btn-primary start-over" onclick="return false;">Cancel</button>
+                <div class="btn-section mt-4">
+                    <button type="submit" class="btn btn-success submit-button float-right">Save</button>
+                    <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cancel</button>
+                </div>
               </form>
 
             </div>
