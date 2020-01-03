@@ -13,7 +13,25 @@ blueprint = Blueprint('public', __name__, static_folder='../static')
 @blueprint.route('/')
 def home():
     """ Home page. """
-    return render_template('public/home.html', profile_form=None)
+    if current_user.is_authenticated:
+        if current_user.sex or current_user.dob or current_user.first_name or current_user.last_name:
+            action="edit"
+        else:
+            action="create"
+
+        form=ProfileForm(obj=current_user)
+        if form.validate_on_submit():
+            form.populate_obj(current_user)
+            current_user.save()
+            flash('User profile saved.','success')
+            return redirect(url_for('public.home'))
+        else:
+            flash_errors(form)
+    else:
+        form=None
+        action=None
+
+    return render_template('public/home.html', profile_form=form, action=action)
 
 @blueprint.route('/FAQ')
 def FAQ():
@@ -43,7 +61,7 @@ def contact():
         # Come back to this and complete. Write or use function for sending email
         flash('Message sent. Thank you for contacting us.','success')
         return redirect(url_for('public.home'))
-        
+
     return render_template('public/contact.html',contact_form=form)
 
 # Uncomment below when set up up blogging app

@@ -24,7 +24,6 @@
                 <p class="btn-ca"><a class="btn btn-large btn-y" href="{{ url_for( 'experiment.add' ) }}" role="button"><i class="fa fa-upload" aria-hidden="true"></i> Upload my scan</a></p>
             {% else %}
                 <p>Click below to view your scans or complete a survey.</p>
-
                 <p>
                     <a class="btn btn-primary btn-large" href="" role="button"><i class="fa fa-eye" aria-hidden="true"></i> My scans</a>
                     <a class="btn btn-primary btn-large" href="" role="button"><i class="fa fa-pencil-square" aria-hidden="true"></i> My surveys</a>
@@ -44,7 +43,7 @@
 <section role="intro">
 
     <article class="container">
-      
+
       <div class="feature">
 
           <div class="row key-features">
@@ -206,9 +205,9 @@
 </section>
 </div>
 
-
-
-
+{% if current_user.is_authenticated %}
+  {% include "users/profile_modal.html" %}
+{% endif %}
 
 
 {% endblock %}
