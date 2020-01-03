@@ -3,25 +3,24 @@ version: '3'
 services:
  web:
    restart: always
-   build: ../../cookiecutter_mbam
+   build: ./cookiecutter_mbam
    image: mbam_web
    environment:
      - "PYTHONUNBUFFERED=1"
    volumes:
      - user-data:/app/static/files
-     - assets-data:/app/cookiecutter_mbam/static/build
-     - static-data:/app/cookiecutter_mbam/static
-   command: bash -c "cp .docker_env .env && npm run build && flask db upgrade && flask run"
+     - assets-data:/app/static/build
+     - static-data:/app/static
+   command: python ./dev_tools/start.py --flask --env docker --config_dir dev_tools
    depends_on:
      - jatos
    environment:
-    CONFIG_NAME: 'docker'
     XNAT_HOST: ${XNAT_HOST}
     XNAT_USER: ${XNAT_USER}
     XNAT_PASSWORD: ${XNAT_PASSWORD}
     XNAT_PROJECT: ${XNAT_PROJECT}
     DOCKER_HOST: ${XNAT_DOCKER_HOST}
-    DICOM_TO_NIFTI_COMMAND: ${DICOM_TO_NIFTI_TRANSFER_COMMAND_ID}
+    DICOM_TO_NIFTI_COMMAND: ${DICOM_TO_NIFTI_COMMAND}
     CLOUDFRONT_PRIVATE_KEY: ${CLOUDFRONT_PRIVATE_KEY}
     AWS_KEY_ID: ${AWS_KEY_ID}
     AWS_SECRET_KEY: ${AWS_SECRET_KEY}
@@ -34,8 +33,6 @@ services:
     - "9000"
    volumes:
     - jatos-data:/opt/docker
-   # env_file:
-   #  - .env
 
  nginx:
    restart: always
@@ -48,14 +45,14 @@ services:
      - "443:443"
    volumes:
      - user-data:/app/static/files
-     - assets-data:/app/cookiecutter_mbam/static/build
-     - static-data:/app/cookiecutter_mbam/static
+     - assets-data:/app/static/build
+     - static-data:/app/static
    depends_on:
      - web
 
  redis:
    image: 'redis:5.0.3-alpine'
-   command: redis-server
+   command: python ./dev_tools/start.py --redis --env docker
    volumes:
     - 'redis-data:/data'
    ports:
@@ -63,7 +60,7 @@ services:
 
  celery:
    image: mbam_web
-   command: bash -c "celery -A cookiecutter_mbam.run_celery:celery worker --pool=gevent --concurrency=500 --loglevel info"
+   command: python ./dev_tools/start.py --celery --env docker
    volumes:
      - user-data:/app/static/files
    links:

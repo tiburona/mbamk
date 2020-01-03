@@ -2,6 +2,7 @@ import os
 import argparse
 import subprocess
 import threading
+import shlex
 from colorama import init, Fore
 
 init(autoreset=True)
@@ -25,18 +26,46 @@ def execute(cmd, label, color, npm=False):
             line = getattr(Fore, color) + '{}'.format(label) + Fore.RESET + ' ' + line
 
 @thread
-def start_celery(dir, npm=False):
+def start_threaded_celery(dir, npm=False):
     execute('cd {}; celery -A cookiecutter_mbam.run_celery:celery worker --pool=gevent --concurrency=500 --loglevel '
             'info'.format(dir), 'CELERY', 'GREEN', npm=npm)
 
 @thread
-def start_redis(npm=False):
+def start_threaded_redis(npm=False):
     execute('redis-server', 'REDIS', 'BLUE', npm=npm)
 
 
+def run_command(command_string):
+    command = shlex.split(command_string)
+    subprocess.run(command, check=True)
+
+def start_celery(dir, npm=False, docker=False):
+    if docker:
+        run_command('celery -A cookiecutter_mbam.run_celery:celery worker --pool=gevent --concurrency=500 --loglevel '
+                    'info')
+    else:
+        start_threaded_celery(dir, npm)
+
+def start_redis(dir, npm=False, docker=False):
+    if docker:
+        run_command('redis-server')
+    else:
+        start_threaded_redis
+
+
 @thread
-def start_flask(dir, npm=False):
+def start_threaded_flask(dir, npm=False):
     execute('cd {}; flask run'.format(dir), 'FLASK', 'RED', npm=npm)
+
+def start_flask(dir, npm=False, docker=False):
+    if docker:
+        run_command('npm run build')
+        run_command('flask db upgrade')
+        run_command('flask run')
+    else:
+        start_threaded_flask(dir, npm=npm)
+
+
 
 
 if __name__ == '__main__':
@@ -84,7 +113,7 @@ if __name__ == '__main__':
             {
                 'default': 'trusted',
                 'help': "The type of environment. Determines whether to retrieve credentials from the parameter store.",
-                'choices': ['local', 'trusted']
+                'choices': ['local', 'trusted', 'docker']
 
             }
         ),
@@ -126,6 +155,13 @@ if __name__ == '__main__':
                 'help': 'XNAT instance'
             }
         )
+        (
+            ['--docker'],
+            {
+                'choices': ['local', 'remote'],
+                'help': 'If intending to start the app with docker-compose'
+            }
+        )
     ]
 
     for args, kwargs in args_to_add:
@@ -151,13 +187,15 @@ if __name__ == '__main__':
         set_env_vars(**kwargs)
 
     if args.celery:
-        start_celery(args.celery_dir, npm=args.npm)
+        start_celery(args.celery_dir, npm=args.npm, docker=args.env == 'docker')
 
     if args.redis:
-        start_redis(npm=args.npm)
+        start_redis(npm=args.npm, docker=args.env == 'docker')
 
     if args.flask:
-        start_flask(args.celery_dir, npm=args.npm)
+        start_flask(args.celery_dir, npm=args.npm, docker = args.env == 'docker')
+
+
 
 
 

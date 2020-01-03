@@ -73,7 +73,7 @@ def set_config(config_path, config_name, xnat):
 
 def set_env_vars(dir='.', secrets=True, config=True, env='trusted', xnat='mind', params_to_fetch=parameters_to_fetch):
 
-    if env == 'trusted':
+    if env in ['trusted', 'docker']:
         if secrets:
 
             config_type, result = set_secrets(os.path.join(dir, 'credentials', 'secrets.yml'), params_to_fetch, xnat)
