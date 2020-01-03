@@ -1,0 +1,29 @@
+<!-- Edit user starts here -->
+<div class="modal fade user-modal" id="editScanModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+
+                  <h3 class="modal-title">Edit Label Title</h3>
+                   <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+            </div>
+            <div class="modal-body">
+
+              <form method="POST" action="{{ url_for('scan.edit_scan', id=1) }}" enctype="multipart/form-data" role="form">
+              {% from "security/_macros.html" import render_field, render_field_with_errors %}
+              {{ scan_form.hidden_tag() }}
+              {{ render_field_with_errors(scan_form.label, class='form-control') }}
+              <button type="submit" class="btn btn-success custom-width">Update</button>
+              <a href="{{ url_for('display.displays') }}" class="btn btn-primary">Cancel</a>
+            </form>
+
+            </div>
+
+            <!-- <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss = "modal">Close</button>
+            </div> -->
+        </div>
+    </div>
+</div>
