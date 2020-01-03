@@ -3,9 +3,9 @@
 
 env=$1
 
-cp -r ./docker/* ../
+cp -r ./build/docker/* .
 
-cp ./docker/web/Dockerfile ../
+cp ./build/docker/web/Dockerfile .
 
 if ["$env" == "test"]; then
     sudo /etc/init.d/apache2 stop
@@ -19,11 +19,11 @@ fi
 dockerDirs=(jatos, mysql, nginx, web)
 for dir in "${dockerDirs[@]}"
 do
-    rm -rf ../"${dir}"
+    rm -rf ./"${dir}"
 done
 
 
-rm ../docker-compose*yml
+rm ./docker-compose*yml
 
 
 
