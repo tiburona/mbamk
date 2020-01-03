@@ -5,6 +5,9 @@ from flask_security import current_user, login_required
 from cookiecutter_mbam.utils.error_utils import flash_errors
 from cookiecutter_mbam.scan.models import Scan
 from .service import DisplayService
+from cookiecutter_mbam.experiment.forms import ExperimentForm
+from cookiecutter_mbam.scan.forms import EditScanForm
+
 
 def debug():
     assert current_app.debug == False, "Don't panic! You're here by request of debug()"
@@ -28,10 +31,13 @@ def displays():
     """ List all displays available for this user. """
     # For now list and pass the scans that have a aws_orig_key until
     # derivation is updated
+    session_form=ExperimentForm()
+    scan_form=EditScanForm()
+
     dis = DisplayService(user=current_user).get_user_scans()
     #dis = DisplayService(user=current_user).get_user_experiments()
     #debug()
-    return render_template('displays/displays.html', displays=dis)
+    return render_template('displays/displays.html', displays=dis, session_form=session_form, scan_form=scan_form)
 
 @blueprint.route('/scan/<scan_id>/slice_view',methods=['GET'])
 @login_required

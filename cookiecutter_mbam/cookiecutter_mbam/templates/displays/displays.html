@@ -24,11 +24,11 @@
         {% endif %}
         <tr>
             {% if scan.experiment_id not in exp_id_list %}
-              <td>{{ scan.parent_experiment.date }}  <a data-toggle= "modal" data-target="#editDateModal" href="{{ url_for('experiment.edit_experiment', id=scan.experiment_id) }}"><i class="fa fa-edit" aria-hidden="true"></i></a></td>
+              <td>{{ scan.parent_experiment.date }}  <a data-toggle= "modal" data-target="#editSessionModal" data-id=scan.experiment_id"><i class="fa fa-edit" aria-hidden="true"></i></a></td>
             {% else %}
               <td></td>
             {% endif %}
-            <td>{{ scan.label }} <a data-toggle= "modal" data-target="#editLabelModal" href="{{ url_for('scan.edit_scan', id=scan.id) }}"><i class="fa fa-edit" aria-hidden="true"></i><a/></td>
+            <td>{{ scan.label }} <a data-toggle= "modal" data-target="#editScanModal" data-id=scan.id }}"><i class="fa fa-edit" aria-hidden="true"></i><a/></td>
             <td>
                  <span><a href="{{ url_for('display.slice_view',scan_id=scan.id) }}">View</a></span>
             </td>
@@ -45,59 +45,9 @@
     </div>
 
     <!-- add the edit session form -->
-    <!-- <div id="container"></div>
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
-    <script>
-      $(function() {
-        $('#container').load('edit_experiment_model.html');
-      });
-    </script> -->
-    <!-- end the edit session form -->
-    <!-- Edit profile starts here -->
-    <div class="modal fade user-modal" id="editDateModal">
-        <div class="modal-dialog">
-            <div class="modal-content"> 
-                <div class="modal-header">
-                  
-                      <h3 class="modal-title">Edit Date</h3>
-                       <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                </div>
-                <div class="modal-body">
-                
-                  <!-- form goes here -->
+    {% include "experiments/edit_experiment_modal.html" %}
+    <!-- end the edit scan form -->
+    {% include "scans/edit_scan_modal.html" %}
 
-                </div>
-                
-                <!-- <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-dismiss = "modal">Close</button>
-                </div> -->
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade user-modal" id="editLabelModal">
-        <div class="modal-dialog">
-            <div class="modal-content"> 
-                <div class="modal-header">
-                  
-                      <h3 class="modal-title">Edit Label Title</h3>
-                       <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                </div>
-                <div class="modal-body">
-                
-                  <!-- form goes here -->
-
-                </div>
-                
-                <!-- <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-dismiss = "modal">Close</button>
-                </div> -->
-            </div>
-        </div>
-    </div>
 
 {% endblock %}
