@@ -23,14 +23,15 @@
                   {{ render_field_with_errors(profile_form.dob, class_='form-control') }}
 
                   {% if action == "edit" %}
-                    <div class="btn-section">
-                        <button type="submit" class="btn btn-primary create-btn">Save</button>
-                        <a href="{{ url_for('public.home') }}">Cancel</a>
+                    <div class="btn-section mt-4">
+                        <button type="submit" class="btn btn-primary create-btn float-right">Save</button>
+                        <a class="btn btn-outline-secondary" href="{{ url_for('public.home') }}">Cancel</a>
+                        
                     </div>
                   {% else %}
-                    <div class="btn-section">
-                        <button type="submit" class="btn btn-primary create-btn">Create</button>
-                        <a href="{{ url_for('public.home') }}">Skip</a>
+                    <div class="btn-section mt-4">
+                        <button type="submit" class="btn btn-primary create-btn float-right">Create</button>
+                        <a class="btn btn-outline-secondary" href="{{ url_for('public.home') }}">Skip</a>
                     </div>
                   {% endif %}
 
