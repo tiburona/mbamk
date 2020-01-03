@@ -56,4 +56,4 @@ def edit_scan(id):
     else:
         flash_errors(form)
 
-    return render_template('scans/edit_scan.html',session_form=form, scan=scan)
+    return render_template('scans/edit_scan.html',scan_form=form, scan=scan)

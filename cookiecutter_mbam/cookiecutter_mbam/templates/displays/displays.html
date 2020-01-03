@@ -24,11 +24,19 @@
         {% endif %}
         <tr>
             {% if scan.experiment_id not in exp_id_list %}
-              <td>{{ scan.parent_experiment.date }}  <a data-toggle= "modal" data-target="#editSessionModal" data-id=scan.experiment_id"><i class="fa fa-edit" aria-hidden="true"></i></a></td>
+              <td>{{ scan.parent_experiment.date }}
+                <!-- Uncomment below line, and comment 2nd line to use the modal version of the form -->
+                <!-- <a data-toggle="modal" data-target="#editSessionModal" data-id="{{ scan.experiment_id }}"> -->
+                <a href="{{ url_for('experiment.edit_experiment', id=scan.experiment_id) }}">
+                <i class="fa fa-edit" aria-hidden="true"></i></a></td>
             {% else %}
               <td></td>
             {% endif %}
-            <td>{{ scan.label }} <a data-toggle= "modal" data-target="#editScanModal" data-id=scan.id }}"><i class="fa fa-edit" aria-hidden="true"></i><a/></td>
+            <td>{{ scan.label }}
+              <!-- Uncomment below line, and comment 2nd line to use the modal version of the form --> 
+              <!-- <a data-toggle= "modal" data-target="#editScanModal" data-id="{{ scan.id }}"> -->
+              <a href="{{ url_for('scan.edit_scan', id=scan.id) }}">
+                <i class="fa fa-edit" aria-hidden="true"></i><a/></td>
             <td>
                  <span><a href="{{ url_for('display.slice_view',scan_id=scan.id) }}">View</a></span>
             </td>

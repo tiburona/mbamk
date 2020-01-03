@@ -5,8 +5,8 @@
   <h4 class="mt-5">Edit Scan Metadata</h4>
       <form method="POST" action="{{ url_for('scan.edit_scan', id=scan.id) }}" enctype="multipart/form-data" role="form">
       {% from "security/_macros.html" import render_field, render_field_with_errors %}
-      {{ session_form.hidden_tag() }}
-      {{ render_field_with_errors(session_form.label, class='form-control') }}
+      {{ scan_form.hidden_tag() }}
+      {{ render_field_with_errors(scan_form.label, class='form-control') }}
       <button type="submit" class="btn btn-success custom-width">Update</button>
       <a href="{{ url_for('display.displays') }}" class="btn btn-primary">Cancel</a>
       </form>

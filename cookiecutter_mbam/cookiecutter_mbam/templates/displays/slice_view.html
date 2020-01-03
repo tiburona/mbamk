@@ -7,7 +7,11 @@
 
     <div class="container-narrow">
          <p class="go-b"><a href="{{ url_for('display.displays') }}"><i class="fa fa-arrow-left pr-2"></i>Go to menu</a></p>
-        <h4 class="mt-5 mb-3">{{ scan.label }} <a data-toggle= "modal" data-target="#editScanModal" href="{{ url_for('scan.edit_scan', id=scan.id) }}"><i class="fa fa-edit" aria-hidden="true"></i></a></h4>
+        <h4 class="mt-5 mb-3">{{ scan.label }}
+          <!-- Uncomment below line, and comment 2nd line to use the modal version of the form -->
+          <!-- <a data-toggle= "modal" data-target="#editScanModal" href="{{ url_for('scan.edit_scan', id=scan.id) }}"> -->
+          <a href="{{ url_for('scan.edit_scan', id=scan.id) }}">
+            <i class="fa fa-edit" aria-hidden="true"></i></a></h4>
 
         <div class="papaya" data-params="params"></div>
     </div>
