@@ -1,7 +1,10 @@
 {% extends "layout.html" %}
 {% block content %}
-    <div class="container-narrow container-displays">
-        <h4 class="mt-5">These are your available displays.</h4>
+
+<section role="content-uni-wrapper">
+    <div class="container">
+      <div class="container-displays">
+        <h4>These are your available displays.</h4>
 
         <table>
         <thead>
@@ -51,12 +54,15 @@
         </tbody>
 
         </table>
+      </div>
     </div>
+</section>
 
     <!-- add the edit session form -->
     {% include "experiments/edit_experiment_modal.html" %}
     <!-- add the edit scan form -->
     {% include "scans/edit_scan_modal.html" %}
+
 
 
 {% endblock %}

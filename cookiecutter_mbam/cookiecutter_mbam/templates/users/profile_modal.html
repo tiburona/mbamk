@@ -13,7 +13,6 @@
                   </button>
             </div>
             <div class="modal-body">
-              <div class="form-wrapper">
               {% from "security/_macros.html" import render_field, render_field_with_errors %}
               <form id="profileForm" method="POST" action="{{ url_for( 'user.profile' ) }}" role="form">
                   {{ profile_form.hidden_tag() }}
@@ -35,12 +34,7 @@
                     </div>
                   {% endif %}
 
-            </form>
-        </div>
-
-
-              <!-- form goes here -->
-
+              </form>
             </div>
 
             <!-- <div class="modal-footer">
