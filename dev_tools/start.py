@@ -66,7 +66,8 @@ def start_flask(dir, npm=False, docker=False):
         start_threaded_flask(dir, npm=npm)
 
 
-
+def run_tests():
+    run_command('flask test')
 
 if __name__ == '__main__':
 
@@ -87,6 +88,10 @@ if __name__ == '__main__':
                 'default': '.'
             }
         ),
+        (
+            ['--cookiecutter_dir'],
+
+        )
         (
             ['--noconfig'],
             {
@@ -113,7 +118,7 @@ if __name__ == '__main__':
             {
                 'default': 'trusted',
                 'help': "The type of environment. Determines whether to retrieve credentials from the parameter store.",
-                'choices': ['local', 'trusted', 'docker']
+                'choices': ['local', 'trusted', 'docker', 'test']
 
             }
         ),
@@ -194,6 +199,10 @@ if __name__ == '__main__':
 
     if args.flask:
         start_flask(args.celery_dir, npm=args.npm, docker = args.env == 'docker')
+
+    if args.env == 'test':
+        run_tests()
+
 
 
 
