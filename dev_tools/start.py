@@ -89,7 +89,7 @@ if __name__ == '__main__':
             }
         ),
         (
-            ['--cookiecutter_dir'],
+            ['--cookiecutter_dir']
 
         )
         (

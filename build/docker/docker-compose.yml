@@ -15,6 +15,7 @@ services:
    depends_on:
      - jatos
    environment:
+    SECRET_KEY: ${SECRET_KEY}
     XNAT_HOST: ${XNAT_HOST}
     XNAT_USER: ${XNAT_USER}
     XNAT_PASSWORD: ${XNAT_PASSWORD}
