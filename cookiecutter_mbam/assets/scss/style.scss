@@ -80,7 +80,8 @@ header[role="nav-menu"] {
 }
 
 section[role="content-uni-wrapper"]{
-	padding-top: 8rem;
+	padding-top: 10rem;
+    padding-bottom: 1rem;
 	text-align: left;
 }
 
@@ -761,12 +762,12 @@ section{
 		display: block;
 	}
 
-	.mobile-show.nav-edit-section {
-		display: flex;
+	.nav-edit-section {
+		display: grid;
 		float: right;
     	text-align: right;
     	background: #193b48;
-    	padding: 0.5rem 0rem;
+    	padding: 0.5rem 0rem 0.5rem 1rem;
     	border-radius: 4px;
 	}
 
