@@ -26,7 +26,7 @@
             {% if scan.experiment_id not in exp_id_list %}
               <td>{{ scan.parent_experiment.date }}
                 <!-- Uncomment below line, and comment 2nd line to use the modal version of the form -->
-                <!-- <a data-toggle="modal" data-target="#editSessionModal" data-id="{{ scan.experiment_id }}"> -->
+                <!--<a data-toggle="modal" data-target="#editSessionModal" data-url="{{ url_for('experiment.edit_experiment', id=scan.experiment_id) }}">-->
                 <a href="{{ url_for('experiment.edit_experiment', id=scan.experiment_id) }}">
                 <i class="fa fa-edit" aria-hidden="true"></i></a></td>
             {% else %}
@@ -34,8 +34,9 @@
             {% endif %}
             <td>{{ scan.label }}
               <!-- Uncomment below line, and comment 2nd line to use the modal version of the form -->
-              <a data-toggle= "modal" data-target="#editScanModal" data-url="{{ url_for('scan.edit_scan', id=scan.id) }}" data-obj="{{ scan }}"> 
-              <!-- <a href="{{ url_for('scan.edit_scan', id=scan.id) }}"> -->
+              <a data-toggle= "modal" data-target="#editScanModal" data-url="{{ url_for('scan.edit_scan', id=scan.id) }}"
+                 data-label="{{ scan.label }}">
+              <!--<a href="{{ url_for('scan.edit_scan', id=scan.id) }}">-->
                 <i class="fa fa-edit" aria-hidden="true"></i><a/></td>
             <td>
                  <span><a href="{{ url_for('display.slice_view',scan_id=scan.id) }}">View</a></span>
@@ -54,7 +55,7 @@
 
     <!-- add the edit session form -->
     {% include "experiments/edit_experiment_modal.html" %}
-    <!-- end the edit scan form -->
+    <!-- add the edit scan form -->
     {% include "scans/edit_scan_modal.html" %}
 
 

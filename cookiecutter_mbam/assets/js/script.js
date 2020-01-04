@@ -31,16 +31,11 @@ $(document).ready(function() {
 $('#editScanModal').on('show.bs.modal', function (event) {
   var button = $(event.relatedTarget) // Button that triggered the modal
   var url= button.data('url') // Extract info from data-* attributes
-	var obj=button.data('obj')
+	var label=button.data('label')
 
-	//$('#label').val(label)
-	// var obj = {
-	// 	"label": "OK DOES THIS WORK?"
+	$('#label').val(label)
+	// for (var key in obj) {
+	// 	$("#" + key).val(obj[key])
 	// }
-
-	for (var key in obj) {
-		$("#" + key).val(obj[key])
-	}
-
   $("#editScanForm").attr("action", url);
 })
