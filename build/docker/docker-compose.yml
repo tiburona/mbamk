@@ -3,7 +3,7 @@ version: '3'
 services:
  web:
    restart: always
-   build: ../../cookiecutter_mbam
+   build: ../..
    image: mbam_web
    environment:
      - "PYTHONUNBUFFERED=1"
