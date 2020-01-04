@@ -3,4 +3,4 @@ version: '3'
 services:
  sut:
    image: mbam_web
-   command: bash -c "flask test"
+   command: bash -c "cd cookiecutter_mbam && flask test"
