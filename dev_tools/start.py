@@ -99,7 +99,7 @@ if __name__ == '__main__':
             ['--noconfig'],
             {
                 'help': "Skip setting config",
-                'action': 'store_true',
+                'action': 'store_true'
             }
         ),
         (
