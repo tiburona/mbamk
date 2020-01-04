@@ -26,6 +26,8 @@ done
 
 
 rm ./docker-compose*yml
+rm ./test.yml
+rm ./Dockerfile
 
 
 
