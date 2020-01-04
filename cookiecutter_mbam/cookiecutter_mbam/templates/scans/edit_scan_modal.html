@@ -11,7 +11,7 @@
             </div>
             <div class="modal-body">
 
-              <form method="POST" action="{{ url_for('scan.edit_scan', id=1) }}" enctype="multipart/form-data" role="form">
+              <form method="POST" action="" enctype="multipart/form-data" role="form" id="editScanForm">
                 {% from "security/_macros.html" import render_field, render_field_with_errors %}
                 {{ scan_form.hidden_tag() }}
                 {{ render_field_with_errors(scan_form.label, class='form-control') }}

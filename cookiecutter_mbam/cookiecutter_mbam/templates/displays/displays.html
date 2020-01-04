@@ -33,9 +33,9 @@
               <td></td>
             {% endif %}
             <td>{{ scan.label }}
-              <!-- Uncomment below line, and comment 2nd line to use the modal version of the form --> 
-              <!-- <a data-toggle= "modal" data-target="#editScanModal" data-id="{{ scan.id }}"> -->
-              <a href="{{ url_for('scan.edit_scan', id=scan.id) }}">
+              <!-- Uncomment below line, and comment 2nd line to use the modal version of the form -->
+              <a data-toggle= "modal" data-target="#editScanModal" data-url="{{ url_for('scan.edit_scan', id=scan.id) }}" data-obj="{{ scan }}"> 
+              <!-- <a href="{{ url_for('scan.edit_scan', id=scan.id) }}"> -->
                 <i class="fa fa-edit" aria-hidden="true"></i><a/></td>
             <td>
                  <span><a href="{{ url_for('display.slice_view',scan_id=scan.id) }}">View</a></span>

@@ -9,7 +9,7 @@ var spiro=1;
 // 	$( this ).parent( 'li' ).addClass( 'active' );
 // });
 
-$(document).ready(function() {  
+$(document).ready(function() {
 	 if ($('#detect-this').length) {
 	    var scroll_pos = 0;
 		$(document.body).scroll(function() {
@@ -28,10 +28,19 @@ $(document).ready(function() {
 
 });
 
+$('#editScanModal').on('show.bs.modal', function (event) {
+  var button = $(event.relatedTarget) // Button that triggered the modal
+  var url= button.data('url') // Extract info from data-* attributes
+	var obj=button.data('obj')
 
+	//$('#label').val(label)
+	// var obj = {
+	// 	"label": "OK DOES THIS WORK?"
+	// }
 
+	for (var key in obj) {
+		$("#" + key).val(obj[key])
+	}
 
-
-
-
-
+  $("#editScanForm").attr("action", url);
+})
