@@ -18,16 +18,16 @@ else
     echo hello
 fi
 
-dockerDirs=(jatos mysql nginx web)
-for dir in "${dockerDirs[@]}"
-do
-    rm -rf ./"${dir}"
-done
-
-
-rm ./docker-compose*yml
-rm ./test.yml
-rm ./Dockerfile
+#dockerDirs=(jatos mysql nginx web)
+#for dir in "${dockerDirs[@]}"
+#do
+#    rm -rf ./"${dir}"
+#done
+#
+#
+#rm ./docker-compose*yml
+#rm ./test.yml
+#rm ./Dockerfile
 
 
 
