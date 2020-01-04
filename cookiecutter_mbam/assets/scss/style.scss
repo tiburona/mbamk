@@ -60,10 +60,29 @@ header[role="nav-menu"] {
 			cursor: pointer;
 		}
 	}
+
+	.nav-link.dropdown-toggle {
+		&:hover {
+			text-decoration: none !important;
+			color: #ffffffb5;
+		}
+	}
 }
 
 .navbar-nav .dropdown-menu {
 	width: 100%;
+}
+
+section[role="content-uni-wrapper"]{
+	padding-top: 8rem;
+	text-align: left;
+}
+
+section[role="content-uni-wrapper"]{
+	.section-wrapper{
+		width: 75%;
+    	margin: 1% auto 8% auto;
+	}
 }
 
 h5 {
@@ -443,6 +462,10 @@ section{
 
 		a {
 			color: #ffffff;
+			&:hover {
+				color: #ffffff;
+				text-decoration: underline;
+			}
 		}
 
 		.footer-nav {
@@ -490,6 +513,7 @@ section{
 
 .container-displays {
 	max-width: 900px;
+	margin: 0 auto;
 
 	table {
 		width: 100%;
@@ -513,41 +537,40 @@ section{
 	}
 }
 
-.container-wrapper {
-	width: 65%;
-    margin: 0 auto;
-    h3 {
-    	font-size: 1.5rem;
-    	margin-bottom: 1rem;
-    }
     .form-wrapper {
     	border: 1px solid #ccc;
 	    padding: 2rem;
 	    border-radius: 10px;
+	    max-width: 55%;
+    	margin: 0% auto 10% auto;
+	    h3 {
+	    	font-size: 1.5rem;
+	    	margin-bottom: 1rem;
+	    }
+
+	    #submit {
+	    	margin: 1rem 0 0.4rem 0;
+	    	width: 100%;
+	    	padding: 0.8rem;
+	    }
+
+	    .btn-section {
+	    	margin: 2rem 0 1rem 0;
+	    	a {
+	    		color: #484848;
+	    		padding-top: 1rem;
+	    		&:hover {
+	    			text-decoration: underline;
+	    		}
+	    	}
+
+	    }
+
+	    .create-btn {
+	    	float: right;
+	    }
     }
 
-    #submit {
-    	margin: 1rem 0 0.4rem 0;
-    	width: 100%;
-    	padding: 0.8rem;
-    }
-
-    .btn-section {
-    	margin: 2rem 0 1rem 0;
-    	a {
-    		color: #484848;
-    		padding-top: 1rem;
-    		&:hover {
-    			text-decoration: underline;
-    		}
-    	}
-
-    }
-
-    .create-btn {
-    	float: right;
-    }
-}
 
 .btn-txt {
 	float: right;
@@ -735,12 +758,21 @@ section{
 		display: flex;
 		float: right;
     	text-align: right;
+    	background: #193b48;
+    	padding: 0.5rem 0rem;
+    	border-radius: 4px;
 	}
 
 	.mobile-hide {
 		display: none;
 	}
 
+}
+
+@media (max-width: 991px) {
+	.form-wrapper {
+		max-width: 80%;
+	}
 }
 
 @media (max-width: 768px) {
@@ -793,17 +825,14 @@ section{
 	    width: 280px;
 	}
 
-	.container-wrapper {
-	    width: 85%;
-	    .form-wrapper {
-	    	padding: 2rem 1.5rem;
-	    }
 
-	    h3 {
+    .form-wrapper {
+    	padding: 2rem 1.5rem;
+    	h3 {
 	    	font-size: 1.1rem;
 	    	padding-left: 0;
 	    }
-	}
+    }
 
 	.container-narrow {
 	    margin: 20% auto 8% auto;

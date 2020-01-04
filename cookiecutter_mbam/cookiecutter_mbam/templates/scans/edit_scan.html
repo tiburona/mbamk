@@ -1,21 +1,21 @@
 {% extends "layout.html" %}
 {% block content %}
 
-<div class="container-narrow">
-      <div class="container-wrapper">
-            <div class="form-wrapper">
-                  <h3>Edit Scan Metadata</h3>
-                  <form method="POST" action="{{ url_for('scan.edit_scan', id=scan.id) }}" enctype="multipart/form-data" role="form">
-			      {% from "security/_macros.html" import render_field, render_field_with_errors %}
-			      {{ scan_form.hidden_tag() }}
-			      {{ render_field_with_errors(scan_form.label, class='form-control') }}
-			      <div class="btn-section mt-4">
-			      	<button type="submit" class="btn btn-success custom-width float-right">Update</button>
-			      	<button href="{{ url_for('display.displays') }}" class="btn btn-outline-secondary">Cancel</button>
-			      </div>
-			      </form>
-            </div>
-      </div>
-</div>
+<section role="content-uni-wrapper">
+	<div class="container">
+	    <div class="form-wrapper">
+	          <h3>Edit Scan Metadata</h3>
+	          <form method="POST" action="{{ url_for('scan.edit_scan', id=scan.id) }}" enctype="multipart/form-data" role="form">
+		      {% from "security/_macros.html" import render_field, render_field_with_errors %}
+		      {{ scan_form.hidden_tag() }}
+		      {{ render_field_with_errors(scan_form.label, class='form-control') }}
+		      <div class="btn-section mt-4">
+		      	<button type="submit" class="btn btn-success custom-width float-right">Update</button>
+		      	<button href="{{ url_for('display.displays') }}" class="btn btn-outline-secondary">Cancel</button>
+		      </div>
+		      </form>
+	    </div>
+	</div>
+</section>
 
 {% endblock %}

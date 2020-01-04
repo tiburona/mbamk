@@ -1,7 +1,10 @@
 {% extends "layout.html" %}
 {% block content %}
-    <div class="container-narrow container-displays">
-        <h4 class="mt-5">These are your available displays.</h4>
+
+<section role="content-uni-wrapper">
+    <div class="container">
+      <div class="container-displays">
+        <h4>These are your available displays.</h4>
 
         <table>
         <thead>
@@ -36,7 +39,7 @@
               <!-- Uncomment below line, and comment 2nd line to use the modal version of the form --> 
               <!-- <a data-toggle= "modal" data-target="#editScanModal" data-id="{{ scan.id }}"> -->
               <a href="{{ url_for('scan.edit_scan', id=scan.id) }}">
-                <i class="fa fa-edit" aria-hidden="true"></i><a/></td>
+                <i class="fa fa-edit" aria-hidden="true"></i></a></td>
             <td>
                  <span><a href="{{ url_for('display.slice_view',scan_id=scan.id) }}">View</a></span>
             </td>
@@ -50,12 +53,15 @@
         </tbody>
 
         </table>
+      </div>
     </div>
+</section>
 
     <!-- add the edit session form -->
     {% include "experiments/edit_experiment_modal.html" %}
     <!-- end the edit scan form -->
     {% include "scans/edit_scan_modal.html" %}
+
 
 
 {% endblock %}
