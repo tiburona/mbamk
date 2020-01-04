@@ -13,6 +13,14 @@ html, body {
     overflow-x: hidden;
 }
 
+.mobile-show{
+	display: none;
+}
+
+.mobile-hide {
+	display: block;
+}
+
 header[role="nav-menu"] {
 	position: fixed;
     top: 0;
@@ -35,9 +43,27 @@ header[role="nav-menu"] {
 	  }
 	}
 
+	.navbar-toggler {
+		margin-right: 1.2rem;
+		border-width: 2px;
+    	border-color: #ffffff80;
+	}
+
 	.navbar-dark .navbar-toggler:focus {
 		outline: none;
 	}
+
+	.navbar-dark .navbar-nav .nav-link {
+		color: #ffffff;
+		&:hover {
+			text-decoration: underline;
+			cursor: pointer;
+		}
+	}
+}
+
+.navbar-nav .dropdown-menu {
+	width: 100%;
 }
 
 h5 {
@@ -97,6 +123,10 @@ h5 {
 	  		display: block;
 			color: white;
 			padding: 5px 20px;
+	  	}
+
+	  	.fa {
+	  		padding-right: 0.5rem;
 	  	}
 	}
 }
@@ -647,6 +677,12 @@ section{
 		font-size: 13.5px;
 	}
 
+	.nav-default {
+		display: grid;
+		float: right;
+    	text-align: right;
+	}
+
 	article.container {
 	   	padding: 4% 2%;
 	}
@@ -689,6 +725,20 @@ section{
 	.modal-lg {
 	    max-width: 940px;
 	    margin-top:	8rem;
+	}
+
+	.mobile-show{
+		display: block;
+	}
+
+	.mobile-show.nav-edit-section {
+		display: flex;
+		float: right;
+    	text-align: right;
+	}
+
+	.mobile-hide {
+		display: none;
 	}
 
 }
