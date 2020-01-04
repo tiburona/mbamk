@@ -66,8 +66,8 @@ def start_flask(dir, npm=False, docker=False):
         start_threaded_flask(dir, npm=npm)
 
 
-def run_tests():
-    run_command('flask test')
+def run_tests(dir='.'):
+    subprocess.run(['cd' '{}'.format(dir), '&&', 'flask', 'test'])
 
 if __name__ == '__main__':
 
@@ -89,8 +89,11 @@ if __name__ == '__main__':
             }
         ),
         (
-            ['--cookiecutter_dir']
-
+            ['--cookiecutter_dir'],
+            {
+                'help': "Relative or absolute path to directory in which Flask is initialized",
+                'default': '.'
+            }
         )
         (
             ['--noconfig'],
@@ -201,7 +204,7 @@ if __name__ == '__main__':
         start_flask(args.celery_dir, npm=args.npm, docker = args.env == 'docker')
 
     if args.env == 'test':
-        run_tests()
+        run_tests(args.cookiecutter_dir)
 
 
 

@@ -3,4 +3,4 @@ version: '3'
 services:
  sut:
    image: mbam_web
-   command: bash -c "cd cookiecutter_mbam && flask test"
+   command: python ./dev_tools/start.py --env test --config_dir dev_tools --cookiecutter_dir cookiecutter_mbam

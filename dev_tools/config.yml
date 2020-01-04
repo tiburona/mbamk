@@ -5,6 +5,7 @@ TEST:
   WTF_CSRF_ENABLED: False
   DEBUG_TB_ENABLED: False
   PRESERVE_CONTEXT_ON_EXCEPTION: False
+  SECRET_KEY: not-so-secret-in-tests
   SECURITY_PASSWORD_SALT: not-so-secret-in-tests
   FULL_DB_URI: sqlite://
   STACK_NAME: staging
