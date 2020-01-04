@@ -47,6 +47,12 @@ header[role="nav-menu"] {
 		margin-right: 1.2rem;
 		border-width: 2px;
     	border-color: #ffffff80;
+    	padding: 0.1rem 0.5rem;
+	}
+
+	.navbar-toggler-icon {
+		width: 1.3em;
+    	height: 1.3em;
 	}
 
 	.navbar-dark .navbar-toggler:focus {
@@ -492,6 +498,7 @@ section{
 
 			p {
 				margin-right: 0;
+				font-size: 0.7rem;
 			}
 		}
 
@@ -838,6 +845,10 @@ section{
 	    margin: 20% auto 8% auto;
 	    padding: 8% 0;
 	}
+
+	footer {
+			    padding-bottom: 3rem;
+		}
 }
 
 @media (max-width: 575px) {
@@ -849,6 +860,22 @@ section{
 		}
 	}
 
+	header[role="nav-menu"] .navbar-custom {
+	    padding: 0.4rem 1rem;
+	    .navbar-brand {
+		    padding: 7px 5px;
+		}
+	}
+
+	header[role="nav-menu"] .navbar-toggler {
+		margin-right: 0;
+	    padding: 0rem 0.3rem;
+	}
+
+	.navbar-toggler-icon {
+		width: 1em;
+		height: 1em;
+	}
 
 	article.container {
 	   	padding: 4% 10%;
