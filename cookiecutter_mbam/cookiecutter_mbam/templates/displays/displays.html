@@ -14,24 +14,21 @@
           <th>View 3D</th>
         </thead>
 
-        <tbody>
 
-          <!-- initialize list to remember which sessions have been listed to avoid listing date again -->
+        <tbody>
+        <!-- initialize list to remember which sessions have been listed to avoid listing date again -->
         {% set exp_id_list = [] %}
 
         {% for scan in displays %}
-        {% if scan.experiment_id not in exp_id_list %}
-       <!--  <tr>
-          <td colspan="4"><hr/></td>
-        </tr> -->
-        {% endif %}
+
         <tr>
             {% if scan.experiment_id not in exp_id_list %}
               <td>{{ scan.parent_experiment.date }}
                 <!-- Uncomment below line, and comment 2nd line to use the modal version of the form -->
                 <!--<a data-toggle="modal" data-target="#editSessionModal" data-url="{{ url_for('experiment.edit_experiment', id=scan.experiment_id) }}">-->
                 <a href="{{ url_for('experiment.edit_experiment', id=scan.experiment_id) }}">
-                <i class="fa fa-edit" aria-hidden="true"></i></a></td>
+                <i class="fa fa-edit" aria-hidden="true"></i></a>
+              </td>
             {% else %}
               <td></td>
             {% endif %}
@@ -40,7 +37,8 @@
               <a data-toggle= "modal" data-target="#editScanModal" data-url="{{ url_for('scan.edit_scan', id=scan.id) }}"
                  data-label="{{ scan.label }}">
               <!--<a href="{{ url_for('scan.edit_scan', id=scan.id) }}">-->
-                <i class="fa fa-edit" aria-hidden="true"></i><a/></td>
+                <i class="fa fa-edit" aria-hidden="true"></i><a/>
+            </td>
             <td>
                  <span><a href="{{ url_for('display.slice_view',scan_id=scan.id) }}">View</a></span>
             </td>
@@ -49,7 +47,7 @@
             </td>
         </tr>
         <!-- increment the list of session ids -->
-        {{ exp_id_list.append(scan.experiment_id) }}
+        {{ exp_id_list.append(scan.experiment_id) or "" }}
         {% endfor %}
         </tbody>
 
