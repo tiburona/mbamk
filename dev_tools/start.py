@@ -67,7 +67,7 @@ def start_flask(dir, npm=False, docker=False):
 
 
 def run_tests(dir='.'):
-    subprocess.run(['cd' '{}'.format(dir), '&&', 'flask', 'test'])
+    subprocess.run(['cd', '{}'.format(dir), '&&', 'flask', 'test'])
 
 if __name__ == '__main__':
 
@@ -94,7 +94,7 @@ if __name__ == '__main__':
                 'help': "Relative or absolute path to directory in which Flask is initialized",
                 'default': '.'
             }
-        )
+        ),
         (
             ['--noconfig'],
             {
@@ -162,7 +162,7 @@ if __name__ == '__main__':
                 'choices': ['mind', 'backup'],
                 'help': 'XNAT instance'
             }
-        )
+        ),
         (
             ['--docker'],
             {
