@@ -3,7 +3,7 @@
 
 env=$1
 
-cp -r ./build/docker/* .
+#cp -r ./build/docker/* .
 
 cp ./build/docker/web/Dockerfile .
 
