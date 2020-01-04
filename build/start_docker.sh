@@ -5,7 +5,7 @@ env=$1
 
 #cp -r ./build/docker/* .
 
-cp ./build/docker/web/Dockerfile .
+cp ./build/docker/web/Dockerfile ../..
 
 if [ "$env" == "test" ]; then
     sudo /etc/init.d/apache2 stop
