@@ -1,74 +1,25 @@
 import os
 import argparse
-import subprocess
-import threading
-import shlex
-from colorama import init, Fore
-
-init(autoreset=True)
-
-from set_env import parameters_to_fetch, set_env_vars
-
-def thread(func):
-    def wrapper(*args, **kwargs):
-        x = threading.Thread(target=func, args=args, kwargs=kwargs)
-        x.start()
-    return wrapper
+from set_env import set_env_vars, parameters_to_fetch
+from execution import send_process
 
 
-def execute(cmd, label, color, colors=True):
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
-    while True:
-        line = proc.stdout.readline().rstrip().decode('utf-8')
-        if not line:
-            break
-        if colors:
-            line = getattr(Fore, color) + '{}'.format(label) + Fore.RESET + ' ' + line
+processes = {
+    'celery': {
+        'cmd': 'celery -A cookiecutter_mbam.run_celery:celery worker --pool=gevent --concurrency=500 --loglevel info',
+        'labels': ('CELERY', 'GREEN')
+    },
+    'redis': {
+        'cmd': 'redis-server',
+        'label': ('REDIS', 'RED')
+    },
+    'flask': {
+        'cmd': 'flask run',
+        'docker_cmds': ['npm run build', 'flask db upgrade', 'flask run'],
+        'label': ('FLASK', 'BLUE')
+    }
+}
 
-@thread
-def start_threaded_celery(dir, colors=False):
-    execute('cd {}; celery -A cookiecutter_mbam.run_celery:celery worker --pool=gevent --concurrency=500 --loglevel '
-            'info'.format(dir), 'CELERY', 'GREEN', colors=colors)
-
-@thread
-def start_threaded_redis(colors=False):
-    execute('redis-server', 'REDIS', 'BLUE', colors=colors)
-
-
-def run_command(command_string):
-    command = shlex.split(command_string)
-    subprocess.run(command, check=True)
-
-def start_celery(dir, npm=False, docker=False):
-    if docker:
-        run_command('celery -A cookiecutter_mbam.run_celery:celery worker --pool=gevent --concurrency=500 --loglevel '
-                    'info')
-    else:
-        start_threaded_celery(dir, npm)
-
-def start_redis(dir, npm=False, docker=False):
-    if docker:
-        run_command('redis-server')
-    else:
-        start_threaded_redis(colors=not npm)
-
-
-@thread
-def start_threaded_flask(dir, npm=False):
-    execute('cd {}; flask run'.format(dir), 'FLASK', 'RED', colors=not npm)
-
-def start_flask(dir, npm=False, docker=False):
-    if docker:
-        run_command('npm run build')
-        run_command('flask db upgrade')
-        run_command('flask run')
-    else:
-        start_threaded_flask(dir, npm=npm)
-
-
-def run_tests(dir='.'):
-    print("cwd is ", os.getcwd())
-    execute('cd {}; flask test'.format(dir), 'FLASK-TEST', 'CYAN', colors=False)
 
 if __name__ == '__main__':
 
@@ -90,7 +41,7 @@ if __name__ == '__main__':
             }
         ),
         (
-            ['--cookiecutter_dir'],
+            ['--flask_dir'],
             {
                 'help': "Relative or absolute path to directory in which Flask is initialized",
                 'default': '.'
@@ -165,10 +116,10 @@ if __name__ == '__main__':
             }
         ),
         (
-            ['--docker'],
+            ['-t', '--test'],
             {
-                'choices': ['local', 'remote'],
-                'help': 'If intending to start the app with docker-compose'
+                'action': 'store_true',
+                'help': 'Execute dockerized tests'
             }
         )
     ]
@@ -195,17 +146,31 @@ if __name__ == '__main__':
     except KeyError:
         set_env_vars(**kwargs)
 
-    if args.celery:
-        start_celery(args.celery_dir, npm=args.npm, docker=args.env == 'docker')
 
-    if args.redis:
-        start_redis(npm=args.npm, docker=args.env == 'docker')
+    for arg in 'flask', 'redis', 'celery':
 
-    if args.flask:
-        start_flask(args.celery_dir, npm=args.npm, docker = args.env == 'docker')
+        if getattr(args, arg):
+            # We only print color labels if we're running a local development server not through npm.
+            if args.npm or args.env in ['test', 'docker']:
+                output_labels = None
+            else:
+                output_labels = processes[arg]['labels']
 
-    if args.env == 'test':
-        run_tests(dir=args.cookiecutter_dir)
+            d = getattr(args, arg + '_dir') if hasattr(args, arg + '_dir') else '.'
+
+            # The dockerized version of Flask has several commands that must be executed, not just `flask run`
+            if args.env == 'docker' and arg == 'flask':
+                for cmd in processes['flask']['docker-cmds']:
+                    send_process(cmd, d, output_labels, docker=True)
+
+            else:
+                send_process(processes[arg]['cmd'], d, output_labels, docker=args.env == 'docker')
+
+
+    if args.test:
+        # stream_output is set to True here just to avoid calling shlex.split on a command with a semicolon in it
+        # (see the execute function for more info)
+        send_process('flask test', directory=args.flask_dir, docker=True, stream_output=True)
 
 
 
