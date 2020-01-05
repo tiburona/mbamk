@@ -16,23 +16,23 @@ def thread(func):
     return wrapper
 
 
-def execute(cmd, label, color, npm=False):
+def execute(cmd, label, color, colors=True):
     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
     while True:
         line = proc.stdout.readline().rstrip().decode('utf-8')
         if not line:
             break
-        if not npm:
+        if colors:
             line = getattr(Fore, color) + '{}'.format(label) + Fore.RESET + ' ' + line
 
 @thread
-def start_threaded_celery(dir, npm=False):
+def start_threaded_celery(dir, colors=False):
     execute('cd {}; celery -A cookiecutter_mbam.run_celery:celery worker --pool=gevent --concurrency=500 --loglevel '
-            'info'.format(dir), 'CELERY', 'GREEN', npm=npm)
+            'info'.format(dir), 'CELERY', 'GREEN', colors=colors)
 
 @thread
-def start_threaded_redis(npm=False):
-    execute('redis-server', 'REDIS', 'BLUE', npm=npm)
+def start_threaded_redis(colors=False):
+    execute('redis-server', 'REDIS', 'BLUE', colors=colors)
 
 
 def run_command(command_string):
@@ -50,12 +50,12 @@ def start_redis(dir, npm=False, docker=False):
     if docker:
         run_command('redis-server')
     else:
-        start_threaded_redis
+        start_threaded_redis(colors=not npm)
 
 
 @thread
 def start_threaded_flask(dir, npm=False):
-    execute('cd {}; flask run'.format(dir), 'FLASK', 'RED', npm=npm)
+    execute('cd {}; flask run'.format(dir), 'FLASK', 'RED', colors=not npm)
 
 def start_flask(dir, npm=False, docker=False):
     if docker:
@@ -67,7 +67,8 @@ def start_flask(dir, npm=False, docker=False):
 
 
 def run_tests(dir='.'):
-    subprocess.run(['cd', '{}'.format(dir), '&&', 'flask', 'test'])
+    print("cwd is ", os.getcwd())
+    execute('cd {}; flask test'.format(dir), 'FLASK-TEST', 'CYAN', colors=False)
 
 if __name__ == '__main__':
 
@@ -204,7 +205,7 @@ if __name__ == '__main__':
         start_flask(args.celery_dir, npm=args.npm, docker = args.env == 'docker')
 
     if args.env == 'test':
-        run_tests(args.cookiecutter_dir)
+        run_tests(dir=args.cookiecutter_dir)
 
 
 
