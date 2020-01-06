@@ -22,6 +22,7 @@ class Config:
     CACHE_TYPE = 'simple'  # Can be "memcached", "redis", etc.
     SQLALCHEMY_TRACK_MODIFICATIONS = True
     WEBPACK_MANIFEST_PATH = 'webpack/manifest.json'
+    PRESERVE_CONTEXT_ON_EXCEPTION = DEBUG
 
     # Flask security settings
     SECURITY_PASSWORD_SALT = 'super-secret-random-salt' # erm, keep out of our repo in real prod version?
@@ -33,7 +34,7 @@ class Config:
     #SECURITY_EMAIL_SENDER = '"My Brain and Me" <info@mybrainandme.org>'
     SECURITY_REGISTERABLE = True
     SECURITY_CHANGEABLE = True
-    SECURITY_POST_REGISTER_VIEW = '/users/home'
+    SECURITY_POST_REGISTER_VIEW = '/public/home'
 
     # Flask-Mail Settings
     #MAIL_USERNAME = 'testingmbam@gmail.com'

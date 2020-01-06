@@ -14,7 +14,6 @@
           <th>View 3D</th>
         </thead>
 
-
         <tbody>
         <!-- initialize list to remember which sessions have been listed to avoid listing date again -->
         {% set exp_id_list = [] %}
@@ -28,6 +27,7 @@
                 <!--<a data-toggle="modal" data-target="#editSessionModal" data-url="{{ url_for('experiment.edit_experiment', id=scan.experiment_id) }}">-->
                 <a href="{{ url_for('experiment.edit_experiment', id=scan.experiment_id) }}">
                 <i class="fa fa-edit" aria-hidden="true"></i></a>
+
               </td>
             {% else %}
               <td></td>
@@ -60,7 +60,5 @@
     {% include "experiments/edit_experiment_modal.html" %}
     <!-- add the edit scan form -->
     {% include "scans/edit_scan_modal.html" %}
-
-
 
 {% endblock %}

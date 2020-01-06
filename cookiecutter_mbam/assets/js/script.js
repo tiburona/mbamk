@@ -34,8 +34,5 @@ $('#editScanModal').on('show.bs.modal', function (event) {
 	var label=button.data('label')
 
 	$('#label').val(label)
-	// for (var key in obj) {
-	// 	$("#" + key).val(obj[key])
-	// }
   $("#editScanForm").attr("action", url);
 })

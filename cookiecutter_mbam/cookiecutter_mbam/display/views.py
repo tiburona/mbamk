@@ -14,7 +14,6 @@ def debug():
 
 blueprint = Blueprint('display', __name__, url_prefix='/displays', static_folder='../static')
 
-
 def resource_belongs_to_user(resource_type, instance_id):
     """ Verify that what the user wants to view belongs to the user
     :param resource_type class:  The Class (i.e Scan, Derivation, Experiment)
@@ -35,6 +34,8 @@ def displays():
     scan_form=EditScanForm()
 
     dis = DisplayService(user=current_user).get_user_scans()
+    print(current_user.experiments.scans)
+    print("utest")
     #dis = DisplayService(user=current_user).get_user_experiments()
     #debug()
     return render_template('displays/displays.html', displays=dis, session_form=session_form, scan_form=scan_form)

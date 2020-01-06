@@ -4,9 +4,8 @@
 
 {% block content %}
 
-<div class="container-narrow">
-    <div class="container-wrapper">
-
+<section role="content-uni-wrapper">
+    <div class="container">
         <div class="form-wrapper">
           {% if action == "edit" %}
             <h3>Edit your profile</h3>
@@ -29,13 +28,12 @@
                 {% else %}
                   <div class="btn-section">
                       <button type="submit" class="btn btn-primary create-btn">Create</button>
-                      <button type="cancel" onclick="window.location='{{ url_for('display.displays') }}';return false;" class="btn btn-outline-secondary">Skip</button>
+                      <button type="cancel" onclick="window.location='{{ url_for('public.home') }}';return false;" class="btn btn-outline-secondary">Skip</button>
                   </div>
                 {% endif %}
-
             </form>
         </div>
     </div>
-</div>
+</section>
 
 {% endblock %}

@@ -16,51 +16,51 @@ def create_test_users(app, user_datastore, db):
 
         if not user_datastore.get_user('someone@example.com'):
             user_datastore.create_user(email='someone@example.com', password='password')
+
+            Experiment.create(date=date.fromisoformat('2008-12-04'),
+                             scanner=None,
+                             field_strength=None,
+                             user_id=1,
+                             num_scans = 1,
+                             xnat_id = 'MIND02_E00612',
+                             xnat_label = '000001_MR1',
+                             scan_counter = 1)
+
+            Scan.create(xnat_status='Uploaded',
+                        aws_status='Uploaded',
+                        xnat_uri='/data/experiments/MIND02_E00612/scans/T1_01',
+                        xnat_id='T1_01',
+                        aws_key='user/1/experiment/1/scan/1/file/T1.nii.gz',
+                        experiment_id=1,
+                        user_id=1)
+
+            Experiment.create(date=date.fromisoformat('2012-05-12'),
+                             scanner=None,
+                             field_strength=None,
+                             user_id=1,
+                             num_scans = 2,
+                             xnat_id = 'MIND02_E00592',
+                             xnat_label = '000001_MR2',
+                             scan_counter = 2)
+
+            Scan.create(xnat_status='Uploaded',
+                        aws_status='Uploaded',
+                        xnat_uri='/data/experiments/MIND02_E00592/scans/T1_01',
+                        xnat_id='T1_01',
+                        aws_key='user/1/experiment/2/scan/1/file/T1.nii.gz',
+                        experiment_id=2,
+                        user_id=1)
+
+            Scan.create(xnat_status='Uploaded',
+                        aws_status='Uploaded',
+                        xnat_uri='/data/experiments/MIND02_E00592/scans/6',
+                        xnat_id='6',
+                        aws_key='user/1/experiment/2/scan/2/file/T1.nii.gz',
+                        experiment_id=2,
+                        user_id=1)
+
         if not user_datastore.get_user('admin@example.com'):
             user_datastore.create_user(email='admin@example.com', password='password')
-
-        # Add scans to the first user
-        Experiment.create(date=date.fromisoformat('2008-12-04'),
-                         scanner=None,
-                         field_strength=None,
-                         user_id=1,
-                         num_scans = 1,
-                         xnat_id = 'MIND02_E00612',
-                         xnat_label = '000001_MR1',
-                         scan_counter = 1)
-
-        Scan.create(xnat_status='Uploaded',
-                    aws_status='Uploaded',
-                    xnat_uri='/data/experiments/MIND02_E00612/scans/T1_01',
-                    xnat_id='T1_01',
-                    aws_key='user/1/experiment/1/scan/1/file/T1.nii.gz',
-                    experiment_id=1,
-                    user_id=1)
-
-        Experiment.create(date=date.fromisoformat('2012-05-12'),
-                         scanner=None,
-                         field_strength=None,
-                         user_id=1,
-                         num_scans = 2,
-                         xnat_id = 'MIND02_E00592',
-                         xnat_label = '000001_MR2',
-                         scan_counter = 2)
-
-        Scan.create(xnat_status='Uploaded',
-                    aws_status='Uploaded',
-                    xnat_uri='/data/experiments/MIND02_E00592/scans/T1_01',
-                    xnat_id='T1_01',
-                    aws_key='user/1/experiment/2/scan/1/file/T1.nii.gz',
-                    experiment_id=2,
-                    user_id=1)
-
-        Scan.create(xnat_status='Uploaded',
-                    aws_status='Uploaded',
-                    xnat_uri='/data/experiments/MIND02_E00592/scans/6',
-                    xnat_id='6',
-                    aws_key='user/1/experiment/2/scan/2/file/T1.nii.gz',
-                    experiment_id=2,
-                    user_id=1)
 
         db.session.commit()
 

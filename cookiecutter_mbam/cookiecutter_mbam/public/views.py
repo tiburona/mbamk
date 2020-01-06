@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """Public section, including homepage and signup."""
-from flask import Blueprint, flash, redirect, render_template, url_for
+from flask import Blueprint, flash, redirect, render_template, url_for, current_app
 
 from cookiecutter_mbam.utils.error_utils import flash_errors
 from flask_security import current_user

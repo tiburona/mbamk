@@ -24,7 +24,7 @@ class Experiment(SurrogatePK, Model):
     xnat_label = Column(db.String(80), nullable=True)
     xnat_uri = Column(db.String(255), nullable=True)
     user_id = reference_col('user', nullable=False)
-    scans = relationship('Scan', backref='experiment')
+    scans = relationship('Scan', backref='experiment', lazy='dynamic')
     scan_counter = Column(db.Integer(), default=0)
 
     def __init__(self, date, scanner, user_id, **kwargs):

@@ -51,7 +51,7 @@ def edit_scan(id):
     if form.validate_on_submit():
         form.populate_obj(scan) # update whatever has been changed in the form
         scan.save()
-        flash('Scan metadata updated','success')
+        flash('Scan label updated','success')
         return redirect(url_for('display.displays'))
     else:
         flash_errors(form)
