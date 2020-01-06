@@ -34,10 +34,8 @@ def displays():
     scan_form=EditScanForm()
 
     dis = DisplayService(user=current_user).get_user_scans()
-    print(current_user.experiments.scans)
-    print("utest")
-    #dis = DisplayService(user=current_user).get_user_experiments()
-    #debug()
+    print(dis)
+
     return render_template('displays/displays.html', displays=dis, session_form=session_form, scan_form=scan_form)
 
 @blueprint.route('/scan/<scan_id>/slice_view',methods=['GET'])

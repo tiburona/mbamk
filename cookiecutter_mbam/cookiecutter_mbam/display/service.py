@@ -61,12 +61,6 @@ class DisplayService(BaseService):
 
         return [scan for experiment in self.user.experiments for scan in experiment.scans if scan.aws_key != None]
 
-    def get_user_experiments(self):
-        """ Get all experiments belonging to a user that have at least one scans with an orig_aws_key
-        :param int user_id:
-        :return: list of experiment objects """
-
-        return [experiment for experiment in self.user.experiments]
 
     def _rsa_signer(self, message):
         """ Create normalized RSA signer to generate a cloudfront signer

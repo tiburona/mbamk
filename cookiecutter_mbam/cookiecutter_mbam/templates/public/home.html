@@ -19,14 +19,15 @@
         <h1>Your Neuroscience and Psychology Portal</h1>
 
         {% if current_user.is_authenticated %}
-            {% if not current_user.experiments.scans %}
+            {% if current_user.num_experiments == 0 %}
                 <p>First Visit? We will guide you through the steps</p>
                 <p class="btn-ca"><a class="btn btn-large btn-y" href="{{ url_for( 'experiment.add' ) }}" role="button"><i class="fa fa-upload" aria-hidden="true"></i> Upload my scan</a></p>
             {% else %}
-                <p>Click below to view your scans or complete a survey.</p>
+                <p>Click below to view your uploaded scans or upload a new one.</p>
                 <p>
-                    <a class="btn btn-primary btn-large" href="" role="button"><i class="fa fa-eye" aria-hidden="true"></i> My scans</a>
-                    <a class="btn btn-primary btn-large" href="" role="button"><i class="fa fa-pencil-square" aria-hidden="true"></i> My surveys</a>
+                    <p class="btn-ca"><a class="btn btn-large btn-y" href="{{ url_for('display.displays') }}" role="button"><i class="fa fa-desktop" aria-hidden="true"></i> View my scans</a></p>
+                    <p class="hype-t"><i>Would you like add another scan?<a href="{{ url_for('experiment.add') }}" role="button"> <u>Upload a scan</u></a></i></p>
+                    <!--<a class="btn btn-primary btn-large" href="" role="button"><i class="fa fa-pencil-square" aria-hidden="true"></i> My surveys</a>-->
                 </p>
             {% endif %}
         {% else %}
@@ -201,10 +202,6 @@
 
 </section>
 </div>
-
-<!-- {% if current_user.is_authenticated %}
-  {% include "users/profile_modal.html" %}
-{% endif %} -->
 
 
 {% endblock %}
