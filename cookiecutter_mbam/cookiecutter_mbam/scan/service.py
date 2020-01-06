@@ -136,8 +136,9 @@ class ScanService(BaseService):
 
     def _write_local_files(self, image_file):
         """
-        :param image_file:
-        :return:
+        :param image_file: the file object
+        :type image_file: werkzeug.datastructures.FileStorage
+        :return: None
         """
 
         self.local_dir = os.path.join(self.file_depot, str(self.scan.id))
@@ -165,7 +166,8 @@ class ScanService(BaseService):
 
         :param status_type: the attribute that will be set to error on the object
         :type status_type: str
-        :return:
+        :return: error_proc, the chain that handles errors and sets the status attribute
+        :rtype: celery.canvas._chain
         """
 
         error_proc = self._error_handler(log_message='generic_message', email_admin=True, email_user=False)
