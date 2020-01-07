@@ -11,7 +11,7 @@ services:
      - user-data:/app/static/files
      - assets-data:/app/static/build
      - static-data:/app/static
-   command: python ./dev_tools/start.py --flask --env docker --config_dir dev_tools
+   command: python ./tools/start.py --flask --env docker --config_dir config
    depends_on:
      - jatos
    environment:

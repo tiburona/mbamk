@@ -47,7 +47,7 @@ def sync_semaphore(configs):
     for var in current_vars:
         if var['name'] not in configs['TEST']:
             print("Found variable {} in Semaphore that is not in your configuration. If you would like to control its "
-                  "content add it to dev_tools/config.yml".format(var['name']))
+                  "content add it to tools/config.yml".format(var['name']))
         else:
             id = var['id']
             data = {'name': var['name'], 'content': str(configs['TEST'][var['name']])}

@@ -28,17 +28,17 @@ def thread(func):
     return wrapper
 
 
-def send_process(command, directory, output_labels=None, docker=False, stream_output=False):
-    if dir != '.':
+def send_process(command, directory, output_labels=None, thread_wrap=False, stream_output=False):
+    if directory != '.':
         command = 'cd {}; '.format(directory) + command
 
-    if docker:
-        execute(command, stream_output=stream_output)
-
-    else:
+    if thread_wrap:
 
         @thread
         def start_threaded_process():
             execute(command, stream_output=True, output_labels=output_labels)
 
         start_threaded_process()
+
+    else:
+        execute(command, stream_output=stream_output)
