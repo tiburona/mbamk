@@ -3,4 +3,4 @@ version: '3'
 services:
  sut:
    image: mbam_web
-   command: python ./tools/start.py --test --env test --config_dir tools --flask_dir cookiecutter_mbam
+   command: python ./tools/start.py --test --env test --config_dir config --flask_dir cookiecutter_mbam
