@@ -41,7 +41,7 @@ if __name__ == '__main__':
             ['--config_dir'],
         {
             'help': "Relative or absolute path to directory in which config files are stored",
-            'default': '.'
+            'default': './config'
         }
         ),
         (
