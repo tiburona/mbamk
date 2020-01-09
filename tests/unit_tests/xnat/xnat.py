@@ -6,7 +6,6 @@ import collections
 import random
 from datetime import datetime
 from cookiecutter_mbam.xnat.tasks import *
-from cookiecutter_mbam.config import config_by_name, config_name
 
 
 class TestXNATTasks:

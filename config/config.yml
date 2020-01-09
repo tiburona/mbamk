@@ -23,6 +23,8 @@ TEST:
   CLOUDFRONT_SECRET_KEY: bar
   S3_KEY_ID: baz
   S3_SECRET_KEY: foo
+  FLASK_ENV: test
+  FLASK_APP: ../autoapp.py
 
 DOCKER:
   ENV: docker

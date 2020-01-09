@@ -1,5 +1,4 @@
 import pytest
-from cookiecutter_mbam.config import config_by_name, config_name
 from cookiecutter_mbam.base.tasks import *
 import mock
 from pytest_mock import mocker

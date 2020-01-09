@@ -1,6 +1,8 @@
 import shlex
 import subprocess
 import threading
+import sys
+import os
 from colorama import init, Fore
 
 init(autoreset=True)
@@ -8,17 +10,21 @@ init(autoreset=True)
 
 def execute(cmd, stream_output=False, output_labels=None):
     if stream_output:
+
         proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
+
         while True:
-            line = proc.stdout.readline().rstrip().decode('utf-8')
-            if not line:
+            line1 = proc.stdout.readline().rstrip().decode('utf-8')
+            if not line1:
                 break
             if output_labels:
                 label, color = output_labels
-                line = getattr(Fore, color) + '{}'.format(label) + Fore.RESET + ' ' + line
+                line1 = getattr(Fore, color) + '{}'.format(label) + Fore.RESET + ' ' + line1
+            print(line1)
+
     else:
-        command = shlex.split(cmd)
-        subprocess.run(command, check=True)
+        proc = subprocess.run(cmd, capture_output=True, shell=True)
+        return proc
 
 
 def thread(func):
@@ -32,6 +38,7 @@ def send_process(command, directory, output_labels=None, thread_wrap=False, stre
     if directory != '.':
         command = 'cd {}; '.format(directory) + command
 
+
     if thread_wrap:
 
         @thread
@@ -41,4 +48,4 @@ def send_process(command, directory, output_labels=None, thread_wrap=False, stre
         start_threaded_process()
 
     else:
-        execute(command, stream_output=stream_output)
+        return execute(command, stream_output=stream_output)

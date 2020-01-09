@@ -2,6 +2,7 @@
 # with the correct environment variables.
 
 import os
+import sys
 import argparse
 from set_env import set_env_vars, parameters_to_fetch
 from execution import send_process
@@ -147,6 +148,10 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
+    if args.test and args.env != 'test':
+        print("Warning: you are running tests but you haven't sent the environment to `test`.  If this is a mistake, "
+              "include `--env test` as an argument to start.py.")
+
     kwargs = {
         'dir': args.config_dir,
         'env': args.env,
@@ -180,7 +185,7 @@ if __name__ == '__main__':
 
             # The dockerized version of Flask has several commands that must be executed, not just `flask run`
             if args.env in ['docker', 'staging'] and arg == 'flask':
-                for cmd in processes['flask']['{}-cmds'.format(args.env)]:
+                for cmd in processes['flask']['{}_cmds'.format(args.env)]:
                     send_process(cmd, d, output_labels, thread_wrap=thread_wrap)
 
             else:
@@ -188,9 +193,9 @@ if __name__ == '__main__':
 
     # Run tests
     if args.test:
-        # stream_output is set to True here just to avoid calling shlex.split on a command with a semicolon in it
-        # (see the execute function for more info)
-        send_process('flask test', directory=args.flask_dir, thread_wrap=False, stream_output=True)
+        proc = send_process('flask test', directory=args.flask_dir, thread_wrap=False)
+        print(proc.stdout)
+        sys.exit(proc.returncode)
 
     # Deploy a server
     if args.deploy:
