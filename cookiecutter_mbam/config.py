@@ -34,8 +34,14 @@ class Config:
 
     # Server
 
-    SERVER_NAME = env.str('SERVER_NAME', '0.0.0.0:8000')
+    if ENV != 'test':
+        SERVER_NAME = env.str('SERVER_NAME', '0.0.0.0:8000')
+
+    else:
+        SERVER_NAME = ''
+
     PREFERRED_URL_SCHEME = env.str('PREFFERED_URL_SCHEME', 'http')
+
 
     # Flask security
 

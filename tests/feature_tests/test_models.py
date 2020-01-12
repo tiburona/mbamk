@@ -12,11 +12,6 @@ from .factories import UserFactory
 class TestUser:
     """User tests."""
 
-    def test_we_expect_to_fail(self):
-        assert 1/0
-        assert False
-        assert 'blue' == 'green'
-
     def test_get_by_id(self):
         """Get user by ID."""
         user = User('foo@bar.com')
