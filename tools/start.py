@@ -193,9 +193,8 @@ if __name__ == '__main__':
 
     # Run tests
     if args.test:
-        proc = send_process('flask test', directory=args.flask_dir, thread_wrap=False)
-        print(proc.stdout.decode('utf-8'))
-        sys.exit(proc.returncode)
+        returncode = send_process('flask test', directory=args.flask_dir, thread_wrap=False)
+        sys.exit(returncode)
 
     # Deploy a server
     if args.deploy:

@@ -36,7 +36,6 @@ def send_process(command, directory, output_labels=None, thread_wrap=False, stre
     if directory != '.':
         command = 'cd {}; '.format(directory) + command
 
-
     if thread_wrap:
 
         @thread
