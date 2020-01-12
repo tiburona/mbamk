@@ -6,7 +6,7 @@ set -e
 
 REV_TAG=$(git describe --tags)-$(git log -1 --pretty=format:%h)
 
-cd ./cookiecutter_mbam
+cp ./build/docker/web/Dockerfile .
 
 echo "Building image..."
 docker build -t ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${IMAGE_REPO}:${REV_TAG} .

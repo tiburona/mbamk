@@ -12,7 +12,6 @@ Install recent versions of Node and pipenv.
 Next navigate to the directory where you'd like to set up your environment and run the following commands to clone the repository and install dependencies:
 
     git clone https://github.com/spiropan/mbam
-    cd mbam/cookiecutter_mbam
     pipenv install --dev
     npm install
 
@@ -55,32 +54,53 @@ Finally, check to make sure all your tables were created in MySQL:
     mysql> use brain_db
     mysql> show tables;
 
-### 3. Start the webserver
+### 3. Install Redis
 
-If you are in the mbam/cookiecutter_mbam directory, these commands will start the server:
+ See here: https://redis.io/topics/quickstart
+
+### 4. Determine your level of permissions
+
+MBAM has two kinds of local development environment, one named named 'trusted' and one named 'local'.  If you're reading this before we've open sourced the project, it's very likely you're a trusted developer.  Trusted developers can access a central set of credentials for MBAM.  Assuming you have an internet connection, there is only one set of credentials you need on your machine, the key ID/secret key pair that accesses the AWS parameter store.  Open `config/credentials/sample.secrets.yml` and enter the values you've been provided in for  `PARAMETER_STORE_KEY_ID` and `PARAMETER_STORE_SECRET_KEY`.  Change the name of the file to `secrets.yml`.  This file is in the .gitignore; of course it must never be committed to the repository.
+
+### 5. Start the webserver
+
+If you are in the mbam/cookiecutter_mbam directory, these commands will start the server if you're a trusted developer:
 
     pipenv shell
     npm start
 
+`npm start` also starts a Redis server and a Celery worker.  You will see output from Redis, Celery, and Webpack in the same terminal window.
+
 Visit http://0.0.0.0:8000 to see the welcome screen.
 
-### 4. Run Redis and Celery
+If you're not a trusted developer, you'll see a suggestion for another command you can run consistently to suppress the warning message: `npm run start-local`.
 
-MBAM depends on Redis and Celery to perform distributed tasks.  For local development, these services must be started seperately.
 
-In a new terminal window, run Redis:
+## Understanding the services used by MBAM
+
+### 1. XNAT
+
+MBAM uses XNAT, software that orchestrates neuroimaging workflows, to interface with Docker containers that process brain images.  In order to run MBAM, you must either set up your own XNAT installation or use one of the Columbia team's XNAT instances.  We have two: MIND XNAT and Backup XNAT.  If you are a trusted developer and you start the application using `npm start` by default you will be using MIND XNAT.  For more information on configuring MBAM's use of XNAT see [Advanced Configuration Options](#configuration).
+
+### 2. Celery, Redis, and Flower
+
+Celery runs MBAM's asynchronous operations.  All communications with XNAT are asynchronous processes.  Redis is the message broker and results backend for Celery. In the local development environment, the `start.py` script runs both a Redis server instance and a Celery worker with the commands
 
     redis-server
 
-And in a third terminal window, run Celery:
+and
 
     celery -A cookiecutter_mbam.run_celery:celery worker --pool=gevent --concurrency=500 --loglevel info
 
-Now you have a running local installation of MBAM that you can use for development.  (Steps 1 and 2 will not need to be repeated, but 3 and 4 must be performed every time you want to spin up the server.)
+respectively.
 
-### 5. Choose an XNAT instance
+During development you may be interested in using Flower to monitor your Celery process.
 
-MBAM uses XNAT, software that orchestrates neuroimaging workflows, to interface with Docker containers.  In order to run MBAM, you must either set up your own XNAT installation or use one of the Columbia team's XNAT instances.  We have two: MIND XNAT
+Run
+
+    flower -A cookiecutter_mbam.run_celery:celery --port=5555
+
+and visit http://0.0.0.0:5555.
 
 ## Contributing
 
@@ -88,12 +108,9 @@ Thank you for contributing to MBAM!  To contribute, please pull the latest versi
 
 ### What else you need
 
-
-
-You must have a Docker installation, either on your own computer, a remote host, or both.  Docker has two
+You must have a Docker installation, either on your own computer, a remote host, or both.
 
 When you have finished your feature or bug fix, first checkout development, pull any changes from the remote, and merge those changes into your local branches.  Be sure to resolve any merge conflicts.  Once you have an unconflicted branch, commit your work and test your branch following the steps in the next section.  If your branch passes automated and manual tests, open a PR and request review.  You should have at least one reviewer who did not contribute to the development of your branch.
-
 
 
 ## Testing MBAM
@@ -145,3 +162,22 @@ As of this writing, an MBAM user should be able to upload up to 3 scans at a tim
 Upon upload, MBAM should automatically convert DICOM files to NIFTI, if applicable, and then kick off the Freesurfer reconstruction process, which runs in a Docker container also hosted on a Columbia server.  At the end of this process MBAM should transfer the output files from the Docker container to XNAT and S3.  The MBAM database should be updated with the S3 and XNAT locations of the original uploaded scan, the NIFTI files (but only if a conversion was performed), and the Freesurfer output.
 
 Because Freesurfer reconstruction is a many-hour process in the best case, for testing purposes it is best to use a mock Freesurfer container that provides output as if Freesurfer ran.
+
+
+
+
+
+<a name="configuration"></a>
+## Advanced Configuration Options
+
+### 1. Choosing an XNAT instance
+
+MBAM uses XNAT, software that orchestrates neuroimaging workflows, to interface with Docker containers.  In order to run MBAM, you must either set up your own XNAT installation or use one of the Columbia team's XNAT instances.  We have two: MIND XNAT and Backup XNAT.  If you are a trusted developer and you start the application using `npm start` by default you will be using MIND XNAT.  If you'd like to change this you have a couple of options.
+
+ 1. Add a `.env `file to the top level directory that has five variables: `XNAT_HOST`, `XNAT_USER,`  `XNAT_PASSWORD`, `DICOM_TO_NIFTI_COMMAND`, and `FREESURFER_RECON_COMMAND`.  If you don't know the latter two values for your XNAT instance, you can figure them out In this project we conceive of `.env`files as being designed for idiosyncratic or ephemeral adjustments a developer might make to their local environment.  For this reason`.env`is included in the `.gitignore`; please don't commit it to the repo.
+
+ 2.  Invoke the project's `start.py` script directly.  This is the script that `npm start` calls to run the project.  It's found in the `tools` directory.  A list of arguments to `start.py` can be found by running `tools/start.py -h`.  One fo the arguments is `--xnat`.  As of this writing, the choices are `mind` and `backup`.  If you start the app like this
+`python tools/start.py -frc --config_dir config --xnat backup`
+you will configure it to use the backup XNAT instance.
+
+Note that any variables configured in a `.env` file have higher precedence than configuration from environment variables.

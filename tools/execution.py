@@ -1,8 +1,5 @@
-import shlex
 import subprocess
 import threading
-import sys
-import os
 from colorama import init, Fore
 
 init(autoreset=True)
@@ -24,7 +21,8 @@ def execute(cmd, stream_output=False, output_labels=None):
 
     else:
         proc = subprocess.run(cmd, capture_output=True, shell=True)
-        return proc
+        print(proc.stdout.decode('utf-8'))
+        return proc.returncode
 
 
 def thread(func):

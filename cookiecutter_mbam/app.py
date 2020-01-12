@@ -12,13 +12,13 @@ from cookiecutter_mbam.extensions import admin, cache, csrf_protect, db, debug_t
     security, webpack, mail, jsglue, basicauth
 from cookiecutter_mbam.user import User, Role
 from .hooks import create_test_users, models_committed_hooks
-from .config import Config as config
+from .config import Config
 
 from flask import current_app
 def debug():
     assert current_app.debug == False, "Don't panic! You're here by request of debug()"
 
-def create_app():
+def create_app(config=Config):
     """An application factory, as explained here: http://flask.pocoo.org/docs/patterns/appfactories/.
     :param config_object: The configuration object to use.
     """

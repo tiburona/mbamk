@@ -25,7 +25,6 @@ mbam.log
 .coverage
 .tox
 nosetests.xml
-cookiecutter_mbam/scan/.pytest_cache/
 
 # Translations
 *.mo
@@ -57,7 +56,7 @@ cookiecutter_mbam/static/build/
 cookiecutter_mbam/webpack/manifest.json
 
 
-#.env
+.env
 
 # Development database
 *.db
