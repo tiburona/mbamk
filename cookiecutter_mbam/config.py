@@ -34,12 +34,9 @@ class Config:
 
     # Server
 
-    if ENV != 'test':
-        SERVER_NAME = env.str('SERVER_NAME', '0.0.0.0:8000')
-
-    else:
-        SERVER_NAME = ''
-
+    default_server = None if ENV == 'test' else '0.0.0.0:8000'
+    
+    SERVER_NAME = env.str('SERVER_NAME', default_server)
     PREFERRED_URL_SCHEME = env.str('PREFFERED_URL_SCHEME', 'http')
 
 
