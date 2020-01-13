@@ -60,7 +60,7 @@ def set_secrets(credential_path, params_to_fetch, xnat):
         return 'LOCAL', E
 
 
-def set_config(config_path, config_name, xnat):
+def set_config(config_path, config_name, xnat, db):
     with open(config_path) as file:
         configs = yaml.safe_load(file)
         config = configs[config_name]
@@ -69,14 +69,18 @@ def set_config(config_path, config_name, xnat):
         if xnat in ['MIND', 'BACKUP']:
             for var in 'XNAT_HOST', 'DICOM_TO_NIFTI_COMMAND', 'FREESURFER_RECON_COMMAND':
                 os.environ[var] = os.environ[xnat + '_' + var]
+        if db == 'sqlite':
+            os.environ['SQLALCHEMY_DATABASE_URI'] = config['SQLITE_URI']
 
 
-def set_env_vars(dir='.', secrets=True, config=True, env='trusted', xnat='mind', params_to_fetch=parameters_to_fetch):
+def set_env_vars(directory='.', secrets=True, config=True, env='trusted', xnat='mind', db='sqlite',
+                 params_to_fetch=parameters_to_fetch):
 
     if env in ['trusted', 'docker']:
         if secrets:
 
-            config_type, result = set_secrets(os.path.join(dir, 'credentials', 'secrets.yml'), params_to_fetch, xnat)
+            config_type, result = set_secrets(os.path.join(directory, 'credentials', 'secrets.yml'),
+                                              params_to_fetch, xnat)
 
             if isinstance(result, Exception):
                 print("Received exception when fetching credentials from the parameter store.  This isn't a problem if "
@@ -88,4 +92,4 @@ def set_env_vars(dir='.', secrets=True, config=True, env='trusted', xnat='mind',
 
 
     if config:
-        set_config(os.path.join(dir, 'config.yml'), env.upper(), xnat.upper())
+        set_config(os.path.join(directory, 'config.yml'), env.upper(), xnat.upper(), db)

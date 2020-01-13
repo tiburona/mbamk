@@ -32,7 +32,7 @@ def thread(func):
     return wrapper
 
 
-def send_process(command, directory, output_labels=None, thread_wrap=False, stream_output=False):
+def send_process(command, directory='.', output_labels=None, thread_wrap=False, stream_output=False):
     if directory != '.':
         command = 'cd {}; '.format(directory) + command
 
