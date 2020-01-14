@@ -1,6 +1,8 @@
 import yaml
 import boto3
 import os
+import sqlalchemy as sqla
+from sqlalchemy.exc import OperationalError
 
 parameters_to_fetch = [
 
@@ -60,15 +62,37 @@ def set_secrets(credential_path, params_to_fetch, xnat):
         return 'LOCAL', E
 
 
+def assemble_db_uri(protocol='mysql+pymysql', db_name='brain_db', vars=['MYSQL_USER', 'MYSQL_PASSWORD', 'MYSQL_URI']):
+    db_user, db_password, db_uri = [os.environ[var] for var in vars]
+    return '{}://{}:{}@{}/{}'.format(protocol, db_user, db_password, db_uri, db_name)
+
+def database_exists(uri):
+    db = sqla.create_engine(uri)
+    try:
+        db.connect()
+        return True
+    except (OperationalError, RuntimeError) as e:
+        return False
+    else:
+        raise e
+
+
 def set_config(config_path, config_name, xnat, db):
     with open(config_path) as file:
         configs = yaml.safe_load(file)
         config = configs[config_name]
         for var in config:
             os.environ[var] = str(config[var])
+
         if xnat in ['MIND', 'BACKUP']:
             for var in 'XNAT_HOST', 'DICOM_TO_NIFTI_COMMAND', 'FREESURFER_RECON_COMMAND':
                 os.environ[var] = os.environ[xnat + '_' + var]
+
+        if db == 'mysql' and not database_exists(assemble_db_uri()):
+            db = 'sqlite'
+            print("WARNING: No MySQL instance found. Switching to an SQLite database.  You can suppress this message in"
+                  "the future by running start.py with the `--database sqlite` option.")
+
         if db == 'sqlite':
             os.environ['SQLALCHEMY_DATABASE_URI'] = config['SQLITE_URI']
 

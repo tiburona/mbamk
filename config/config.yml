@@ -25,6 +25,9 @@ TEST:
   FLASK_ENV: test
   FLASK_APP: ../autoapp.py
   SQLITE_URI: sqlite:////tmp/dev.db
+  MYSQL_USER: mbam
+  MYSQL_URI: localhost
+  MYSQL_PASSWORD: mbam123
 
 DOCKER:
   ENV: docker
@@ -68,7 +71,7 @@ TRUSTED:
   MIND_FREESURFER_RECON_COMMAND: 37
   MIND_XNAT_PROJECT: MBAM_TEST_KS
   BACKUP_DICOM_TO_NIFTI_COMMAND: 1
-  BACKUP_DICOM_TO_NIFTI_COMMAND: 2
+  BACKUP_FREESURFER_RECON_COMMAND: 2
   MIND_XNAT_HOST: https://mind-xnat.nyspi.org
   BACUP_XNAT_HOST: http://10.20.205.246:8080/
   AWS_DEFAULT_REGION: us-east-1
@@ -76,6 +79,10 @@ TRUSTED:
   FLASK_APP: autoapp.py
   FLASK_RUN_PORT: 8000
   FLASK_RUN_HOST: 0.0.0.0
+  SQLITE_URI: sqlite:////tmp/dev.db
+  MYSQL_USER: mbam
+  MYSQL_URI: localhost
+  MYSQL_PASSWORD: mbam123
 
 LOCAL:
   ENV: local
@@ -85,6 +92,10 @@ LOCAL:
   FLASK_RUN_PORT: 8000
   FLASK_RUN_HOST: 0.0.0.0
   SECURITY_PASSWORD_SALT: not_so_secret_salt
+  SQLITE_URI: sqlite:////tmp/dev.db
+  MYSQL_USER: mbam
+  MYSQL_URI: localhost
+  MYSQL_PASSWORD: mbam123
 
 
 

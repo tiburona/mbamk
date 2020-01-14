@@ -172,23 +172,17 @@ if __name__ == '__main__':
         build_environment(reset=True, **kwargs)
         send_process(args.command)
 
-
-
     if command == 'run':
-
-
-
-
-
-
-
-        try:
-            os.environ['FLASK_APP']
-            if args.reset:
-                set_env_vars(**kwargs)
-
-        except KeyError:
-            set_env_vars(**kwargs)
+        kwargs = {
+            'directory': args.config_dir,
+            'env': args.env,
+            'xnat': args.xnat,
+            'config': not args.noconfig,
+            'secrets': not args.nosecrets,
+            'params_to_fetch': parameters_to_fetch,
+            'db': args.database,
+        }
+        build_environment(args.reset, **kwargs)
 
         # Start a process or processes
         for arg in 'flask', 'redis', 'celery':
@@ -212,12 +206,8 @@ if __name__ == '__main__':
                 else:
                     send_process(processes[arg]['cmd'], d, output_labels, thread_wrap=thread_wrap, stream_output=True)
 
-        # Deploy a server
-        if args.deploy:
-            if args.deploy == 'staging':
-                for cmd in deployments['staging']:
-                    send_process(cmd, '.', output_labels=None, thread_wrap=False)
-    
+
+
 
 
 
