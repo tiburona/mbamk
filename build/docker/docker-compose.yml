@@ -5,26 +5,15 @@ services:
    restart: always
    build: ../..
    image: mbam_web
-   environment:
-     - "PYTHONUNBUFFERED=1"
    volumes:
      - user-data:/app/static/files
      - assets-data:/app/static/build
      - static-data:/app/static
-   command: python ./tools/start.py --flask --env docker --config_dir config
+   command: python ./tools/start.py run --flask --env docker --config_dir config
    depends_on:
      - jatos
    environment:
-    XNAT_HOST: ${XNAT_HOST}
-    XNAT_USER: ${XNAT_USER}
-    XNAT_PASSWORD: ${XNAT_PASSWORD}
-    XNAT_PROJECT: ${XNAT_PROJECT}
-    DOCKER_HOST: ${XNAT_DOCKER_HOST}
-    DICOM_TO_NIFTI_COMMAND: ${DICOM_TO_NIFTI_COMMAND}
-    CLOUDFRONT_PRIVATE_KEY: ${CLOUDFRONT_PRIVATE_KEY}
-    AWS_KEY_ID: ${AWS_KEY_ID}
-    AWS_SECRET_KEY: ${AWS_SECRET_KEY}
-    AWS_S3_BUCKET: ${AWS_S3_BUCKET}
+    - "PYTHONUNBUFFERED=1"
 
  jatos:
    restart: always

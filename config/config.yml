@@ -26,7 +26,8 @@ TEST:
   FLASK_APP: ../autoapp.py
   SQLITE_URI: sqlite:////tmp/dev.db
   MYSQL_USER: mbam
-  MYSQL_URI: localhost
+  MYSQL_LOCAL_HOST: localhost
+  MYSQL_DOCKER_HOST: mysql
   MYSQL_PASSWORD: mbam123
 
 DOCKER:
@@ -81,7 +82,8 @@ TRUSTED:
   FLASK_RUN_HOST: 0.0.0.0
   SQLITE_URI: sqlite:////tmp/dev.db
   MYSQL_USER: mbam
-  MYSQL_URI: localhost
+  MYSQL_LOCAL_HOST: localhost
+  MYSQL_DOCKER_HOST: mysql
   MYSQL_PASSWORD: mbam123
 
 LOCAL:
@@ -94,7 +96,8 @@ LOCAL:
   SECURITY_PASSWORD_SALT: not_so_secret_salt
   SQLITE_URI: sqlite:////tmp/dev.db
   MYSQL_USER: mbam
-  MYSQL_URI: localhost
+  MYSQL_LOCAL_HOST: localhost
+  MYSQL_DOCKER_HOST: mysql
   MYSQL_PASSWORD: mbam123
 
 

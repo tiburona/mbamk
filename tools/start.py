@@ -119,19 +119,22 @@ run_args = [
             'help': 'XNAT instance'
         }
     ),
-    (
-        ['-d', '--database'],
-        {'default': 'mysql', 'choices': ['mysql', 'sqlite']})
+
+    (['-m', '--mysql'], {'default': 'local', 'choices': ['none', 'local', 'docker'],
+                        'help': "Determines MySQL configuration. Note that a docker container run on the developer's "
+                                "machine should use `docker`. If `none` tests will use SQLite."})
 ]
 
 
 test_args = [
-    (['-c', '--command'], {'default': 'pytest ./tests --verbose'}),
-    (['-d', '--database'], {'default': 'sqlite', 'choices': ['mysql', 'sqlite']})
+    (['-c', '--command'], {'default': 'pytest ./tests --verbose',
+                           'help': "Test command to run"}),
+    (['-m', '--mysql'], {'default': 'none', 'choices': ['none', 'local', 'docker'],
+                        'help': "Determines MySQL configuration. Note that a docker container run on the developer's "
+                                "machine should use `docker`. If `none` tests will use SQLite."})
 ]
 
-shared_args = [
-]
+shared_args = []
 
 def build_environment(reset, **kwargs):
     try:
@@ -167,7 +170,7 @@ if __name__ == '__main__':
             'config': True,
             'secrets': False,
             'params_to_fetch': parameters_to_fetch,
-            'db': args.database,
+            'mysql': args.mysql
         }
         build_environment(reset=True, **kwargs)
         send_process(args.command)
@@ -180,7 +183,7 @@ if __name__ == '__main__':
             'config': not args.noconfig,
             'secrets': not args.nosecrets,
             'params_to_fetch': parameters_to_fetch,
-            'db': args.database,
+            'mysql': args.mysql
         }
         build_environment(args.reset, **kwargs)
 
