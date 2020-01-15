@@ -66,7 +66,6 @@ def set_secrets(credential_path, params_to_fetch, xnat):
 
 def assemble_db_uri(protocol='mysql+pymysql', db_name='brain_db', vars=['MYSQL_USER', 'MYSQL_PASSWORD', 'MYSQL_HOST']):
     db_user, db_password, db_uri = [os.environ[var] for var in vars]
-    print("full db uri", '{}://{}:{}@{}/{}'.format(protocol, db_user, db_password, dgit st
     return '{}://{}:{}@{}/{}'.format(protocol, db_user, db_password, db_uri, db_name)
 
 def check_database(uri):
