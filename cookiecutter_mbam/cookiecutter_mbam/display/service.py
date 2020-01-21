@@ -43,6 +43,17 @@ class DisplayService(BaseService):
             url = self.cf_base_url + aws_key
         return url
 
+    def get_scan_label(self, scan_id):
+        """ Get user defined label for a specific scan, or set default one
+        :param int scan_id: id of the scan
+        :return: the scan label """
+
+        label = Scan.get_by_id(scan_id).label
+        if label is None:
+            label = 'Unlabeled'
+        return label
+
+
     def get_user_scans(self):
         """ Get all scans belonging to a user that also have orig_aws_key
         :param int user_id:

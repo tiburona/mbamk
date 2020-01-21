@@ -3,8 +3,8 @@
 
 from cookiecutter_mbam.database import Column, Model, SurrogatePK, db, reference_col, relationship
 from flask_sqlalchemy import event
-from cookiecutter_mbam.user import User
-from cookiecutter_mbam.scan import Scan
+from cookiecutter_mbam.user.models import User
+from cookiecutter_mbam.scan.models import Scan
 from cookiecutter_mbam.utils.model_utils import make_ins_del_listener
 
 from flask import current_app
@@ -24,13 +24,12 @@ class Experiment(SurrogatePK, Model):
     xnat_label = Column(db.String(80), nullable=True)
     xnat_uri = Column(db.String(255), nullable=True)
     user_id = reference_col('user', nullable=False)
-    scans = relationship('Scan', backref='experiment')
+    scans = relationship('Scan', backref='experiment', lazy='dynamic')
     scan_counter = Column(db.Integer(), default=0)
-
 
     def __init__(self, date, scanner, user_id, **kwargs):
         """Create instance."""
-        db.Model.__init__(self, date=date, scanner=scanner, user_id=user_id, **kwargs)
+        db.Model.__init__(self, date=date, user_id=user_id, **kwargs)
 
     def __repr__(self):
         """Represent instance as a unique string."""

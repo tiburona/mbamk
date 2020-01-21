@@ -6,8 +6,13 @@
     <link href="{{ url_for('static',filename='papaya/papaya.css') }}" rel="stylesheet">
 
     <div class="container-narrow">
-        <h4 class="mt-5">This is your brain scan.</h4>
-        <p><a href="{{ url_for('display.displays') }}">Displays menu</a></p>
+         <p class="go-b"><a href="{{ url_for('display.displays') }}"><i class="fa fa-arrow-left pr-2"></i>Go to menu</a></p>
+        <h4 class="mt-5 mb-3">{{ scan.label }}
+          <!-- Uncomment below line, and comment 2nd line to use the modal version of the form -->
+          <!--<a data-toggle= "modal" data-target="#editScanModal" data-url="{{ url_for('scan.edit_scan', id=scan.id) }}" data-label="{{ scan.label }}">-->
+          <a href="{{ url_for('scan.edit_scan', id=scan.id) }}">
+            <i class="fa fa-edit" aria-hidden="true"></i></a></h4>
+
         <div class="papaya" data-params="params"></div>
     </div>
 
@@ -16,16 +21,18 @@
     <script type="text/javascript">
         var params = [];
         params["images"] = [ "{{ url|safe }}" ];
-        params["worldSpace"] = false; // Doesn't seem to work.
-        params["smoothDisplay"] = false; // Doesn't seem to work. Can only apply when clicking Globe in top right
-        params["kioskMode"] = false;
-
+        // params["worldSpace"] = false; // Doesn't seem to work.
+        // params["smoothDisplay"] = false; // Doesn't seem to work. Can only apply when clicking Globe in top right
+        params["kioskMode"] = true;
+        // params["fullScreen"] = true;
+        params["showControls"] = true;
+        params["showControlBar"] = true;
         // Below will pull the filename along with the Cloudfront signature, but
         // it doesn't seem to work in terms of apply parameters to the image instance
         // Should fix this at some point. See Papaya docs at https://github.com/rii-mango/Papaya/wiki/Configuration
         //var filename = "{{ url|safe }}".substring("{{ url|safe}}".lastIndexOf('/')+1)
         //params[filename] = {"interpolation": false, "min": 20, "max": 200}
-
     </script>
+
 
 {% endblock %}

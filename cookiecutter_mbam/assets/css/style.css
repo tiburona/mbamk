@@ -1,20 +1,3 @@
-/* =============================================================================
-   App specific CSS file.
-   ========================================================================== */
-
-/* universal */
-
-html {
-  overflow-y: scroll;
-}
-
-body {
-  /*padding-top: 60px;*/
-}
-
-section {
-  overflow: auto;
-}
 
 textarea {
   resize: vertical;
@@ -25,12 +8,6 @@ textarea {
   max-width: 700px;
 }
 
-/* Nav Bar and Splash page*/
-.navbar-custom {
-  /*background-color: #f59ddd fucia pink */
-  background-color: #30f7ef;
-  /*height: 80px;*/
-}
 
 .btn-link {
   text-align: left;
@@ -44,22 +21,6 @@ textarea {
 
 .modal { overflow: auto !important; }
 
-/*
-.btn {
-  background-color: #8358ad; /* shade of purple can change
-} */
-
-body {
-  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
-}
-
-.navbar-brand {
-    padding-top: 25px;
-}
-
-.jumbotron {
-  background-color: #30f7ef
-}
 
 /* Welcome to My Brain and Me */
 .display-3 {

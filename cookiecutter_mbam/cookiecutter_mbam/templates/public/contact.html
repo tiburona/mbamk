@@ -4,22 +4,24 @@
 
 {% block content %}
 
-<div class = "container-narrow">
+<section role="content-uni-wrapper">
+    <div class="container">
+        <div class="form-wrapper">
+             <h3>Contact Form</h3>
 
-    <h3 class="mt-5">Contact Form</h3>
+            {% from "security/_macros.html" import render_field, render_field_with_errors %}
 
-    {% from "security/_macros.html" import render_field, render_field_with_errors %}
-
-    <form method="POST" action="{{ url_for('public.contact') }}" role="form">
-        {{ contact_form.hidden_tag() }}
-        {{ render_field_with_errors(contact_form.fullname, class_='form-control') }}
-        {{ render_field_with_errors(contact_form.email, class_='form-control') }}
-        {{ render_field_with_errors(contact_form.subject, class_='form-control') }}
-        {{ render_field_with_errors(contact_form.message, class_='form-control') }}
-        <button type="submit" class="btn btn-primary">Submit</button>
-    </form>
-
-</div>
+            <form method="POST" action="{{ url_for('public.contact') }}" role="form">
+                {{ contact_form.hidden_tag() }}
+                {{ render_field_with_errors(contact_form.fullname, class_='form-control') }}
+                {{ render_field_with_errors(contact_form.email, class_='form-control') }}
+                {{ render_field_with_errors(contact_form.subject, class_='form-control') }}
+                {{ render_field_with_errors(contact_form.message, class_='form-control') }}
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+    </div>
+</section>
 
 
 {% endblock %}

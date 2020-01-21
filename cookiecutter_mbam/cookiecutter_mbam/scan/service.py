@@ -87,6 +87,8 @@ class ScanService(BaseService):
 
         self._process_file(image_file)
 
+        self.scan.update(label=self.orig_filename)
+
         self._update_xnat_labels(xnat_labels)
 
         self.scan_info = [self.user.id, self.experiment.id, self.scan.id]
@@ -422,7 +424,6 @@ class ScanService(BaseService):
 
         return Scan.create(experiment_id=self.experiment.id, xnat_status=xnat_status, aws_status=aws_status,
                            user_id=self.experiment.user_id)
-
 
     def delete(self, scan_id, delete_from_xnat=False):
         # todo: add delete listener

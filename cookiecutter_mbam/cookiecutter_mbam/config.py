@@ -22,6 +22,7 @@ class Config:
     CACHE_TYPE = 'simple'  # Can be "memcached", "redis", etc.
     SQLALCHEMY_TRACK_MODIFICATIONS = True
     WEBPACK_MANIFEST_PATH = 'webpack/manifest.json'
+    PRESERVE_CONTEXT_ON_EXCEPTION = DEBUG
 
     # Flask security settings
     SECURITY_PASSWORD_SALT = 'super-secret-random-salt' # erm, keep out of our repo in real prod version?
@@ -33,6 +34,7 @@ class Config:
     #SECURITY_EMAIL_SENDER = '"My Brain and Me" <info@mybrainandme.org>'
     SECURITY_REGISTERABLE = True
     SECURITY_CHANGEABLE = True
+    SECURITY_POST_REGISTER_VIEW = '/'
 
     # Flask-Mail Settings
     #MAIL_USERNAME = 'testingmbam@gmail.com'
@@ -101,9 +103,9 @@ class Config:
 
 class LocalConfig(Config):
     """ Class defining configurations for local development. Config_name is 'local'. """
-    #SQLALCHEMY_DATABASE_URI = 'sqlite:////tmp/dev.db'
+    SQLALCHEMY_DATABASE_URI = 'sqlite:////tmp/dev.db'
     # Use below line instead if testing flask migratinos with local mysql installation (see MySQL section in the MBaM docs)
-    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://mbam:mbam123@localhost/brain_db'
+    # SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://mbam:mbam123@localhost/brain_db'
 
     # Default settings for Flask-Security
     SECURITY_SEND_REGISTER_EMAIL = False

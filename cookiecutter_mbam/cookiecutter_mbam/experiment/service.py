@@ -6,7 +6,7 @@ from copy import deepcopy
 from functools import reduce
 from celery import group, chain
 from cookiecutter_mbam.base import BaseService
-from cookiecutter_mbam.scan import ScanService
+from cookiecutter_mbam.scan.service import ScanService
 from cookiecutter_mbam.xnat.service import XNATConnection as XC
 from cookiecutter_mbam.config import config_by_name, config_name
 from .models import Experiment
