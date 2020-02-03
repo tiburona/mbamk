@@ -50,7 +50,8 @@ def slice_view(scan_id):
             scan=Scan.get_by_id(scan_id)
             return render_template('displays/slice_view.html', url=signed_url, scan=scan)
         except:
-            return render_template('404.html')
+            # TODO: Log this error
+            return render_template('404.html') 
     else:
         return render_template('403.html')
 
