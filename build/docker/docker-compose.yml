@@ -9,7 +9,7 @@ services:
      - user-data:/app/static/files
      - assets-data:/app/static/build
      - static-data:/app/static
-   command: python ./tools/start.py run --flask --env docker --config_dir config
+   command: python ./tools/start_mbam.py run --flask --env docker --config_dir config
    depends_on:
      - jatos
    environment:
@@ -41,7 +41,7 @@ services:
 
  redis:
    image: 'redis:5.0.3-alpine'
-   command: python ./dev_tools/start.py --redis --env docker
+   command: python ./dev_tools/start_mbam.py --redis --env docker
    volumes:
     - 'redis-data:/data'
    ports:
@@ -49,7 +49,7 @@ services:
 
  celery:
    image: mbam_web
-   command: python ./dev_tools/start.py --celery --env docker
+   command: python ./dev_tools/start_mbam.py --celery --env docker
    volumes:
      - user-data:/app/static/files
    links:

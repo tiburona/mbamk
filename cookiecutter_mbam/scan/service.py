@@ -2,7 +2,7 @@
 """Scan service.
 
 This module implements adding a scan to the database, and setting up Celery chains to upload a scan to cloud storage
-backup, upload the scan to XNAT, and start the Freesurfer recon process.
+backup, upload the scan to XNAT, and start_mbam the Freesurfer recon process.
 
 Todo: do we want to infer file type from extension?  Or use some other method?
 

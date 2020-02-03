@@ -78,13 +78,11 @@ def check_database(uri):
         # "cryptography is required for sha256_password or caching_sha2_password"
         tb = traceback.format_exc()
         return False, tb
-    else:
-        raise e
 
 
 def set_config(config_path, config_name, xnat,  **kwargs):
 
-    # Retrieve the configuratoin for the given environment
+    # Retrieve the configuration for the given environment
     with open(config_path) as file:
         configs = yaml.safe_load(file)
         config = configs[config_name]
@@ -106,14 +104,14 @@ def set_config(config_path, config_name, xnat,  **kwargs):
                       "have MYSQL_LOCAL_HOST and/or MYSQL_DOCKER_HOST set in `config.yml`. Defaulting to the dockerized "
                       "host, but if you do not have a dockerized instance of the MBAM database running, SQLite will be "
                       "automatically used.")
-                os.environ['MYSQL_HOST'] = 'localhost'
+                os.environ['MYSQL_HOST'] = 'mysql'
 
             database_exists, tb = check_database(assemble_db_uri())
 
             if not database_exists:
-                print("WARNING: No MySQL instance found. Switching to an SQLite database.  You can suppress this "
-                      "message in the future by running start.py with the `--database sqlite` option. The exception "
-                      "received was \n{}".format(tb))
+                print("WARNING: No MySQL instance found. The exception received was \n{}\n This exception was handled "
+                      "by switching to an SQLite database and is not fatal.  You can suppress this message in the "
+                      "future by running start_mbam.py with the `--database sqlite` option.  ".format(tb))
 
                 os.environ['SQLALCHEMY_DATABASE_URI'] = config['SQLITE_URI']
 
@@ -122,23 +120,23 @@ def set_config(config_path, config_name, xnat,  **kwargs):
 
 
 
-def set_env_vars(directory='.', secrets=True, config=True, env='trusted', xnat='mind', db='sqlite',
+def set_env_vars(config_dir='.', secrets=True, config=True, env='trusted', xnat='mind',
                  params_to_fetch=parameters_to_fetch, **kwargs):
 
     if env in ['trusted', 'docker']:
         if secrets:
 
-            config_type, result, tb = set_secrets(os.path.join(directory, 'credentials', 'secrets.yml'),
+            config_type, result, tb = set_secrets(os.path.join(config_dir, 'credentials', 'secrets.yml'),
                                               params_to_fetch, xnat)
 
             if isinstance(result, Exception):
                 print("Received exception when fetching credentials from the parameter store.  This isn't a problem if "
-                  "you're not intending to use MBAM credentials.  If you are running `npm start` and would like to "
-                  "suppress this message in the future, use `npm run start-local`.  The exception received was \n"
+                  "you're not intending to use MBAM credentials.  If you are running `npm start_mbam` and would like to "
+                  "suppress this message in the future, use `npm run start_mbam-local`.  The exception received was \n"
                   "{}".format(tb))
 
                 xnat = env = 'local'
 
 
     if config:
-        set_config(os.path.join(directory, 'config.yml'), env.upper(), xnat.upper(), **kwargs)
+        set_config(os.path.join(config_dir, 'config.yml'), env.upper(), xnat.upper(), **kwargs)

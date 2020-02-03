@@ -45,7 +45,6 @@ DOCKER:
   FLASK_RUN_PORT: 8000
   FLASK_RUN_HOST: 0.0.0.0
 
-
 STAGING:
   ENV: staging
   DEBUG: False
@@ -60,6 +59,8 @@ STAGING:
   AWS_DEFAULT_REGION: us-east-1
   IMAGE_REPO: mbam/flask-app
   STACK_NAME: staging
+  MYSQL_HOST: braindb-instance.clem3xtlzpyq.us-east-1.rds.amazonaws.com
+  JATOS_DB_URL: jdbc:mysql://braindb-instance.clem3xtlzpyq.us-east-1.rds.amazonaws.com/brain_db?characterEncoding=UTF-8&useSSL=false
 
 TRUSTED:
   ENV: trusted

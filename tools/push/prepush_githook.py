@@ -4,8 +4,7 @@ import git
 import sys
 from pathlib2 import Path
 from difflib import context_diff
-from . import push_config
-
+from tools.push import push_config
 
 repo_path = Path(__file__).resolve().parents[1] # return the MBAM .git directory
 
