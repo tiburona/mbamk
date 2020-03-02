@@ -5,6 +5,7 @@ from execution import send_process
 from args_and_commands import parse_args, processes, deployments, construct_kwargs
 
 def build_environment(command, args):
+    os.environ['MBAM_START_ENTRY'] = os.path.dirname(os.path.abspath( __file__ ))
     kwargs = construct_kwargs(command, args)
     try:
         os.environ['FLASK_APP']

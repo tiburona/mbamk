@@ -87,10 +87,12 @@ def set_config_from_yaml(config_path, config_name):
             config = configs[config_name]
             for var in config:
                 os.environ[var] = str(config[var])
+            return config
+
         else:
             print("Warning: {} is not a block in {}. This is likely not a problem for the config override file."
                   .format(config_name, config_path))
-        return config
+
 
 def configure_database(config, kwargs):
 
@@ -130,8 +132,10 @@ def set_config(config_path, override_config_path, config_name, xnat, **kwargs):
     config = set_config_from_yaml(config_path, config_name)
     override_config = set_config_from_yaml(override_config_path, config_name)
 
-    if 'xnat' in override_config:
-        xnat = override_config['xnat']
+    if override_config:
+        if 'xnat' in override_config:
+            xnat = override_config['xnat']
+        config.update(override_config)
 
     configure_database(config, kwargs)
     configure_xnat(xnat)

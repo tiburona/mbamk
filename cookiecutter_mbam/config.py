@@ -85,9 +85,9 @@ class Config:
     XNAT_PASSWORD = env.str('XNAT_PASSWORD', 'admin')
     XNAT_DOCKER_HOST = env.str('XNAT_DOCKER_HOST','unix:///var/run/docker.sock')
     XNAT_PROJECT = env.str('XNAT_PROJECT', 'MBAM_TEST')
-    DICOM_TO_NIFTI_COMMAND = int(env.str('DICOM_TO_NIFTI_COMMAND'), 1)
+    DICOM_TO_NIFTI_COMMAND = int(env.str('DICOM_TO_NIFTI_COMMAND', 1))
     DICOM_TO_NIFTI_WRAPPER = env.str('DICOM_TO_NIFTI_WRAPPER', 'dcm2niix-xfer')
-    FREESURFER_RECON_COMMAND = int(env.str('FREESURFER_RECON_COMMAND'), 2)
+    FREESURFER_RECON_COMMAND = int(env.str('FREESURFER_RECON_COMMAND', 2))
     FREESURFER_RECON_WRAPPER = env.str('FREESURFER_RECON_WRAPPER', 'freesurfer-recon-all-xfer')
 
 
