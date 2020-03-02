@@ -4,9 +4,10 @@
 My Brain and Me is a website that lets users upload their brain MRIs and get back an interactive visualization of their 
 own brain.
 
-##Table of Contents  
+## Table of Contents 
+  
 
-#### [Setting up an environment for local development and testing](#setting-up-an-environment-for-local-development-and-testing)  
+[**Setting up an environment for local development and testing**](#setting-up-an-environment-for-local-development-and-testing)
 1. [Install dependencies](#1-install-dependencies)  
 2. [Choose your database](#2-choose-your-database)  
 3. [Install Redis](#3-install-redis)  
@@ -14,29 +15,32 @@ own brain.
 5. [Locally install the MBAM start package](#5-locally-install-the-mbam-start-package)  
 6. [Start the webserver](#6-start-the-webserver)
     
-#### [Understanding the services used by MBAM](#understanding-the-services-used-by-mbam)
+[**Understanding the services used by MBAM**](#understanding-the-services-used-by-mbam)
 1. [XNAT](#1-xnat)
 2. [Celery, Redis, and Flower](#2-celery-redis-and-flower)
 
-#### [Contributing](#contributing)  
-- [Process](#process)
-- [What else you need](#what-else-you-need) 
-- [Database setup](#database-setup)
+[**Contributing**](#contributing)  
+1. [Process](#1-process)
+2. [What else you need](2-#what-else-you-need) 
+3. [Database setup](#2-database-setup)
+    - [MySQL Installation](#mysql-installation)
+    - [Dockerized MySQL](#dockerized-mysql)
 
-#### [Testing](#testing-mbam)
+[**Testing**](#testing)
 1. [Run automated tests in the local development environment](#1-run-automated-tests-in-the-local-development-environment)
 2. [Run automated tests in the docker environment](#2--run-automated-tests-in-the-docker-environment)
 3. [Test that migrations work](#3-test-that-migrations-work)
 4. [Manually test the website](#4-manually-test-the-website)
 
-#### [More setup and configuration options](#more-setup-and-configuration-options)
+[**More setup and configuration options**](#more-setup-and-configuration-options)
 1. [Custom configuration with config overrride](#1-custom-configuration-with-config-overrride)  
 2. [XNAT configuration](#2-xnat-configuration)
     - [Configuration variables](#configuration-variables)
     - [Setting up the VVM - preliminaries](#setting-up-the-vvm---preliminaries) 
     - [Setting up the VVM - Docker images and commands](#setting-up-the-vvm---docker-images-and-commands)
 
-#### [Deployment](#deployment)  
+[**Deployment**](#deployment)  
+1. Nothing to see here yet
 
 
 
@@ -148,7 +152,7 @@ and visit http://0.0.0.0:5555.
 
 ## Contributing
 
-### Process
+### 1. Process
 
 Thank you for contributing to MBAM!  To contribute, please pull the latest version of the `development` branch and make 
 a branch off of it.
@@ -159,7 +163,7 @@ commit your work and test your branch following the steps in the [next section](
 automated and manual tests, open a PR and request review.  You should have at least one reviewer who did not contribute to the 
 development of your branch.
 
-### What else you need
+### 2. What else you need
 
 You need a [Docker installation](https://docs.docker.com/install/), either on your own computer, a remote host, or both.
 
@@ -167,7 +171,7 @@ If you plan to make changes to database schema in your contribution than SQLite 
 files.  You need MySQL.
 
 
-### Database setup
+### 3. Database setup
 
 There are two ways to use MySQL with MBAM, either using the application installed on your 
 machine or using the dockerized version.
@@ -219,7 +223,7 @@ Finally, check to make sure all your tables were created in MySQL:
     mysql> use brain_db
     mysql> show tables;
 
-####Dockerized MySQL
+#### Dockerized MySQL
 
 [UNFINISHED]
 
