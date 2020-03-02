@@ -26,16 +26,17 @@ parameters_to_fetch = [
         ]
 
 
-def set_secrets(credential_path, params_to_fetch, xnat):
+def set_secrets(credential_path, params_to_fetch, xnat, credential_source='file'):
 
     try:
-        with open(credential_path) as file:
-            credentials = yaml.safe_load(file)
+        if credential_source == 'file':
+            with open(credential_path) as file:
+                credentials = yaml.safe_load(file)
 
-        for key in credentials:
-            for var in credentials[key]:
-                if credentials[key][var]:
-                    os.environ[var] = credentials[key][var]
+            for key in credentials:
+                for var in credentials[key]:
+                    if credentials[key][var]:
+                        os.environ[var] = credentials[key][var]
 
         aws_auth = {'aws_access_key_id': os.environ['PARAMETER_STORE_KEY_ID'],
                     'aws_secret_access_key': os.environ['PARAMETER_STORE_SECRET_KEY']}
@@ -79,45 +80,57 @@ def check_database(uri):
         tb = traceback.format_exc()
         return False, tb
 
-
-def set_config(config_path, config_name, xnat,  **kwargs):
-
-    # Retrieve the configuration for the given environment
+def set_config_from_yaml(config_path, config_name):
     with open(config_path) as file:
         configs = yaml.safe_load(file)
         config = configs[config_name]
         for var in config:
             os.environ[var] = str(config[var])
+        return config
 
-        # Configure XNAT
-        if xnat in ['MIND', 'BACKUP']:
-            for var in 'XNAT_HOST', 'DICOM_TO_NIFTI_COMMAND', 'FREESURFER_RECON_COMMAND':
-                os.environ[var] = os.environ[xnat + '_' + var]
+def configure_database(config, kwargs):
 
-        # Configure the database
-        if 'mysql' in kwargs and kwargs['mysql'] in ['local', 'docker']:
+    if 'mysql' in kwargs and kwargs['mysql'] in ['local', 'docker']:
 
-            try:
-                os.environ['MYSQL_HOST'] = config['MYSQL_' + kwargs['mysql'].upper() + '_HOST']
-            except KeyError:
-                print("WARNING: You selected a MySQL database but did not correctly configure your host. Make sure you "
-                      "have MYSQL_LOCAL_HOST and/or MYSQL_DOCKER_HOST set in `config.yml`. Defaulting to the dockerized "
-                      "host, but if you do not have a dockerized instance of the MBAM database running, SQLite will be "
-                      "automatically used.")
-                os.environ['MYSQL_HOST'] = 'mysql'
+        try:
+            os.environ['MYSQL_HOST'] = config['MYSQL_' + kwargs['mysql'].upper() + '_HOST']
+        except KeyError:
+            print("WARNING: You selected a MySQL database but did not correctly configure your host. Make sure you "
+                  "have MYSQL_LOCAL_HOST and/or MYSQL_DOCKER_HOST set in `config.yml`. Defaulting to the dockerized "
+                  "host, but if you do not have a dockerized instance of the MBAM database running, SQLite will be "
+                  "automatically used.")
+            os.environ['MYSQL_HOST'] = 'mysql'
 
-            database_exists, tb = check_database(assemble_db_uri())
+        database_exists, tb = check_database(assemble_db_uri())
 
-            if not database_exists:
-                print("WARNING: No MySQL instance found. The exception received was \n{}\n This exception was handled "
-                      "by switching to an SQLite database and is not fatal.  You can suppress this message in the "
-                      "future by running start_mbam.py with the `--database sqlite` option.  ".format(tb))
+        if not database_exists:
+            print("WARNING: No MySQL instance found. The exception received was \n{}\n This exception was handled "
+                  "by switching to an SQLite database and is not fatal.  You can suppress this message in the "
+                  "future by running start_mbam.py with the `--database sqlite` option.  ".format(tb))
 
-                os.environ['SQLALCHEMY_DATABASE_URI'] = config['SQLITE_URI']
-
-        else:
             os.environ['SQLALCHEMY_DATABASE_URI'] = config['SQLITE_URI']
 
+    else:
+        os.environ['SQLALCHEMY_DATABASE_URI'] = config['SQLITE_URI']
+
+def configure_xnat(xnat):
+    try:
+        for var in 'XNAT_HOST', 'DICOM_TO_NIFTI_COMMAND', 'FREESURFER_RECON_COMMAND':
+            os.environ[var] = os.environ[xnat + '_' + var]
+    except KeyError as e:
+        print("You've selected {} as your XNAT instance but {} is not configured.".format(xnat, var))
+
+
+def set_config(config_path, override_config_path, config_name, xnat, **kwargs):
+
+    config = set_config_from_yaml(config_path, config_name)
+    override_config = set_config_from_yaml(override_config_path, config_name)
+
+    if 'xnat' in override_config:
+        xnat = override_config['xnat']
+
+    configure_database(config, kwargs)
+    configure_xnat(xnat)
 
 
 def set_env_vars(config_dir='.', secrets=True, config=True, env='trusted', xnat='mind',
@@ -139,4 +152,5 @@ def set_env_vars(config_dir='.', secrets=True, config=True, env='trusted', xnat=
 
 
     if config:
-        set_config(os.path.join(config_dir, 'config.yml'), env.upper(), xnat.upper(), **kwargs)
+        set_config(os.path.join(config_dir, 'config.yml'), os.path.join(config_dir, 'config.override.yml'), env.upper(),
+                   xnat.upper(), **kwargs)

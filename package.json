@@ -13,7 +13,7 @@
     "start-celery": "mbam run -cn --config_dir config",
     "start-redis": "mbam run -rn --config_dir config",
     "start-flask-local": "mbam run -fn --config_dir config --env local",
-    "start-celery-local":  "mbam run -cn --config_dir config --env local",
+    "start-celery-local": "mbam run -cn --config_dir config --env local",
     "start-redis-local": "mbam run -rn --config_dir config --env local"
   },
   "repository": {

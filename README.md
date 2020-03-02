@@ -1,167 +1,384 @@
-===============================
-My Brain and Me
-===============================
 
-Cookiecutter MBAM
+# My Brain and Me
 
-Quickstart ('local' configuration)
-----------
+My Brain and Me is a website that lets users upload their brain MRIs and get back an interactive visualization of their 
+own brain.
 
-Be sure to first install recent versions of Node/NPM and pipenv (i.e. pip install pipenv).
-Then run the following commands to bootstrap your environment
+##Table of Contents
+[Setting up an environment for local development and testing](#setting-up-an-environment-for-local-development-and-testing)  
+1. [Install dependencies](#1-install-dependencies)  
+2. [Choose your database](#2-choose-your-database)  
+3. [Install Redis](#3-install-redis)  
+4. [Determine your level of permissions](#4-determine-your-level-of-permissions)  
+5. [Locally install the MBAM start package](#5-locally-install-the-mbam-start-package)  
+6. [Start the webserver](#6-start-the-webserver)
+    
+[Understanding the services used by MBAM](#understanding-the-services-used-by-mbam)
+1. [XNAT](#1-xnat)
+2. [Celery, Redis, and Flower](#2-celery-redis-and-flower)
 
-    git clone https://github.com/spiropan/mbam # To clone the master branch
-    cd mbam/cookiecutter_mbam
+[Contributing](#contributing)  
+- [Process](#process)
+- [What else you need](#what-else-you-need) 
+- [Database setup](#database-setup)
+
+[Testing](#testing-mbam)
+1. [Run automated tests in the local development environment](#1-run-automated-tests-in-the-local-development-environment)
+2. [Run automated tests in the docker environment](#2--run-automated-tests-in-the-docker-environment)
+3. [Test that migrations work](#3-test-that-migrations-work)
+4. [Manually test the website](#4-manually-test-the-website)
+
+[More setup and configuration options](#more-setup-and-configuration-options)
+1. [Custom configuration with config overrride](#1-custom-configuration-with-config-overrride)  
+2. [XNAT configuration](#2-xnat-configuration)
+    - [Configuration variables](#configuration-variables)
+    - [Setting up the VVM - preliminaries](#setting-up-the-vvm---preliminaries) 
+    - [Setting up the VVM - Docker images and commands](#setting-up-the-vvm---docker-images-and-commands)
+
+[Deployment](#deployment)  
+
+
+
+
+## Setting up an environment for local development and testing
+
+### 1. Install dependencies
+
+Install recent versions of Node and pipenv.
+
+Next navigate to the directory where you'd like to set up your environment and run the following commands to clone the repository and install dependencies:
+
+    git clone https://github.com/spiropan/mbam
     pipenv install --dev
     npm install
-    pipenv shell
-    npm start  # run the webpack dev server and flask server using concurrently
 
-If you orient your browser to http://0.0.0.0:8000 you will see a pretty welcome screen.
+### 2. Choose your database
 
-    After running the above commands the first time, to spin up the app on your machine
-    again type the below commands ::
+To get development up and running quickly, SQLite, which is installed with MBAM, is sufficient.  If during development 
+you plan to be making changes to the database tables, you will need MySQL, either locally installed or dockerized.
+For instructions on locally installing MySQL and getting it up and running with MBAM, go to 
+[Database Configuration](#1-database-installation).
 
-    cd mbam/cookiecutter_mbam
-    pipenv shell
+### 3. Install Redis
+
+ See here: https://redis.io/topics/quickstart
+
+### 4. Determine your level of permissions
+
+MBAM has two kinds of local development environment, one named named 'trusted' and one named 'local'.  If you're reading 
+this before we've open sourced the project, it's very likely you're a trusted developer.  Trusted developers can access 
+a central set of credentials for MBAM.  Assuming you have an internet connection, there is only one set of credentials 
+you need on your machine, the key ID/secret key pair that accesses the AWS parameter store.  
+
+Open `config/credentials/sample.secrets.yml` and enter the values you've been provided in for  `PARAMETER_STORE_KEY_ID` 
+and `PARAMETER_STORE_SECRET_KEY`.  Change the name of the file to `secrets.yml`.  This file is in the .gitignore; of 
+course it must never be committed to the repository.
+
+### 5. Locally install the MBAM start package
+
+As of this writing, the utility in the `tools/start` directory allows can run an MBAM development server (and its 
+tests).  It can be executed as a regular Python program, but it is also packaged to allow it to be executed as a
+standalone command line utility.  To install this package and also activate the pipenv shell, run
+
+    . env.sh install
+
+in the main directory.  After using the `install` argument once, every other time you can just run 
+
+    . env.sh
+
+
+### 6. Start the webserver
+
+If you're a trusted developer, the last command you have to run is
+
     npm start
 
-The above steps will create and write the DB to a /tmp/dev.db sqlite file. This should
-work well enough for development. Follow the steps below if you want to work with a different
-DBMS. Remember to change $DATABASE_URL in the .env included with the repo.
+`npm start` also starts a Redis server and a Celery worker.  You will see output from Redis, Celery, and Webpack in the 
+same terminal window.
 
-Once you have installed your DBMS, run the following to create your app's
-database tables and perform the initial migration.
+Visit http://0.0.0.0:8000 to see the welcome screen.
+
+If you're not a trusted developer, you'll see a suggestion for another command you can run consistently to suppress the 
+warning message: `npm run start-local`.
+
+    mbam run 
+    
+will also work.  However, as of this writing color coding works better using `npm start`.
+
+
+## Understanding the services used by MBAM
+
+### 1. XNAT
+
+MBAM uses XNAT, software that orchestrates neuroimaging workflows, to interface with Docker containers that process 
+brain images.  In order to run MBAM, you must either set up your own XNAT installation or use one of the Columbia team's 
+XNAT instances.  We have two: MIND XNAT and Backup XNAT.  If you are a trusted developer and you start the application 
+using `npm start` by default you will be using MIND XNAT.  
+
+If you are not yet a trusted developer, you will need your own instance of XNAT.  The 
+<a href="https://wiki.xnat.org/documentation/getting-started-with-xnat/running-xnat-in-a-vagrant-virtual-machine">
+one line XNAT installation</a> is a quick way of doing that. 
+
+For more information on configuring MBAM's use of XNAT, including further setup of the VVM XNAT, see 
+[More Configuration Options](#more-configuration-options).
+
+### 2. Celery, Redis, and Flower
+
+Celery runs MBAM's asynchronous operations.  All communications with XNAT are asynchronous processes.  Redis is the 
+message broker and results backend for Celery. In the local development environment, the MBAM start package runs both a 
+Redis server instance and a Celery worker with the commands
+
+    redis-server
+
+and
+
+    celery -A cookiecutter_mbam.run_celery:celery worker --pool=gevent --concurrency=500 --loglevel info
+
+respectively.
+
+During development you may be interested in using Flower to monitor your Celery process.
+
+Run
+
+    flower -A cookiecutter_mbam.run_celery:celery --port=5555
+
+and visit http://0.0.0.0:5555.
+
+
+## Contributing
+
+### Process
+
+Thank you for contributing to MBAM!  To contribute, please pull the latest version of the `development` branch and make 
+a branch off of it.
+
+When you have finished your feature or bug fix, first checkout development, pull any changes from the remote, and merge 
+those changes into your local branches.  Be sure to resolve any merge conflicts.  Once you have an unconflicted branch, 
+commit your work and test your branch following the steps in the [next section](#testing).  If your branch passes 
+automated and manual tests, open a PR and request review.  You should have at least one reviewer who did not contribute to the 
+development of your branch.
+
+### What else you need
+
+You need a [Docker installation](https://docs.docker.com/install/), either on your own computer, a remote host, or both.
+
+If you plan to make changes to database schema in your contribution than SQLite won't work when generating migration 
+files.  You need MySQL.
+
+
+### Database setup
+
+There are two ways to use MySQL with MBAM, either using the application installed on your 
+machine or using the dockerized version.
+
+A note to preemptively explain errors: if you ever install dockerized MySQL, the MBAM application seems to find and 
+connect to it at times when you think it shouldn't.  If you intend to connect to different database, make sure your 
+MySQL Docker container is not running. 
+
+ 
+
+#### MySQL Installation
+
+Install a recent version of MySQL. (As of this writing, the current version is 8.0).  If on MacOS, do this with
+
+    brew install mysql
+
+After installing MySQL, you must create the database user with the requisite permissions and create the database. Start MySQL:
+
+    brew services start mysql
+
+(If you do not have services installed, first run:
+
+`brew tap homebrew/services`
+
+Then from the mysql prompt:
+
+    mysql> CREATE USER 'mbam'@'localhost' IDENTIFIED BY 'mbam123';
+    mysql> GRANT ALL PRIVILEGES on brain_db.* TO 'mbam'@'localhost';
+    mysql> QUIT
+
+Back at your command line prompt:
+
+    mysql -u mbam -p
+
+When prompted for the password, enter `mbam123`.
+
+Create the database:
+
+    mysql>  CREATE DATABASE brain_db;
+
+Back on the command line, upgrade your new database so that it has the MBAM tables.  (You can do this from a different terminal window to avoid closing out of MySQL.  Just make sure to `cd` into mbam/cookiecutter_mbam.)
 
     flask db init
     flask db migrate
     flask db upgrade
-    npm start
+
+Finally, check to make sure all your tables were created in MySQL:
+
+    mysql> use brain_db
+    mysql> show tables;
+
+####Dockerized MySQL
+
+[UNFINISHED]
 
 
-Deployment
-----------
+## Testing
 
-The below is part of the autogenerated docs, but is left here for reference.
-These steps are implemented as part of running the dockerized version of the flask app.
-See the main README at the root directory of the repo.
+### 1. Run automated tests in the local development environment
 
-To deploy:
+From the mbam top level directory run:
 
-    export FLASK_ENV=production
-    export FLASK_DEBUG=0
-    export DATABASE_URL="<YOUR DATABASE URL>"
-    npm run build   # build assets with webpack
-    flask run       # start the flask server
+    mbam test
+    
+This will run all tests.  This command is a wrapper for Pytest, more specifically for the command 
+    
+    pytest ./tests --verbose
+    
+You can subsitute any other pytest command with 
 
-In your production environment, make sure the ``FLASK_DEBUG`` environment
-variable is unset or is set to ``0``.
+    mbam run -c <command>
+    
+For example, 
 
-
-Shell
------
-
-To open the interactive shell, run ::
-
-    flask shell
-
-By default, you will have access to the flask ``app``.
+    mbam run -c pytest ./tests --verbose
+    
+is equivalent to `mbam run`.  Using the MBAM start package will ensure the correct configuration of tests. 
 
 
-Running Tests
--------------
+### 2.  Run automated tests in the docker environment
 
-To run all tests, run ::
+MBAM must be dockerized to be deployed on Amazon servers.  To run MBAM's test in the docker environment, run
 
-    flask test
+    mbam test --docker
+    
+This command is a wrapper for 
 
-Migrations
-----------
+    docker-compose build && docker-compose -f test.yml up
 
-If you add or delete columns in the database in a models.py file, then a database migration needs to be made. Whenever a database migration needs to be made. Run the following commands ::
+### 3. Test that migrations work
 
-    flask db migrate
+Whether or not you've made changes to any of the MBAM models, you should test that you are committing a series of migration files that are continuous with the migration files in the latest version of development, that run without error, and that bring a new database up-to-date with your current models.
 
-This will generate a new migration script in cookiecutter_mbam/migrations/versions folder. Make sure to check this file and edit it manually if need be, because Alembic does not detect every change automatically. Then run ::
+In order to do this, log into MySQL again:
+
+    mysql -u mbam -p
+
+and enter the password `mbam123` at the command prompt.
+
+Then
+
+    mysql> drop database brain_db;
+    mysql> create database brain_db;
+
+Now, back at your command line in mbam/cookiecutter_mbam, run:
 
     flask db upgrade
 
-To apply the migration and change the underlying database. If this is not successful, you may need to go back and edit the migration file. When successful (and the changes are applied to your local database), then be sure to commit the alembic migration file (in cookiecutter_mbam/migrations/versions folder) to git.
+Now back at the mysql prompt:
 
-For a full migration command reference, run ``flask db --help``.
+    mysql> use database brain_db;
+    mysql> show tables;
 
-There are some catches. Flask migrate doesn't work 100% with SQLite, and contraints need to be named for upgrades and downgrades to work as expected (i.e. op.create_foreign_key('scan_user_id_fk', 'scan', 'user', ['user_id'], ['id']) instead of op.create_foreign_key(None, 'scan', 'user', ['user_id'], ['id']))
+And if you've made changes to the models and you want to make sure that this upgrade is current, you can inspect the tables individually with `show columns from <tablename>;`, for example:
 
-In addition, even if flask db upgrade works locally with mysql, it can still fail in production.
-One way this can happen is when making changes to a field if it is used as a foreign key. The type and definition of foreign key field and reference must be equal. This means your foreign key disallows changing the type of your field.
+    mysql> show columns from scan;
 
-The below example will trigger an error. Take home message, make sure to define fields properly before production, especially if they are being used as foreign keys.
+### 4. Manually test the website
 
-Revision #1
-op.add_column('scan', sa.Column('user_id', sa.Integer(), nullable=True))
+As of this writing, an MBAM user should be able to upload up to 3 scans at a time.  Those files can be in one of three 
+formats: a .zip file of DICOMS, an uncompressed NIFTI file (.nii) and a compressed NIFTI file (.nii.gz).  A user's 
+uploaded files should be saved both to an S3 bucket and to an XNAT instance.
 
-Revision #2
-op.alter_column('scan', 'user_id',
-            existing_type=mysql.INTEGER(display_width=11),
-            nullable=False)
+Upon upload, MBAM should automatically convert DICOM files to NIFTI, if applicable, and then kick off the Freesurfer 
+reconstruction process, which runs in a Docker container also hosted on a Columbia server.  At the end of this process 
+MBAM should transfer the output files from the Docker container to XNAT and S3.  The MBAM database should be updated 
+with the S3 and XNAT locations of the original uploaded scan, the NIFTI files (but only if a conversion was performed), 
+and the Freesurfer output.
 
+Because Freesurfer reconstruction is a many-hour process in the best case, for testing purposes it is best to use a mock 
+Freesurfer container that provides output as if Freesurfer ran.
 
-
-Asset Management
-----------------
-
-Files placed inside the ``assets`` directory and its subdirectories
-(excluding ``js`` and ``css``) will be copied by webpack's
-``file-loader`` into the ``static/build`` directory, with hashes of
-their contents appended to their names.  For instance, if you have the
-file ``assets/img/favicon.ico``, this will get copied into something
-like
-``static/build/img/favicon.fec40b1d14528bf9179da3b6b78079ad.ico``.
-You can then put this line into your header::
-
-    <link rel="shortcut icon" href="{{asset_url_for('img/favicon.ico') }}">
-
-to refer to it inside your HTML page.  If all of your static files are
-managed this way, then their filenames will change whenever their
-contents do, and you can ask Flask to tell web browsers that they
-should cache all your assets forever by including the following line
-in your ``settings.py``::
-
-    SEND_FILE_MAX_AGE_DEFAULT = 31556926  # one year
-
-Celery
-------
-
-In order to have the site's asynchronous functions operate with Celery you must `install Redis <https://redis.io/topics/quickstart>`_
-and invoke it with the command ``redis-server``.
-
-You also must invoke a Celery worker in a different process.  In the current development environment, this the command to do so:
-
-    celery -A cookiecutter_mbam.run_celery:celery worker --pool=gevent --concurrency=500 --loglevel info
-
-During development it might be helpful to see a graphic display of what the celery workers are up to. For this run the below command and open http://0.0.0.0:5555 in your web browser
-
-    flower -A cookiecutter_mbam.run_celery:celery --port=5555
+[UNFINISHED]
 
 
-MYSQL
------
-For 'local' development, SQLite is OK. But SQLite has too many issues when using flask db migrate (see https://github.com/miguelgrinberg/Flask-Migrate/issues/97). Therefore if you're making changes to the models.py it's better to test migrations using a local installation of MySQL.
+## More Setup and Configuration Options
 
-To do this:
+### 1. Custom configuration with config overrride
 
-  1) If on Mac OS X, install MySQL following https://gist.github.com/operatino/392614486ce4421063b9dece4dfe6c21
-    Briefly, install Homebrew, then run brew install mysql@5.7
-  2) Install MySQL Workbench (https://dev.mysql.com/downloads/workbench/)
-  3) Add below to your .bash_profile (from https://stackoverflow.com/questions/30990488/how-do-i-install-command-line-mysql-client-on-mac)
+For ephemeral or idiosyncratic configuration during development use `config/config.override.yml`.  Choose the name of 
+the config you are using, for example, `TRUSTED`, and enter your custom variables in the block underneath.  An example:
 
-     export PATH=$PATH:/Applications/MySQLWorkbench.app/Contents/MacOS
+    TRUSTED:
+        CLAUDIAS_CUSTOM_VARIABLE_1: foo
+        CLAUDIAS_CUSTOM_VARIABLE_2: 5
+        
 
-  3) Start mysql to connect to the service
-    % brew services start mysql@5.7
-    (note you may need to install services through brew first with "brew tap homebrew/services")
-  4) In terminal type 'mysql -u root' to connect to mysql, then run:
-    mysql> GRANT ALL PRIVILEGES ON *.* TO 'mbam'@'localhost' IDENTIFIED BY 'mbam123';
-    mysql> create database brain_db;
+### 2. XNAT configuration
 
-Then you should be able to connect to mysql with "mysql -u mbam -p mbam123"
+#### Configuration variables
+
+MBAM needs to know five things about any XNAT version: the XNAT host, XNAT user, XNAT password, DICOM to NIFTI command 
+ID, and the Freesurfer recon command ID.  If you want to change the default you must take an additional step to tell 
+MBAM your XNAT configuration.  You have a couple of options.
+
+1) Invoke the project's start utility directly to switch to backup XNAT.  This calls the same functions to run the
+project as `npm start`.  First run `. env.sh` if you are not already in the MBAM virtual environment, and then 
+`mbam run -h` will give you a full list of arguments.  The `--xnat` optional argument passed with `mbam run` will let 
+you switch XNATs. Right now there are only three values this parameter can take, `mind`, `backup`, and `vvm`. `mind` 
+is the default.
+
+2) Another option is to use `config/config.override.yml`. Here is an example override file:
+
+
+    TRUSTED:
+        XNAT: FRED
+        FRED_XNAT_HOST: https://my_url.net
+        FRED_DICOM_TO_NIFTI_COMMAND: 2
+        FRED_FREESURFER_RECON_COMMAND: 3
+        
+You would also put your username and password for your alternative XNAT in `config/secrets.yml`.  There you don't need 
+the config name header.  Just add:
+
+    FRED_XNAT_USER: Alice
+    FRED_XNAT_PASSWORD: my-533krit-pa55w0rd
+    
+#### Setting up the VVM - preliminaries
+
+If you are running the XNAT VVM on your local machine you have a couple more steps to take. 
+
+After following the 
+[instructions](https://wiki.xnat.org/documentation/getting-started-with-xnat/running-xnat-in-a-vagrant-virtual-machine) 
+for installation, if you haven't already done so navigate to 
+`{XNAT installation folder}/xnat-vagrant/configs/xnat-release` and run 
+
+    vagrant up
+    
+When you try to navigate to http://10.1.1.17 you may see a bad gateway error.  If you do, from the same directory run:
+
+    vagrant ssh
+    sudo service tomcat7 restart
+    
+and give it a few minutes.
+
+After you've succeeded in loading the XNAT instance, log in with username and password `admin`.  You may now experience
+an extremely repetitive timeout message that kicks you out.  This writer knows one way to deal with this.  At
+the command prompt of the virtual machine, run
+
+    sudo timedatectl set-ntp no
+    sudo timedatectl set-time "2020-03-01 14:56:00"
+    sudo timedatectl set-ntp on
+    
+ Substitute the current date and time of course.
+ 
+ #### Setting up the VVM - docker images and commands
+ 
+[UNFINISHED]
+ 
+    
+
+
+    
+
+ 
+   

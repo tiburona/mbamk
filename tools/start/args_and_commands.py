@@ -10,9 +10,12 @@ processes = {
         'label': ('REDIS', 'RED')
     },
     'flask': {
-        'cmd': 'flask run',
-        'docker_cmds': ['npm run build', 'flask db upgrade', 'flask run'],
-        'staging_cmds': ['flask db upgrade', 'flask run'],
+        'cmd': {
+            'local': ['flask run'],
+            'trusted': ['flask run'],
+            'docker': ['npm run build', 'flask db upgrade', 'flask run'],
+            'staging': ['flask db upgrade', 'flask run']
+        } ,
         'label': ('FLASK', 'BLUE')
     }
 }
@@ -36,22 +39,32 @@ run_args = [
     (['-r', '--redis'], {'action': 'store_true', 'help': "Start Redis"}),
     (['-n', '--npm'], {'action': 'store_true',
                        'help': 'script was executed by npm command'}),
-    (['-x', '--xnat'], {'default': 'mind', 'choices': ['mind', 'backup'], 'help': 'XNAT instance'})
+    (['-x', '--xnat'], {'default': 'mind', 'choices': ['mind', 'backup', 'vvm'], 'help': 'XNAT instance'})
 ]
 
 
 test_args = [
-    (['-c', '--command'], {'default': 'pytest ./tests --verbose', 'help': "Test command to run"})
+    (['-c', '--command'], {'dest':'command', 'default': 'pytest ./tests --verbose', 'nargs': '?',
+                           'const': 'pytest ./tests --verbose', 'help': "Pytest command to run"}),
+    (['-d', '--docker'], {'default': 'cd build/docker; docker-compose build && docker-compose -f test.yml up',
+                          'help':'Docker command to run', 'dest':'command', 'nargs':'?'})
 ]
 
 deploy_args = []
 
+class NegateAction(argparse.Action):
+    def __call__(self, parser, ns, values, option):
+        setattr(ns, self.dest, option[2:4] != 'no')
+
 shared_args = [
     (['--config_dir'], {'help': "Relative or absolute path to directory in which config files are stored",
                         'default': './config'}),
-    (['--noconfig'], {'help': "Skip setting config", 'action': 'store_true'}),
-    (['--nosecrets'], {'help': "Skip setting secrets", 'action': 'store_true'}),
-    (['--reset'], {'help': "Reset the environment variables even if they have been set", 'action': 'store_true'}),
+    (['--config', '--noconfig'], {'help': "Set config", 'action': NegateAction, 'dest':'config', 'nargs':'?',
+                                  'default': True}),
+    (['--secrets', '--nosecrets'], {'help': "Set secrets", 'action': NegateAction, 'dest':'secrets', 'nargs':'?',
+                                  'default': True}),
+    (['--reset', '--no-reset'], {'help': "Reset env variables even if they have been set", 'action': NegateAction,
+                                 'dest':'reset', 'nargs':'?', 'default': False}),
 ]
 
 shared_args_with_divergence = [
@@ -76,27 +89,28 @@ def parse_args():
     for cmd, help_text, sub_args in [('run', 'Run an MBAM development server.', run_args),
                                      ('test', 'Test MBAM', test_args),
                                      ('deploy', 'Deploy MBAM', deploy_args)]:
-        subparser = subparsers.add_parser(cmd, help=help_text, parents=[parent_parser])
+        sparser = subparsers.add_parser(cmd, help=help_text, parents=[parent_parser],
+                                        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+
+        if 'cmd' == 'test':
+            sparser = sparser.add_mutually_exclusive_group()
 
         for args, kwargs in sub_args:
-            subparser.add_argument(*args, **kwargs)
+            sparser.add_argument(*args, **kwargs)
 
-    for subparser in subparsers.choices:
+    for sparser in subparsers.choices:
         for args, kwargs, defaults in shared_args_with_divergence:
-            if subparser in defaults:
-                subparsers.choices[subparser].add_argument(*args, **kwargs, default=defaults[subparser])
+            if sparser in defaults:
+                subparsers.choices[sparser].add_argument(*args, **kwargs, default=defaults[sparser])
 
     return parser.parse_args()
 
 
 def construct_kwargs(command, args):
     kwargs = {}
-    for key in ['config_dir', 'env', 'xnat', 'mysql']:
+    for key in ['config_dir', 'env', 'xnat', 'mysql', 'secrets', 'config']:
         if hasattr(args, key):
             kwargs[key] = getattr(args, key)
-    for key in ['nosecrets', 'noconfig']:
-        if hasattr(args, key):
-            kwargs[key[2:]] = not getattr(args, key)
     if command == 'test':
         kwargs['env'] = 'test'
     if hasattr(args, 'env') and args.env == 'staging':

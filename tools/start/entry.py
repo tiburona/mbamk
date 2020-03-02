@@ -14,6 +14,7 @@ def build_environment(command, args):
     except KeyError:
         set_env_vars(**kwargs)
 
+
 def main():
     args = parse_args()
     command = sys.argv[1]
@@ -23,19 +24,19 @@ def main():
         send_process(args.command)
 
     if command == 'run':
-        for arg in 'flask', 'redis', 'celery':
-            if getattr(args, arg):
+        for process in 'flask', 'redis', 'celery':
+            if getattr(args, process):
                 if args.npm:
                     output_labels = None
                     thread_wrap = False
                 else:
-                    output_labels = processes[arg]['label']
+                    output_labels = processes[process]['label']
                     thread_wrap = True
 
-                d = getattr(args, arg + '_dir') if hasattr(args, arg + '_dir') else '.'
+                d = getattr(args, process + '_dir') if hasattr(args, process + '_dir') else '.'
 
-                # todo: send more than one process for, e.g., staging?
-                send_process(processes[arg]['cmd'], d, output_labels, thread_wrap=thread_wrap, stream_output=True)
+                for cmd in processes[process]['cmd'][args.env]:
+                    send_process(cmd, d, output_labels, thread_wrap=thread_wrap, stream_output=True)
 
     if command == 'deploy':
         if args.env in ['staging']:

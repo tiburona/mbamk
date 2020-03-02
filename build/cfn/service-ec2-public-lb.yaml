@@ -154,23 +154,6 @@ Resources:
               ValueFrom: !Sub
                 - ${PREPEND}/MYSQL_USERNAME
                 - { PREPEND: !Ref ParameterStore }
-            - Name: CLOUDFRONT_PRIVATE_KEY
-              ValueFrom: !Sub
-                - ${PREPEND}/CLOUDFRONT_PRIVATE_KEY
-                - { PREPEND: !Ref ParameterStore }
-            - Name: AWS_KEY_ID
-              ValueFrom: !Sub
-                - ${PREPEND}/AMAZON_KEY_ID
-                - { PREPEND: !Ref ParameterStore }
-            - Name: AWS_SECRET_KEY
-              ValueFrom: !Sub
-                - ${PREPEND}/AMAZON_SECRET_KEY
-                - { PREPEND: !Ref ParameterStore }
-            - Name: AWS_SMTP_PASSWORD
-              ValueFrom: !Sub
-                - ${PREPEND}/AMAZON_SMTP_PASSWORD
-                - { PREPEND: !Ref ParameterStore }
-
           Environment:
           # Pass the same environment variables to JATOS and MBaM app.
           - Name: CONFIG_NAME
@@ -191,15 +174,10 @@ Resources:
           # Access to XNAT
           - Name: XNAT_HOST
             Value: '{{resolve:ssm:XNAT_HOST:1}}'
-          - Name: AWS_S3_BUCKET
-            Value: '{{resolve:ssm:AMAZON_S3_BUCKET:1}}'
           # Access to Redis
           - Name: broker_url
             Value:
               Fn::ImportValue: !Sub ${EnvironmentName}:RedisEndpoint
-          # Sending email
-          - Name: AWS_SMTP_USERNAME
-            Value: '{{resolve:ssm:AMAZON_SMTP_USERNAME:1}}'
 
   # The service. The service is a resource which allows you to run multiple
   # copies of a type of task, and gather up their logs and metrics, as well
@@ -236,8 +214,6 @@ Resources:
       HealthCheckTimeoutSeconds: 5
       HealthyThresholdCount: 2
       Name: !Ref 'ServiceName'
-      Matcher:
-        HttpCode: "200,401"
       Port: 81
       Protocol: HTTP
       UnhealthyThresholdCount: 5

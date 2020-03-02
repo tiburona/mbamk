@@ -113,13 +113,13 @@ Resources:
         ContainerPort: 8000
         ContainerCpu: 256
         ContainerMemory: 384
-        ContainerCommand: "python ./tools/start.py -f -e staging"
+        ContainerCommand: "bash,-c,cp .dev_env .env && flask run"
         Path: "*"
         Priority: 2 # This must NOT be set to 1 due to downstream IF statements to check.
         HealthCheckPath: /
-        ContainerMountPoint: /app/static/files
+        ContainerMountPoint: /app/static/files # This should be same as files['files_depot'] in config.py
         HostMountPoint: /efs/mbam/user-data
-        DesiredCount: 2
+        DesiredCount: 1
         TaskRole: ""
         ExecutionRole: "arn:aws:iam::413377292493:role/ecsTaskExecutionRole"
         VolumeName: "EFSVolume"
@@ -144,12 +144,12 @@ Resources:
         ServiceName: celery
         ImageUrl: !Ref 'FlaskAppImageUrl'
         ContainerCpu: 256
-        ContainerMemory: 256
-        ContainerCommand: "python ./tools/start.py -c -e staging"
+        ContainerMemory: 384
+        ContainerCommand: "celery -A cookiecutter_mbam.run_celery:celery worker --loglevel info"
         ContainerWorkingDirectory: /app
-        ContainerMountPoint: /app/static/files
+        ContainerMountPoint: /app/static/files # This should be same as files['files_depot'] in config.py
         HostMountPoint: /efs/mbam/user-data
-        DesiredCount: 2
+        DesiredCount: 1
         TaskRole: ""
         ExecutionRole: "arn:aws:iam::413377292493:role/ecsTaskExecutionRole"
         VolumeName: "EFSVolume"

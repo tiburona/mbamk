@@ -1,4 +1,5 @@
 import logging
+import sys
 from logging.handlers import SMTPHandler
 from logging import FileHandler
 from flask import request
@@ -81,12 +82,15 @@ mail_handler = TlsSMTPHandler(
 )
 
 mail_handler.addFilter(MailFilter())
-mail_handler.setFormatter(request_and_task_formatter)
-mail_handler.setLevel(logging.ERROR)
-
 file_handler = FileHandler('./mbam.log')
-file_handler.setFormatter(request_and_task_formatter)
-file_handler.setLevel(logging.ERROR)
+stream_handler = logging.StreamHandler(sys.stdout)
+
+for handler in [mail_handler, file_handler, stream_handler]:
+    handler.setFormatter(request_and_task_formatter)
+    if handler in [mail_handler, file_handler]:
+        handler.setLevel(logging.ERROR)
+    else:
+        handler.setLevel(logging.INFO)
 
 for logger in [app_logger, celery_logger]:
     for handler in [mail_handler, file_handler]:
