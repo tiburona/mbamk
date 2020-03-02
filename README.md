@@ -4,8 +4,9 @@
 My Brain and Me is a website that lets users upload their brain MRIs and get back an interactive visualization of their 
 own brain.
 
-##Table of Contents
-[Setting up an environment for local development and testing](#setting-up-an-environment-for-local-development-and-testing)  
+##Table of Contents  
+
+#### [Setting up an environment for local development and testing](#setting-up-an-environment-for-local-development-and-testing)  
 1. [Install dependencies](#1-install-dependencies)  
 2. [Choose your database](#2-choose-your-database)  
 3. [Install Redis](#3-install-redis)  
@@ -13,29 +14,29 @@ own brain.
 5. [Locally install the MBAM start package](#5-locally-install-the-mbam-start-package)  
 6. [Start the webserver](#6-start-the-webserver)
     
-[Understanding the services used by MBAM](#understanding-the-services-used-by-mbam)
+#### [Understanding the services used by MBAM](#understanding-the-services-used-by-mbam)
 1. [XNAT](#1-xnat)
 2. [Celery, Redis, and Flower](#2-celery-redis-and-flower)
 
-[Contributing](#contributing)  
+#### [Contributing](#contributing)  
 - [Process](#process)
 - [What else you need](#what-else-you-need) 
 - [Database setup](#database-setup)
 
-[Testing](#testing-mbam)
+#### [Testing](#testing-mbam)
 1. [Run automated tests in the local development environment](#1-run-automated-tests-in-the-local-development-environment)
 2. [Run automated tests in the docker environment](#2--run-automated-tests-in-the-docker-environment)
 3. [Test that migrations work](#3-test-that-migrations-work)
 4. [Manually test the website](#4-manually-test-the-website)
 
-[More setup and configuration options](#more-setup-and-configuration-options)
+#### [More setup and configuration options](#more-setup-and-configuration-options)
 1. [Custom configuration with config overrride](#1-custom-configuration-with-config-overrride)  
 2. [XNAT configuration](#2-xnat-configuration)
     - [Configuration variables](#configuration-variables)
     - [Setting up the VVM - preliminaries](#setting-up-the-vvm---preliminaries) 
     - [Setting up the VVM - Docker images and commands](#setting-up-the-vvm---docker-images-and-commands)
 
-[Deployment](#deployment)  
+#### [Deployment](#deployment)  
 
 
 
