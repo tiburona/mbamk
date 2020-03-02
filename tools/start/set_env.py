@@ -83,7 +83,7 @@ def check_database(uri):
 def set_config_from_yaml(config_path, config_name):
     with open(config_path) as file:
         configs = yaml.safe_load(file)
-        if config_name in configs:
+        if configs and config_name in configs:
             config = configs[config_name]
             for var in config:
                 os.environ[var] = str(config[var])
