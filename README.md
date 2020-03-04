@@ -42,6 +42,9 @@ own brain.
 [**Deployment**](#deployment)  
 1. Nothing to see here yet
 
+[**Resources**](#resources)
+1. [XNAT](#1-xnat)
+
 
 
 
@@ -106,7 +109,7 @@ Visit http://0.0.0.0:8000 to see the welcome screen.
 If you're not a trusted developer, you'll see a suggestion for another command you can run consistently to suppress the 
 warning message: `npm run start-local`.
 
-    mbam run 
+    mbam run -fcr
     
 will also work.  However, as of this writing color coding works better using `npm start`.
 
@@ -117,15 +120,15 @@ will also work.  However, as of this writing color coding works better using `np
 
 MBAM uses XNAT, software that orchestrates neuroimaging workflows, to interface with Docker containers that process 
 brain images.  In order to run MBAM, you must either set up your own XNAT installation or use one of the Columbia team's 
-XNAT instances.  We have two: MIND XNAT and Backup XNAT.  If you are a trusted developer and you start the application 
+XNAT instances.  We have two: MIND XNAT (accessible at https://mind-xnat.nyspi.org/) and Backup XNAT.  If you are a trusted developer and you start the application 
 using `npm start` by default you will be using MIND XNAT.  
 
 If you are not yet a trusted developer, you will need your own instance of XNAT.  The 
-<a href="https://wiki.xnat.org/documentation/getting-started-with-xnat/running-xnat-in-a-vagrant-virtual-machine">
-one line XNAT installation</a> is a quick way of doing that. 
+[one line XNAT installation](https://wiki.xnat.org/documentation/getting-started-with-xnat/running-xnat-in-a-vagrant-virtual-machine) is a quick way of doing that. 
 
 For more information on configuring MBAM's use of XNAT, including further setup of the VVM XNAT, see 
 [More Configuration Options](#more-configuration-options).
+
 
 ### 2. Celery, Redis, and Flower
 
@@ -225,7 +228,9 @@ Finally, check to make sure all your tables were created in MySQL:
 
 #### Dockerized MySQL
 
-[UNFINISHED]
+Run the following command from the `build/docker` directory:
+
+    docker-compose up -d mysql 
 
 
 ## Testing
@@ -263,7 +268,9 @@ This command is a wrapper for
 
 ### 3. Test that migrations work
 
-Whether or not you've made changes to any of the MBAM models, you should test that you are committing a series of migration files that are continuous with the migration files in the latest version of development, that run without error, and that bring a new database up-to-date with your current models.
+If you've made changes to any of the MBAM models, you should test that you are committing a series of migration files 
+that are continuous with the migration files in the latest version of development, that run without error, and that 
+bring a new database up-to-date with your current models.
 
 In order to do this, log into MySQL again:
 
@@ -379,6 +386,18 @@ the command prompt of the virtual machine, run
  #### Setting up the VVM - docker images and commands
  
 [UNFINISHED]
+
+## Resources
+
+1. XNAT
+
+For more information about XNAT you may be interested in visiting 
+[the documentation](https://wiki.xnat.org/documentation).
+
+For developing an intuitive sense of the XNAT container service, an interface to the Docker daemon MBAM uses to launch
+Docker containers, you may be interested in working through 
+[this tutorial](https://github.com/MIND-NYSPI/xnat-cs-tutorial/blob/master/tutorial.md), written by one of the MBAM
+developers, Katie Surrence.  You may find it more user friendly than the XNAT docs.  
  
     
 

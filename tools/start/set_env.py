@@ -90,7 +90,7 @@ def set_config_from_yaml(config_path, config_name):
             return config
 
         else:
-            print("Warning: {} is not a block in {}. This is likely not a problem for the config override file."
+            print("WARNING: {} is not a block in {}. This is likely not a problem for the config override file."
                   .format(config_name, config_path))
 
 
@@ -110,9 +110,9 @@ def configure_database(config, kwargs):
         database_exists, tb = check_database(assemble_db_uri())
 
         if not database_exists:
-            print("WARNING: No MySQL instance found. The exception received was \n{}\n This exception was handled "
-                  "by switching to an SQLite database and is not fatal.  You can suppress this message in the "
-                  "future by running start_mbam.py with the `--database sqlite` option.  ".format(tb))
+            print("WARNING: No MySQL instance found. This exception was handled by switching to an SQLite database and "
+                  "is not fatal.  You can suppress this message in the future by running start_mbam.py with the "
+                  "--database sqlite` option.  ")
 
             os.environ['SQLALCHEMY_DATABASE_URI'] = config['SQLITE_URI']
 
