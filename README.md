@@ -7,7 +7,7 @@ own brain.
 ## Table of Contents 
   
 
-[**Setting up an environment for local development and testing**](#setting-up-an-environment-for-local-development-and-testing)
+[**Quickstart: Setting up an environment for local development and testing**](#setting-up-an-environment-for-local-development-and-testing)
 1. [Install dependencies](#1-install-dependencies)  
 2. [Choose your database](#2-choose-your-database)  
 3. [Install Redis](#3-install-redis)  
@@ -18,6 +18,10 @@ own brain.
 [**Understanding the services used by MBAM**](#understanding-the-services-used-by-mbam)
 1. [XNAT](#1-xnat)
 2. [Celery, Redis, and Flower](#2-celery-redis-and-flower)
+3. [AWS](#3-aws)
+    - [Parameter Store](#parameter-store)
+    - [S3](#s3)
+    - [Cloudfront](#cloudfront)
 
 [**Contributing**](#contributing)  
 1. [Process](#1-process)
@@ -25,13 +29,14 @@ own brain.
 
 [**More setup and configuration options**](#more-setup-and-configuration-options)
 1. [Custom configuration with config overrride](#1-custom-configuration-with-config-overrride)  
-2. [XNAT configuration](#2-xnat-configuration)
+2. [S3 configuration](#2-s3-configuration)
+3. [XNAT configuration](#2-xnat-configuration)
     - [Configuration variables](#configuration-variables)
     - [Setting up the VVM - preliminaries](#setting-up-the-vvm---preliminaries) 
     - [Setting up the VVM or any other XNAT instance - Docker images and commands](#setting-up-the-vvm-or-any-other-xnat-instance---docker-images-and-commands)
         1. [Make XNAT communicate with Docker](#i-make-xnat-communicate-with-docker)
         2. [Build containers](#ii-build-containers)
-3. [Database setup](#3-database-setup)
+4. [Database setup](#3-database-setup)
     - [MySQL Installation](#mysql-installation)
     - [Dockerized MySQL](#dockerized-mysql)
 
@@ -49,6 +54,9 @@ own brain.
 
 
 ## Setting up an environment for local development and testing
+
+If you just want to get up and running and poke around a bit, items 1-6 in this section will get you a local development
+environment up and running.  
 
 ### 1. Install dependencies
 
@@ -93,6 +101,9 @@ standalone command line utility.  To install this package and also activate the 
 in the main directory.  After using the `install` argument once, every other time you can just run 
 
     . env.sh
+    
+(For more information about what the MBAM start package can do, `mbam -h`, `mbam run -h`, and `mbam test -h` will all be
+informative.  `mbam deploy` is hopefully coming soon.)
 
 
 ### 6. Start the webserver
@@ -106,23 +117,27 @@ same terminal window.
 
 Visit http://0.0.0.0:8000 to see the welcome screen.
 
-If you're not a trusted developer, you'll see a suggestion for another command you can run consistently to suppress the 
-warning message: `npm run start-local`.
-
     mbam run -fcr
     
 will also work.  However, as of this writing color coding works better using `npm start`.
+
+If you're not a trusted developer, you'll see a suggestion for another command you can run consistently to suppress the 
+warning message: `npm run start-local`.
+
+MBAM should now work out of the box if you're a trusted developer, although there's some further database setup for 
+testing.  If you're not you still have some work to do to get everything you need configured to have a fully functional
+MBAM.  Read on.
 
 
 ## Understanding the services used by MBAM
 
 ### 1. XNAT
 
-MBAM uses XNAT, software that orchestrates neuroimaging workflows, to interface with Docker containers that process 
-brain images.  In order to run MBAM, you must either set up your own XNAT installation or use one of the Columbia team's 
-XNAT instances.  We have two: MIND XNAT (accessible at https://mind-xnat.nyspi.org/) and Backup XNAT ( 
-http://10.20.205.246:8080/).  You must be behind the NYSPI firewall to access Backup XNAT.  If you are a trusted 
-developer and you start the application using `npm start` by default you will be using MIND XNAT.  
+MBAM uses XNAT, software that orchestrates neuroimaging workflows, to store user files and to interface with Docker 
+containers that process brain images.  In order to run MBAM, you must either set up your own XNAT installation or use 
+one of the Columbia team's XNAT instances.  We have two: MIND XNAT (accessible at https://mind-xnat.nyspi.org/) and 
+Backup XNAT ( http://10.20.205.246:8080/).  You must be behind the NYSPI firewall to access Backup XNAT.  If you are a 
+trusted developer and you start the application using `npm start` by default you will be using MIND XNAT.  
 
 If you are not yet a trusted developer, you will need your own instance of XNAT.  The 
 [one line XNAT installation](https://wiki.xnat.org/documentation/getting-started-with-xnat/running-xnat-in-a-vagrant-virtual-machine) 
@@ -154,6 +169,29 @@ Run
 
 and visit http://0.0.0.0:5555.
 
+
+### 3. AWS
+
+- ##### Parameter Store  
+    MBAM uses the AWS Parameter Store as a credential server for trusted developers. 
+
+- ##### S3  
+    User files are stored on s3 as well as on the Columbia servers.  s3 is the host of the images that users see.  If
+    you are a trusted user, your images will be uploaded to the `mbam-test-sp` bucket in the MBAM s3 account.  If you're 
+    testing and would like to check that your files were uploaded, contact MBAM developer Spiro Pantazatos for 
+    credentials to login to s3.  
+    
+    If you are not a trusted user, you need to set up your own s3 bucket at https://aws.amazon.com/s3.  This requires 
+    setting some [custom configuration](#1-custom-configuration-with-config-overrride) for your 
+    [s3 bucket](#2-s3-configuration).
+      
+    S3 also stores the Cloud Formation templates that are used to build the site for deployment on AWS servers.  
+    
+- ##### Cloudfront  
+    Cloudfront 
+
+
+
 ## Contributing
 
 ### 1. Process
@@ -164,8 +202,8 @@ a branch off of it.
 When you have finished your feature or bug fix, first checkout development, pull any changes from the remote, and merge 
 those changes into your local branches.  Be sure to resolve any merge conflicts.  Once you have an unconflicted branch, 
 commit your work and test your branch following the steps in the [Testing](#testing).  If your branch passes 
-automated and manual tests, open a PR and request review.  You should have at least one reviewer who did not contribute to the 
-development of your branch.
+automated and manual tests, open a PR and request review.  You should have at least one reviewer who did not contribute 
+to the development of your branch.
 
 ### 2. What else you need
 
@@ -173,6 +211,9 @@ You need a [Docker installation](https://docs.docker.com/install/), either on yo
 
 If you plan to make changes to database schema in your contribution than SQLite won't work when generating migration 
 files.  You need MySQL.
+
+As already mentioned, new developers to the project who don't have access to MBAM credentials need their own XNAT
+instance and S3 bucket.  
 
 
 ## More Setup and Configuration Options
@@ -185,9 +226,20 @@ the config you are using, for example, `TRUSTED`, and enter your custom variable
     TRUSTED:
         CLAUDIAS_CUSTOM_VARIABLE_1: foo
         CLAUDIAS_CUSTOM_VARIABLE_2: 5
-        
 
-### 2. XNAT configuration
+### 2. S3 configuration
+
+If you're not a trusted user, s3 is one aspect of your MBAM setup that needs to be configured with config override.  
+An example:
+
+    LOCAL:
+        S3_KEY_ID: <my_key_id>
+        S3_SECRET_KEY: <my_secret_key>
+        S3_BUCKET: <my_bucket>  
+
+     
+
+### 3. XNAT configuration
 
 #### Configuration variables
 
@@ -251,10 +303,9 @@ After you have a working XNAT instance, it needs to be pointed to two containers
 conversion container and the Freesurfer recon container.  For testing, you probably also want the mock Freesurfer 
  container.
   
-  Out of the box, XNAT communicates with 
-`unix:///var/run/docker.sock`. You can either build your Docker containers on the same machine as the
-XNAT host, in which case you can leave that be, or a different machine, in which case you must change it to the host and 
-port your Docker daemon is listening on.
+Out of the box, XNAT communicates with `unix:///var/run/docker.sock`. You can either build your Docker containers on the 
+same machine as the XNAT host, in which case you can leave that be, or a different machine, in which case you must 
+change it to the host and port your Docker daemon is listening on.
 
 If you're using the VVM XNAT and you'd like to use your computer as the Docker host, you need to do two things:
 
@@ -289,7 +340,7 @@ to host Docker, your computer's URL from the point of view of the VVM is http://
  you'll need to make sure your local MBAM points to the right command with [config override](#1-custom-configuration-with-config-overrride).
  
 
-### 3. Database setup
+### 4. Database setup
 
 There are two ways to use MySQL with MBAM, either using the application installed on your 
 machine or using the dockerized version.
@@ -423,7 +474,18 @@ with the S3 and XNAT locations of the original uploaded scan, the NIFTI files (b
 and the Freesurfer output.
 
 Because Freesurfer reconstruction is a many-hour process in the best case, for testing purposes it is best to use a mock 
-Freesurfer container that provides output as if Freesurfer ran.
+Freesurfer container that provides output as if Freesurfer ran.  If you are a trusted developer, you can make MBAM use 
+this mock container by setting 
+
+    TRUSTED:
+        FREESURFER_RECON_COMMAND: 38 
+        
+in `mbam/config/config.override.yml`. 
+
+If you're not a trusted developer you can set up 
+
+[UNFINISHED]
+
 
 #### Setting up the XNAT container service for testing
 
