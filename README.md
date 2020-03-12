@@ -7,7 +7,7 @@ own brain.
 ## Table of Contents 
   
 
-[**Quickstart: Setting up an environment for local development and testing**](#setting-up-an-environment-for-local-development-and-testing)
+[**Quickstart: setting up an environment for local development and testing**](#setting-up-an-environment-for-local-development-and-testing)
 1. [Install dependencies](#1-install-dependencies)  
 2. [Choose your database](#2-choose-your-database)  
 3. [Install Redis](#3-install-redis)  
@@ -45,6 +45,9 @@ own brain.
 2. [Run automated tests in the docker environment](#2--run-automated-tests-in-the-docker-environment)
 3. [Test that migrations work](#3-test-that-migrations-work)
 4. [Manually test the website](#4-manually-test-the-website)
+    - [Setting up the XNAT container service for testing](#setting-up-the-xnat-container-service-for-testing)
+    - [Testing uploads](#testing-uploads)
+    - [What to verify](#what-to-verify)
 
 [**Deployment**](#deployment)  
 1. Nothing to see here yet
@@ -53,14 +56,14 @@ own brain.
 1. [XNAT](#1-xnat)
 
 
-## Setting up an environment for local development and testing
+## Quickstart: setting up an environment for local development and testing
 
 If you just want to get up and running and poke around a bit, items 1-6 in this section will get you a local development
 environment up and running.  
 
 ### 1. Install dependencies
 
-Install recent versions of Node and pipenv.
+Install recent versions of [Node](https://nodejs.org/en/download) and [pipenv](https://pipenv.pypa.io/en/latest/).
 
 Next navigate to the directory where you'd like to set up your environment and run the following commands to clone the repository and install dependencies:
 
@@ -188,8 +191,7 @@ and visit http://0.0.0.0:5555.
     S3 also stores the Cloud Formation templates that are used to build the site for deployment on AWS servers.  
     
 - ##### Cloudfront  
-    Cloudfront 
-
+    Cloudfront is a CDN that is used to deliver displays of user images (hosted by s3) with an RSA encrypted URL.
 
 
 ## Contributing
@@ -229,7 +231,7 @@ the config you are using, for example, `TRUSTED`, and enter your custom variable
 
 ### 2. S3 configuration
 
-If you're not a trusted user, s3 is one aspect of your MBAM setup that needs to be configured with config override.  
+If you're not a trusted develepor, s3 is one aspect of your MBAM setup that needs to be configured with config override.  
 An example:
 
     LOCAL:
@@ -400,6 +402,8 @@ Run the following command from the `build/docker` directory:
 
 ## Testing
 
+The following four steps constitute the threshold for merging a branch to development.
+
 ### 1. Run automated tests in the local development environment
 
 From the mbam top level directory run:
@@ -465,13 +469,19 @@ And if you've made changes to the models and you want to make sure that this upg
 
 As of this writing, an MBAM user should be able to upload up to 3 scans at a time.  Those files can be in one of three 
 formats: a .zip file of DICOMS, an uncompressed NIFTI file (.nii) and a compressed NIFTI file (.nii.gz).  A user's 
-uploaded files should be saved both to an S3 bucket and to an XNAT instance.
+uploaded files should be saved both to an s3 bucket and to an XNAT instance.
 
 Upon upload, MBAM should automatically convert DICOM files to NIFTI, if applicable, and then kick off the Freesurfer 
 reconstruction process, which runs in a Docker container also hosted on a Columbia server.  At the end of this process 
 MBAM should transfer the output files from the Docker container to XNAT and S3.  The MBAM database should be updated 
 with the S3 and XNAT locations of the original uploaded scan, the NIFTI files (but only if a conversion was performed), 
 and the Freesurfer output.
+
+#### Setting up the XNAT container service for testing
+
+If you are a trusted user, by default your MBAM development server is configured to access DICOM to NIFTI conversion and 
+Freesurfer recon containers on MIND XNAT.  If you would like to switch to the mock Freesurfer container for manual 
+testing, 
 
 Because Freesurfer reconstruction is a many-hour process in the best case, for testing purposes it is best to use a mock 
 Freesurfer container that provides output as if Freesurfer ran.  If you are a trusted developer, you can make MBAM use 
@@ -482,19 +492,28 @@ this mock container by setting
         
 in `mbam/config/config.override.yml`. 
 
-If you're not a trusted developer you can set up 
-
-[UNFINISHED]
-
-
-#### Setting up the XNAT container service for testing
-
-If you are a trusted user, by default your MBAM development server is configured to access DICOM to NIFTI conversion and 
-Freesurfer recon containers on MIND XNAT.  If you would like to switch to the mock Freesurfer container for manual 
-testing, 
+If you're not a trusted developer you can access the materials to build the mock freesurfer container 
+[here](https://s3.console.aws.amazon.com/s3/object/mbam-test-files/mock_freesurfer.zip?region=us-east-1&tab=overview)
 
 
-[UNFINISHED]
+#### Testing uploads
+
+The MBAM backend adopts the term "experiment" to describe what might more conventionally be called a "session" or "scan 
+session".  This terminology was adopted from XNAT and is likely an effort to avoid semantic overloading of "session" in 
+a web context.  The front end, however, uses "session".  Whatever you call it, you should make sure you try uploading 
+at least two unique sets of DICOMS in a single session.  You should test an nii.gz file and a nii file. Here are two 
+sources of sample DICOMS.  [One](https://central.xnat.org/app/action/ProjectDownloadAction/project/Sample_DICOM), 
+[two](https://www.theobjects.com/dragonfly/learn-sample-datasets.html) (scroll down to "MR Brain" for the second one).  
+[Here](https://nifti.nimh.nih.gov/nifti-1/data) is a source of sample NIFTI files.
+
+#### What to verify
+
+ - The original files made it to s3.
+ - The original files made it to XNAT.
+ - DICOMS were converted to nii.gz files and the converted files stored in both XNAT and s3.
+ - The Freesurfer recon process (simulated) kicked off for all files, and the appropriate Freesurfer files made it to 
+ s3. (Regarding checking on s3, if you're a trusted developer you'll need to get login information from MBAM developer Spiro
+Pantazatos.  The bucket to check is `mbam-test-sp`.)  
 
 
 ## Resources
