@@ -22,6 +22,7 @@ module.exports = {
   context: __dirname,
   entry: {
     main_js: './assets/js/main',
+    entry: './assets/js/mbam3d_src/mbam_index.js',
     main_css: [
       path.join(__dirname, 'node_modules', 'font-awesome', 'css', 'font-awesome.css'),
       path.join(__dirname, 'node_modules', 'bootstrap', 'dist', 'css', 'bootstrap.css'),
@@ -55,11 +56,15 @@ module.exports = {
       { test: /\.(ttf|eot|svg|png|jpe?g|gif|tif|mp4|ico)(\?.*)?$/i,
         loader: `file-loader?context=${rootAssetPath}&name=[path][name].[hash].[ext]` },
       { test: /\.js$/, exclude: /node_modules/, loader: 'babel-loader', query: { presets: ['env'], cacheDirectory: true } },
+      { test: /\.js$/, exclude: /node_modules/, loader: 'obfuscator-loader', enforce: 'post', include: [ path.join(__dirname, 'assets', 'js', 'upload.js') ], query: { presets: ['env'], cacheDirectory: true } }
     ],
   },
   plugins: [
     new ExtractTextPlugin('[name].[hash].css'),
     new webpack.ProvidePlugin({ $: 'jquery', jQuery: 'jquery' }),
+    // new JavaScriptObfuscator({
+    //         rotateUnicodeArray: true
+    //     }, []),
     new ManifestRevisionPlugin(path.join(__dirname, 'cookiecutter_mbam', 'webpack', 'manifest.json'), {
       rootAssetPath,
       ignorePaths: ['/js', '/css'],

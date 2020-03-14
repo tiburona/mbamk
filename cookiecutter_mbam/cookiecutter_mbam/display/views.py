@@ -51,10 +51,15 @@ def slice_view(scan_id):
             return render_template('displays/slice_view.html', url=signed_url, scan=scan)
         except:
             # TODO: Log this error
-            return render_template('404.html') 
+            return render_template('404.html')
     else:
         return render_template('403.html')
 
+@blueprint.route('/mikes_view',methods=['GET'])
+def mikes_view():
+    """ Display Mike's 3D brain """
+
+    return render_template('displays/mikes_view.html', url=url)
 
 
 @blueprint.route('/test',methods=['GET'])
