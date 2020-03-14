@@ -7,7 +7,7 @@ processes = {
     },
     'redis': {
         'cmd': 'redis-server',
-        'label': ('REDIS', 'RED')
+        'label': ('REDIS', 'RED'),
     },
     'flask': {
         'cmd': {

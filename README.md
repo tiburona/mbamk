@@ -65,7 +65,8 @@ environment up and running.
 
 Install recent versions of [Node](https://nodejs.org/en/download) and [pipenv](https://pipenv.pypa.io/en/latest/).
 
-Next navigate to the directory where you'd like to set up your environment and run the following commands to clone the repository and install dependencies:
+Next navigate to the directory where you'd like to set up your environment and run the following commands to clone the 
+repository and install dependencies:
 
     git clone https://github.com/spiropan/mbam
     pipenv install --dev
