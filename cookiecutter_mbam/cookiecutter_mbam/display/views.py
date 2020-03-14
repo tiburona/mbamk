@@ -58,8 +58,7 @@ def slice_view(scan_id):
 @blueprint.route('/mikes_view',methods=['GET'])
 def mikes_view():
     """ Display Mike's 3D brain """
-
-    return render_template('displays/mikes_view.html', url=url)
+    return render_template('displays/threed_view.html')
 
 
 @blueprint.route('/test',methods=['GET'])

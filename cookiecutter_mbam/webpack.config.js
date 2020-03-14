@@ -22,7 +22,6 @@ module.exports = {
   context: __dirname,
   entry: {
     main_js: './assets/js/main',
-    entry: './assets/js/mbam3d_src/mbam_index.js',
     main_css: [
       path.join(__dirname, 'node_modules', 'font-awesome', 'css', 'font-awesome.css'),
       path.join(__dirname, 'node_modules', 'bootstrap', 'dist', 'css', 'bootstrap.css'),

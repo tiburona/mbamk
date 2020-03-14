@@ -1,0 +1,136 @@
+<!doctype html>
+
+<html lang="en-US">
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html" charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>VR Brain and parts!</title>
+
+	<!-- add mbam3d css here  / -->
+	<link href="{{ url_for('static',filename='mbam3d/mbam3d.css') }}" rel="stylesheet">
+
+	<style>
+		body { margin: 0; }
+	</style>
+</head>
+
+<body style="overflow: hidden;">
+
+	<div class="floatingtext" id="toptitle">My Brain and Me - Experimental (Mike's brain)</div>
+
+	<!-- Visibility Menu Items -->
+	<div class="menubox" id="anatomy_menu_container">
+
+		<div class="floatingtext head" id="anatomy_menu_header"><u>Visibility:</u></div>
+
+		<div class="single light clickable" id="Hippocampus_visibility_button" style="top: 5pt; left: 10px;">
+			<i class="fas fa-toggle-on"></i></div>
+		<div class="floatingtext" id="hippo_visibility" style="top: 5pt; left: 50px;">
+			Hippocampus</div>
+		<div class="single light clickable" id="RHippocampus_animation_button" style="top: 5pt; left: 175px;">
+			<i class="fas fa-play"></i></div>
+		<div class="single light clickable" id="Framesave_toggle_button" style="top: 5pt; left: 200px;">
+			<i class="far fa-square"></i></div>
+
+		<div class="single light clickable" id="Amygdala_visibility_button" style="top: 25pt; left: 10px;">
+			<i class="fas fa-toggle-on"></i></div>
+		<div class="floatingtext" id="amygdala_visibility" style="top: 25pt; left: 50px;">
+			Amygdala</div>
+
+		<div class="single light clickable" id="Ventricles_visibility_button" style="top: 45pt; left: 10px;">
+			<i class="fas fa-toggle-on"></i></div>
+		<div class="floatingtext" id="ventricle_visibility" style="top: 45pt; left: 50px;">
+			Ventricles</div>
+	</div>
+
+	<!-- Camera Menu Items -->
+	<div class="menubox" id="camera_menu_container" style="font-weight: bold">
+
+		<div class="floatingtext head" id="camera_menu_header"><u>Camera:</u></div>
+
+		<div class="single light clickable" id="TopAxial_camera_button" style="top: 5px; left: 25px;">
+			<i class="fas fa-arrow-circle-down"></i></div>
+		<div class="single light clickable" id="Right_camera_button" style="top: 25px; left: 5px;">
+			<i class="fas fa-arrow-circle-right"></i></div>
+		<div class="single light clickable" id="Coronal_camera_button" style="top: 25px; left: 25px;">
+			<i class="fas fa-grin"></i></div>
+		<div class="single light clickable" id="Left_camera_button" style="top: 25px; left: 45px;">
+			<i class="fas fa-arrow-circle-left"></i></div>
+		<div class="single light clickable" id="BottomAxial_camera_button" style="top: 45px; left: 25px;">
+			<i class="fas fa-arrow-circle-up"></i></div>
+
+		<div class="single light clickable" id="trigger_snapshot_button" style="bottom: 5px; left: 20px;">
+			<i class="fas fa-camera fa-2x"></i></div>
+	</div>
+
+
+	<!-- Cortex Menu Items -->
+	<div class="menubox" id="cortex_menu_container">
+
+		<div class="floatingtext head" id="cortex_menu_header"><u>Cortex:</u></div>
+
+		<div class="single light" style="top: 5px; left: 5px; font-size: small;">R</div>
+		<div class="single light clickable" id="RCortex_visibility_button" style="top: 5px; left: 25px;">
+			<i class="fas fa-toggle-on"></i></div>
+		<div class="single light clickable" id="RCortex_opacity_button" style="top: 5px; left: 50px;">
+			<i class="fas fa-brain"></i></div>
+		<div class="single light clickable" id="Brainstem_visibility_button" style="top: 5px; left: 75px;">
+			<i class="fas fa-toggle-on"></i></div>
+		<div class="single light clickable" id="LCortex_opacity_button" style="top: 5px; right: 50px;">
+			<i class="fas fa-brain"></i></div>
+		<div class="single light clickable" id="LCortex_visibility_button" style="top: 5px; right: 25px;">
+			<i class="fas fa-toggle-on"></i></div>
+		<div class="single light" style="top: 5px; right: 5px;">L</div>
+
+	</div>
+
+	<!-- Background color selector -->
+	<div class="menubox" id="background_menu_container">
+
+		<div class="floatingtext head" id="background_menu_header"><u>Background:</u></div>
+
+		<div class="single light clickable" id="white_background_button" style="top: 5px; left: 5px;">
+			<span class="fa-layers fa-fw" style="background: #ffffff; color: #ffdab9;"><i class="far fa-brain"></i></span>
+		</div>
+		<div class="single light clickable" id="lightgray_background_button" style="top: 5px; left: 30px;">
+			<span class="fa-layers fa-fw" style="background: #dddddd; color: #ffdab9;"><i class="far fa-brain"></i></span>
+		</div>
+		<div class="single light clickable" id="lightblue_background_button" style="top: 5px; left: 55px;">
+			<span class="fa-layers fa-fw" style="background: #7dd5d9; color: #ffdab9;"><i class="far fa-brain"></i></span>
+		</div>
+		<div class="single light clickable" id="blue_background_button" style="top: 5px; left: 80px;">
+			<span class="fa-layers fa-fw" style="background: #286090; color: #ffdab9;"><i class="far fa-brain"></i></span>
+		</div>
+		<div class="single light clickable" id="darkblue_background_button" style="top: 5px; left: 105px;">
+			<span class="fa-layers fa-fw" style="background: #21576e; color: #ffdab9;"><i class="far fa-brain"></i></span>
+		</div>
+		<div class="single light clickable" id="mbamdarkblue_background_button" style="top: 5px; left: 130px;">
+			<span class="fa-layers fa-fw" style="background: #14353f; color: #ffdab9;"><i class="far fa-brain"></i></span>
+		</div>
+		<div class="single light clickable" id="reallydarkblue_background_button" style="top: 5px; left: 155px;">
+			<span class="fa-layers fa-fw" style="background: #0f272d; color: #ffdab9;"><i class="far fa-brain"></i></span>
+		</div>
+		<div class="single light clickable" id="darkgray_background_button" style="top: 5px; left: 180px;">
+			<span class="fa-layers fa-fw" style="background: #222222; color: #ffdab9;"><i class="far fa-brain"></i></span>
+		</div>
+		<div class="single light clickable" id="black_background_button" style="top: 5px; left: 205px;">
+			<span class="fa-layers fa-fw" style="background: #000000; color: #ffdab9;"><i class="far fa-brain"></i></span>
+		</div>
+
+	</div>
+
+	<!--
+	<div class="menu light clickable" id="cam_autorotate" style="top: 180pt;"
+		onclick="toggle_autorotation( this )">
+		<i class="far fa-sync"></i></div>
+	-->
+
+	<!-- <script src="fa/js/all.min.js" data-auto-replace-svg="nest"></script> -->
+	<!-- Add mbam3d.bundle.js here -->
+	<script type="text/javascript" src="{{ url_for('static',filename='mbam3d/mbam3d.bundle.js') }}"></script>
+
+
+</body>
+
+</html>
