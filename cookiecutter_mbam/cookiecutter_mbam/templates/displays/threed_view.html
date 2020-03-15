@@ -6,10 +6,8 @@
 	<meta http-equiv="Content-Type" content="text/html" charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<title>VR Brain and parts!</title>
-
 	<!-- add mbam3d css here  / -->
 	<link href="{{ url_for('static',filename='mbam3d/mbam3d.css') }}" rel="stylesheet">
-
 	<style>
 		body { margin: 0; }
 	</style>
@@ -17,7 +15,7 @@
 
 <body style="overflow: hidden;">
 
-	<div class="floatingtext" id="toptitle">My Brain and Me - Experimental (Mike's brain)</div>
+	<div class="floatingtext" id="toptitle">My Brain and Me 3D - (Mike's brain)</div>
 
 	<!-- Visibility Menu Items -->
 	<div class="menubox" id="anatomy_menu_container">
@@ -125,10 +123,10 @@
 		onclick="toggle_autorotation( this )">
 		<i class="far fa-sync"></i></div>
 	-->
-
-	<!-- <script src="fa/js/all.min.js" data-auto-replace-svg="nest"></script> -->
+	<script src="{{ url_for('static',filename='mbam3d/fa/all.min.js') }}" data-auto-replace-svg="nest"></script>
 	<!-- Add mbam3d.bundle.js here -->
-	<script type="text/javascript" src="{{ url_for('static',filename='mbam3d/mbam3d.bundle.js') }}"></script>
+	<script type="text/javascript" src="{{ url_for('static',filename='mbam3d/mbam3d.bundle.js') }}" defer></script>
+
 
 
 </body>
