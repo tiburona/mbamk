@@ -299,6 +299,9 @@ the command prompt of the virtual machine, run
     
  Substitute the current date and time of course.
  
+ After you have a working XNAT instance, you also need to create a project in your local VVM called `MBAM_TEST`.  MBAM 
+ is configured by default to expect this project name.  
+ 
  #### Setting up the VVM or any other XNAT instance - Docker images and commands
  
  ##### a. Make XNAT communicate with Docker 
@@ -330,7 +333,7 @@ to host Docker, your computer's URL from the point of view of the VVM is http://
  any images are hidden.  Click on the eye to unhide them if so.  Similarly, cd into `mbam/pipelines/freesurfer/freesurfer-recon-xfer`
  and build with the analogous command.  Now you need to add the command (a JSON file the XNAT container service uses to
  configure the Docker container when it launches it.  For both DICOM to NIFTI and Freesurfer recon, this file is stored 
- as `command.json` in the same directory with the `Dockerfile`.  For DICOM to NFIT, copy the 
+ as `command.json` in the same directory with the `Dockerfile`.  For DICOM to NIFTI, copy the 
  text of this file, navigate to Administer -> Tools -> Plugin Settings -> Images and Commands, click on Add New Command
  next to the DICOM to NIFTI image, and paste the command into the text box, and click Save Command.) Then do the same 
  for Freesurfer recon.  

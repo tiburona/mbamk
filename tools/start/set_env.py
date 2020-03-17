@@ -121,7 +121,7 @@ def configure_database(config, kwargs):
 
 def configure_xnat(xnat):
     try:
-        for var in 'XNAT_HOST', 'DICOM_TO_NIFTI_COMMAND', 'FREESURFER_RECON_COMMAND':
+        for var in 'XNAT_HOST', 'DICOM_TO_NIFTI_COMMAND', 'FREESURFER_RECON_COMMAND', 'XNAT_PROJECT':
             os.environ[var] = os.environ[xnat + '_' + var]
     except KeyError as e:
         print("You've selected {} as your XNAT instance but {} is not configured.".format(xnat, var))
