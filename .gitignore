@@ -72,6 +72,7 @@ cookiecutter_mbam/node_modules
 /.semaphore-cache
 /cookiecutter_mbam/webpack/manifest.json
 /cookiecutter_mbam/mbam.log
+/config/config.override.yml
 
 
 *dump.rdb
