@@ -81,17 +81,22 @@ def check_database(uri):
         return False, tb
 
 def set_config_from_yaml(config_path, config_name):
-    with open(config_path) as file:
-        configs = yaml.safe_load(file)
-        if configs and config_name in configs:
-            config = configs[config_name]
-            for var in config:
-                os.environ[var] = str(config[var])
-            return config
+    try:
+        with open(config_path) as file:
+            configs = yaml.safe_load(file)
+            if configs and config_name in configs:
+                config = configs[config_name]
+                for var in config:
+                    os.environ[var] = str(config[var])
+                return config
 
-        else:
-            print("WARNING: {} is not a block in {}. This is likely not a problem for the config override file."
-                  .format(config_name, config_path))
+            else:
+                print("INFO: {} is not a block in {}. This is likely not a problem for the config override file."
+                    .format(config_name, config_path))
+                
+    except FileNotFoundError:
+        print("INFO: No config override file exists.")
+
 
 
 def configure_database(config, kwargs):
