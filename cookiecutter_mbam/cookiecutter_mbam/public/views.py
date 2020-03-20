@@ -3,7 +3,7 @@
 from flask import Blueprint, flash, redirect, render_template, url_for, current_app
 
 from cookiecutter_mbam.utils.error_utils import flash_errors
-from flask_security import current_user
+from flask_security import current_user, roles_required, login_required
 from cookiecutter_mbam.public.forms import ContactForm
 from cookiecutter_mbam.base.tasks import send_email
 
@@ -40,11 +40,12 @@ def contact():
     form = ContactForm()
     if form.validate_on_submit():
         fullname=form.fullname.data
-        email=form.email.data
+        sender_email=form.email.data
         subject=form.subject.data
         body=form.message.data
-        
+
         message = {'subject': subject,'body': body}
+        email='info@mybrainandme.org'
         send_email((fullname,email,message))
 
         flash('Message sent. Thank you for contacting us.','success')

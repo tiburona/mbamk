@@ -7,7 +7,7 @@ from celery import Celery
 from cookiecutter_mbam import celery
 from cookiecutter_mbam.init_celery import init_celery
 from cookiecutter_mbam import commands, public, user, experiment, scan, display
-from cookiecutter_mbam.admin import UserAdmin, RoleAdmin
+from cookiecutter_mbam.admin import register_admin_views
 from cookiecutter_mbam.extensions import admin, cache, csrf_protect, db, debug_toolbar, migrate, \
     security, webpack, mail, jsglue, basicauth
 from cookiecutter_mbam.user import User, Role
@@ -33,6 +33,7 @@ def create_app(config_name=config_name):
     register_errorhandlers(app)
     register_shellcontext(app)
     register_commands(app)
+
     return app
 
 def register_extensions(app):
@@ -46,6 +47,7 @@ def register_extensions(app):
     debug_toolbar.init_app(app)
     migrate.init_app(app, db)
     webpack.init_app(app)
+    register_admin_views(admin)
     admin.init_app(app, endpoint='admin')
     mail.init_app(app)
     jsglue.init_app(app)
@@ -93,8 +95,3 @@ def register_commands(app):
     app.cli.add_command(commands.lint)
     app.cli.add_command(commands.clean)
     app.cli.add_command(commands.urls)
-
-def register_admin_views():
-    """Register Flask admin views."""
-    admin.add_view(UserAdmin(User, db.session))
-    admin.add_view(RoleAdmin(Role, db.session))
