@@ -1,6 +1,6 @@
 #FROM mysql:latest
-#FROM mysql:5.7.22
-FROM mysql:8
+FROM mysql:5.7.22
+#FROM mysql:8
 #FROM mariadb:latest
 
 # Here set enviromental variables

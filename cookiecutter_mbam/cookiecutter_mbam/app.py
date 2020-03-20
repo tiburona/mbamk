@@ -13,6 +13,7 @@ from cookiecutter_mbam.extensions import admin, cache, csrf_protect, db, debug_t
 from cookiecutter_mbam.user import User, Role
 from .hooks import create_test_users, models_committed_hooks
 from .config import config_by_name, config_name
+from flask_admin import Admin
 
 from flask import current_app
 def debug():
@@ -47,8 +48,13 @@ def register_extensions(app):
     debug_toolbar.init_app(app)
     migrate.init_app(app, db)
     webpack.init_app(app)
+    # Must register views before initalizing the Flask admin
+    # And recreate admin instance within create_app to avoide blueprint name collisions during testing
+    # https://github.com/flask-admin/flask-admin/issues/910
+    admin=Admin()
     register_admin_views(admin)
     admin.init_app(app, endpoint='admin')
+
     mail.init_app(app)
     jsglue.init_app(app)
     basicauth.init_app(app) # To protect site until it goes live
