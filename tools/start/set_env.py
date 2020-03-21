@@ -93,7 +93,7 @@ def set_config_from_yaml(config_path, config_name):
             else:
                 print("INFO: {} is not a block in {}. This is likely not a problem for the config override file."
                     .format(config_name, config_path))
-                
+
     except FileNotFoundError:
         print("INFO: No config override file exists.")
 

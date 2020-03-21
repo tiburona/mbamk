@@ -28,15 +28,16 @@ own brain.
 2. [What else you need](2-#what-else-you-need) 
 
 [**More setup and configuration options**](#more-setup-and-configuration-options)
-1. [Custom configuration with config overrride](#1-custom-configuration-with-config-overrride)  
-2. [S3 configuration](#2-s3-configuration)
-3. [XNAT configuration](#2-xnat-configuration)
+1. [Your personal secrets](#1-your-personal-secrets)
+2. [Custom configuration with config overrride](#1-custom-configuration-with-config-overrride)  
+3. [S3 configuration](#2-s3-configuration)
+4. [XNAT configuration](#2-xnat-configuration)
     - [Configuration variables](#configuration-variables)
     - [Setting up the VVM - preliminaries](#setting-up-the-vvm---preliminaries) 
     - [Setting up the VVM or any other XNAT instance - Docker images and commands](#setting-up-the-vvm-or-any-other-xnat-instance---docker-images-and-commands)
         1. [Make XNAT communicate with Docker](#i-make-xnat-communicate-with-docker)
         2. [Build containers](#ii-build-containers)
-4. [Database setup](#3-database-setup)
+5. [Database setup](#3-database-setup)
     - [MySQL Installation](#mysql-installation)
     - [Dockerized MySQL](#dockerized-mysql)
 
@@ -93,6 +94,9 @@ you need on your machine, the key ID/secret key pair that accesses the AWS param
 Open `config/credentials/sample.secrets.yml` and enter the values you've been provided in for  `PARAMETER_STORE_KEY_ID` 
 and `PARAMETER_STORE_SECRET_KEY`.  Change the name of the file to `secrets.yml`.  This file is in the .gitignore; of 
 course it must never be committed to the repository.
+
+If you are not yet a trusted developer, then see [here](#1-your-personal-secrets) for more information about the 
+credentials you need.  
 
 ### 5. Locally install the MBAM start package
 
@@ -221,7 +225,15 @@ instance and S3 bucket.
 
 ## More Setup and Configuration Options
 
-### 1. Custom configuration with config overrride
+### 1. Your personal secrets
+
+If you are a new developer to the project, you will need mail, S3, and Cloudfront credentials for full site 
+functionality.  If you are using a local version of XNAT running through a virtual machine and have not changed the 
+default credentials, nothing needs to be set.  See `sample.secrets.yaml` to understand how to format your credentials
+file, and remove the `sample.` prefix to make it discoverable.  
+
+
+### 2. Custom configuration with config overrride
 
 For ephemeral or idiosyncratic configuration during development use `config/config.override.yml`.  Choose the name of 
 the config you are using, for example, `TRUSTED`, and enter your custom variables in the block underneath.  An example:
@@ -230,17 +242,13 @@ the config you are using, for example, `TRUSTED`, and enter your custom variable
         CLAUDIAS_CUSTOM_VARIABLE_1: foo
         CLAUDIAS_CUSTOM_VARIABLE_2: 5
 
-### 2. S3 configuration
+### 3. S3 configuration
 
 If you're not a trusted develepor, s3 is one aspect of your MBAM setup that needs to be configured with config override.  
 An example:
 
     LOCAL:
-        S3_KEY_ID: <my_key_id>
-        S3_SECRET_KEY: <my_secret_key>
         S3_BUCKET: <my_bucket>  
-
-     
 
 ### 3. XNAT configuration
 

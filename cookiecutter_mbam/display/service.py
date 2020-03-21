@@ -18,7 +18,7 @@ class DisplayService(BaseService):
         # set Cloudfront parameters from config file
         self.cf_base_url = config.CLOUDFRONT_URL
         self.key_id = config.CLOUDFRONT_KEY_ID
-        self.private_key = config.CLOUDFRONT_PRIVATE_KEY
+        self.private_key = config.CLOUDFRONT_SECRET_KEY
         self.user = user
 
     def sign_url(self, url):

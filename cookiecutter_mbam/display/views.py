@@ -36,13 +36,12 @@ def displays():
 def slice_view(scan_id):
     """ Display current user's raw NIFTI file """
     if resource_belongs_to_user(Scan, scan_id):
-        try:
-            ds = DisplayService(user=current_user)
-            url = ds.get_nifti_url(scan_id)
-            signed_url = ds.sign_url(url)
-            return render_template('displays/slice_view.html', url=signed_url)
-        except:
-            return render_template('404.html')
+        ds = DisplayService(user=current_user)
+        url = ds.get_nifti_url(scan_id)
+        signed_url = ds.sign_url(url)
+        return render_template('displays/slice_view.html', url=signed_url)
+        # except:
+        #     return render_template('404.html')
     else:
         return render_template('403.html')
 
