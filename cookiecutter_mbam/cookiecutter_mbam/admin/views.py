@@ -3,16 +3,11 @@
 from flask import Blueprint, flash, redirect, render_template, url_for, current_app
 from flask_admin import BaseView, expose
 from cookiecutter_mbam.utils.error_utils import flash_errors
-from flask_security import current_user, roles_required
+from flask_security import current_user
 from cookiecutter_mbam.admin.forms import SendEmailForm
 from cookiecutter_mbam.base.tasks import send_email
 
 class EmailView(BaseView):
-
-    # @expose('/')
-    # def index(self):
-    #     """ Override the master (default) admin dashboard view """
-    #     return self.render('admin/index.html')
 
     @expose('/',methods=('GET','POST'))
     def email(self):
@@ -31,3 +26,7 @@ class EmailView(BaseView):
             return redirect(url_for('admin.index'))
 
         return self.render('admin/email.html',email_form=form)
+
+    # Prevent administration of Users unless the currently logged-in user has the "admin" role
+    def is_accessible(self):
+        return current_user.has_role('admin')
