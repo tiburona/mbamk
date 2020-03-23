@@ -4,14 +4,21 @@
   "description": "Cookiecutter MBAM",
   "scripts": {
     "build": "NODE_ENV=production webpack --progress --colors -p",
-    "start": "concurrently -n \"WEBPACK,FLASK\" -c \"bgBlue.bold,bgMagenta.bold\" \"npm run webpack-dev-server\" \"npm run flask-server\"",
-    "webpack-dev-server": "NODE_ENV=debug webpack-dev-server --port 8082 --hot --inline $PUBLIC",
+    "start": "concurrently -n \"WEBPACK,FLASK,REDIS,CELERY\" -c \"bgBlue.bold,bgMagenta.bold,bgYellow.bold,bgGreen.bold\" \"npm run webpack-dev-server\" \"npm run start-flask\" \"npm run start-redis\" \"npm run start-celery\"",
+    "start-local": "concurrently -n \"WEBPACK,FLASK,REDIS,CELERY\" -c \"bgBlue.bold,bgMagenta.bold,bgYellow.bold,bgGreen.bold\" \"npm run webpack-dev-server\" \"npm run start-flask-local\" \"npm run start-redis-local\" \"npm run start-celery-local\"",
+    "webpack-dev-server": "NODE_ENV=debug webpack-dev-server --port 8081 --hot --inline $PUBLIC",
     "flask-server": "flask run",
-    "lint": "eslint \"assets/js/*.js\""
+    "lint": "eslint \"assets/js/*.js\"",
+    "start-flask": "mbam run -fn --config_dir config --mysql local",
+    "start-celery": "mbam run -cn --config_dir config",
+    "start-redis": "mbam run -rn --config_dir config",
+    "start-flask-local": "mbam run -fn --config_dir config --env local",
+    "start-celery-local": "mbam run -cn --config_dir config --env local",
+    "start-redis-local": "mbam run -rn --config_dir config --env local"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/tiburona/cookiecutter_mbam.git"
+    "url": "git+https://github.com/spiropan/mbam.git"
   },
   "author": "Katie Surrence",
   "license": "BSD-3-Clause",
@@ -25,7 +32,7 @@
   "dependencies": {
     "bootstrap": "^4.1.3",
     "bootstrap-fileinput": "^4.5.1",
-    "daikon": "^1.2.42",
+    "daikon": "^1.2.36",
     "expose-loader": "^0.7.5",
     "file-saver": "^2.0.0",
     "font-awesome": "^4.7.0",
@@ -33,7 +40,6 @@
     "jquery": "^3.2.1",
     "jquery-validation": "^1.19.0",
     "jszip": "^3.1.5",
-    "node-sass": "^4.13.1",
     "pako": "^1.0.8",
     "popper.js": "^1.14.3"
   },
@@ -53,6 +59,7 @@
     "less": "^3.8.0",
     "less-loader": "^2.2.3",
     "manifest-revision-webpack-plugin": "^0.4.0",
+    "node-sass": "^4.12.0",
     "raw-loader": "^0.5.1",
     "sass-loader": "^7.1.0",
     "style-loader": "^0.23.0",
@@ -61,8 +68,5 @@
     "webpack": "^2.6.1",
     "webpack-cli": "^3.1.2",
     "webpack-dev-server": "2.9.1"
-  },
-  "optionalDependencies": {
-    "fsevents": "^2.1.2"
   }
 }
