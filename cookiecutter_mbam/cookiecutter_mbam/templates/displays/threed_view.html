@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<section role="content-uni-wrapper">
+      <div class="container-displays">
+        <!-- Use some slightly different colors from default, or funky colors to make it obvious the overrides worked. -->
+        <iframe id="mbam3d" src="brain_explorer.html" style="width:100%;height:480px" data-objects='[
+            {"name": "LHippocampus", "url": "https://mbam-test-files.s3.amazonaws.com/models/017-Left-Hippocampus.smooth-48.obj", "color": "blue"},
+            {"name": "RHippocampus", "url": "https://mbam-test-files.s3.amazonaws.com/models/053-Right-Hippocampus.smooth-48.obj"},
+            {"name": "LAmygdala", "url": "https://mbam-test-files.s3.amazonaws.com/models/018-Left-Amygdala.smooth-96.obj", "color": "red"},
+            {"name": "RAmygdala", "url": "https://mbam-test-files.s3.amazonaws.com/models/054-Right-Amygdala.smooth-96.obj"},
+            {"name": "Ventricles", "url": "https://mbam-test-files.s3.amazonaws.com/models/ventricles.smooth-48.obj", "color": "indigo", "transparent": true, "opacity": 0.50},
+            {"name": "LCortex", "url": "https://mbam-test-files.s3.amazonaws.com/models/lh.pial.smooth-10.obj", "color": "pink"},
+            {"name": "RCortex", "url": "https://mbam-test-files.s3.amazonaws.com/models/rh.pial.smooth-10.obj"}
+        ]'></iframe>
+        <!-- The iframe must have id of "mbam3d".
+             The data-objects attribute contains a json list of objects.
+             All css colors and xkcd (https://blog.xkcd.com/2010/05/03/color-survey-results/) colors are supported. -->
+        </div>
+</section>
+
+{% endblock %}

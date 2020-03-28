@@ -1,2 +1,1 @@
-from .models import UserAdmin, RoleAdmin
-from .service import init_admin
+from .service import register_admin_views
