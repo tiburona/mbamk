@@ -157,7 +157,7 @@ class DevConfig(Config):
     results_backend = env.str('broker_url', default='dummy') + '/1'
 
     XNAT=Config.XNAT
-    XNAT['dicom_to_nifti_transfer_command_id'] = env.int('DICOM_TO_NIFTI_TRANSFER_COMMAND_ID',23)
+    XNAT['dicom_to_nifti_transfer_command_id'] = env.int('DICOM_TO_NIFTI_TRANSFER_COMMAND_ID',36)
     XNAT['project'] = env.str('XNAT_PROJECT', 'MBAM_STAGING')
     XNAT['docker_host'] = env.str('XNAT_DOCKER_HOST','http://10.20.193.32:2375')
 

@@ -771,11 +771,11 @@
         },
         "awscli": {
             "hashes": [
-                "sha256:0ed52bd32b34df05b074f6b171ec0a85fc66d7840a7c9f3b51dc61c5276f3bb9",
-                "sha256:80bc3cab9a903bfdc2e40c3f50c33605573c15dd43f845d40a89d4a9454ec5e2"
+                "sha256:2447b9ac845e280724bee659b5c73127cfb1c089c81943e21f80cf141d6ed875",
+                "sha256:df83e1e021578d485afd3e3bd8a6d1e8c1d62ce1d8836b89d6b7ff10baf8a512"
             ],
             "index": "pypi",
-            "version": "==1.18.25"
+            "version": "==1.18.26"
         },
         "beautifulsoup4": {
             "hashes": [
