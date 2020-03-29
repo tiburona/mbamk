@@ -69,5 +69,6 @@ setup.cfg
 .idea
 .idea/*
 
-
+# Files
+static/files/*
 

@@ -12,8 +12,8 @@ from . import textbank
 from cookiecutter_mbam.mbam_logging import app_logger, celery_logger
 
 # set mail constants
-mail_constants = ['USERNAME', 'SERVER', 'PASSWORD', 'PORT']
-UNAME, SERVER, PASSWORD, PORT = [getattr(config_by_name[config_name], 'MAIL_'+ const) for const in mail_constants]
+mail_constants = ['MAIL_USERNAME', 'MAIL_SERVER', 'MAIL_PASSWORD', 'MAIL_PORT','SECURITY_EMAIL_SENDER']
+UNAME, SERVER, PASSWORD, PORT, SENDER = [getattr(config_by_name[config_name], const) for const in mail_constants]
 
 
 # The following three functions are factory functions.  They generate setter and getter functions for the provided model
@@ -90,7 +90,7 @@ def send_email(email_info):
     msg.set_content(message['body'])
     msg['Subject'] = message['subject']
     msg['To'] = f'{user_name} <{user_email}>'
-    msg['From'] = UNAME
+    msg['From'] = SENDER
 
     with smtplib.SMTP(SERVER, PORT) as server:
         server.starttls(context=context)
