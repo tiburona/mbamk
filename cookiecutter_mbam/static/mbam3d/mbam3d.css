@@ -1,0 +1,93 @@
+/* Each menu has a title (.floatingtext.head) and a box of clickables (.menubox) */
+.floatingtext {
+	position: absolute;
+	display: block;
+	z-index: 99;
+	background-color: transparent;
+	color: white;
+}
+.floatingtext.head {
+	text-decoration: underline;
+	font-weight: bold;
+}
+
+.menubox {
+	position: absolute;
+	display: block;
+	z-index: 98;
+	padding: 2 2 2 2;
+	background-color: #222222;
+	color: #ffffff;
+}
+
+/* font-awesome icons are used for clickable buttons and are subject to these styles */
+.single {
+	position: absolute;
+	display: block;
+	width: 20px;
+	z-index: 100;
+	text-align: center;
+}
+.single.dark {
+	color: white;
+}
+.single.light {
+	color: #7dd5d9;
+}
+.single.black {
+	color: #2f6181;
+}
+.clickable {
+	/* clickable divs will be manipulated by js to respond to mouseovers and clicks. */
+	font-weight: bold;
+}
+
+/* The Top Title is unique and laid out by id here. */
+#toptitle {
+	top: 10px;
+	width: 100%;
+	text-align: center;
+	font-weight: bold;
+}
+
+/* Specific divs, identified by unique id, have their screen locations hard-coded here. */
+#anatomy_menu_header {
+	bottom: 66pt;
+	left: 5px;
+}
+#anatomy_menu_container {
+	top: 50pt;
+	left: 10px;
+	width: 225px;
+	height: 65pt;
+}
+#camera_menu_header {
+	bottom: 81pt;
+	left: 5px;
+}
+#camera_menu_container {
+	bottom: 10pt;
+	right: 10px;
+	width: 70px;
+	height: 80pt;
+}
+#cortex_menu_header {
+	bottom: 26pt;
+	left: 5px;
+}
+#cortex_menu_container {
+	bottom: 10pt;
+	left: 10px;
+	width: 170px;
+	height: 25pt;
+}
+#background_menu_header {
+	bottom: 26pt;
+	left: 5px;
+}
+#background_menu_container {
+	bottom: 10pt;
+	left: 400px;
+	width: 235px;
+	height: 25pt;
+}

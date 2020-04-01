@@ -1,20 +1,47 @@
-/* =============================================================================
-   App specific CSS file.
-   ========================================================================== */
-
-/* universal */
-
-html {
-  overflow-y: scroll;
+.whitespace {
+  height: 80px;
+  width: 100%;
 }
 
-body {
-  /*padding-top: 60px;*/
+.partner-text {
+  text-transform: capitalize;
+  color: #ffb366;
+  line-height: 0.5;
+  text-align: center;
 }
 
-section {
-  overflow: auto;
+.partner-text span {
+  display: inline-block;
+  position: relative;
+  color: #333;
+  font-size: 1.3rem;
+  letter-spacing: 1px;
 }
+
+.partner-text span:before,
+.partner-text span:after {
+  content: "";
+    position: absolute;
+    height: 5px;
+    border-top: 1px solid #eee;
+    top: 3px;
+    width:490px;
+}
+
+.partner-text span:before {
+  right: 100%;
+  margin-right: 15px;
+}
+
+.partner-text span:after {
+  left: 100%;
+  margin-left: 15px;
+}
+
+.google-form {
+  margin-bottom: 5rem;
+}
+
 
 textarea {
   resize: vertical;
@@ -25,12 +52,6 @@ textarea {
   max-width: 700px;
 }
 
-/* Nav Bar and Splash page*/
-.navbar-custom {
-  /*background-color: #f59ddd fucia pink */
-  background-color: #30f7ef;
-  /*height: 80px;*/
-}
 
 .btn-link {
   text-align: left;
@@ -44,22 +65,6 @@ textarea {
 
 .modal { overflow: auto !important; }
 
-/*
-.btn {
-  background-color: #8358ad; /* shade of purple can change
-} */
-
-body {
-  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
-}
-
-.navbar-brand {
-    padding-top: 25px;
-}
-
-.jumbotron {
-  background-color: #30f7ef
-}
 
 /* Welcome to My Brain and Me */
 .display-3 {
@@ -181,5 +186,9 @@ footer .footer-nav {
   .modal-xl {
    width: 90%;
    max-width: 900px;
+  }
+
+  .google-form {
+    width: auto;
   }
 }

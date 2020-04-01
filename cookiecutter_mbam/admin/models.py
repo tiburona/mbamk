@@ -45,9 +45,8 @@ class UserAdmin(sqla.ModelView):
             # the existing password in the database will be retained.
             model.password = utils.hash_password(model.password2)
 
-
-# Customized Role model for SQL-Admin
-class RoleAdmin(sqla.ModelView):
+# Generic model for SQL-Admin
+class GenericAdmin(sqla.ModelView):
 
     # Prevent administration of Roles unless the currently logged-in user has the "admin" role
     def is_accessible(self):

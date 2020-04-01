@@ -87,3 +87,4 @@ class BaseService(BaseModel):
     def _set_config(self, config_vars):
         [setattr(self, attr, getattr(config, config_var)) for attr, config_var in config_vars]
 
+    

@@ -8,7 +8,7 @@ from cookiecutter_mbam.utils.error_utils import flash_errors
 from .forms import ExperimentForm, ExperimentAndScanForm
 from .models import Experiment
 from .service import ExperimentService
-from cookiecutter_mbam.scan import ScanService
+from cookiecutter_mbam.scan.service import ScanService
 from cookiecutter_mbam.base.tasks import global_error_handler
 
 
@@ -70,7 +70,7 @@ def add():
     """Access the add an experiment route and form."""
 
     if not current_user.consented:
-        return redirect(url_for('user.profile'))
+        return redirect(url_for('user.consent'))
 
     form = ExperimentAndScanForm(request.form)
 
@@ -113,7 +113,7 @@ def edit_experiment(id):
         form.populate_obj(exp) # update whatever has been changed in the form
         exp.save()
         flash('Experiment metadata updated','success')
-        return redirect(url_for('experiment.single_experiment', id=exp.id))
+        return redirect(url_for('display.displays', id=exp.id))
     else:
         flash_errors(form)
 

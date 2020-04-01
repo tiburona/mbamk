@@ -1,58 +1,211 @@
 
 {% extends "layout.html" %}
+<div class="l-page">
 {% block content %}
 <!-- Main jumbotron for a primary marketing message or call to action -->
-<div class="jumbotron">
-    <div class="container">
 
-      <h1 class="display-3 text-center">Welcome to My Brain and Me!</h1>
-      {% if current_user.is_authenticated %}
-          {% if not current_user.experiments.scans %}
-              <p class="lead text-center">Click below to upload your brain scan. If this is your first visit we will ask you to complete a basic user profile
-              and read and agree to our consent form for participation in research.</p>
-              <hr class="my-4">
-              <p class="lead text-center">
-                  <a class="btn btn-primary btn-large" href="{{ url_for( 'experiment.add' ) }}" role="button"><i class="fa fa-upload" aria-hidden="true"></i> Upload my scan</a>
-              </p>
-          {% else %}
-              <p class="lead text-center">Click below to view your scans or complete a survey.</p>
-              <hr class="my-4">
-              <p class="lead text-center">
-                  <a class="btn btn-primary btn-large" href="" role="button"><i class="fa fa-eye" aria-hidden="true"></i> My scans</a>
-                  <a class="btn btn-primary btn-large" href="" role="button"><i class="fa fa-pencil-square" aria-hidden="true"></i> My surveys</a>
-              </p>
-          {% endif %}
-      {% else %}
-          <p class="lead text-center">
-            Register or login to create a 3D model based on your brain scan if have one, learn where you can
-            obtain one if you don't, or to start contributing to mental health research.</p>
-          <hr class="my-4">
-          <p class="lead text-center">
-              <a class="btn btn-primary btn-large" href="{{ url_for('security.register') }}" role="button">Create account</a>
-              <a class="btn btn-primary btn-large" href="{{ url_for('security.login') }}" role="button">Login</a>
-          </p>
-      {% endif %}
-
-    </div>
-</div><!-- /.jumbotron -->
-
-<div class="container">
-  <div class="row">
-    <div class="col-lg-4">
-      <h4><i class="fa fa-wpexplorer"></i> Engage with your brain</h4>
-      <p>Create a 3D rendering of your brain for art or exploration!</p>
-      <p><a class="btn btn-outline-secondary" href="" >Learn more &raquo;</a></p>
-    </div>
-    <div class="col-lg-4">
-      <h4><i class="fa fa-users"></i> Contribute towards research</h4>
-      <p>Participate in studies that further our understanding of neuropsychology and mental health and illness.</p>
-      <p><a href="" class="btn btn-outline-secondary">Learn more &raquo;</a></p>
-   </div>
-    <div class="col-lg-4">
-      <h4><i class="fa fa-external-link-square"></i> Additional Resources</h4>
-      <p>Find out where to get a scan if you don't already have one, discover dimensions of your personality, and more!</p>
-      <p><a href="http://wtforms.simplecodes.com/" class="btn btn-outline-secondary">Learn more &raquo;</a></p>
-    </div>
-  </div><!-- /.row -->
+<div id="detect-this">
 </div>
+
+<section role="top-row" class="landing-page">
+
+    <div class="landing-video">
+      <video autoplay="" loop="" muted="">
+        <source src="{{ asset_url_for('img/mbam3d_newblue_hippocampus.mp4') }}" type="video/mp4">
+      </video>
+    </div>
+
+    <div class="container">
+        <h1>Your Neuroscience and Psychology Portal</h1>
+
+        {% if current_user.is_authenticated %}
+            {% if current_user.num_experiments == 0 %}
+                <p>First Visit? We will guide you through the steps</p>
+                <p class="btn-ca"><a class="btn btn-large btn-y" href="{{ url_for( 'experiment.add' ) }}" role="button"><i class="fa fa-upload" aria-hidden="true"></i> Upload my scan</a></p>
+            {% else %}
+                <p>Click below to view your uploaded scans or upload a new one.</p>
+                <p>
+                    <p class="btn-ca"><a class="btn btn-large btn-y" href="{{ url_for('display.displays') }}" role="button"><i class="fa fa-desktop" aria-hidden="true"></i> View my scans</a></p>
+                    <p class="hype-t"><i>Would you like add another scan?<a href="{{ url_for('experiment.add') }}" role="button"> <u>Upload a scan</u></a></i></p>
+                    <!--<a class="btn btn-primary btn-large" href="" role="button"><i class="fa fa-pencil-square" aria-hidden="true"></i> My surveys</a>-->
+                </p>
+            {% endif %}
+        {% else %}
+
+            <p>Create a 3D model of your brain scan. Contribute to mental health research.</p>
+            <p><a class="btn btn-primary btn-large btn-y" href="{{ url_for('security.register') }}" role="button">Create account</a></p>
+            <p class="hype-t"><i>Already have an account?<a href="{{ url_for('security.login') }}" role="button"> <u>Login</u></a></i></p>
+
+        {% endif %}
+    </div>
+</section>
+
+
+<section role="intro">
+
+    <article class="container">
+
+      <div class="feature">
+
+          <div class="row key-features">
+            <div class="col-lg-4 col-sm-4 col-12">
+              <img src="{{ asset_url_for('img/brain.png') }}">
+              <p>See inside your own brain</p>
+            </div>
+
+            <div class="col-lg-4 col-sm-4 col-12">
+              <img src="{{ asset_url_for('img/micro.png') }}">
+              <p>Participate in neuroscience and mental health research</p>
+            </div>
+
+            <div class="col-lg-4 col-sm-4 col-12">
+              <img src="{{ asset_url_for('img/search.png') }}">
+              <p>Learn about your mind and body</p>
+            </div>
+          </div>
+
+          <hr>
+
+            <p class="welcome-text">Welcome! We are a group of Columbia University neuroscientists passionate about accelerating scientific research and helping everyone learn from psychology and neuroscience discoveries. We want to help you to use science to improve your life and give you opportunities to contribute to research. Our flagship service, now in development, is a tool to help you upload a brain scan and get a beautiful, interactive, 3D visualization of your own brain. If you don’t have a brain scan, we’ll help you look for a research study you can participate in to get one for free.
+
+            Below you can leave your email for an update on when we're ready to release our brain visualization tool. But that's not all! We have a lot of ideas about where to go from here, and we want to know what’s important to you, so we’re opening the floor. Tell us what you think we should work on next, and if you like, sign up to get updates on our projects.</p>
+
+
+          <div class="partners">
+            <span class="s-head">Our Partners</span>
+            <div class="row">
+                <div class="col-lg-4 col-sm-4">
+                  <img src="{{ asset_url_for('img/nyspi.png') }}">
+                </div>
+
+                <div class="col-lg-4 col-sm-4">
+                  <img src="{{ asset_url_for('img/nycmedialab.png') }}">
+                </div>
+
+                <div class="col-lg-4 col-sm-4">
+                  <img src="{{ asset_url_for('img/columbia.png') }}">
+                </div>
+            </div>
+          </div>
+
+      </div> <!-- Feature End  -->
+    </article>
+</section>
+
+
+<section role="participate">
+
+  <p>We want your help. Contribute to mental health research.</p>
+  <div class="buttons">
+    <div><a class="btn btn-primary btn-large btn-y" id="participate-survey" href=#email-form>Get updates</a></div>
+  </div>
+  <div id="media-section"></div>
+
+</section>
+
+<section role="media">
+    <article class="container-fluid">
+        <div class= "row rev-art">
+
+                  <div class="col-md-6">
+                    <div class="article-wrapper article-1">
+                        <div class="article-description">
+                          <p class="article-title">Spiro Pantazatos Presents 'My Brain and Me' at the 2019 NYC Media Lab Combine</p>
+                          <p class="article-date">April 24, 2019</p>
+                          <p class="article-para">In April, Spiro Pantazatos, PhD, Assistant Professor of Clinical Neurobiology in Psychiatry, presented his lab’s project, My Brain and Me, at the 2019 NYC Media Lab Combine (Demo Day). We spoke with Pantazatos about how he found his way to Columbia Psychiatry, his My Brain and Me project, and his experience at the NYC Media Lab Combine. </p>
+                          <a class="article-button" href="https://www.columbiapsychiatry.org/news/spiro-pantazatos-presents-my-brain-and-me-2019-nyc-media-lab-combine" target="_blank">Read Full Article</a>
+                        </div>
+                      </div>
+                  </div>
+
+                  <div class="col-md-6">
+                    <div class="article-image">
+                      <img src="{{ asset_url_for('img/article/columbia.jpg') }}" class="spiro-columbia"></img>
+                    </div>
+                  </div>
+
+              </div>
+
+              <div class= "row">
+                  <div class="col-md-6">
+                    <div class="article-image image-brain">
+                     <img src="{{ asset_url_for('img/article/brain.jpg') }}" class="combine-brain"></img>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6">
+                    <div class="article-wrapper article-2">
+                      <div class="article-description article-description2">
+                        <p class="article-title">My Brain and Me</p>
+                        <p class="article-date">January 2, 2019</p>
+                        <p class="article-para">We want to help you see yourself like never before, and in the process, move scientific research forward, enabling discovery that will ease the burden of physical and mental illness.  </p>
+                        <a class="article-button" href="https://www.thecombine.nyc/my-brain-and-me" target="_blank">Read Full Article</a>
+                      </div>
+                    </div>
+                   </div>
+              </div>
+    </article>
+</section>
+
+<div id="team-section"></div>
+<section role="team">
+    <article class="container">
+        <span class="s-head">Team</span>
+        <div class="row team-wrapper">
+            <div class="col-md-4 col-sm-6 col-6 team-member">
+              <img class="team-image" src="{{ asset_url_for('img/team/spiro.png') }}">
+                <a href="https://www.columbiapsychiatry.org/profile/spiro-pantazatos-phd" target="_blank"><p class="member-name">Spiro Pantazatos, PhD</p></a>
+                <p class="member-title">Founder and Team Lead <br>Neuroinformatics</p>
+            </div>
+
+            <div class="col-md-4 col-sm-6 col-6 team-member">
+              <img class="team-image" src="{{ asset_url_for('img/team/katie.png') }}">
+                <a href="https://www.columbiapsychiatry.org/research-labs/brain-imaging-lab" target="_blank"><p class="member-name">Katie Surrence, MS</p></a>
+                <p class="member-title">Web Development</p>
+            </div>
+
+            <div class="col-md-4 col-sm-6 col-6 team-member">
+              <img class="team-image" src="{{ asset_url_for('img/team/mike.png') }}">
+                <a href="https://www.columbiapsychiatry.org/research-labs/brain-imaging-lab" target="_blank"><p class="member-name">Mike Schmidt, PhD</p></a>
+                <p class="member-title">Computational Neuroanatomy</p>
+            </div>
+        </div>
+
+        <span class="s-head">Designer</span>
+        <div class="row team-wrapper">
+          <div class="col-md-4 col-sm-6 col-6 team-member">
+              <img class="team-image" src="{{ asset_url_for('img/team/barsha.jpg') }}">
+                <a href="https://www.baarshaa.com/" target="_blank"><p class="member-name">Barsha Maharjan, MFA</p></a>
+                <p class="member-title">UI/UX Design and Development</p>
+          </div>
+        </div>
+
+        <span class="s-head">Contributors and partners</span>
+        <div class="row team-wrapper">
+          <div class="col-md-4 col-sm-6 col-6 team-member">
+                <a href=https://www.columbiapsychiatry.org/profile/jeffrey-m-miller-md target="_blank"><p class="member-name">Jeffrey Miller, MD</p></a>
+                <p class="member-title">Associate Professor of Clinical Psychiatry, Columbia University Department of Psychiatry</p>
+            </div>
+            <div class="col-md-4 col-sm-6 col-6 team-member">
+                <a href=https://www.linkedin.com/in/chris-stanley-156a9011 target="_blank"><p class="member-name">Chris Stanley</p></a>
+                <p class="member-title">Chief Security Information Officer, NYS Office of Information Technology</p>
+            </div>
+        </div>
+    </article>
+
+    <div id="email-form"></div>
+    <div class="whitespace"></div>
+    <div class="partner-text">
+      <span>Get updates</span>
+    </div>
+    <div class="container-fluid google-form" >
+      {% include 'mc_embedded_signup.html' %}
+    </div>
+
+</section>
+</div>
+
+
+
+
 {% endblock %}

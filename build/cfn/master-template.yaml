@@ -112,8 +112,8 @@ Resources:
         ImageUrl: !Ref 'FlaskAppImageUrl'
         ContainerPort: 8000
         ContainerCpu: 256
-        ContainerMemory: 384
-        ContainerCommand: "bash,-c,cp .dev_env .env && flask run"
+        ContainerMemory: 256
+        ContainerCommand: "bash,-c,cp .dev_env .env && flask db upgrade && gunicorn -w 4 -b :8000 'cookiecutter_mbam.app:create_app()'"
         Path: "*"
         Priority: 2 # This must NOT be set to 1 due to downstream IF statements to check.
         HealthCheckPath: /
@@ -144,8 +144,8 @@ Resources:
         ServiceName: celery
         ImageUrl: !Ref 'FlaskAppImageUrl'
         ContainerCpu: 256
-        ContainerMemory: 384
-        ContainerCommand: "celery -A cookiecutter_mbam.run_celery:celery worker --loglevel info"
+        ContainerMemory: 256
+        ContainerCommand: "celery -A cookiecutter_mbam.run_celery:celery worker --pool=gevent --concurrency=500 --loglevel info"
         ContainerWorkingDirectory: /app
         ContainerMountPoint: /app/static/files # This should be same as files['files_depot'] in config.py
         HostMountPoint: /efs/mbam/user-data

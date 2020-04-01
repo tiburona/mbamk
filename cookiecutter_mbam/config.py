@@ -15,7 +15,7 @@ def debug():
 class Config:
     """ Sets default configuration and reads from environment variables for any overwrites"""
 
-    SECRET_KEY = env.str('SECRET_KEY')
+    SECRET_KEY = env.str('SECRET_KEY','not-so-secret')
     ENV = env.str('FLASK_ENV', 'development')
 
     CACHE_TYPE = 'simple'  # Can be "memcached", "redis", etc.
@@ -41,7 +41,7 @@ class Config:
 
     # Flask security
 
-    SECURITY_PASSWORD_SALT = env.str('SECURITY_PASSWORD_SALT')
+    SECURITY_PASSWORD_SALT = env.str('SECURITY_PASSWORD_SALT','not-so-salty')
     SECURITY_PASSWORD_HASH='bcrypt'
     SECURITY_REGISTERABLE = True
     SECURITY_RECOVERABLE = True
@@ -71,8 +71,8 @@ class Config:
 
     # Mail
 
-    MAIL_USERNAME = env.str('MAIL_USERNAME')
-    MAIL_PASSWORD = env.str('MAIL_PASSWORD')
+    MAIL_USERNAME = env.str('MAIL_USERNAME','test')
+    MAIL_PASSWORD = env.str('MAIL_PASSWORD','test')
     MAIL_SERVER = env.str('MAIL_SERVER', 'smtp.gmail.com')
     MAIL_PORT = env.int('MAIL_PORT', 587)
     MAIL_USE_SSL = env.bool('MAIL_USE_SSL', False)
@@ -85,23 +85,23 @@ class Config:
     XNAT_PASSWORD = env.str('XNAT_PASSWORD', 'admin')
     XNAT_DOCKER_HOST = env.str('XNAT_DOCKER_HOST','unix:///var/run/docker.sock')
     XNAT_PROJECT = env.str('XNAT_PROJECT', 'MBAM_TEST')
-    DICOM_TO_NIFTI_COMMAND = int(env.str('DICOM_TO_NIFTI_COMMAND', 1))
+    DICOM_TO_NIFTI_COMMAND = int(env.str('DICOM_TO_NIFTI_COMMAND', '1'))
     DICOM_TO_NIFTI_WRAPPER = env.str('DICOM_TO_NIFTI_WRAPPER', 'dcm2niix-xfer')
-    FREESURFER_RECON_COMMAND = int(env.str('FREESURFER_RECON_COMMAND', 2))
+    FREESURFER_RECON_COMMAND = int(env.str('FREESURFER_RECON_COMMAND', '2'))
     FREESURFER_RECON_WRAPPER = env.str('FREESURFER_RECON_WRAPPER', 'freesurfer-recon-all-xfer')
 
 
     # Cloudfront
 
-    CLOUDFRONT_URL = env.str('CLOUDFRONT_URL')
-    CLOUDFRONT_KEY_ID = env.str('CLOUDFRONT_KEY_ID')
-    CLOUDFRONT_SECRET_KEY = env.str('CLOUDFRONT_SECRET_KEY')
+    CLOUDFRONT_URL = env.str('CLOUDFRONT_URL','test')
+    CLOUDFRONT_KEY_ID = env.str('CLOUDFRONT_KEY_ID','test')
+    CLOUDFRONT_SECRET_KEY = env.str('CLOUDFRONT_SECRET_KEY','test')
 
 
     # S3
 
-    CLOUD_STORAGE_ACCESS_KEY_ID = env.str('S3_KEY_ID')
-    CLOUD_STORAGE_SECRET_ACCESS_KEY = env.str('S3_SECRET_KEY')
+    CLOUD_STORAGE_ACCESS_KEY_ID = env.str('S3_KEY_ID','test')
+    CLOUD_STORAGE_SECRET_ACCESS_KEY = env.str('S3_SECRET_KEY','test')
     CLOUD_STORAGE_BUCKET_NAME = env.str('S3_BUCKET', 'mbam-test')
 
 
@@ -113,8 +113,3 @@ class Config:
     enable_utc = True
     broker_url = env.str('BROKER_URL', 'redis://localhost:6379')
     results_backend = env.str('RESULTS_BACKEND', broker_url)
-
-
-
-
-

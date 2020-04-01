@@ -8,8 +8,8 @@ from wtforms.validators import DataRequired, Email, Length
 
 class ContactForm(FlaskForm):
     """ Contact form. """
-    fullname = StringField('Full Name (required)', validators=[DataRequired()])
-    email = EmailField('Contact Email (required)', validators=[DataRequired(), Email()])
+    fullname = StringField('Full Name', validators=[Length(min=5,max=50)])
+    email = EmailField('Contact Email', validators=[Email()])
     subject = SelectField('Subject', choices=[('General Inquiry','General Inquiry'),('Site Suggestion','Site Suggestion'),('Other','Other')], validators=[DataRequired()])
     message = TextAreaField('Message (required)', validators=[DataRequired(), Length(min=5,max=500)])
 

@@ -11,5 +11,5 @@ COPY .htpasswd /etc/nginx/
 # The below is so that we can change nginx settings on the fly and debug
 # using vim within the shell but eventually want to take out since it increases
 # build time.
-RUN ["apt-get", "update"]
-RUN ["apt-get", "install", "-y", "vim"]
+#RUN ["apt-get", "update"]
+#RUN ["apt-get", "install", "-y", "vim"]

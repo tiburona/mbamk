@@ -2,4 +2,4 @@ version: '3'
 
 services:
   web:
-    command: bash -c "npm run build && flask run" # Come back to fix
+    command: bash -c "cp .docker_env .env && npm run build && gunicorn -w 4 -b :8000 'cookiecutter_mbam.app:create_app()'"

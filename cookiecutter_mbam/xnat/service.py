@@ -276,9 +276,3 @@ class XNATConnection(BaseService):
             resource_url = resource_url[5:]
         refresh_url = '/data/services/refresh/catalog?resource=' + resource_url
         return self.xnat_post(refresh_url)
-
-
-
-
-
-

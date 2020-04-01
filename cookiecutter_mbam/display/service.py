@@ -36,8 +36,8 @@ class DisplayService(BaseService):
         aws_key = Scan.get_by_id(scan_id).aws_key
         if aws_key.endswith('.zip'):
             # Case where a .zip was uploaded
-            der = [d for d in Scan.get_by_id(scan_id).derivations if (d.process_name == 'dicom_to_nifti') & (d.cloud_storage_key != None)]
-            url = self.cf_base_url + der[0].cloud_storage_key
+            der = [d for d in Scan.get_by_id(scan_id).derivations if (d.process_name == 'dicom_to_nifti') & (d.aws_key != None)]
+            url = self.cf_base_url + der[0].aws_key
         else:
             # Case where a NIFTI was uploaded
             url = self.cf_base_url + aws_key

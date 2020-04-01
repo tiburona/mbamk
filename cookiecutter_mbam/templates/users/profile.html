@@ -4,20 +4,36 @@
 
 {% block content %}
 
-<div class="container-narrow">
+<section role="content-uni-wrapper">
+    <div class="container">
+        <div class="form-wrapper">
+          {% if action == "edit" %}
+            <h3>Edit your profile</h3>
+          {% else %}
+            <h3>Create your profile</h3>
+          {% endif %}
+            {% from "security/_macros.html" import render_field, render_field_with_errors %}
+            <form id="profileForm" method="POST" action="{{ url_for( 'user.profile' ) }}" role="form">
+                {{ form.hidden_tag() }}
+                {{ render_field_with_errors(form.first_name, class_='form-control') }}
+                {{ render_field_with_errors(form.last_name, class_='form-control') }}
+                {{ render_field_with_errors(form.sex, class_='form-control') }}
+                {{ render_field_with_errors(form.dob, class_='form-control') }}
 
-    <h3 class="mt-5">User Profile</h3>
-
-    {% from "security/_macros.html" import render_field, render_field_with_errors %}
-    <form id="profileForm" method="POST" action="{{ url_for( 'user.profile' ) }}" role="form">
-        {{ form.hidden_tag() }}
-        {{ render_field_with_errors(form.first_name, class_='form-control') }}
-        {{ render_field_with_errors(form.last_name, class_='form-control') }}
-        {{ render_field_with_errors(form.sex, class_='form-control') }}
-        {{ render_field_with_errors(form.dob, class_='form-control') }}
-        <button type="submit" class="btn btn-primary">Save</button>
-        <a href="{{ url_for('public.home') }}" class="btn btn-primary">Cancel</a>
-    </form>
-</div>
+                {% if action == "edit" %}
+                  <div class="btn-section">
+                      <button type="submit" class="btn btn-primary create-btn">Save</button>
+                      <button type="cancel" onclick="window.location='{{ url_for('public.home') }}';return false;" class="btn btn-outline-secondary">Cancel</button>
+                  </div>
+                {% else %}
+                  <div class="btn-section">
+                      <button type="submit" class="btn btn-primary create-btn">Create</button>
+                      <button type="cancel" onclick="window.location='{{ url_for('public.home') }}';return false;" class="btn btn-outline-secondary">Skip</button>
+                  </div>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+</section>
 
 {% endblock %}

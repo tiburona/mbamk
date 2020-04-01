@@ -22,10 +22,9 @@ class ExperimentForm(FlaskForm):
         """Create instance."""
         super(ExperimentForm, self).__init__(*args, **kwargs)
 
-
 class ScanForm(FlaskForm):
     scan_file = FileField(validators=[FileAllowed(['nii', 'nii.gz', 'zip'])])
-    submit = SubmitField('Submit')
+    submit = SubmitField('Save')
 
     def __init__(self, *args, **kwargs):
         """Create instance."""

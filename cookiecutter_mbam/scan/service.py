@@ -78,6 +78,8 @@ class ScanService(BaseService):
 
         self._process_file(image_file)
 
+        self.scan.update(label=self.orig_filename)
+
         self._update_xnat_labels(xnat_labels)
 
         self.scan_info = [self.user.id, self.experiment.id, self.scan.id]

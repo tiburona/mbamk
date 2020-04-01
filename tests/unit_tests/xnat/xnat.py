@@ -12,7 +12,6 @@ class TestXNATTasks:
     @pytest.fixture(autouse=True)
     def setup_xnat_tests(self):
         self.project = 'MBAM_TEST'
-        config = config_by_name[config_name]
         self.file_depot = config.files['file_depot']
         self.xnat_config = config.XNAT
         self.server = self.xnat_config['server']
@@ -248,8 +247,3 @@ class TestDLFileFromXnat(TestXNATTasks):
         responses.add(responses.GET, self.server + self.file_uri, status=404, json={'error': 'not found'})
         with pytest.raises(ValueError) as e_info:
             self.signature.apply(throw=True)
-
-
-
-
-

@@ -7,12 +7,13 @@ from celery import Celery
 from cookiecutter_mbam import celery
 from cookiecutter_mbam.init_celery import init_celery
 from cookiecutter_mbam import commands, public, user, experiment, scan, display
-from cookiecutter_mbam.admin import UserAdmin, RoleAdmin
+from cookiecutter_mbam.admin import register_admin_views
 from cookiecutter_mbam.extensions import admin, cache, csrf_protect, db, debug_toolbar, migrate, \
     security, webpack, mail, jsglue, basicauth
 from cookiecutter_mbam.user import User, Role
 from .hooks import create_test_users, models_committed_hooks
 from .config import Config
+from flask_admin import Admin
 
 from flask import current_app
 def debug():
@@ -33,6 +34,7 @@ def create_app(config=Config):
     register_errorhandlers(app)
     register_shellcontext(app)
     register_commands(app)
+
     return app
 
 def register_extensions(app):
@@ -46,7 +48,13 @@ def register_extensions(app):
     debug_toolbar.init_app(app)
     migrate.init_app(app, db)
     webpack.init_app(app)
+    # Must register views before initalizing the Flask admin
+    # And recreate admin instance within create_app to avoide blueprint name collisions during testing
+    # https://github.com/flask-admin/flask-admin/issues/910
+    admin=Admin()
+    register_admin_views(admin)
     admin.init_app(app, endpoint='admin')
+
     mail.init_app(app)
     jsglue.init_app(app)
     basicauth.init_app(app) # To protect site until it goes live
@@ -93,8 +101,3 @@ def register_commands(app):
     app.cli.add_command(commands.lint)
     app.cli.add_command(commands.clean)
     app.cli.add_command(commands.urls)
-
-def register_admin_views():
-    """Register Flask admin views."""
-    admin.add_view(UserAdmin(User, db.session))
-    admin.add_view(RoleAdmin(Role, db.session))

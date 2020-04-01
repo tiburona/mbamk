@@ -12,8 +12,8 @@ WTF_CSRF_ENABLED = False  # Allows form testing
 PRESERVE_CONTEXT_ON_EXCEPTION = False
 SECURITY_PASSWORD_SALT = 'test'
 SECURITY_PASSWORD_HASH = 'bcrypt'
-SECURITY_EMAIL_SUBJECT_REGISTER = 'Welcome to MyBrainandMe!'
-SECURITY_EMAIL_SENDER = '"MyBrainandMe" <mbaminfo@gmail.com>'
+SECURITY_EMAIL_SUBJECT_REGISTER = 'Welcome to My Brain and Me!'
+SECURITY_EMAIL_SENDER = '"My Brain and Me" <mbaminfo@gmail.com>'
 SECURITY_REGISTERABLE = True
 
 # Flask-Mail Settings
@@ -21,7 +21,7 @@ MAIL_USERNAME = 'mbaminfo@gmail.com'
 # Below is temporary application specific password for gmail smtp. Delete and replace with
 # env variable when repo goes public
 MAIL_PASSWORD='digkexrwzscfpybx'
-MAIL_DEFAULT_SENDER = '"MyBrainandMe" <mbaminfo@gmail.com>'
+MAIL_DEFAULT_SENDER = '"My Brain and Me" <mbaminfo@gmail.com>'
 MAIL_SERVER = 'smtp.gmail.com'
 MAIL_PORT = 587
 MAIL_USE_SSL = False
