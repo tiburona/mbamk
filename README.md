@@ -492,8 +492,7 @@ and the Freesurfer output.
 #### Setting up the XNAT container service for testing
 
 If you are a trusted user, by default your MBAM development server is configured to access DICOM to NIFTI conversion and 
-Freesurfer recon containers on MIND XNAT.  If you would like to switch to the mock Freesurfer container for manual 
-testing, 
+Freesurfer recon containers on MIND XNAT.
 
 Because Freesurfer reconstruction is a many-hour process in the best case, for testing purposes it is best to use a mock 
 Freesurfer container that provides output as if Freesurfer ran.  If you are a trusted developer, you can make MBAM use 
