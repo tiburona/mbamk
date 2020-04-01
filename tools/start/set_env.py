@@ -138,8 +138,8 @@ def set_config(config_path, override_config_path, config_name, xnat, **kwargs):
     override_config = set_config_from_yaml(override_config_path, config_name)
 
     if override_config:
-        if 'xnat' in override_config:
-            xnat = override_config['xnat']
+        if 'XNAT' in override_config:
+            xnat = override_config['XNAT']
         config.update(override_config)
 
     configure_database(config, kwargs)
