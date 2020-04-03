@@ -1,0 +1,65 @@
+{
+  "name": "freesurfer-to-obj",
+  "description": "Downloads Freesurfer recon output, generates obj files, and reuploads them",
+  "image": "mbam/freesurfer_to_obj:latest",
+  "type": "docker",
+  "command-line": "./main.sh #download-url# #upload-url# #xnat-host#",
+  "mounts": [],
+  "environment-variables": {},
+  "ports": {},
+  "inputs": [
+    {
+      "name": "download-url",
+      "description": "url of the Freesurfer files resources",
+      "type": "string",
+      "matcher": null,
+      "default-value": "",
+      "required": false,
+      "replacement-key": null,
+      "sensitive": null,
+      "command-line-flag": null,
+      "command-line-separator": null,
+      "true-value": null,
+      "false-value": null
+    },
+     {
+      "name": "upload-url",
+      "description": "url of the obj resource",
+      "type": "string",
+      "matcher": null,
+      "default-value": "",
+      "required": false,
+      "replacement-key": null,
+      "sensitive": null,
+      "command-line-flag": null,
+      "command-line-separator": null,
+      "true-value": null,
+      "false-value": null
+    },
+    {
+      "name": "xnat-host",
+      "description": "XNAT host",
+      "type": "string",
+      "matcher": null,
+      "default-value": "",
+      "required": false,
+      "replacement-key": null,
+      "command-line-flag": null,
+      "command-line-separator": null,
+      "true-value": null,
+      "false-value": null
+    }
+  ],
+  "outputs": [],
+  "xnat": [
+    {
+      "name": "freesurfer-to-obj",
+      "label": null,
+      "description": "download recon files, convert to obj, upload obj files",
+      "contexts": [],
+      "external-inputs": [],
+      "derived-inputs": [],
+      "output-handlers": []
+    }
+  ]
+}
