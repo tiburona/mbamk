@@ -41,7 +41,7 @@ DOCKER:
   BROKER_URL: redis://redis:6379
   RESULTS_BACKEND: redis://redis:6379
   FLASK_APP: autoapp.py
-  FLASK_ENV: production
+  FLASK_ENV: development
   FLASK_RUN_PORT: 8000
   FLASK_RUN_HOST: 0.0.0.0
 
@@ -50,11 +50,15 @@ STAGING:
   DEBUG: False
   SERVER_NAME: staging.mybrainandme.org
   PREFERRED_URL_SCHEME: https
-  XNAT_HOST: https://mind-xnat.nyspi.org
+  MIND_XNAT_HOST: https://mind-xnat.nyspi.org
+  MIND_DICOM_TO_NIFTI_COMMAND: 36
+  MIND_FREESURFER_RECON_COMMAND: 37
   XNAT_DOCKER_HOST: http://10.20.193.32:2375
   XNAT_PROJECT: MBAM_STAGING
   DICOM_TO_NIFTI_COMMAND: 36
   FREESURFER_RECON_COMMAND: 37
+  FLASK_APP: autoapp.py
+  FLASK_ENV: production
   AWS_ACCOUNT_ID: 413377292493
   AWS_DEFAULT_REGION: us-east-1
   IMAGE_REPO: mbam/flask-app
@@ -90,8 +94,8 @@ TRUSTED:
 
 LOCAL:
   ENV: local
-  FLASK_APP: autoapp.py
   FLASK_ENV: development
+  FLASK_APP: autoapp.py
   SECRET_KEY: not-so-secret
   FLASK_RUN_PORT: 8000
   FLASK_RUN_HOST: 0.0.0.0
@@ -106,9 +110,3 @@ LOCAL:
   VVM_FREESURFER_RECON_COMMAND: 2
   VVM_XNAT_PASSWORD: admin
   VVM_XNAT_USER: admin
-
-
-
-
-
-

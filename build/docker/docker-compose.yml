@@ -9,11 +9,13 @@ services:
      - user-data:/app/static/files
      - assets-data:/app/static/build
      - static-data:/app/static
-   command: python ./tools/start_mbam.py run --flask --env docker --config_dir config
+   command: python tools/start/entry.py run --flask --env docker
    depends_on:
      - jatos
    environment:
     - "PYTHONUNBUFFERED=1"
+      PARAMETER_STORE_KEY_ID: ${AWS_KEY_ID}
+      PARAMETER_STORE_SECRET_KEY: ${AWS_SECRET_KEY}
 
  jatos:
    restart: always
@@ -41,7 +43,7 @@ services:
 
  redis:
    image: 'redis:5.0.3-alpine'
-   command: python ./dev_tools/start_mbam.py --redis --env docker
+   command: python tools/start/entry.py run --redis --env docker
    volumes:
     - 'redis-data:/data'
    ports:
@@ -49,23 +51,23 @@ services:
 
  celery:
    image: mbam_web
-   command: python ./dev_tools/start_mbam.py --celery --env docker
+   command: python tools/start/entry.py run --celery --env docker
    volumes:
      - user-data:/app/static/files
    links:
     - redis
    environment:
-    CONFIG_NAME: 'docker'
-    XNAT_HOST: ${XNAT_HOST}
-    XNAT_USER: ${XNAT_USER}
-    XNAT_PASSWORD: ${XNAT_PASSWORD}
-    XNAT_PROJECT: ${XNAT_PROJECT}
-    DOCKER_HOST: ${XNAT_DOCKER_HOST}
-    DICOM_TO_NIFTI_COMMAND: ${DICOM_TO_NIFTI_TRANSFER_COMMAND_ID}
-    CLOUDFRONT_PRIVATE_KEY: ${CLOUDFRONT_PRIVATE_KEY}
-    AWS_KEY_ID: ${AWS_KEY_ID}
-    AWS_SECRET_KEY: ${AWS_SECRET_KEY}
-    AWS_S3_BUCKET: ${AWS_S3_BUCKET}
+    # CONFIG_NAME: 'docker'
+    # XNAT_HOST: ${XNAT_HOST}
+    # XNAT_USER: ${XNAT_USER}
+    # XNAT_PASSWORD: ${XNAT_PASSWORD}
+    # XNAT_PROJECT: ${XNAT_PROJECT}
+    # DOCKER_HOST: ${XNAT_DOCKER_HOST}
+    # DICOM_TO_NIFTI_COMMAND: ${DICOM_TO_NIFTI_TRANSFER_COMMAND_ID}
+    # CLOUDFRONT_PRIVATE_KEY: ${CLOUDFRONT_PRIVATE_KEY}
+    PARAMETER_STORE_KEY_ID: ${AWS_KEY_ID}
+    PARAMETER_STORE_SECRET_KEY: ${AWS_SECRET_KEY}
+
 
 volumes:
   jatos-data:

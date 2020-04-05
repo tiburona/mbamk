@@ -130,51 +130,25 @@ Resources:
               SourceVolume: !Ref 'VolumeName'
           Command: !Ref 'ContainerCommand'
           Secrets:
-            - Name: XNAT_USER
+            - Name: PARAMETER_STORE_KEY_ID
               ValueFrom: !Sub
-                - ${PREPEND}/XNAT_USER
+                - ${PREPEND}/AMAZON_KEY_ID
                 - { PREPEND: !Ref ParameterStore }
-            - Name: XNAT_PASSWORD
+            - Name: PARAMETER_STORE_SECRET_KEY
               ValueFrom: !Sub
-                - ${PREPEND}/XNAT_PASSWORD
-                - { PREPEND: !Ref ParameterStore }
-            - Name: MYSQL_PASSWORD
-              ValueFrom: !Sub
-                - ${PREPEND}/MYSQL_PASSWORD
+                - ${PREPEND}/AMAZON_SECRET_KEY
                 - { PREPEND: !Ref ParameterStore }
             - Name: JATOS_DB_PASSWORD
               ValueFrom: !Sub
                 - ${PREPEND}/MYSQL_PASSWORD
                 - { PREPEND: !Ref ParameterStore }
-            - Name: MYSQL_USERNAME
-              ValueFrom: !Sub
-                - ${PREPEND}/MYSQL_USERNAME
-                - { PREPEND: !Ref ParameterStore }
             - Name: JATOS_DB_USERNAME
               ValueFrom: !Sub
                 - ${PREPEND}/MYSQL_USERNAME
                 - { PREPEND: !Ref ParameterStore }
-            - Name: CLOUDFRONT_PRIVATE_KEY
-              ValueFrom: !Sub
-                - ${PREPEND}/CLOUDFRONT_PRIVATE_KEY
-                - { PREPEND: !Ref ParameterStore }
-            - Name: AWS_KEY_ID
-              ValueFrom: !Sub
-                - ${PREPEND}/AMAZON_KEY_ID
-                - { PREPEND: !Ref ParameterStore }
-            - Name: AWS_SECRET_KEY
-              ValueFrom: !Sub
-                - ${PREPEND}/AMAZON_SECRET_KEY
-                - { PREPEND: !Ref ParameterStore }
-            - Name: AWS_SMTP_PASSWORD
-              ValueFrom: !Sub
-                - ${PREPEND}/AMAZON_SMTP_PASSWORD
-                - { PREPEND: !Ref ParameterStore }
 
           Environment:
           # Pass the same environment variables to JATOS and MBaM app.
-          - Name: CONFIG_NAME
-            Value: !Ref 'EnvironmentName' # This should be 'staging' or 'production', and must match options in config.py
           - Name: JATOS_DB_URL
             Value: !Join
                     - ''
@@ -185,19 +159,6 @@ Resources:
             Value: "com.mysql.jdbc.Driver"
           - Name: JATOS_JPA
             Value: "mysqlPersistenceUnit"
-          # Access to MYSQL database
-          - Name: MYSQL_HOST
-            Value: '{{resolve:ssm:MYSQL_HOST:1}}'
-          # Access to XNAT
-          - Name: XNAT_HOST
-            Value: '{{resolve:ssm:XNAT_HOST:1}}'
-          # Access to Redis
-          - Name: broker_url
-            Value:
-              Fn::ImportValue: !Sub ${EnvironmentName}:RedisEndpoint
-          # Sending email
-          - Name: AWS_SMTP_USERNAME
-            Value: '{{resolve:ssm:AMAZON_SMTP_USERNAME:1}}'
 
   # The service. The service is a resource which allows you to run multiple
   # copies of a type of task, and gather up their logs and metrics, as well
