@@ -4,7 +4,7 @@ services:
   web:
     volumes:
       - ../../assets:/app/assets
-      - ../../cookiecutter_mbam:/app/cookiecutter_mbam
+      - ../../../mbam:/app
 
   celery:
     volumes:

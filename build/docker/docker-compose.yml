@@ -9,7 +9,7 @@ services:
      - user-data:/app/static/files
      - assets-data:/app/static/build
      - static-data:/app/static
-   command: python tools/start/entry.py run --flask --env docker
+   command: python tools/start/entry.py run --flask --mysql docker --env docker
    depends_on:
      - jatos
    environment:
@@ -29,8 +29,6 @@ services:
    restart: always
    build:
      context: ./nginx
-     args:
-       - NGINX_CONFIG_FILE=${NGINX_CONFIG_FILE}
    ports:
      - "80:80"
      - "443:443"
@@ -43,7 +41,7 @@ services:
 
  redis:
    image: 'redis:5.0.3-alpine'
-   command: python tools/start/entry.py run --redis --env docker
+   command: redis-server
    volumes:
     - 'redis-data:/data'
    ports:
@@ -51,7 +49,7 @@ services:
 
  celery:
    image: mbam_web
-   command: python tools/start/entry.py run --celery --env docker
+   command: python tools/start/entry.py run --celery  --mysql docker --env docker
    volumes:
      - user-data:/app/static/files
    links:

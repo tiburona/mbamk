@@ -113,7 +113,7 @@ Resources:
         ContainerPort: 8000
         ContainerCpu: 256
         ContainerMemory: 256
-        ContainerCommand: "bash,-c,python tools/start/entry.py run --flask --env staging"
+        ContainerCommand: "python tools/start/entry.py run --flask --env staging"
         Path: "*"
         Priority: 2 # This must NOT be set to 1 due to downstream IF statements to check.
         HealthCheckPath: /

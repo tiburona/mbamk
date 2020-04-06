@@ -33,7 +33,7 @@ run_args = [
                        'default': '.' }),
     (['-e', '--env'], {'default': 'trusted',
                        'help': "The type of environment. Determines configuration.",
-                       'choices': ['local', 'trusted','staging']}),
+                       'choices': ['local','docker','trusted','staging']}),
     (['-f', '--flask'], {'action': 'store_true', 'help': "Start the Flask app" }),
     (['-c', '--celery'], {'action': 'store_true', 'help': "Start Celery worker"}),
     (['-r', '--redis'], {'action': 'store_true', 'help': "Start Redis"}),

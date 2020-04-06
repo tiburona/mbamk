@@ -5,7 +5,9 @@ RUN rm  /etc/nginx/conf.d/default.conf
 # Make sure to define NGINX_CONFIG_FILE in .env file, and/or
 # can also define default by setting =value it here.
 ARG NGINX_CONFIG_FILE
-COPY $NGINX_CONFIG_FILE /etc/nginx/conf.d/
+
+# COPY $NGINX_CONFIG_FILE /etc/nginx/conf.d/
+COPY local.conf /etc/nginx/conf.d/
 COPY .htpasswd /etc/nginx/
 
 # The below is so that we can change nginx settings on the fly and debug
