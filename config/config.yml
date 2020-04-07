@@ -58,20 +58,18 @@ STAGING:
   DEBUG: False
   SERVER_NAME: staging.mybrainandme.org
   PREFERRED_URL_SCHEME: https
+  FLASK_APP: autoapp.py
+  FLASK_ENV: production
   MIND_XNAT_HOST: https://mind-xnat.nyspi.org
   MIND_DICOM_TO_NIFTI_COMMAND: 36
   MIND_FREESURFER_RECON_COMMAND: 37
-  XNAT_DOCKER_HOST: http://10.20.193.32:2375
-  XNAT_PROJECT: MBAM_STAGING
-  DICOM_TO_NIFTI_COMMAND: 36
-  FREESURFER_RECON_COMMAND: 37
-  FLASK_APP: autoapp.py
-  FLASK_ENV: production
+  MIND_XNAT_DOCKER_HOST: http://10.20.193.32:2375
+  MIND_XNAT_PROJECT: MBAM_STAGING
   AWS_ACCOUNT_ID: 413377292493
   AWS_DEFAULT_REGION: us-east-1
   IMAGE_REPO: mbam/flask-app
   STACK_NAME: staging
-  MYSQL_HOST: braindb-instance.clem3xtlzpyq.us-east-1.rds.amazonaws.com
+  MYSQL_LOCAL_HOST: braindb-instance.clem3xtlzpyq.us-east-1.rds.amazonaws.com
   JATOS_DB_URL: jdbc:mysql://braindb-instance.clem3xtlzpyq.us-east-1.rds.amazonaws.com/brain_db?characterEncoding=UTF-8&useSSL=false
   S3_BUCKET: 'mbam-test-sp'
 
