@@ -33,7 +33,7 @@ Parameters:
   FlaskAppImageUrl:
     Description: URL to the MBaM Flask app container.
     Type: String
-    Default: 413377292493.dkr.ecr.us-east-1.amazonaws.com/mbam/flask-app:796fe03
+    Default: 413377292493.dkr.ecr.us-east-1.amazonaws.com/mbam/flask-app:v0.1-alpha-367-gc68b05d-c68b05d
   MakeVPCPublic:
     Description: If set to false will create a private (not public) VPC. Leave to true in order to access EC2 instances with SSH.
     Type: String
@@ -41,11 +41,11 @@ Parameters:
     AllowedValues: [ true, false ]
   DesiredCapacity:
       Type: Number
-      Default: 2
+      Default: 1
       Description: The number of EC2 instances to launch in your ECS cluster.
   MaxSize:
     Type: Number
-    Default: 4
+    Default: 2
     Description: Maximum number of EC2 instances that can be launched in your ECS cluster.
   FlaskServiceName:
     Type: String
@@ -113,7 +113,7 @@ Resources:
         ContainerPort: 8000
         ContainerCpu: 256
         ContainerMemory: 256
-        ContainerCommand: "python tools/start/entry.py run --flask --env staging"
+        ContainerCommand: "bash,-c,python tools/start/entry.py run --flask --env staging"
         Path: "*"
         Priority: 2 # This must NOT be set to 1 due to downstream IF statements to check.
         HealthCheckPath: /

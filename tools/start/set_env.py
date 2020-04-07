@@ -57,6 +57,8 @@ def parameters_to_fetch(config_name):
                 '/STAGING/SECURITY_PASSWORD_SALT',
                 '/STAGING/MAIL_USERNAME',
                 '/STAGING/MAIL_PASSWORD',
+                '/STAGING/MYSQL_USERNAME',
+                '/STAGING/MYSQL_PASSWORD',
                 '/STAGING/AMAZON_SMTP_PASSWORD',
                 '/STAGING/AMAZON_SMTP_USERNAME',
                 '/STAGING/AWS_DEFAULT_REGION'
