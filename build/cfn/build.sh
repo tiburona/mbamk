@@ -1,12 +1,11 @@
-  ParameterKey=MaxSize,UsePreviousValue=tru2
-/web/flask_brain_db/xnat_c9.cf2
 #!/usr/bin/env bash
 
 set -e
 
 REV_TAG=$(git describe --tags)-$(git log -1 --pretty=format:%h)
 
-cd ./cookiecutter_mbam
+cp ../docker/web/Dockerfile ../../.
+cd ../../
 
 echo "Building image..."
 docker build -t ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${IMAGE_REPO}:${REV_TAG} .
