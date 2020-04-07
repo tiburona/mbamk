@@ -80,7 +80,12 @@ def set_secrets(credential_path, params_to_fetch, xnat, credential_source='file'
         aws_auth = {'aws_access_key_id': os.environ['PARAMETER_STORE_KEY_ID'],
                     'aws_secret_access_key': os.environ['PARAMETER_STORE_SECRET_KEY']}
 
-        ssm_client = boto3.client('ssm', region_name='us-east-1', **aws_auth)
+        try:
+            region_name=os.environ['AWS_DEFAULT_REGION']
+        except:
+            region_name='us-east-1'
+
+        ssm_client = boto3.client('ssm', region_name=region_name, **aws_auth)
 
         for parameter_name in params_to_fetch:
             # todo: this would speed up substantially if I used get_parameters.

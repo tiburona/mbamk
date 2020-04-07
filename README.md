@@ -411,6 +411,9 @@ Run the following command from the `build/docker` directory:
 
     docker-compose up -d mysql
 
+Note this command is also useful to run first if you are testing/bringup up the fully Dockerized
+version of the MBaM app as layed out in build/docker/docker-compose.yml. If you do not run it first,
+then MBaM app may not find the mysql database before it is initialized and instead default to SQLite.
 
 ## Testing
 

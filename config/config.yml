@@ -34,27 +34,22 @@ DOCKER:
   ENV: docker
   DEBUG: False
   SERVER_NAME: 0.0.0.0
-  XNAT_HOST: https://mind-xnat.nyspi.org
-  XNAT_DOCKER_HOST: http://10.20.193.32:2375
-  DICOM_TO_NIFTI_COMMAND: 36
-  FREESURFER_RECON_COMMAND: 37
-  BROKER_URL: redis://redis:6379
-  RESULTS_BACKEND: redis://redis:6379
-  AWS_DEFAULT_REGION : us-east-1
   FLASK_APP: autoapp.py
   FLASK_ENV: production
   FLASK_RUN_PORT: 8000
   FLASK_RUN_HOST: 0.0.0.0
-  MYSQL_USER: mbam
-  MYSQL_DOCKER_HOST: mysql
-  MYSQL_PASSWORD: mbam123
   MIND_XNAT_HOST: https://mind-xnat.nyspi.org
   MIND_DICOM_TO_NIFTI_COMMAND: 36
   MIND_FREESURFER_RECON_COMMAND: 37
-  XNAT_DOCKER_HOST: http://10.20.193.32:2375
-  XNAT_PROJECT: MBAM_TEST
-  DICOM_TO_NIFTI_COMMAND: 36
-  FREESURFER_RECON_COMMAND: 37
+  MIND_DOCKER_HOST: http://10.20.193.32:2375
+  MIND_XNAT_PROJECT: MBAM_TEST
+  MIND_XNAT_DOCKER_HOST: http://10.20.193.32:2375
+  BROKER_URL: redis://redis:6379
+  RESULTS_BACKEND: redis://redis:6379
+  MYSQL_USER: mbam
+  MYSQL_DOCKER_HOST: mysql
+  MYSQL_PASSWORD: mbam123
+  AWS_DEFAULT_REGION: us-east-1
   CLOUDFRONT_URL: https://dc2khv0msnx9b.cloudfront.net/
   S3_BUCKET: 'mbam-test-sp'
 
@@ -79,7 +74,7 @@ STAGING:
   MYSQL_HOST: braindb-instance.clem3xtlzpyq.us-east-1.rds.amazonaws.com
   JATOS_DB_URL: jdbc:mysql://braindb-instance.clem3xtlzpyq.us-east-1.rds.amazonaws.com/brain_db?characterEncoding=UTF-8&useSSL=false
   S3_BUCKET: 'mbam-test-sp'
-  
+
 TRUSTED:
   ENV: trusted
   SEMAPHORE_HASH_ID: ccb50d9e-4b65-4d19-9c9d-7a9cbe8f26d2
