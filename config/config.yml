@@ -72,6 +72,7 @@ STAGING:
   AWS_DEFAULT_REGION: us-east-1
   IMAGE_REPO: mbam/flask-app
   STACK_NAME: staging
+  MAIL_SERVER: email-smtp.us-east-1.amazonaws.com
   MYSQL_HOST: braindb-instance.clem3xtlzpyq.us-east-1.rds.amazonaws.com
   JATOS_DB_URL: jdbc:mysql://braindb-instance.clem3xtlzpyq.us-east-1.rds.amazonaws.com/brain_db?characterEncoding=UTF-8&useSSL=false
   S3_BUCKET: 'mbam-test-sp'
