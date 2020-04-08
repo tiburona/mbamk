@@ -14,7 +14,7 @@ processes = {
             'local': ['flask run'],
             'trusted': ['flask run'],
             'docker': ['flask db upgrade', 'flask run'],
-            'staging': ['flask db upgrade', "gunicorn -w 4 -b :8000 'cookiecutter_mbam.app:create_app()'"]
+            'staging': ['flask db upgrade', "gunicorn -w 1 -b :8000 'cookiecutter_mbam.app:create_app()'"]
         } ,
         'label': ('FLASK', 'BLUE')
     }
