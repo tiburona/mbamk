@@ -48,7 +48,9 @@ DOCKER:
   RESULTS_BACKEND: redis://redis:6379
   MYSQL_USER: mbam
   MYSQL_DOCKER_HOST: mysql
+  MYSQL_LOCAL_HOST: localhost
   MYSQL_PASSWORD: mbam123
+  SQLITE_URI: sqlite:////tmp/dev.db
   AWS_DEFAULT_REGION: us-east-1
   CLOUDFRONT_URL: https://dc2khv0msnx9b.cloudfront.net/
   S3_BUCKET: 'mbam-test-sp'

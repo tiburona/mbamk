@@ -47,7 +47,6 @@ def parameters_to_fetch(config_name):
                 '/STAGING/MIND_XNAT_PASSWORD',
                 '/STAGING/BACKUP_XNAT_USER',
                 '/STAGING/BACKUP_XNAT_PASSWORD',
-                '/STAGING/SEMAPHORE_AUTH_TOKEN',
                 '/STAGING/CLOUDFRONT_URL',
                 '/STAGING/CLOUDFRONT_KEY_ID',
                 '/STAGING/CLOUDFRONT_SECRET_KEY',
@@ -68,17 +67,21 @@ def parameters_to_fetch(config_name):
 
     return parameters_to_fetch
 
-def set_secrets(credential_path, params_to_fetch, xnat, credential_source='file'):
+def set_secrets(credential_path, params_to_fetch, xnat):
 
     try:
-        if credential_source == 'file':
+        if os.path.exists(credential_path):
+            print("Local secrets file exists. Will load AWS Parameter Store credentials from the file.")
             with open(credential_path) as file:
                 credentials = yaml.safe_load(file)
-
             for key in credentials:
                 for var in credentials[key]:
                     if credentials[key][var]:
                         os.environ[var] = credentials[key][var]
+        else:
+            print("Can not locate a local secrets file. Will attempt to load AWS Parameter Store credentials"
+                  "directly from the environment.")
+            credentials={'empty:','dict'}
 
         aws_auth = {'aws_access_key_id': os.environ['PARAMETER_STORE_KEY_ID'],
                     'aws_secret_access_key': os.environ['PARAMETER_STORE_SECRET_KEY']}
@@ -106,7 +109,7 @@ def set_secrets(credential_path, params_to_fetch, xnat, credential_source='file'
         for var in 'XNAT_USER', 'XNAT_PASSWORD':
             os.environ[var] = os.environ[xnat.upper() + '_' + var]
 
-        return 'TRUSTED', credentials, 'no error'
+        return 'NONLOCAL', credentials, 'no error'
 
     except Exception as e:
         tb = traceback.format_exc()
@@ -150,8 +153,9 @@ def set_config_from_yaml(config_path, config_name):
 def configure_database(config, kwargs):
 
     # The below is a stopgap fix to properly configure MYSQL in staging and docker
-    if kwargs['env'] == 'STAGING':
-    # if kwargs['env'] == 'STAGING' or kwargs['env'] == 'DOCKER':
+    if kwargs['env'] in ['STAGING','QA','ALPHA','BETA']:
+        print("It looks like we are in an AWS environment, so we will not configure MYSQL"
+              "for local or mysql host.")
         return
 
     if 'mysql' in kwargs and kwargs['mysql'] in ['local', 'docker']:
@@ -204,7 +208,7 @@ def set_config(config_path, override_config_path, config_name, xnat, **kwargs):
 #                     params_to_fetch=parameters_to_fetch,**kwargs):
 def set_env_vars(config_dir='.', secrets=True, config=True, env='trusted', xnat='mind',**kwargs):
 
-    if env in ['trusted', 'docker','staging']:
+    if env not in ['local'] and env not in ['test']:
         if secrets:
             params_to_fetch=parameters_to_fetch(env)
             config_type, result, tb = set_secrets(os.path.join(config_dir, 'credentials', 'secrets.yml'),
