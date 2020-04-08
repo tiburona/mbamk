@@ -160,7 +160,7 @@ Resources:
           - Name: JATOS_JPA
             Value: "mysqlPersistenceUnit"
           # Access to Redis
-          - Name: broker_url
+          - Name: BROKER_URL
             Value:
               Fn::ImportValue: !Sub ${EnvironmentName}:RedisEndpoint
 
