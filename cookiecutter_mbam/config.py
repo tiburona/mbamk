@@ -23,13 +23,12 @@ class Config:
 
     # Debugging and testing
 
-    DEBUG = True
+    DEBUG = env.bool('DEBUG',True)
     TESTING = env.bool('TESTING', False)
     WTF_CSRF_ENABLED = env.bool('WTF_CSRF_ENABLED', True)
     DEBUG_TB_ENABLED = env.bool('DEBUG_TB_ENABLED', DEBUG)
     PRESERVE_CONTEXT_ON_EXCEPTION = True
     DEBUG_TB_INTERCEPT_REDIRECTS = False
-
 
     # Server
 
@@ -47,7 +46,7 @@ class Config:
     SECURITY_RECOVERABLE = True
     SECURITY_CHANGEABLE = True
     SECURITY_CONFIRMABLE = False
-    SECURITY_SEND_REGISTER_EMAIL = False
+    SECURITY_SEND_REGISTER_EMAIL = True
     SECURITY_EMAIL_SENDER = env.str('SECURITY_EMAIL_SENDER', '"My Brain and Me" <mbaminfo@gmail.com>')
 
     # File upload
