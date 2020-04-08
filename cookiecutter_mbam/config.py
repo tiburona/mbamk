@@ -65,9 +65,9 @@ class Config:
 
     # Auth
 
-    BASIC_AUTH_USERNAME = ''
-    BASIC_AUTH_PASSWORD = ''
-    BASIC_AUTH_FORCE = False
+    BASIC_AUTH_USERNAME = env.str('BASIC_AUTH_USERNAME','tester')
+    BASIC_AUTH_PASSWORD = env.str('BASIC_AUTH_PASSWORD','mind@nyspi')
+    BASIC_AUTH_FORCE = True
 
     # Mail
 
