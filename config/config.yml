@@ -80,6 +80,8 @@ STAGING:
 
 TRUSTED:
   ENV: trusted
+  TESTING: False
+  DEBUG: True
   SEMAPHORE_HASH_ID: ccb50d9e-4b65-4d19-9c9d-7a9cbe8f26d2
   CLOUDFRONT_URL: https://dc2khv0msnx9b.cloudfront.net/
   CFN_TEMPLATE_DIR: ../../build/cfn
@@ -102,10 +104,11 @@ TRUSTED:
   MYSQL_LOCAL_HOST: localhost
   MYSQL_DOCKER_HOST: mysql
   MYSQL_PASSWORD: mbam123
-  TESTING: False
+
 
 LOCAL:
   ENV: local
+  DEBUG: True
   FLASK_ENV: development
   FLASK_APP: autoapp.py
   SECRET_KEY: not-so-secret

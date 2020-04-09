@@ -122,6 +122,31 @@ Resources:
               ValueFrom: !Sub
                 - ${PREPEND}/AMAZON_SECRET_KEY
                 - { PREPEND: !Ref ParameterStore }
+            - Name: JATOS_DB_PASSWORD
+              ValueFrom: !Sub
+                - ${PREPEND}/MYSQL_PASSWORD
+                - { PREPEND: !Ref ParameterStore }
+            - Name: JATOS_DB_USERNAME
+              ValueFrom: !Sub
+                - ${PREPEND}/MYSQL_USERNAME
+                - { PREPEND: !Ref ParameterStore }
+
+          Environment:
+          # Pass the same environment variables to JATOS and MBaM app.
+          - Name: JATOS_DB_URL
+            Value: !Join
+                    - ''
+                    - - 'jdbc:mysql://'
+                      - '{{resolve:ssm:MYSQL_HOST:1}}'
+                      - '/brain_db?characterEncoding=UTF-8&useSSL=false'
+          - Name: JATOS_DB_DRIVER
+            Value: "com.mysql.jdbc.Driver"
+          - Name: JATOS_JPA
+            Value: "mysqlPersistenceUnit"
+          # Access to Redis
+          - Name: BROKER_URL
+            Value:
+              Fn::ImportValue: !Sub ${EnvironmentName}:RedisEndpoint
 
   # The service. The service is a resource which allows you to run multiple
   # copies of a type of task, and gather up their logs and metrics, as well
