@@ -15,7 +15,7 @@ WORKDIR /app
 
 # Copy files needed for the pipenv install
 COPY Pipfile Pipfile.lock /app/
-RUN ["pipenv","install","--dev","--system","--deploy"] # install the app and dep
+RUN ["pipenv","install","--system","--deploy"] # install the app and dep
 
 # Copy files needed for the npm install
 COPY package.json package-lock.json webpack.config.js /app/

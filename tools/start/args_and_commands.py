@@ -13,10 +13,9 @@ processes = {
         'cmd': {
             'local': ['flask run'],
             'trusted': ['flask run'],
-            'docker': ['flask db upgrade', "waitress-serve --port 8000 --call 'cookiecutter_mbam.app:create_app'"],
-            # gunicorn was creating issues (service kept restarting every 2 minutes)
-            #'staging': ['flask db upgrade', "gunicorn -w 2 --worker-tmp-dir /dev/shm --threads 4 -b :8000 --worker-class gthread 'cookiecutter_mbam.app:create_app()'"]
-            'staging': ['flask db upgrade', "waitress-serve --port 8000 --call 'cookiecutter_mbam.app:create_app'"]
+            'docker': ['flask db upgrade', "gunicorn -w 2 --threads 4 -b :8000 --worker-class gthread 'cookiecutter_mbam.app:create_app()'"],
+            'staging': ['flask db upgrade', "gunicorn -w 2 --worker-tmp-dir /dev/shm --threads 4 -b :8000 --worker-class gthread 'cookiecutter_mbam.app:create_app()'"]
+
         },
         'label': ('FLASK', 'BLUE')
     }

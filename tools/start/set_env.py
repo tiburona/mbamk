@@ -60,7 +60,6 @@ def parameters_to_fetch(config_name):
                 '/STAGING/MYSQL_PASSWORD',
                 '/STAGING/AMAZON_SMTP_PASSWORD',
                 '/STAGING/AMAZON_SMTP_USERNAME',
-                '/STAGING/AWS_DEFAULT_REGION'
                 ]
     else:
         return
