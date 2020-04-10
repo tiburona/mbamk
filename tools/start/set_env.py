@@ -47,6 +47,8 @@ def parameters_to_fetch(config_name):
                 '/STAGING/MIND_XNAT_PASSWORD',
                 '/STAGING/BACKUP_XNAT_USER',
                 '/STAGING/BACKUP_XNAT_PASSWORD',
+                '/STAGING/BASIC_AUTH_USERNAME',
+                '/STAGING/BASIC_AUTH_PASSWORD',
                 '/STAGING/CLOUDFRONT_URL',
                 '/STAGING/CLOUDFRONT_KEY_ID',
                 '/STAGING/CLOUDFRONT_SECRET_KEY',
@@ -59,7 +61,7 @@ def parameters_to_fetch(config_name):
                 '/STAGING/MYSQL_USERNAME',
                 '/STAGING/MYSQL_PASSWORD',
                 '/STAGING/AMAZON_SMTP_PASSWORD',
-                '/STAGING/AMAZON_SMTP_USERNAME',
+                '/STAGING/AMAZON_SMTP_USERNAME'
                 ]
     else:
         return
@@ -79,7 +81,7 @@ def set_secrets(credential_path, params_to_fetch, xnat):
                         os.environ[var] = credentials[key][var]
         else:
             print("Can not locate a local secrets file. Will attempt to load AWS Parameter Store credentials"
-                  "directly from the environment.")
+                  " directly from the environment.")
             credentials={'empty:','dict'}
 
         aws_auth = {'aws_access_key_id': os.environ['PARAMETER_STORE_KEY_ID'],
