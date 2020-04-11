@@ -15,5 +15,7 @@ with init_session(user, password) as s:
         if 'json' not in file['Name']:
             r = s.get(host + file['URI'])
             if r.status_code == 200:
-                with open('/subjects/currsub/' + file['Name'], 'wb') as f:
-                    f.write(r.content)
+                for subdir in ['stats/', 'mri/', 'surf/', 'scripts/', 'label/', 'touch/']:
+                    if subdir in file['URI']:
+                        with open('/subjects/currsub/' + subdir + file['Name'], 'wb') as f:
+                            f.write(r.content)

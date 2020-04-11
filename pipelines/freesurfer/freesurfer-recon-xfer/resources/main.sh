@@ -28,10 +28,14 @@ recon-all "${args[@]}"
 
 echo "zipping up outputs"
 
+pushd /output/currsub
+
 for SUBDIR in label mri scripts stats surf touch
 do
-	zip -r "/output/currsub/$SUBDIR.zip" "/output/currsub/$SUBDIR"
+	zip -r "./$SUBDIR.zip" "./$SUBDIR"
 done
+
+popd
 
 echo "uploading recon output"
 
