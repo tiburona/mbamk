@@ -7,13 +7,16 @@ services:
    image: mbam_web
    volumes:
      - user-data:/app/static/files
-     - assets-data:/app/static/build
-     - static-data:/app/static
-   command: python ./tools/start_mbam.py run --flask --env docker --config_dir config
+     - assets-data:/app/cookiecutter_mbam/static/build
+     - static-data:/app/cookiecutter_mbam/static
+   command: python tools/start/entry.py run --flask --mysql docker --env docker
    depends_on:
      - jatos
    environment:
-    - "PYTHONUNBUFFERED=1"
+     PYTHONUNBUFFERED: 1
+     # To access the parameter store be sure to put the below params in your .bashrc
+     PARAMETER_STORE_KEY_ID: ${AWS_KEY_ID}
+     PARAMETER_STORE_SECRET_KEY: ${AWS_SECRET_KEY}
 
  jatos:
    restart: always
@@ -27,21 +30,19 @@ services:
    restart: always
    build:
      context: ./nginx
-     args:
-       - NGINX_CONFIG_FILE=${NGINX_CONFIG_FILE}
    ports:
      - "80:80"
      - "443:443"
    volumes:
      - user-data:/app/static/files
-     - assets-data:/app/static/build
-     - static-data:/app/static
+     - assets-data:/app/cookiecutter_mbam/static/build
+     - static-data:/app/cookiecutter_mbam/static
    depends_on:
      - web
 
  redis:
    image: 'redis:5.0.3-alpine'
-   command: python ./dev_tools/start_mbam.py --redis --env docker
+   command: redis-server
    volumes:
     - 'redis-data:/data'
    ports:
@@ -49,23 +50,15 @@ services:
 
  celery:
    image: mbam_web
-   command: python ./dev_tools/start_mbam.py --celery --env docker
+   command: python tools/start/entry.py run --celery  --mysql docker --env docker
    volumes:
      - user-data:/app/static/files
    links:
     - redis
    environment:
-    CONFIG_NAME: 'docker'
-    XNAT_HOST: ${XNAT_HOST}
-    XNAT_USER: ${XNAT_USER}
-    XNAT_PASSWORD: ${XNAT_PASSWORD}
-    XNAT_PROJECT: ${XNAT_PROJECT}
-    DOCKER_HOST: ${XNAT_DOCKER_HOST}
-    DICOM_TO_NIFTI_COMMAND: ${DICOM_TO_NIFTI_TRANSFER_COMMAND_ID}
-    CLOUDFRONT_PRIVATE_KEY: ${CLOUDFRONT_PRIVATE_KEY}
-    AWS_KEY_ID: ${AWS_KEY_ID}
-    AWS_SECRET_KEY: ${AWS_SECRET_KEY}
-    AWS_S3_BUCKET: ${AWS_S3_BUCKET}
+      PARAMETER_STORE_KEY_ID: ${AWS_KEY_ID}
+      PARAMETER_STORE_SECRET_KEY: ${AWS_SECRET_KEY}
+
 
 volumes:
   jatos-data:

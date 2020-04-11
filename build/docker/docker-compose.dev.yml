@@ -3,12 +3,12 @@ version: '3'
 services:
   web:
     volumes:
-      - ./assets:/app/assets
-      - ../cookiecutter_mbam:/app/cookiecutter_mbam
+      - ../../assets:/app/assets
+      - ../../../mbam:/app
 
   celery:
     volumes:
-      - ../cookiecutter_mbam:/app/cookiecutter_mbam
+      - ../../../mbam:/app
 
   jatos:
     depends_on:

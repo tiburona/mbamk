@@ -33,7 +33,7 @@ Parameters:
   FlaskAppImageUrl:
     Description: URL to the MBaM Flask app container.
     Type: String
-    Default: 413377292493.dkr.ecr.us-east-1.amazonaws.com/mbam/flask-app:796fe03
+    Default: 413377292493.dkr.ecr.us-east-1.amazonaws.com/mbam/flask-app:v0.1-alpha-380-ga0f92d9-a0f92d9
   MakeVPCPublic:
     Description: If set to false will create a private (not public) VPC. Leave to true in order to access EC2 instances with SSH.
     Type: String
@@ -41,11 +41,11 @@ Parameters:
     AllowedValues: [ true, false ]
   DesiredCapacity:
       Type: Number
-      Default: 2
+      Default: 1
       Description: The number of EC2 instances to launch in your ECS cluster.
   MaxSize:
     Type: Number
-    Default: 4
+    Default: 2
     Description: Maximum number of EC2 instances that can be launched in your ECS cluster.
   FlaskServiceName:
     Type: String
@@ -88,7 +88,7 @@ Resources:
         ImageUrl: jatos/jatos:3.3.3
         ContainerPort: 9000
         ContainerCpu: 256
-        ContainerMemory: 512
+        ContainerMemory: 384
         ContainerCommand: ""
         Path: "jatos*.mybrainandme.org"
         Priority: 1 # This sets the priority for the routing and must be 1 for Jatos.
@@ -112,8 +112,8 @@ Resources:
         ImageUrl: !Ref 'FlaskAppImageUrl'
         ContainerPort: 8000
         ContainerCpu: 256
-        ContainerMemory: 256
-        ContainerCommand: "bash,-c,cp .dev_env .env && flask db upgrade && gunicorn -w 4 -b :8000 'cookiecutter_mbam.app:create_app()'"
+        ContainerMemory: 384
+        ContainerCommand: "bash,-c,python tools/start/entry.py run --flask --env staging"
         Path: "*"
         Priority: 2 # This must NOT be set to 1 due to downstream IF statements to check.
         HealthCheckPath: /
@@ -145,7 +145,7 @@ Resources:
         ImageUrl: !Ref 'FlaskAppImageUrl'
         ContainerCpu: 256
         ContainerMemory: 256
-        ContainerCommand: "celery -A cookiecutter_mbam.run_celery:celery worker --pool=gevent --concurrency=500 --loglevel info"
+        ContainerCommand: "python tools/start/entry.py run --celery --env staging"
         ContainerWorkingDirectory: /app
         ContainerMountPoint: /app/static/files # This should be same as files['files_depot'] in config.py
         HostMountPoint: /efs/mbam/user-data

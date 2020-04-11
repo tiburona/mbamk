@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """Application configuration
 """
+# TODO: Consider wrapping flask db commands with MBAM package so don't have to use fake defaults.
+# This will also make the app more secure
 
 from environs import Env
 
@@ -8,6 +10,9 @@ env = Env()
 env.read_env()
 
 from flask import current_app
+
+# TODO: Figure out how to remove the debug function in production environments. Spiro will look into Flask
+# context processor
 
 def debug():
     assert current_app.debug == False, "Don't panic! You're here by request of debug()"
@@ -22,32 +27,26 @@ class Config:
     WEBPACK_MANIFEST_PATH = 'webpack/manifest.json'
 
     # Debugging and testing
-
-    DEBUG = True
+    DEBUG = env.bool('DEBUG',False) # Be sure the default is False otherwise credentials are exposed in browser
     TESTING = env.bool('TESTING', False)
     WTF_CSRF_ENABLED = env.bool('WTF_CSRF_ENABLED', True)
     DEBUG_TB_ENABLED = env.bool('DEBUG_TB_ENABLED', DEBUG)
     PRESERVE_CONTEXT_ON_EXCEPTION = True
     DEBUG_TB_INTERCEPT_REDIRECTS = False
 
-
     # Server
-
     default_server = None if ENV == 'test' else '0.0.0.0:8000'
-
     SERVER_NAME = env.str('SERVER_NAME', default_server)
     PREFERRED_URL_SCHEME = env.str('PREFFERED_URL_SCHEME', 'http')
 
-
     # Flask security
-
     SECURITY_PASSWORD_SALT = env.str('SECURITY_PASSWORD_SALT','not-so-salty')
-    SECURITY_PASSWORD_HASH='bcrypt'
+    SECURITY_PASSWORD_HASH = 'bcrypt'
     SECURITY_REGISTERABLE = True
     SECURITY_RECOVERABLE = True
     SECURITY_CHANGEABLE = True
     SECURITY_CONFIRMABLE = False
-    SECURITY_SEND_REGISTER_EMAIL = False
+    SECURITY_SEND_REGISTER_EMAIL = True
     SECURITY_EMAIL_SENDER = env.str('SECURITY_EMAIL_SENDER', '"My Brain and Me" <mbaminfo@gmail.com>')
 
     # File upload
@@ -55,7 +54,6 @@ class Config:
     FILE_DEPOT = 'static/files/'
 
     # Database
-
     SQLALCHEMY_TRACK_MODIFICATIONS = True
     DB_URI = env.str('MYSQL_HOST', 'localhost')
     DB_USER = env.str('MYSQL_USERNAME', 'mbam')
@@ -64,22 +62,21 @@ class Config:
                                       'mysql+pymysql://{}:{}@{}/brain_db'.format(DB_USER, DB_PASSWORD, DB_URI))
 
     # Auth
+    BASIC_AUTH_FORCE = env.bool('BASIC_AUTH_FORCE', False)
 
-    BASIC_AUTH_USERNAME = ''
-    BASIC_AUTH_PASSWORD = ''
-    BASIC_AUTH_FORCE = False
+    if BASIC_AUTH_FORCE:
+        BASIC_AUTH_USERNAME = env.str('BASIC_AUTH_USERNAME')
+        BASIC_AUTH_PASSWORD = env.str('BASIC_AUTH_PASSWORD')
 
     # Mail
-
-    MAIL_USERNAME = env.str('MAIL_USERNAME','test')
-    MAIL_PASSWORD = env.str('MAIL_PASSWORD','test')
+    MAIL_USERNAME = env.str('MAIL_USERNAME','foo')
+    MAIL_PASSWORD = env.str('MAIL_PASSWORD','bar')
     MAIL_SERVER = env.str('MAIL_SERVER', 'smtp.gmail.com')
     MAIL_PORT = env.int('MAIL_PORT', 587)
     MAIL_USE_SSL = env.bool('MAIL_USE_SSL', False)
     MAIL_USE_TLS = env.bool('MAIL_USE_TLS', True)
 
     # XNAT
-
     XNAT_HOST = env.str('XNAT_HOST', 'http://10.1.1.17')
     XNAT_USER = env.str('XNAT_USER', 'admin')
     XNAT_PASSWORD = env.str('XNAT_PASSWORD', 'admin')
@@ -90,23 +87,17 @@ class Config:
     FREESURFER_RECON_COMMAND = int(env.str('FREESURFER_RECON_COMMAND', '2'))
     FREESURFER_RECON_WRAPPER = env.str('FREESURFER_RECON_WRAPPER', 'freesurfer-recon-all-xfer')
 
-
     # Cloudfront
-
-    CLOUDFRONT_URL = env.str('CLOUDFRONT_URL','test')
-    CLOUDFRONT_KEY_ID = env.str('CLOUDFRONT_KEY_ID','test')
-    CLOUDFRONT_SECRET_KEY = env.str('CLOUDFRONT_SECRET_KEY','test')
-
+    CLOUDFRONT_URL = env.str('CLOUDFRONT_URL','foo')
+    CLOUDFRONT_KEY_ID = env.str('CLOUDFRONT_KEY_ID','bar')
+    CLOUDFRONT_SECRET_KEY = env.str('CLOUDFRONT_SECRET_KEY','bar')
 
     # S3
-
-    CLOUD_STORAGE_ACCESS_KEY_ID = env.str('S3_KEY_ID','test')
-    CLOUD_STORAGE_SECRET_ACCESS_KEY = env.str('S3_SECRET_KEY','test')
+    CLOUD_STORAGE_ACCESS_KEY_ID = env.str('S3_KEY_ID','foo')
+    CLOUD_STORAGE_SECRET_ACCESS_KEY = env.str('S3_SECRET_KEY','bar')
     CLOUD_STORAGE_BUCKET_NAME = env.str('S3_BUCKET', 'mbam-test')
 
-
     # Celery
-
     task_serializer = 'json'
     result_serializer = 'json'
     accept_content = ['json']

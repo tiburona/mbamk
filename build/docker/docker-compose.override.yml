@@ -1,15 +1,6 @@
 version: '3'
 
 services:
-  web:
-    volumes:
-      - ../../assets:/app/assets
-      - ../../cookiecutter_mbam:/app/cookiecutter_mbam
-
-  celery:
-    volumes:
-      - ../../cookiecutter_mbam:/app/cookiecutter_mbam
-
   jatos:
     depends_on:
       - mysql

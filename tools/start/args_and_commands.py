@@ -13,9 +13,10 @@ processes = {
         'cmd': {
             'local': ['flask run'],
             'trusted': ['flask run'],
-            'docker': ['npm run build', 'flask db upgrade', 'flask run'],
-            'staging': ['flask db upgrade', 'flask run']
-        } ,
+            'docker': ['flask db upgrade', "gunicorn -w 2 --threads 4 -b :8000 --worker-class gthread 'cookiecutter_mbam.app:create_app()'"],
+            'staging': ['flask db upgrade', "gunicorn -w 2 --worker-tmp-dir /dev/shm --threads 4 -b :8000 --worker-class gthread 'cookiecutter_mbam.app:create_app()'"]
+
+        },
         'label': ('FLASK', 'BLUE')
     }
 }
@@ -33,7 +34,7 @@ run_args = [
                        'default': '.' }),
     (['-e', '--env'], {'default': 'trusted',
                        'help': "The type of environment. Determines configuration.",
-                       'choices': ['local', 'trusted']}),
+                       'choices': ['local','docker','trusted','staging']}),
     (['-f', '--flask'], {'action': 'store_true', 'help': "Start the Flask app" }),
     (['-c', '--celery'], {'action': 'store_true', 'help': "Start Celery worker"}),
     (['-r', '--redis'], {'action': 'store_true', 'help': "Start Redis"}),
@@ -113,6 +114,6 @@ def construct_kwargs(command, args):
             kwargs[key] = getattr(args, key)
     if command == 'test':
         kwargs['env'] = 'test'
-    if hasattr(args, 'env') and args.env == 'staging':
-        kwargs['params_to_fetch'] = []
+    # if hasattr(args, 'env') and args.env == 'staging':
+    #     kwargs['params_to_fetch'] = []
     return kwargs
