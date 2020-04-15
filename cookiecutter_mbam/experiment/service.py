@@ -86,13 +86,13 @@ class ExperimentService(BaseService):
 
         add_scans_to_cloud_storage = [ss.add_to_cloud_storage() for ss in scan_services]
 
-        add_scans_to_xnat_and_run_freesurfer = [
-            ss.add_to_xnat_and_run_freesurfer(*self._gen_xnat_info(i)) for i, ss in enumerate(scan_services)
+        add_to_xnat_run_fs_generate_mesh = [
+            ss.add_to_xnat_run_fs_generate_mesh(*self._gen_xnat_info(i)) for i, ss in enumerate(scan_services)
         ]
 
         cloud_storage_job = group(add_scans_to_cloud_storage)
 
-        xnat_job = reduce((lambda x, y: chain(x, y)), add_scans_to_xnat_and_run_freesurfer)
+        xnat_job = reduce((lambda x, y: chain(x, y)), add_to_xnat_run_fs_generate_mesh)
 
         return cloud_storage_job, xnat_job
 

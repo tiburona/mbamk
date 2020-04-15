@@ -175,6 +175,13 @@ def poll_cs_fsrecon(self, container_id, xnat_credentials, interval):
     except SoftTimeLimitExceeded:
         return 'Timed Out'
 
+@celery.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5}, soft_time_limit=259200)
+def poll_cs_fs2mesh(self, container_id, xnat_credentials, interval):
+    try:
+        return poll_cs(container_id, xnat_credentials, interval)
+    except SoftTimeLimitExceeded:
+        return 'Timed Out'
+
 
 @celery.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5})
 def dl_files_from_xnat(self, uri, xnat_credentials, file_path, suffix='', single_file=True, conditions=[]):
