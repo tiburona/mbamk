@@ -28,9 +28,9 @@
                 <a href="{{ url_for('experiment.edit_experiment', id=scan.experiment_id) }}">
                 <i class="fa fa-edit" aria-hidden="true"></i></a>
 
-                <i class="fa fa-eye-slash" aria-hidden="true"></i>
-
-                <i class="fa fa-trash-o" aria-hidden="true"></i>
+                <a data-toggle= "modal" data-target="#deleteExperimentModal" data-url="{{ url_for('experiment.delete_experiment', id=scan.experiment_id) }}"
+                   data-label="{{ scan.parent_experiment.date }}">
+                <i class="fa fa-trash-o" aria-hidden="true"></i></a>
 
               </td>
             {% else %}
@@ -43,9 +43,9 @@
               <!--<a href="{{ url_for('scan.edit_scan', id=scan.id) }}">-->
                 <i class="fa fa-edit" aria-hidden="true"></i><a/>
 
-                <i class="fa fa-eye-slash" aria-hidden="true"></i>
-
-                <i class="fa fa-trash-o" aria-hidden="true"></i>
+                <a data-toggle= "modal" data-target="#deleteScanModal" data-url="{{ url_for('scan.delete_scan', id=scan.id) }}"
+                   data-label="{{ scan.label }}">
+                <i class="fa fa-trash-o" aria-hidden="true"></i></a>
             </td>
             <td>
                  <span><a href="{{ url_for('display.slice_view',scan_id=scan.id) }}">View</a></span>
@@ -68,5 +68,11 @@
     {% include "experiments/edit_experiment_modal.html" %}
     <!-- add the edit scan form -->
     {% include "scans/edit_scan_modal.html" %}
+
+    <!-- add the delete scan form -->
+    {% include "scans/delete_scan_modal.html" %}
+    <!-- add the delete experiment form -->
+    {% include "experiments/delete_experiment_modal.html" %}
+
 
 {% endblock %}

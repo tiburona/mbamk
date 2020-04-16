@@ -5,7 +5,7 @@ import traceback
 from flask import Blueprint, render_template, request, flash, redirect, url_for, session
 from flask_security import current_user, login_required
 from cookiecutter_mbam.utils.error_utils import flash_errors
-from .forms import ExperimentForm, ExperimentAndScanForm
+from .forms import ExperimentForm, ExperimentAndScanForm, FlaskForm
 from .models import Experiment
 from .service import ExperimentService
 from cookiecutter_mbam.scan.service import ScanService
@@ -113,8 +113,25 @@ def edit_experiment(id):
         form.populate_obj(exp) # update whatever has been changed in the form
         exp.save()
         flash('Experiment metadata updated','success')
-        return redirect(url_for('display.displays', id=exp.id))
+        return redirect(url_for('display.displays'))
     else:
         flash_errors(form)
 
     return render_template('experiments/edit_experiment.html',session_form=form, experiment=exp)
+
+@blueprint.route('/<id>/delete', methods=['GET', 'POST'])
+def delete_experiment(id):
+    """Access and edit experiment metadata."""
+    exp = Experiment.query.filter(Experiment.id==id).first_or_404()
+    form = FlaskForm()
+
+    if form.validate_on_submit():
+        exp.delete()
+        # for scan in exp.scans:
+        #     scan.delete()
+        flash('Deleted the session.','success')
+        return redirect(url_for('display.displays'))
+    else:
+        flash_errors(form)
+
+    return render_template('experiments/delete_experiment.html', session_form=form, experiment=exp)

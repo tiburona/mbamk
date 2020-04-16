@@ -3,11 +3,11 @@
 import traceback
 
 from flask import Blueprint, flash, redirect, url_for, render_template
-from flask_security import current_user
+from flask_security import current_user, login_required
 from .models import Scan
-from .forms import EditScanForm
+from .forms import EditScanForm, FlaskForm
 from cookiecutter_mbam.utils.error_utils import flash_errors
-
+from cookiecutter_mbam.utils.model_utils import resource_belongs_to_user
 from cookiecutter_mbam.base.tasks import global_error_handler
 from .service import ScanService
 
@@ -57,3 +57,22 @@ def edit_scan(id):
         flash_errors(form)
 
     return render_template('scans/edit_scan.html',scan_form=form, scan=scan)
+
+
+@blueprint.route('/<id>/delete', methods=['POST','GET'])
+@login_required
+def delete_scan(id):
+    """ Delete the scan."""
+    scan = Scan.query.filter(Scan.id==id).first_or_404()
+    form = FlaskForm()
+
+    if form.validate_on_submit() and resource_belongs_to_user(scan,id):
+        scan.delete()
+        # Here add code to also delete the scan from XNAT and S3?
+
+        flash('Scan deleted','success')
+        return redirect(url_for('display.displays'))
+    else:
+        flash_errors(form)
+
+    return render_template('scans/delete_scan.html',scan_form=form, scan=scan)

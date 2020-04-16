@@ -26,7 +26,7 @@ class Experiment(SurrogatePK, Model):
     user_id = reference_col('user', nullable=False)
     scans = relationship('Scan', backref='experiment', lazy='dynamic')
     scan_counter = Column(db.Integer(), default=0)
-    #visible = Column(db.Boolean(), nullable=True)
+    visible = Column(db.Boolean(), nullable=True)
 
     def __init__(self, date, scanner, user_id, **kwargs):
         """Create instance."""

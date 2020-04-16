@@ -3,6 +3,7 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for, session, current_app
 from flask_security import current_user, login_required
 from cookiecutter_mbam.utils.error_utils import flash_errors
+from cookiecutter_mbam.utils.model_utils import resource_belongs_to_user
 from cookiecutter_mbam.scan.models import Scan
 from .service import DisplayService
 from cookiecutter_mbam.experiment.forms import ExperimentForm
@@ -13,15 +14,15 @@ def debug():
 
 blueprint = Blueprint('display', __name__, url_prefix='/displays', static_folder='../static')
 
-def resource_belongs_to_user(resource_type, instance_id):
-    """ Verify that what the user wants to view belongs to the user
-    :param resource_type class:  The Class (i.e Scan, Derivation, Experiment)
-    :param instance_id int: The id of the resource
-    :return: Boolean
-     """
-    if resource_type.get_by_id(instance_id):
-        return resource_type.get_by_id(instance_id).user_id == current_user.id
-    return False
+# def resource_belongs_to_user(resource_type, instance_id):
+#     """ Verify that what the user wants to view belongs to the user
+#     :param resource_type class:  The Class (i.e Scan, Derivation, Experiment)
+#     :param instance_id int: The id of the resource
+#     :return: Boolean
+#      """
+#     if resource_type.get_by_id(instance_id):
+#         return resource_type.get_by_id(instance_id).user_id == current_user.id
+#     return False
 
 @blueprint.route('/')
 @login_required
