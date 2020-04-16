@@ -28,6 +28,10 @@
                 <a href="{{ url_for('experiment.edit_experiment', id=scan.experiment_id) }}">
                 <i class="fa fa-edit" aria-hidden="true"></i></a>
 
+                <i class="fa fa-eye-slash" aria-hidden="true"></i>
+
+                <i class="fa fa-trash-o" aria-hidden="true"></i>
+
               </td>
             {% else %}
               <td></td>
@@ -38,6 +42,10 @@
                  data-label="{{ scan.label }}">
               <!--<a href="{{ url_for('scan.edit_scan', id=scan.id) }}">-->
                 <i class="fa fa-edit" aria-hidden="true"></i><a/>
+
+                <i class="fa fa-eye-slash" aria-hidden="true"></i>
+
+                <i class="fa fa-trash-o" aria-hidden="true"></i>
             </td>
             <td>
                  <span><a href="{{ url_for('display.slice_view',scan_id=scan.id) }}">View</a></span>

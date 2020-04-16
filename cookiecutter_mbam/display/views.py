@@ -8,7 +8,6 @@ from .service import DisplayService
 from cookiecutter_mbam.experiment.forms import ExperimentForm
 from cookiecutter_mbam.scan.forms import EditScanForm
 
-
 def debug():
     assert current_app.debug == False, "Don't panic! You're here by request of debug()"
 
