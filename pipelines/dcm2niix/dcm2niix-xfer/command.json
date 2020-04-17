@@ -1,0 +1,72 @@
+{ "name": "dcm2niix-xfer",
+  "label": null,
+  "description": "Downloads dicom files, converts them to nifti, and reuploads them to XNAT",
+  "version": null,
+  "schema-version": null,
+  "info-url": null,
+  "image": "mbam/dcm2niix:latest",
+  "type": "docker",
+  "index": null,
+  "working-directory": null,
+  "command-line": "./main.sh #download-url# #upload-url# #xnat-host#",
+  "override-entrypoint": null,
+  "mounts": [],
+  "environment-variables": {},
+  "ports": {},
+  "inputs": [
+    {
+      "name": "download-url",
+      "description": "URL for input scan",
+      "type": "string",
+      "matcher": null,
+      "default-value": "",
+      "required": false,
+      "replacement-key": null,
+      "command-line-flag": null,
+      "command-line-separator": null,
+      "true-value": null,
+      "false-value": null
+    },
+    {
+      "name": "upload-url",
+      "description": "URL of NIFTI resource",
+      "type": "string",
+      "matcher": null,
+      "default-value": "",
+      "required": false,
+      "replacement-key": null,
+      "command-line-flag": null,
+      "command-line-separator": null,
+      "true-value": null,
+      "false-value": null
+    },
+    {
+      "name": "xnat-host",
+      "description": "XNAT host",
+      "type": "string",
+      "matcher": null,
+      "default-value": "",
+      "required": false,
+      "replacement-key": null,
+      "command-line-flag": null,
+      "command-line-separator": null,
+      "true-value": null,
+      "false-value": null
+    }
+
+  ],
+  "outputs": [],
+  "xnat": [
+    {
+      "name": "dcm2niix-xfer",
+      "description": "download dicoms, convert to nifti, reupload nifti",
+      "contexts": [],
+      "external-inputs": [],
+      "derived-inputs": [],
+      "output-handlers": []
+    }
+  ],
+  "reserve-memory": null,
+  "limit-memory": null,
+  "limit-cpu": null
+}

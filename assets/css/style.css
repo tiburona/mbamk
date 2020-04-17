@@ -1,0 +1,194 @@
+.whitespace {
+  height: 80px;
+  width: 100%;
+}
+
+.partner-text {
+  text-transform: capitalize;
+  color: #ffb366;
+  line-height: 0.5;
+  text-align: center;
+}
+
+.partner-text span {
+  display: inline-block;
+  position: relative;
+  color: #333;
+  font-size: 1.3rem;
+  letter-spacing: 1px;
+}
+
+.partner-text span:before,
+.partner-text span:after {
+  content: "";
+    position: absolute;
+    height: 5px;
+    border-top: 1px solid #eee;
+    top: 3px;
+    width:490px;
+}
+
+.partner-text span:before {
+  right: 100%;
+  margin-right: 15px;
+}
+
+.partner-text span:after {
+  left: 100%;
+  margin-left: 15px;
+}
+
+.google-form {
+  margin-bottom: 5rem;
+}
+
+
+textarea {
+  resize: vertical;
+}
+
+.container-narrow {
+  margin: 0 auto;
+  max-width: 700px;
+}
+
+
+.btn-link {
+  text-align: left;
+  white-space:normal !important;
+  word-wrap: break-word;
+}
+
+.card-header {
+  background-color: rgba(48, 247, 239, .25)
+}
+
+.modal { overflow: auto !important; }
+
+
+/* Welcome to My Brain and Me */
+.display-3 {
+  /*color: #8358ad the nice purple */
+  color: black;
+  font-size: 48px;
+}
+
+/* Forms */
+
+.form-register {
+  width: 50%;
+}
+
+.form-register .form-control {
+  position: relative;
+  font-size: 16px;
+  height: auto;
+  padding: 10px;
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+/* footer */
+
+footer {
+  margin-top: 45px;
+  padding-top: 5px;
+  border-top: 1px solid #eaeaea;
+  color: #999999;
+}
+
+footer a {
+  color: #999999;
+}
+
+footer p {
+  float: right;
+  margin-right: 25px;
+}
+
+footer ul {
+  list-style: none;
+}
+
+footer ul li {
+  float: left;
+  margin-left: 10px;
+}
+
+footer .company {
+  float: left;
+  margin-left: 25px;
+}
+
+footer .footer-nav {
+  float: right;
+  margin-right: 25px;
+  list-style: none;
+}
+
+/* Upload-progress whell */
+
+@keyframes spin {
+	to {
+	    transform: rotate(1turn);
+	}
+}
+
+.upload-progress {
+	position: relative;
+	display: inline-block;
+	width: 5em;
+	height: 5em;
+	margin: 0 .5em;
+	font-size: 24px;
+	text-indent: 999em;
+	overflow: hidden;
+	animation: spin 1s infinite steps(8);
+}
+
+.upload-progress:before,
+.upload-progress:after,
+.upload-progress > div:before,
+.upload-progress > div:after {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 2.25em; /* (container width - part width)/2  */
+	width: .5em;
+	height: 1.5em;
+	border-radius: .2em;
+	background: #eee;
+	box-shadow: 0 3.5em #eee; /* container height - part height */
+	transform-origin: 50% 2.5em; /* container height / 2 */
+}
+
+.upload-progress:before {
+	background: #555;
+}
+
+.upload-progress:after {
+	transform: rotate(-45deg);
+	background: #777;
+}
+
+.upload-progress > div:before {
+	transform: rotate(-90deg);
+	background: #999;
+}
+
+.upload-progress > div:after {
+	transform: rotate(-135deg);
+	background: #bbb;
+}
+
+@media (min-width: 768px) {
+  .modal-xl {
+   width: 90%;
+   max-width: 900px;
+  }
+
+  .google-form {
+    width: auto;
+  }
+}

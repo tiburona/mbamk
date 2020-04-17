@@ -1,0 +1,46 @@
+version: '3'
+
+services:
+  web:
+    volumes:
+      - ../../assets:/app/assets
+      - ../../../mbam:/app
+
+  celery:
+    volumes:
+      - ../../../mbam:/app
+
+  jatos:
+    depends_on:
+      - mysql
+    environment:
+      JATOS_DB_URL: "jdbc:mysql://mysql/brain_db?characterEncoding=UTF-8&useSSL=false"
+      JATOS_DB_USERNAME: "mbam"
+      JATOS_DB_PASSWORD: "mbam123"
+      JATOS_DB_DRIVER: "com.mysql.jdbc.Driver"
+      JATOS_JPA: "mysqlPersistenceUnit"
+
+  mysql:
+   restart: always
+   build: ./mysql
+   volumes:
+     - mysql-data:/var/lib/mysql
+   ports:
+     - "3306:3306"
+   environment:
+       MYSQL_DATABASE: "brain_db"
+       MYSQL_ROOT_PASSWORD: "test"
+       MYSQL_USER: "mbam"
+       MYSQL_PASSWORD: "mbam123"
+   healthcheck:
+       test: /etc/init.d/mysql status
+       interval: 3s
+       timeout: 6s
+       retries: 30
+
+  nginx:
+    ports:
+     - "81:81"
+
+volumes:
+  mysql-data:

@@ -1,0 +1,14 @@
+
+{% extends "layout.html" %}
+
+{% block page_title %}Page Not Found{% endblock %}
+
+{% block content %}
+<div class="jumbotron">
+    <div class="text-center">
+        <h1>413</h1>
+        <p>Hey, that file is too big.</p>
+        <p>Why don't you <a href="{{ url_for('experiment.add') }}">try again</a> with a smaller file?</p>
+    </div>
+</div>
+{% endblock %}

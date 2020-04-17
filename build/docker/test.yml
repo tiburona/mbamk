@@ -1,0 +1,6 @@
+version: '3'
+
+services:
+ sut:
+   image: mbam_web
+   command: python ./tools/start/entry.py test --mysql docker

@@ -1,5 +1,0 @@
-version: '3'
-
-services:
-  web:
-    command: bash -c "npm run build && flask run" # Come back to fix

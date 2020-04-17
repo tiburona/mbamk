@@ -1,0 +1,171 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<section role="content-uni-wrapper">
+  <div class="container">
+    <div class="section-wrapper">
+          {% if request.args.get('action') != "old" and request.args.get('action') != "edit" %}
+                <h4 class="mb-4">New Scan Upload</h4>
+                <p>For the best experience use Chrome, Opera browser or Firefox. <span class="not-supported">Internet Explorer and Safari are not supported.</span></p>
+                <br>
+                <label for="input-cd-step1" class="scan-head">If you have your scan on a CD, please insert it and select the drive using the "Browse" button. You may also select a folder with dicom files.</label>
+                <div class="file-loading">
+                    <input id="input-cd-step1" name="input-cd-step1[]" type="file" multiple mozdirectory webkitdirectory>
+                </div>
+                <div id="errorBlock-cd" class="help-block"></div>
+                <p><br></p>
+                <h4>Or...</h4>
+                <p><br></p>
+                <label for="input-file" class="scan-head">If you already have it, you may also select a NIFTI file or a zipped folder of DICOM files.</label>
+                <div class="file-loading">
+                    <input id="input-file" name="input-file" type="file" multiple>
+                </div>
+                <div id="errorBlock-file" class="help-block"></div>
+
+          {% endif %}
+
+          <!-- Below is CD-Modal #1 -->
+          <div class="modal fade" id="pleaseWaitDialog" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                  <div class="modal-content">
+                      <div class="modal-header">
+                          <h3>Scanning files...</h3>
+                      </div>
+                      <div class="modal-body">
+                          <div class="progress">
+                              <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100" style="width: 40%">
+                                  <span class="sr-only">40% Complete (success)</span>
+                              </div>
+                          </div>
+                          <br>
+                          <div><button class="btn btn-outline-secondary start-over">Cancel</button></div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+
+          <!-- Below is CD-Modal #2 -->
+          <div class="modal fade" id="compareScanDialog" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+              <div class="modal-dialog modal-lg" role="document">
+                  <div class="modal-content">
+                      <div class="modal-header">
+                          <h4>Scans we found on your CD or folder.</h4>
+                           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+
+                      </div>
+                      <div class="modal-body">
+                          <p>We found one or more structural MRI scans. Please select up to 3 scans that look similar to one or more sample images shown at the bottom.
+                          If you have multiple options, we recommend selecting scans with the most number of slices and with a range of acquisition view types (i.e. axial, sagittal and coronal).</p>
+                          <div class="file-loading">
+                              <input id="input-cd-step2" name="input-cd-step2[]" type="file" multiple>
+                              
+                          </div><br>
+                          <button class="btn btn-outline-secondary start-over">Start Over</button>
+                          <button class="btn btn-primary" id="next-button">Next</button>
+                          
+                          <div class="header-spacer"></div>
+                          <hr>
+
+                          <div>
+                              <h5>Sample images</h5>
+                              <input id="sample-images" name="sample-images[]" type="file" multiple>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+
+          <!-- Below is the final submit form where CD folder and file input options converge -->
+          {% if request.args.get('action') != "old" %}
+              <div class="modal fade" id="finalSubmitDialog" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                  <div class="modal-dialog" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">New Scan Upload</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <p class="modal-tile">If it's not already filled in, please provide the date of the scan before clicking the upload button. You also have the option to provide the model and
+                            field strength of the scanner if you know them.</p>
+                            <form method="POST" action="{{ url_for('experiment.add') }}" enctype="multipart/form-data" role="form" id="uploadForm">
+                            {% from "security/_macros.html" import render_field, render_field_with_errors %}
+                            {{ form.hidden_tag() }}
+                            {{ render_field_with_errors(form.date, class='form-control') }}
+                            {{ render_field_with_errors(form.scanner, class='form-control') }}
+                            {{ render_field_with_errors(form.field_strength, class='form-control') }}
+                            <div class="pb-2"></div>
+                            <div style="display: none;">
+                                {{ render_field(form.scan_file, class='form-control') }}
+                            </div>
+                            <button type="submit" class="btn btn-success submit-button" id="upload-toggle" style="float:right;">Upload</button>
+                            <button id="go-back" class="btn btn-outline-secondary" onclick="return false;">Go Back</button>
+                            <!-- <button type="button" class="btn btn-primary start-over" onclick="return false;">Cancel</button> -->
+                            </form>
+                        </div>
+                      </div>
+                  </div>
+              </div>
+          <!-- below form without modals for "legacy" upload form -->
+          {% elif request.args.get('action') == "old" %}
+              <div>
+                  <h3>New Scan Upload</h3>
+                  <form method="POST" action="{{ url_for('experiment.add', action=['old']) }}" enctype="multipart/form-data" role="form" id="uploadForm">
+                  {% from "security/_macros.html" import render_field, render_field_with_errors %}
+                  {{ form.hidden_tag() }}
+                  {{ render_field_with_errors(form.date, class='form-control') }}
+                  {{ render_field_with_errors(form.scanner, class='form-control') }}
+                  {{ render_field_with_errors(form.field_strength, class='form-control') }}
+                  {{ render_field_with_errors(form.scan_file, class='form-control') }}
+                  <button type="submit" class="btn btn-success custom-width" id="upload-toggle">Upload</button>
+                  <a href="{{ url_for('public.home') }}" class="btn btn-primary">Cancel</a>
+                  </form>
+              </div>
+          {% endif %}
+
+          <!-- Below is FinalUploadWait Dialog -->
+          <div class="modal fade" id="uploadWaitDialog" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                        <h4>Uploading...</h4>
+                    </div>
+                    <div class="modal-body">
+                      <p>We appreciate your patience as your MRI scan is being uploaded and archived. This may take several minutes. If successful,
+                      you will be directed to a page where you can view your MRI scan in the browser.</p>
+                    </div>
+                    <div class="row">
+                        <div class="mx-auto" style="width:150px;">
+                            <div class="upload-progress">
+                                <div></div>
+                            </div>
+                            <br>
+                        <div>
+                    </div>
+                    <div class="modal-footer"></div>
+                  </div>
+              </div>
+          </div>
+
+          <!-- Below is error/exception Dialog -->
+          <div class="modal fade" id="errorMsgDialog" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                  <div class="modal-content">
+                      <div class="modal-header">
+                          <!--<h2 class="text-center">Error</h2>-->
+                          <h4>Oops! Something went wrong, try starting over.</h4>
+                          <a href="{{ url_for('experiment.add') }}" class="btn btn-primary">OK</a>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+
+  </div>
+</div>
+
+{% endblock %}

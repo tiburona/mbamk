@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<section role="content-uni-wrapper">
+      <div class="container">
+            <div class="form-wrapper">
+                  <h3>Edit Session Metadata</h3>
+                  <form method="POST" action="{{ url_for('experiment.edit_experiment', id=experiment.id) }}" enctype="multipart/form-data" role="form">
+                  {% from "security/_macros.html" import render_field, render_field_with_errors %}
+                  {{ session_form.hidden_tag() }}
+                  {{ render_field_with_errors(session_form.date, class='form-control') }}
+                  {{ render_field_with_errors(session_form.scanner, class='form-control') }}
+                  {{ render_field_with_errors(session_form.field_strength, class='form-control') }}
+                  <div class="btn-section mt-4">
+                        <button type="submit" class="btn btn-success custom-width float-right">Update</button>
+                        <button type="cancel" onclick="window.location='{{ url_for('display.displays') }}';return false;" class="btn btn-outline-secondary">Cancel</button>
+                  </div>
+                  </form>
+            </div>
+      </div>
+</section>
+
+{% endblock %}

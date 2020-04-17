@@ -1,0 +1,23 @@
+{% extends 'admin/master.html' %}
+{% block body %}
+
+<section role="content-uni-wrapper">
+    <div class="container">
+        <div class="form-wrapper">
+             <h3>Email Form</h3>
+
+            {% from "security/_macros.html" import render_field, render_field_with_errors %}
+
+            <form method="POST" action="{{ url_for('email.email') }}" role="form">
+                {{ email_form.hidden_tag() }}
+                {{ render_field_with_errors(email_form.fullname, class_='form-control') }}
+                {{ render_field_with_errors(email_form.email, class_='form-control') }}
+                {{ render_field_with_errors(email_form.subject, class_='form-control') }}
+                {{ render_field_with_errors(email_form.message, class_='form-control') }}
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
