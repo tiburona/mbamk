@@ -1,6 +1,9 @@
 from flask_sqlalchemy import event
 from flask_security import current_user
+from functools import wraps
+from flask import render_template
 
+# Todo: Turn this into a wrapper function that wrappers the @app.route like @login_required?
 def resource_belongs_to_user(resource_type, instance_id):
     """ Verify that what the user wants to view belongs to the user
     :param resource_type class:  The Class (i.e Scan, Derivation, Experiment)
@@ -10,6 +13,7 @@ def resource_belongs_to_user(resource_type, instance_id):
     if resource_type.get_by_id(instance_id):
         return resource_type.get_by_id(instance_id).user_id == current_user.id
     return False
+
 
 #todo: add counter incrementing to this!
 def make_ins_del_listener(child_model, parent_model, child_model_str, parent_model_str,
@@ -32,9 +36,6 @@ def make_ins_del_listener(child_model, parent_model, child_model_str, parent_mod
         )
 
     return listener
-
-
-
 
     #
     # @event.listens_for(Scan, "after_insert")

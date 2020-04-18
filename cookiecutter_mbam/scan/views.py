@@ -5,6 +5,7 @@ import traceback
 from flask import Blueprint, flash, redirect, url_for, render_template
 from flask_security import current_user, login_required
 from .models import Scan
+from cookiecutter_mbam.experiment.models import Experiment
 from .forms import EditScanForm, FlaskForm
 from cookiecutter_mbam.utils.error_utils import flash_errors
 from cookiecutter_mbam.utils.model_utils import resource_belongs_to_user
@@ -43,36 +44,52 @@ def add_scans(request, exp_id):
 
 
 @blueprint.route('/<id>/edit', methods=['GET', 'POST'])
+@login_required
 def edit_scan(id):
     """Access and edit scan metadata (label)."""
-    scan = Scan.query.filter(Scan.id==id).first_or_404()
-    form = EditScanForm(obj=scan)
+    if resource_belongs_to_user(Scan, id):
+        scan = Scan.query.filter(Scan.id==id).first_or_404()
+        form = EditScanForm(obj=scan)
 
-    if form.validate_on_submit():
-        form.populate_obj(scan) # update whatever has been changed in the form
-        scan.save()
-        flash('Scan label updated','success')
-        return redirect(url_for('display.displays'))
+        if form.validate_on_submit():
+            form.populate_obj(scan) # update whatever has been changed in the form
+            scan.save()
+            flash('Scan label updated','success')
+            return redirect(url_for('display.displays'))
+        else:
+            flash_errors(form)
+
+        return render_template('scans/edit_scan.html',scan_form=form, scan=scan)
     else:
-        flash_errors(form)
-
-    return render_template('scans/edit_scan.html',scan_form=form, scan=scan)
+        return render_template('403.html')
 
 
 @blueprint.route('/<id>/delete', methods=['POST','GET'])
 @login_required
 def delete_scan(id):
     """ Delete the scan."""
-    scan = Scan.query.filter(Scan.id==id).first_or_404()
-    form = FlaskForm()
+    if resource_belongs_to_user(Scan, id):
+        scan = Scan.query.filter(Scan.id==id).first_or_404()
+        form = FlaskForm()
 
-    if form.validate_on_submit() and resource_belongs_to_user(scan,id):
-        scan.delete()
-        # Here add code to also delete the scan from XNAT and S3?
+        if form.validate_on_submit():
+            # First delete the scan's parent experiment if it is the only one
+            if scan.parent_experiment.num_scans == 1:
+                exp_id=scan.parent_experiment.id
+                exp=Experiment.get_by_id(exp_id)
+                scan.delete()
+                exp.delete()
+            else:
+                scan.delete()
 
-        flash('Scan deleted','success')
-        return redirect(url_for('display.displays'))
+            # Can add code to also delete the scan from XNAT and S3
+            # Can use ScanService.delete() instead with includes a flag to delete xnat scan
+
+            flash('Scan deleted','success')
+            return redirect(url_for('display.displays'))
+        else:
+            flash_errors(form)
+
+        return render_template('scans/delete_scan.html',scan_form=form, scan=scan)
     else:
-        flash_errors(form)
-
-    return render_template('scans/delete_scan.html',scan_form=form, scan=scan)
+        return render_template('403.html')

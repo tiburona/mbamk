@@ -22,10 +22,10 @@ def create_test_users(app, user_datastore, db):
                              scanner=None,
                              field_strength=None,
                              user_id=1,
-                             num_scans = 1,
+                             num_scans = 0,
                              xnat_id = 'MIND02_E00612',
                              xnat_label = '000001_MR1',
-                             scan_counter = 1)
+                             scan_counter = 0)
 
             Scan.create(xnat_status='Uploaded',
                         aws_status='Uploaded',
@@ -39,10 +39,10 @@ def create_test_users(app, user_datastore, db):
                              scanner=None,
                              field_strength=None,
                              user_id=1,
-                             num_scans = 2,
+                             num_scans = 0,
                              xnat_id = 'MIND02_E00592',
                              xnat_label = '000001_MR2',
-                             scan_counter = 2)
+                             scan_counter = 0)
 
             Scan.create(xnat_status='Uploaded',
                         aws_status='Uploaded',
