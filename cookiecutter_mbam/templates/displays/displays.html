@@ -4,7 +4,11 @@
 <section role="content-uni-wrapper">
     <div class="container">
       <div class="container-displays">
-        <h4>These are your available displays.</h4>
+        {% if displays %}
+          <h4>These are your available displays.</h4>
+        {% else %}
+          <h4>There are no scans in your dashboard. Upload a scan <a href="{{ url_for( 'experiment.add' ) }}">here</a></h4>
+        {% endif %}
 
         <table>
         <thead>
@@ -24,12 +28,14 @@
             {% if scan.experiment_id not in exp_id_list %}
               <td>{{ scan.parent_experiment.date }}
                 <!-- Uncomment below line, and comment 2nd line to use the modal version of the form -->
-                <!--<a data-toggle="modal" data-target="#editSessionModal" data-url="{{ url_for('experiment.edit_experiment', id=scan.experiment_id) }}">-->
-                <a href="{{ url_for('experiment.edit_experiment', id=scan.experiment_id) }}">
+                <a data-toggle="modal" data-target="#editSessionModal" data-url="{{ url_for('experiment.edit_experiment', id=scan.experiment_id) }}"
+                   data-date="{{ scan.parent_experiment.date }}"
+                   data-field_strength="{{ scan.parent_experiment.field_strength }}"
+                   data-scanner="{{ scan.parent_experiment.scanner }}">
+                <!--<a href="{{ url_for('experiment.edit_experiment', id=scan.experiment_id) }}">-->
                 <i class="fa fa-edit" aria-hidden="true"></i></a>
 
-                <a data-toggle= "modal" data-target="#deleteExperimentModal" data-url="{{ url_for('experiment.delete_experiment', id=scan.experiment_id) }}"
-                   data-label="{{ scan.parent_experiment.date }}">
+                <a data-toggle= "modal" data-target="#deleteSessionModal" data-url="{{ url_for('experiment.delete_experiment', id=scan.experiment_id) }}">
                 <i class="fa fa-trash-o" aria-hidden="true"></i></a>
 
               </td>
@@ -38,13 +44,12 @@
             {% endif %}
             <td>{{ scan.label }}
               <!-- Uncomment below line, and comment 2nd line to use the modal version of the form -->
-              <a data-toggle= "modal" data-target="#editScanModal" data-url="{{ url_for('scan.edit_scan', id=scan.id) }}"
+              <a data-toggle="modal" data-target="#editScanModal" data-url="{{ url_for('scan.edit_scan', id=scan.id) }}"
                  data-label="{{ scan.label }}">
-              <!--<a href="{{ url_for('scan.edit_scan', id=scan.id) }}">-->
+                <!--<a href="{{ url_for('scan.edit_scan', id=scan.id) }}">-->
                 <i class="fa fa-edit" aria-hidden="true"></i><a/>
 
-                <a data-toggle= "modal" data-target="#deleteScanModal" data-url="{{ url_for('scan.delete_scan', id=scan.id) }}"
-                   data-label="{{ scan.label }}">
+                <a data-toggle="modal" data-target="#deleteScanModal" data-url="{{ url_for('scan.delete_scan', id=scan.id) }}">
                 <i class="fa fa-trash-o" aria-hidden="true"></i></a>
             </td>
             <td>

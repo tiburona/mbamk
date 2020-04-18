@@ -11,7 +11,7 @@
 		      {{ render_field_with_errors(scan_form.label, class='form-control') }}
 		      <div class="btn-section mt-4">
 		      	<button type="submit" class="btn btn-success custom-width float-right">Update</button>
-		      	<button type="cancel" onclick="window.location='{{ url_for('display.slice_view',scan_id=scan.id) }}';return false;" class="btn btn-outline-secondary">Cancel</button>
+		      	<button type="cancel" onclick="window.location='{{ url_for('display.slice_view',id=scan.id) }}';return false;" class="btn btn-outline-secondary">Cancel</button>
 		      </div>
 		      </form>
 	    </div>

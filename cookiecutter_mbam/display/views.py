@@ -38,7 +38,7 @@ def slice_view(id):
             url = ds.get_nifti_url(id)
             signed_url = ds.sign_url(url)
             scan=Scan.get_by_id(id)
-            return render_template('displays/slice_view.html', url=signed_url, scan=scan)
+            return render_template('displays/slice_view.html', url=signed_url, scan=scan, scan_form=EditScanForm())
         except:
             # TODO: Log this error
             return render_template('404.html')

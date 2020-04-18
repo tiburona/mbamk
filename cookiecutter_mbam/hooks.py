@@ -16,7 +16,8 @@ def create_test_users(app, user_datastore, db):
 
         if not user_datastore.get_user('someone@example.com'):
             user_datastore.create_user(email='someone@example.com', password='password', first_name='Some',
-                                        last_name='One', sex='Male', dob=date.fromisoformat('1980-01-03'))
+                                        last_name='One', sex='Male', dob=date.fromisoformat('1980-01-03'),
+                                        consented=True)
 
             Experiment.create(date=date.fromisoformat('2008-12-04'),
                              scanner=None,
