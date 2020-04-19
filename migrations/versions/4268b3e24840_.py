@@ -90,8 +90,8 @@ def upgrade():
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('derivations_scans',
-    sa.Column('scan_id', sa.Integer(), nullable=True),
-    sa.Column('derivation_id', sa.Integer(), nullable=True),
+    sa.Column('scan_id', sa.Integer(), primary_key=True),
+    sa.Column('derivation_id', sa.Integer(), primary_key=True),
     sa.ForeignKeyConstraint(['derivation_id'], ['derivation.id'], ),
     sa.ForeignKeyConstraint(['scan_id'], ['scan.id'], )
     )

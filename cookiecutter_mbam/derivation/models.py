@@ -9,8 +9,8 @@ def debug():
 
 derivations_scans = Table(
     'derivations_scans',
-    db.Column('scan_id', db.Integer(), db.ForeignKey('scan.id')),
-    db.Column('derivation_id', db.Integer(), db.ForeignKey('derivation.id'))
+    db.Column('scan_id', db.Integer(), db.ForeignKey('scan.id'), primary_key=True),
+    db.Column('derivation_id', db.Integer(), db.ForeignKey('derivation.id'), primary_key=True)
 )
 
 class Derivation(SurrogatePK, Model):
@@ -44,8 +44,3 @@ class Derivation(SurrogatePK, Model):
     def __repr__(self):
         """Represent instance as a unique string."""
         return '<Derivation({uri})>'.format(uri=self.xnat_uri)
-
-
-
-
-
