@@ -34,12 +34,9 @@ class Derivation(SurrogatePK, Model):
     #     db.CheckConstraint(status in ['started', 'unstarted', 'completed', 'failed'], name='check_status_valid'),
     #     {})
 
-
     def __init__(self, scans, container_status, **kwargs):
         """Create instance."""
         db.Model.__init__(self, scans=scans, container_status=container_status, **kwargs)
-        for scan in scans:
-            self.scans.append(scan)
 
     def __repr__(self):
         """Represent instance as a unique string."""
