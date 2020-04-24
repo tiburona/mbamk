@@ -46,8 +46,7 @@
               <!-- Uncomment below line, and comment 2nd line to use the modal version of the form -->
               <a data-toggle="modal" data-target="#editScanModal" data-url="{{ url_for('scan.edit_scan', id=scan.id) }}"
                  data-label="{{ scan.label }}">
-                <!--<a href="{{ url_for('scan.edit_scan', id=scan.id) }}">-->
-                <i class="fa fa-edit" aria-hidden="true"></i><a/>
+                <i class="fa fa-edit" aria-hidden="true"></i></a>
 
                 <a data-toggle="modal" data-target="#deleteScanModal" data-url="{{ url_for('scan.delete_scan', id=scan.id) }}">
                 <i class="fa fa-trash-o" aria-hidden="true"></i></a>

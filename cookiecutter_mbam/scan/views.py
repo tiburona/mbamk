@@ -88,7 +88,7 @@ def delete_scan(id):
 
             # Can use ScanService.delete() instead with includes a flag to delete xnat scan
 
-            flash('Scan deleted','success')
+            flash('Scan removed.','success')
             return redirect(url_for('display.displays'))
         else:
             flash_errors(form)
