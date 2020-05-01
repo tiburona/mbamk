@@ -29,7 +29,7 @@ from cookiecutter_mbam.storage import CloudStorageConnection
 from cookiecutter_mbam.derivation import DerivationService
 from .utils import gzip_file
 from cookiecutter_mbam.xnat.tasks import *
-from .tasks import set_scan_attribute, get_scan_attribute, set_scan_attributes
+from .tasks import set_scan_attribute, get_scan_attribute, set_scan_attributes, construct_mesh_status_email
 import logging
 
 from flask import current_app
@@ -308,8 +308,12 @@ class ScanService(BaseService):
             ds.set_attribute(ds.derivation.id, 'aws_status', 'Uploaded')
         )
 
+    def _send_mesh_status_email(self):
+        return chain(construct_mesh_status_email.si(self.scan.id), self._send_email())
+
+
     def _run_container_retrieve_and_store_files(self, process_name, download_suffix, upload_suffix, filename, local_dir,
-                                                dl_conditions=[], single_file=True, dest_for_zip=''):
+                                                dl_conditions=[], single_file=True, dest_for_zip='', send_email=False):
         """Construct a celery chain to run an XNAT container, download the output, and back it up to cloud storage
 
         :param process_name: identifier for the process
@@ -346,6 +350,9 @@ class ScanService(BaseService):
                 upload_to_cloud_storage
             )
 
+        if send_email:
+            upload_to_cloud_storage = chain(upload_to_cloud_storage, self._send_mesh_status_email())
+
         return run_container | download_files | upload_to_cloud_storage
 
     def _run_fs2mesh(self):
@@ -357,7 +364,8 @@ class ScanService(BaseService):
             filename='mesh.zip',
             local_dir=os.path.join(self.local_dir, 'mesh'),
             single_file=False,
-            dest_for_zip=self.local_dir
+            dest_for_zip=self.local_dir,
+            send_email=True
         )
 
         return fs2mesh

@@ -9,8 +9,8 @@ def debug():
 
 derivations_scans = Table(
     'derivations_scans',
-    db.Column('scan_id', db.Integer(), db.ForeignKey('scan.id')),
-    db.Column('derivation_id', db.Integer(), db.ForeignKey('derivation.id'))
+    db.Column('scan_id', db.Integer, db.ForeignKey('scan.id'), primary_key=True),
+    db.Column('derivation_id', db.Integer, db.ForeignKey('derivation.id'), primary_key=True)
 )
 
 class Derivation(SurrogatePK, Model):
@@ -38,8 +38,8 @@ class Derivation(SurrogatePK, Model):
     def __init__(self, scans, container_status, **kwargs):
         """Create instance."""
         db.Model.__init__(self, scans=scans, container_status=container_status, **kwargs)
-        for scan in scans:
-            self.scans.append(scan)
+        # for scan in scans:
+        #     self.scans.append(scan)
 
     def __repr__(self):
         """Represent instance as a unique string."""

@@ -60,7 +60,7 @@ def upload_scan_to_xnat(self, xnat_credentials, file_path, url, exp_uri, imp):
             r = s.post(url, **kwargs)
         else:
             r = s.put(url, **kwargs)
-            shutil.rmtree(os.path.dirname(file_path))
+        shutil.rmtree(os.path.dirname(file_path))
         if r.ok:
             return exp_uri
         else:
