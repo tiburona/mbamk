@@ -61,11 +61,11 @@
                           If you have multiple options, we recommend selecting scans with the most number of slices and with a range of acquisition view types (i.e. axial, sagittal and coronal).</p>
                           <div class="file-loading">
                               <input id="input-cd-step2" name="input-cd-step2[]" type="file" multiple>
-                              
+
                           </div><br>
                           <button class="btn btn-outline-secondary start-over">Start Over</button>
                           <button class="btn btn-primary" id="next-button">Next</button>
-                          
+
                           <div class="header-spacer"></div>
                           <hr>
 
@@ -90,14 +90,13 @@
                             </button>
                         </div>
                         <div class="modal-body">
-                            <p class="modal-tile">If it's not already filled in, please provide the date of the scan before clicking the upload button. You also have the option to provide the model and
-                            field strength of the scanner if you know them.</p>
+                            <p class="modal-tile">Please confirm the scan date is correct, then click upload.</p>
                             <form method="POST" action="{{ url_for('experiment.add') }}" enctype="multipart/form-data" role="form" id="uploadForm">
                             {% from "security/_macros.html" import render_field, render_field_with_errors %}
                             {{ form.hidden_tag() }}
                             {{ render_field_with_errors(form.date, class='form-control') }}
-                            {{ render_field_with_errors(form.scanner, class='form-control') }}
-                            {{ render_field_with_errors(form.field_strength, class='form-control') }}
+                            <!-- {{ render_field_with_errors(form.scanner, class='form-control') }}
+                            {{ render_field_with_errors(form.field_strength, class='form-control') }} -->
                             <div class="pb-2"></div>
                             <div style="display: none;">
                                 {{ render_field(form.scan_file, class='form-control') }}
@@ -135,8 +134,7 @@
                         <h4>Uploading...</h4>
                     </div>
                     <div class="modal-body">
-                      <p>We appreciate your patience as your MRI scan is being uploaded and archived. This may take several minutes. If successful,
-                      you will be directed to a page where you can view your MRI scan in the browser.</p>
+                      <p>We appreciate your patience as your MRI scan is being uploaded and archived</p>
                     </div>
                     <div class="row">
                         <div class="mx-auto" style="width:150px;">

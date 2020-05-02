@@ -14,9 +14,8 @@ class ExperimentForm(FlaskForm):
     """Experiment form."""
 
     date = DateField('Date of scan acquisition.', format='%Y-%m-%d')
-    scanner = SelectField('Scanner', choices=[('Unknown','Don\'t know'),('GE', 'GE'), ('Sie', 'Siemens'), ('Phi', 'Phillips')])
-
-    field_strength = SelectField('Field strength', choices=[('Unknown','Don\'t know'),('1.5T', '1.5T'), ('3T', '3T'), ('7T', '7T')])
+    scanner = SelectField('Scanner', choices=[('Unknown','Don\'t know'),('GE', 'GE'), ('Sie', 'Siemens'), ('Phi', 'Phillips')], default='Unknown')
+    field_strength = SelectField('Field strength', choices=[('Unknown','Don\'t know'),('1.5T', '1.5T'), ('3T', '3T'), ('7T', '7T')], default='Unknown')
 
     def __init__(self, *args, **kwargs):
         """Create instance."""
