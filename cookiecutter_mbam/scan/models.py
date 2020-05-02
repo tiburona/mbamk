@@ -26,6 +26,7 @@ class Scan(SurrogatePK, Model):
     label = db.Column(db.String(255), nullable=True)
     # Add back reference to experiment so can access experiment table from scan
     parent_experiment = relationship('Experiment', backref=backref("experiment_scans", lazy="dynamic"))
+    visible = db.Column(db.Boolean(), nullable=True)
 
     def __init__(self, experiment_id, **kwargs):
         """Create instance."""

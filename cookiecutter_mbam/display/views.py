@@ -3,26 +3,16 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for, session, current_app
 from flask_security import current_user, login_required
 from cookiecutter_mbam.utils.error_utils import flash_errors
+from cookiecutter_mbam.utils.model_utils import resource_belongs_to_user
 from cookiecutter_mbam.scan.models import Scan
 from .service import DisplayService
 from cookiecutter_mbam.experiment.forms import ExperimentForm
 from cookiecutter_mbam.scan.forms import EditScanForm
 
-
 def debug():
     assert current_app.debug == False, "Don't panic! You're here by request of debug()"
 
 blueprint = Blueprint('display', __name__, url_prefix='/displays', static_folder='../static')
-
-def resource_belongs_to_user(resource_type, instance_id):
-    """ Verify that what the user wants to view belongs to the user
-    :param resource_type class:  The Class (i.e Scan, Derivation, Experiment)
-    :param instance_id int: The id of the resource
-    :return: Boolean
-     """
-    if resource_type.get_by_id(instance_id):
-        return resource_type.get_by_id(instance_id).user_id == current_user.id
-    return False
 
 @blueprint.route('/')
 @login_required
@@ -38,22 +28,23 @@ def displays():
 
     return render_template('displays/displays.html', displays=dis, session_form=session_form, scan_form=scan_form)
 
-@blueprint.route('/scan/<scan_id>/slice_view',methods=['GET'])
+@blueprint.route('/scan/<id>/slice_view',methods=['GET'])
 @login_required
-def slice_view(scan_id):
+def slice_view(id):
     """ Display current user's raw NIFTI file """
-    if resource_belongs_to_user(Scan, scan_id):
+    if resource_belongs_to_user(Scan, id):
         try:
             ds = DisplayService(user=current_user)
-            url = ds.get_nifti_url(scan_id)
+            url = ds.get_nifti_url(id)
             signed_url = ds.sign_url(url)
-            scan=Scan.get_by_id(scan_id)
-            return render_template('displays/slice_view.html', url=signed_url, scan=scan)
+            scan=Scan.get_by_id(id)
+            return render_template('displays/slice_view.html', url=signed_url, scan=scan, scan_form=EditScanForm())
         except:
             # TODO: Log this error
             return render_template('404.html')
     else:
         return render_template('403.html')
+
 
 @blueprint.route('/mikes_view',methods=['GET'])
 def mikes_view():

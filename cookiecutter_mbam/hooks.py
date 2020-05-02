@@ -16,16 +16,17 @@ def create_test_users(app, user_datastore, db):
 
         if not user_datastore.get_user('someone@example.com'):
             user_datastore.create_user(email='someone@example.com', password='password', first_name='Some',
-                                        last_name='One', sex='Male', dob=date.fromisoformat('1980-01-03'))
+                                        last_name='One', sex='Male', dob=date.fromisoformat('1980-01-03'),
+                                        consented=True)
 
             Experiment.create(date=date.fromisoformat('2008-12-04'),
                              scanner=None,
                              field_strength=None,
                              user_id=1,
-                             num_scans = 1,
+                             num_scans = 0,
                              xnat_id = 'MIND02_E00612',
                              xnat_label = '000001_MR1',
-                             scan_counter = 1)
+                             scan_counter = 0)
 
             Scan.create(xnat_status='Uploaded',
                         aws_status='Uploaded',
@@ -39,10 +40,10 @@ def create_test_users(app, user_datastore, db):
                              scanner=None,
                              field_strength=None,
                              user_id=1,
-                             num_scans = 2,
+                             num_scans = 0,
                              xnat_id = 'MIND02_E00592',
                              xnat_label = '000001_MR2',
-                             scan_counter = 2)
+                             scan_counter = 0)
 
             Scan.create(xnat_status='Uploaded',
                         aws_status='Uploaded',

@@ -1,21 +1,22 @@
-<!-- Edit user starts here -->
-<div class="modal fade user-modal" id="editScanModal">
+<!-- Delete scan modal starts here -->
+<div class="modal fade user-modal" id="deleteScanModal">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                  <h3 class="modal-title">Edit Scan Label</h3>
+
+                  <h3 class="modal-title">Remove Scan</h3>
                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
             </div>
             <div class="modal-body">
 
-              <form method="POST" action="" enctype="multipart/form-data" role="form" id="editScanForm">
+              <form method="POST" action="" enctype="multipart/form-data" role="form" id="deleteScanForm">
+                <h4>Are you sure you want to remove this scan from your dashboard?</h4>
                 {% from "security/_macros.html" import render_field, render_field_with_errors %}
-                {{ scan_form.hidden_tag() }}
-                {{ render_field_with_errors(scan_form.label, class='form-control') }}
+      		      {{ scan_form.hidden_tag() }}
                 <div class="btn-section mt-4">
-                  <button type="submit" class="btn btn-success custom-width float-right">Update</button>
+                   <button type="submit" class="btn btn-success custom-width float-right">Remove</button>
                    <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cancel</button>
                 </div>
               </form>

@@ -13,6 +13,12 @@ def debug():
     assert current_app.debug == False, "Don't panic! You're here by request of debug()"
 
 
+class DeleteScanForm(FlaskForm):
+
+    def __init__(self, *args, **kwargs):
+        """Create instance."""
+        super(DeleteScanForm, self).__init__(*args, **kwargs)
+
 class EditScanForm(FlaskForm):
     label = StringField('Label', validators=[Length(min=2,max=100)])
 
