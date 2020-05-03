@@ -31,11 +31,10 @@
          // params["fullScreen"] = true;
          params["showControls"] = true;
          params["showControlBar"] = true;
-         // Below will pull the filename along with the Cloudfront signature, but
-         // it doesn't seem to work in terms of apply parameters to the image instance
-         // Should fix this at some point. See Papaya docs at https://github.com/rii-mango/Papaya/wiki/Configuration
-         //var filename = "{{ url|safe }}".substring("{{ url|safe}}".lastIndexOf('/')+1)
-         //params[filename] = {"interpolation": false, "min": 20, "max": 200}
+         // Extract filename to apply Papaya params
+         var filename = "{{ url|safe }}".substring("{{ url|safe }}".lastIndexOf('/')+1,"{{ url|safe }}".lastIndexOf('?'))
+         params[filename] = {'min':0, 'maxPercent': 0.5}
+
      </script>
 
      <!-- add the edit scan form -->

@@ -13,9 +13,15 @@
 
     <script type="text/javascript">
         var params = [];
-        params["worldSpace"] = true;
+        // params["worldSpace"] = true;
         params["images"] = [ "{{ url|safe }}" ];
         params["kioskMode"] = true;
+        // params["fullScreen"] = true;
+        params["showControls"] = true;
+        params["showControlBar"] = true;
+        // set max at 50% to maximimze contrast
+        var filename = "{{ url|safe }}".substring("{{ url|safe }}".lastIndexOf('/')+1,"{{ url|safe }}".lastIndexOf('?'))
+        params[filename] = {'min':0, 'maxPercent': 0.5}
     </script>
 
 {% endblock %}

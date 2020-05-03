@@ -63,3 +63,9 @@ def test():
     signed_url = DisplayService(user=current_user).sign_url(url)
 
     return render_template('displays/test.html',url=signed_url)
+
+@blueprint.route('/test_nonsecure',methods=['GET'])
+def test_nonsecure():
+    """ Test route to display a NIFTI file in S3 via Cloudfront signed URL in papaya """
+    url = 'https://mbam-test-files.s3.amazonaws.com/MNI_SPGR01.nii.gz'
+    return render_template('displays/test.html',url=url)
