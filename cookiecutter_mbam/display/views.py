@@ -52,9 +52,9 @@ def mikes_view():
     return render_template('displays/threed_view.html')
 
 
-@blueprint.route('/brain_explorer.html')
-def brain_explorer():
-    return render_template('displays/brain_explorer.html')
+@blueprint.route('/dragonfruit.html')
+def dragonfruit():
+    return render_template('displays/dragonfruit.html')
 
 @blueprint.route('/test',methods=['GET'])
 def test():
