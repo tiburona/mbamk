@@ -11,14 +11,16 @@ def debug():
 
 poll_tasks = {
     'dicom_to_nifti': poll_cs_dcm2nii,
-    'freesurfer_recon': poll_cs_fsrecon
+    'freesurfer_recon': poll_cs_fsrecon,
+    'fs_to_mesh': poll_cs_fs2mesh
 }
 
 config_vars = [
     ('server', 'XNAT_HOST'), ('user', 'XNAT_USER'), ('password', 'XNAT_PASSWORD'), ('project', 'XNAT_PROJECT'),
     ('docker_host', 'XNAT_DOCKER_HOST'), ('dicom_to_nifti_wrapper', 'DICOM_TO_NIFTI_WRAPPER'),
     ('dicom_to_nifti_command', 'DICOM_TO_NIFTI_COMMAND'), ('freesurfer_recon_wrapper', 'FREESURFER_RECON_WRAPPER'),
-    ('freesurfer_recon_command', 'FREESURFER_RECON_COMMAND')
+    ('freesurfer_recon_command', 'FREESURFER_RECON_COMMAND'), ('fs_to_mesh_command', 'FS_TO_MESH_COMMAND'),
+    ('fs_to_mesh_wrapper', 'FS_TO_MESH_WRAPPER')
 ]
 
 #todo: arguably there should be two separate classes here, XNAT Connection and XNAT service
@@ -224,7 +226,7 @@ class XNATConnection(BaseService):
     #todo: restore freesurfer interval after testing!
     def poll_container_service(self, process_name):
 
-        intervals = {'dicom_to_nifti': 5, 'freesurfer_recon': 60*60}
+        intervals = {'dicom_to_nifti': 5, 'freesurfer_recon': 5, 'fs_to_mesh': 5}
         poll_task = poll_tasks[process_name]
         xnat_credentials = (self.server, self.user, self.password)
 

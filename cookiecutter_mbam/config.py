@@ -86,6 +86,8 @@ class Config:
     DICOM_TO_NIFTI_WRAPPER = env.str('DICOM_TO_NIFTI_WRAPPER', 'dcm2niix-xfer')
     FREESURFER_RECON_COMMAND = int(env.str('FREESURFER_RECON_COMMAND', '2'))
     FREESURFER_RECON_WRAPPER = env.str('FREESURFER_RECON_WRAPPER', 'freesurfer-recon-all-xfer')
+    FS_TO_MESH_COMMAND = int(env.str('FS_TO_MESH_COMMAND', '3'))
+    FS_TO_MESH_WRAPPER = env.str('FS_TO_MESH_WRAPPER', 'fs2mesh-xfer')
 
     # Cloudfront
     CLOUDFRONT_URL = env.str('CLOUDFRONT_URL','foo')

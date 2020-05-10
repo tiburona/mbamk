@@ -49,9 +49,12 @@ class ExperimentService(BaseService):
         self.experiment = Experiment.create(date=date, scanner=scanner, field_strength=field_strength, user_id=user.id)
         self.xnat_labels, self.attrs_to_set = self.xc.sub_exp_labels(self.user, self.experiment)
 
-        add_scans_to_cloud_storage, add_scans_to_xnat_and_run_freesurfer = self._add_scans(files)
+        add_scans_to_cloud_storage, add_scans_to_xnat_and_trigger_3d_procs = self._add_scans(files)
 
-        header = group([add_scans_to_cloud_storage, add_scans_to_xnat_and_run_freesurfer])
+        header = group([add_scans_to_cloud_storage, add_scans_to_xnat_and_trigger_3d_procs])
+
+        # `callback` will execute after freesurfer recon is *triggered*, not after the 3d procs complete.
+        # By setting `callback'`s `link_error` to itself, the upload status email task executes on error or success.
         callback = self._send_upload_status_email()
         callback.set(link_error=self._send_upload_status_email())
         job = chain(header, callback)
@@ -86,13 +89,13 @@ class ExperimentService(BaseService):
 
         add_scans_to_cloud_storage = [ss.add_to_cloud_storage() for ss in scan_services]
 
-        add_scans_to_xnat_and_run_freesurfer = [
-            ss.add_to_xnat_and_run_freesurfer(*self._gen_xnat_info(i)) for i, ss in enumerate(scan_services)
+        add_to_xnat_run_fs_generate_mesh = [
+            ss.add_to_xnat_run_fs_generate_mesh(*self._gen_xnat_info(i)) for i, ss in enumerate(scan_services)
         ]
 
         cloud_storage_job = group(add_scans_to_cloud_storage)
 
-        xnat_job = reduce((lambda x, y: chain(x, y)), add_scans_to_xnat_and_run_freesurfer)
+        xnat_job = reduce((lambda x, y: chain(x, y)), add_to_xnat_run_fs_generate_mesh)
 
         return cloud_storage_job, xnat_job
 

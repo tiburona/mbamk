@@ -29,7 +29,7 @@ from cookiecutter_mbam.storage import CloudStorageConnection
 from cookiecutter_mbam.derivation import DerivationService
 from .utils import gzip_file
 from cookiecutter_mbam.xnat.tasks import *
-from .tasks import set_scan_attribute, get_scan_attribute, set_scan_attributes
+from .tasks import set_scan_attribute, get_scan_attribute, set_scan_attributes, construct_mesh_status_email
 import logging
 
 from flask import current_app
@@ -183,7 +183,7 @@ class ScanService(BaseService):
             self.set_attribute(self.scan.id, 'aws_status', val='Uploaded')
         ).set(link_error=self._error_proc('aws_status'))
 
-    def add_to_xnat_and_run_freesurfer(self, is_first_scan, set_sub_and_exp_attrs):
+    def add_to_xnat_run_fs_generate_mesh(self, is_first_scan, set_sub_and_exp_attrs):
         """Construct the celery chain that performs XNAT functions
 
         Constructs the chain to upload a file to XNAT and update user, experiment, and scan representations in the MBAM
@@ -203,7 +203,9 @@ class ScanService(BaseService):
         else:
             xnat_chain = self._upload_file_to_xnat(is_first_scan, set_sub_and_exp_attrs)
 
-        xnat_chain = xnat_chain | self._trigger_job(json.dumps(self._run_freesurfer()))
+        mesh_chain = chain(self._run_freesurfer(), self._run_fs2mesh())
+
+        xnat_chain = xnat_chain | self._trigger_job(json.dumps(mesh_chain))
 
         return xnat_chain.set(link_error=self._error_proc())
 
@@ -306,8 +308,12 @@ class ScanService(BaseService):
             ds.set_attribute(ds.derivation.id, 'aws_status', 'Uploaded')
         )
 
+    def _send_mesh_status_email(self):
+        return chain(construct_mesh_status_email.si(self.scan.id), self._send_email())
+
+
     def _run_container_retrieve_and_store_files(self, process_name, download_suffix, upload_suffix, filename, local_dir,
-                                                dl_conditions=[], single_file=True, dest_for_zip=''):
+                                                dl_conditions=[], single_file=True, dest_for_zip='', send_email=False):
         """Construct a celery chain to run an XNAT container, download the output, and back it up to cloud storage
 
         :param process_name: identifier for the process
@@ -344,7 +350,26 @@ class ScanService(BaseService):
                 upload_to_cloud_storage
             )
 
+        if send_email:
+            upload_to_cloud_storage = chain(upload_to_cloud_storage, self._send_mesh_status_email())
+
         return run_container | download_files | upload_to_cloud_storage
+
+    def _run_fs2mesh(self):
+
+        fs2mesh = self._run_container_retrieve_and_store_files(
+            process_name='fs_to_mesh',
+            download_suffix='/resources/FSv6/files',
+            upload_suffix='/resources/mesh/files',
+            filename='mesh.zip',
+            local_dir=os.path.join(self.local_dir, 'mesh'),
+            single_file=False,
+            dest_for_zip=self.local_dir,
+            send_email=True
+        )
+
+        return fs2mesh
+
 
     def _run_freesurfer(self):
         """Construct a chain to run freesurfer recon-all

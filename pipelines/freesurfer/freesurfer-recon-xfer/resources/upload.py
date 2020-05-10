@@ -12,10 +12,9 @@ url, user, password, host = sys.argv[1:]
 print(url)
 
 with init_session(user, password) as s:
-    for z_name in ['stats.zip', 'surf.zip','mri.zip']:
-        upload = {'file': (z_name, open('./' + z_name, 'rb'), 'application/octet-stream')}
+    for z_name in ['stats.zip', 'surf.zip','mri.zip', 'scripts.zip', 'touch.zip', 'label.zip']:
+        upload = {'file': (z_name, open('/output/currsub/' + z_name, 'rb'), 'application/octet-stream')}
         r = s.put(url + '?extract=true', files=upload)
-
 
 
 

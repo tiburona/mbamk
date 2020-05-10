@@ -60,7 +60,7 @@ def upload_scan_to_xnat(self, xnat_credentials, file_path, url, exp_uri, imp):
             r = s.post(url, **kwargs)
         else:
             r = s.put(url, **kwargs)
-            shutil.rmtree(os.path.dirname(file_path))
+        shutil.rmtree(os.path.dirname(file_path))
         if r.ok:
             return exp_uri
         else:
@@ -170,6 +170,13 @@ def poll_cs_dcm2nii(self, container_id, xnat_credentials, interval):
 
 @celery.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5}, soft_time_limit=259200)
 def poll_cs_fsrecon(self, container_id, xnat_credentials, interval):
+    try:
+        return poll_cs(container_id, xnat_credentials, interval)
+    except SoftTimeLimitExceeded:
+        return 'Timed Out'
+
+@celery.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5}, soft_time_limit=259200)
+def poll_cs_fs2mesh(self, container_id, xnat_credentials, interval):
     try:
         return poll_cs(container_id, xnat_credentials, interval)
     except SoftTimeLimitExceeded:
