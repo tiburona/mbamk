@@ -50,7 +50,7 @@ class Config:
     SECURITY_EMAIL_SENDER = env.str('SECURITY_EMAIL_SENDER', '"My Brain and Me" <mbaminfo@gmail.com>')
 
     # File upload
-    MAX_CONTENT_LENGTH = 30 * 1024 * 1024
+    MAX_CONTENT_LENGTH = 60 * 1024 * 1024
     FILE_DEPOT = 'static/files/'
 
     # Database
