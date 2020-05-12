@@ -35,7 +35,7 @@ def create_resources(xnat_credentials, to_create, urls):
 
             if not r.ok:
                 print("not ok", level, url)
-                raise ValueError(f'Unexpected status code: {r.status_code} Response: \n {r.text}')
+                error = ValueError(f'Unexpected status code: {r.status_code} Response: \n {r.text}')
 
     return responses
 

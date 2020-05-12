@@ -23,11 +23,13 @@ class CloudStorageConnection(BaseService):
         self.s3_client = boto3.client('s3', **self.auth)
         self.s3_resource = boto3.resource('s3', **self.auth)
 
-    def upload_to_cloud_storage(self, filedir, scan_info, filename='', delete=False):
-        if len(filename):
-            return upload_to_cloud_storage.si(filename, filedir, self.bucket_name, self.auth, scan_info, delete=delete)
+    def upload_to_cloud_storage(self, filedir, scan_info, filenames=[], derivation='', delete=False):
+        if len(filenames):
+            return upload_to_cloud_storage.si(filenames, filedir, self.bucket_name, self.auth, scan_info,
+                                              derivation=derivation, delete=delete)
         else:
-            return upload_to_cloud_storage.s(filedir, self.bucket_name, self.auth, scan_info, delete=delete)
+            return upload_to_cloud_storage.s(filedir, self.bucket_name, self.auth, scan_info, derivation=derivation,
+                                             delete=delete)
 
     def object_exists(self, key):
         """

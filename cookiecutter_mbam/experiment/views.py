@@ -51,7 +51,7 @@ def dev_add():
         add_experiment(form, files)
         num_scans = len(files)
         flash('You successfully started the process of adding {}.'.format(num2words[num_scans]), 'success')
-        return redirect(url_for('experiment.experiments'))
+        return redirect(url_for('public.home'))
     return render_template('experiments/exp_and_scans.html', form=form)
 
 @blueprint.route('/add', methods=['GET', 'POST'])

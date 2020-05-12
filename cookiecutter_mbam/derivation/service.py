@@ -14,6 +14,7 @@ class DerivationService(BaseService):
         self.tasks = tasks
 
     def create(self, process_name):
+        self.process_name = process_name
         self.derivation = Derivation.create(scans=self.scans, process_name=process_name, container_status='Pending')
         return self.derivation
 

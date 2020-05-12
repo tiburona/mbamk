@@ -178,7 +178,7 @@ class ScanService(BaseService):
         local_dir = os.path.join(self.local_dir, 'cloud')
 
         return chain(
-            self.csc.upload_to_cloud_storage(local_dir, self.scan_info, filename=self.filename, delete=True),
+            self.csc.upload_to_cloud_storage(local_dir, self.scan_info, filenames=[self.filename], delete=True),
             self.set_attribute(self.scan.id, 'aws_key', passed_val=True),
             self.set_attribute(self.scan.id, 'aws_status', val='Uploaded')
         ).set(link_error=self._error_proc('aws_status'))
@@ -209,7 +209,7 @@ class ScanService(BaseService):
 
         return xnat_chain.set(link_error=self._error_proc())
 
-    def _run_container(self, process_name, download_suffix, upload_suffix, ds):
+    def _run_container(self, download_suffix, upload_suffix, ds):
         """Construct a celery chain to launch a container and poll for completion.
 
         :param process_name: identifier for the process
@@ -225,15 +225,13 @@ class ScanService(BaseService):
         """
 
         return chain(
-            self._launch_container(process_name, download_suffix, upload_suffix, ds),
-            self._poll_container_service_and_set_derivation_attributes_on_completion(process_name, upload_suffix, ds)
+            self._launch_container(download_suffix, upload_suffix, ds),
+            self._poll_container_service_and_set_derivation_attributes_on_completion(upload_suffix, ds)
         )
 
-    def _launch_container(self, process_name, download_suffix, upload_suffix, ds):
+    def _launch_container(self, download_suffix, upload_suffix, ds):
         """Construct a Celery chain to launch a container and set attributes pertaining to the container service process.
 
-        :param process_name: identifier for the process
-        :type process_name: str
         :param download_suffix: what to append to the scan uri to locate files to download
         :type download_suffix: str
         :param upload_suffix: what to append to the scan uri to locate files to upload
@@ -246,15 +244,13 @@ class ScanService(BaseService):
         return chain(
             self.get_attribute(self.scan.id, attr='xnat_uri'),
             self.xc.gen_container_data(download_suffix=download_suffix, upload_suffix=upload_suffix),
-            self.xc.launch_command(process_name),
+            self.xc.launch_command(ds.process_name),
             ds.set_attributes(ds.derivation.id, passed_val=True)
         )
 
-    def _poll_container_service_and_set_derivation_attributes_on_completion(self, process_name, suffix, ds):
+    def _poll_container_service_and_set_derivation_attributes_on_completion(self, suffix, ds):
         """Construct a Celery chain to poll the container service and set derivation attributes
 
-        :param process_name: identifier for the process
-        :type process_name: str
         :param suffix: the suffix of the XNAT URI of the resulting files
         :type suffix: str
         :param ds: derivation service
@@ -263,7 +259,7 @@ class ScanService(BaseService):
         :rtype: celery.canvas._chain
         """
         return chain(
-            self.xc.poll_container_service(process_name),
+            self.xc.poll_container_service(ds.process_name),
             ds.update_derivation_model('container_status', exception_on_failure=True),
             ds.construct_derivation_uri_from_scan_uri(suffix),
             ds.set_attribute(ds.derivation.id, 'xnat_uri', passed_val=True)
@@ -288,7 +284,7 @@ class ScanService(BaseService):
             self.xc.dl_files_from_xnat(local_dir, suffix=suffix, conditions=conditions, single_file=single_file),
         )
 
-    def _upload_derivation_to_cloud_storage(self, local_path, filename, ds, delete=True):
+    def _upload_derivation_to_cloud_storage(self, local_path, ds, filename='', delete=True):
         """Construct a celery chain to upload a derivation to cloud storage
 
         :param local_path: the path to the file
@@ -302,8 +298,11 @@ class ScanService(BaseService):
         :return: None
         """
 
+        filenames = [filename] if len(filename) else []
+
         return chain(
-            self.csc.upload_to_cloud_storage(local_path, self.scan_info, filename=filename, delete=delete),
+            self.csc.upload_to_cloud_storage(local_path, self.scan_info, derivation=ds.process_name,
+                                             filenames=filenames, delete=delete),
             ds.update_derivation_model('aws_key'),
             ds.set_attribute(ds.derivation.id, 'aws_status', 'Uploaded')
         )
@@ -312,8 +311,10 @@ class ScanService(BaseService):
         return chain(construct_mesh_status_email.si(self.scan.id), self._send_email())
 
 
-    def _run_container_retrieve_and_store_files(self, process_name, download_suffix, upload_suffix, filename, local_dir,
-                                                dl_conditions=[], single_file=True, dest_for_zip='', send_email=False):
+    def _run_container_retrieve_and_store_files(
+            self, process_name, download_suffix, upload_suffix, local_dir,
+            filename='', dl_conditions=[], single_file=True, dest_for_zip='', send_email=False
+    ):
         """Construct a celery chain to run an XNAT container, download the output, and back it up to cloud storage
 
         :param process_name: identifier for the process
@@ -332,17 +333,22 @@ class ScanService(BaseService):
         :return: the celery chain to execute the entire derivation process
         """
 
+        # todo: why is this two steps?  Shouldn't these create steps happen in the init method of Derivation Services?
+        # consider refactoring DerivationService
         ds = DerivationService([self.scan])
         ds.create(process_name)
 
-        run_container = self._run_container(process_name, download_suffix, upload_suffix, ds)
+        run_container = self._run_container(download_suffix, upload_suffix, ds)
         download_files = self._download_files_from_xnat(local_dir, upload_suffix, conditions=dl_conditions,
                                                         single_file=single_file)
 
         if len(dest_for_zip):
             local_dir = dest_for_zip
 
-        upload_to_cloud_storage = self._upload_derivation_to_cloud_storage(local_dir, filename, ds, delete=True)
+        if len(filename):
+            filenames=[filename]
+
+        upload_to_cloud_storage = self._upload_derivation_to_cloud_storage(local_dir, ds, delete=True, filename='')
 
         if len(dest_for_zip):
             upload_to_cloud_storage = chain(
@@ -355,16 +361,15 @@ class ScanService(BaseService):
 
         return run_container | download_files | upload_to_cloud_storage
 
+
     def _run_fs2mesh(self):
 
         fs2mesh = self._run_container_retrieve_and_store_files(
             process_name='fs_to_mesh',
             download_suffix='/resources/FSv6/files',
             upload_suffix='/resources/mesh/files',
-            filename='mesh.zip',
             local_dir=os.path.join(self.local_dir, 'mesh'),
             single_file=False,
-            dest_for_zip=self.local_dir,
             send_email=True
         )
 
@@ -382,9 +387,9 @@ class ScanService(BaseService):
             process_name='freesurfer_recon',
             download_suffix='/resources/NIFTI/files',
             upload_suffix='/resources/FSv6/files',
+            local_dir=os.path.join(self.local_dir, 'freesurfer'),
             filename='freesurfer.zip',
             single_file=False,
-            local_dir=os.path.join(self.local_dir, 'freesurfer'),
             dest_for_zip=self.local_dir
         )
 
@@ -399,9 +404,10 @@ class ScanService(BaseService):
             process_name='dicom_to_nifti',
             download_suffix='/resources/DICOM/files',
             upload_suffix='/resources/NIFTI/files',
+            local_dir=self.local_dir,
             filename='T1.nii.gz',
-            dl_conditions=['json_exclusion'],
-            local_dir=self.local_dir
+            dl_conditions=['json_exclusion']
+
         )
 
     def _upload_file_to_xnat(self, is_first_scan, set_sub_and_exp_attrs):
