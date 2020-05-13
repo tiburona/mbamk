@@ -299,9 +299,10 @@ class ScanService(BaseService):
         """
 
         filenames = [filename] if len(filename) else []
+        derivation = '' if ds.process_name == 'dicom_to_nifti' else ds.process_name
 
         return chain(
-            self.csc.upload_to_cloud_storage(local_path, self.scan_info, derivation=ds.process_name,
+            self.csc.upload_to_cloud_storage(local_path, self.scan_info, derivation=derivation,
                                              filenames=filenames, delete=delete),
             ds.update_derivation_model('aws_key'),
             ds.set_attribute(ds.derivation.id, 'aws_status', 'Uploaded')
@@ -344,9 +345,6 @@ class ScanService(BaseService):
 
         if len(dest_for_zip):
             local_dir = dest_for_zip
-
-        if len(filename):
-            filenames=[filename]
 
         upload_to_cloud_storage = self._upload_derivation_to_cloud_storage(local_dir, ds, delete=True, filename='')
 

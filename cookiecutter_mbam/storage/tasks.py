@@ -10,6 +10,9 @@ from cookiecutter_mbam import celery
 def upload_to_cloud_storage(filenames, filedir, bucket_name, auth, scan_info, derivation='', delete=False):
     user_id, experiment_id, scan_id = scan_info
 
+    if not isinstance(filenames, list):
+        filenames = [filenames]
+
     for filename in filenames:
         key_path = 'user/{}/experiment/{}/scan/{}'.format(user_id, experiment_id, scan_id)
         if len(derivation):
