@@ -8,6 +8,7 @@ from cookiecutter_mbam.scan.models import Scan
 from .service import DisplayService
 from cookiecutter_mbam.experiment.forms import ExperimentForm
 from cookiecutter_mbam.scan.forms import EditScanForm
+import json
 
 def debug():
     assert current_app.debug == False, "Don't panic! You're here by request of debug()"
@@ -45,15 +46,36 @@ def slice_view(id):
     else:
         return render_template('403.html')
 
+@blueprint.route('/scan/<id>/threed_view',methods=['GET'])
+@login_required
+def threed_view(id):
+    """ Display current user's 3D model """
+    if resource_belongs_to_user(Scan, id):
+        try:
+            ds = DisplayService(user=current_user)
+            url = ds.get_threed_url(id) + '/file/all.raw.glb'
+            signed_url = ds.sign_url(url)
+            scan=Scan.get_by_id(id)
+            return render_template('displays/threed_view.html',scan=scan,url=signed_url)
+        except:
+            # TODO: Log this error
+            return render_template('404.html')
+    else:
+        return render_template('403.html')
+
+
+@blueprint.route('/scan/<id>/dragonfruit.html')
+@login_required
+def dragonfruit(id):
+    return render_template('displays/dragonfruit.html')
 
 @blueprint.route('/mikes_view',methods=['GET'])
 def mikes_view():
     """ Display Mike's 3D brain """
-    return render_template('displays/threed_view.html')
-
+    return render_template('displays/threed_view_test.html')
 
 @blueprint.route('/dragonfruit.html')
-def dragonfruit():
+def dragonfruit_test():
     return render_template('displays/dragonfruit.html')
 
 @blueprint.route('/test',methods=['GET'])

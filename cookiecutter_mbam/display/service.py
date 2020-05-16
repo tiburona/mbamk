@@ -43,6 +43,16 @@ class DisplayService(BaseService):
             url = self.cf_base_url + aws_key
         return url
 
+    def get_threed_url(self, scan_id):
+        """ Get unsigned cloudfront url for 3D view of a scan
+        :param int scan_id: id of the scan
+        :return: unsigned Cloudfront url """
+
+        der = [d for d in Scan.get_by_id(scan_id).derivations if (d.process_name == 'fs_to_mesh') & (d.aws_key != None)]
+        url = self.cf_base_url + der[0].aws_key
+        
+        return url
+
     def get_user_scans(self):
         """ Get all scans belonging to a user that also have orig_aws_key
         :param int user_id:

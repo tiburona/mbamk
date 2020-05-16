@@ -36,7 +36,7 @@
                 <i class="fa fa-edit" aria-hidden="true"></i></a>
 
                 <a data-toggle= "modal" data-target="#deleteSessionModal" data-url="{{ url_for('experiment.delete_experiment', id=scan.experiment_id) }}">
-                <i class="fa fa-trash-o" aria-hidden="true"></i></a>
+                <i class="fa fa-trash" aria-hidden="true"></i></a>
 
               </td>
             {% else %}
@@ -52,10 +52,22 @@
                 <i class="fa fa-trash-o" aria-hidden="true"></i></a>
             </td>
             <td>
-                 <span><a href="{{ url_for('display.slice_view',id=scan.id) }}">View</a></span>
+              {% if scan.xnat_status == 'Uploaded' %}
+                <span><a href="{{ url_for('display.slice_view',id=scan.id) }}">View</a></span>
+              {% else %}
+                <span>Pending</span>
+              {% endif %}
             </td>
             <td>
-                 <h5>Placeholder</h5>
+            {% for d in scan.derivations %}
+              {% if d.process_name == 'fs_to_mesh' %}
+                {% if d.aws_status == 'Uploaded' %}
+                  <span><a href="{{ url_for('display.threed_view',id=scan.id) }}">View</a></span>
+                {% else %}
+                  <span>Pending</span>
+                {% endif %}
+              {% endif %}
+            {% endfor %}
             </td>
         </tr>
         <!-- increment the list of session ids -->

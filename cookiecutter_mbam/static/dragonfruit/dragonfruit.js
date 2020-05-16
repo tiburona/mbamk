@@ -82801,7 +82801,7 @@ function createColorPicker(el, props) {
     let picker_top = Math.max(0, Math.min(el_rect.top, window.innerHeight - picker_height));
     let picker_left = Math.max(0, Math.min(el_rect.left - picker_width, window.innerWidth - picker_width));
     console.log("Window innerHeight: " + window.innerHeight + ", innerWidth: " + window.innerWidth);
-    
+
     console.log("Element's Rect:");
     console.log(el_rect);
     picker_div.style.left = picker_left + "px";
@@ -83340,9 +83340,9 @@ function loadObject(url, scene, object_name = "") {
     };
 
     // Use the correct loader to interpret the file at url.
-    if (url.toLowerCase().endsWith(".obj")) {
+    if (url.toLowerCase().includes(".obj")) {
         new three_examples_jsm_loaders_OBJLoader_js__WEBPACK_IMPORTED_MODULE_3__["OBJLoader"]().load(url, object_handler, object_updater, object_error_handler);
-    } else if (url.toLowerCase().endsWith(".gltf") || url.toLowerCase().endsWith(".glb")) {
+    } else if (url.toLowerCase().includes(".gltf") || url.toLowerCase().includes(".glb")) {
         // GLTF files contain a scene, which contains a group, which contains objects. Load objects from group.
         if(_entry__WEBPACK_IMPORTED_MODULE_8__["console_verbosity"] > 2) {
             console.time("gltf_load");
@@ -83350,7 +83350,7 @@ function loadObject(url, scene, object_name = "") {
         }
         let loader = new three_examples_jsm_loaders_GLTFLoader_js__WEBPACK_IMPORTED_MODULE_5__["GLTFLoader"]();
         let dracoLoader = new three_examples_jsm_loaders_DRACOLoader_js__WEBPACK_IMPORTED_MODULE_6__["DRACOLoader"]();
-        if (url.toLowerCase().endsWith(".glb")) {
+        if (url.toLowerCase().includes(".glb")) {
             // This gltf file contains draco-compressed meshes; they need to be decompressed by the draco decoder.
             // I currently assume any .glb file is compressed. We can invent a better way to signal this in future.
             dracoLoader.setDecoderPath('https://www.gstatic.com/draco/v1/decoders/');
