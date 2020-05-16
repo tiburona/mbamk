@@ -52,10 +52,22 @@
                 <i class="fa fa-trash-o" aria-hidden="true"></i></a>
             </td>
             <td>
-              {% if scan.xnat_status == 'Uploaded' %}
-                <span><a href="{{ url_for('display.slice_view',id=scan.id) }}">View</a></span>
+              {% if scan.aws_key.endswith('.zip') %}
+                {% for d in scan.derivations %}
+                 {% if d.process_name == 'dicom_to_nifti' %}
+                   {% if d.aws_status == 'Uploaded' %}
+                      <span><a href="{{ url_for('display.slice_view',id=scan.id) }}">View</a></span>
+                    {% else %}
+                      <span>Pending</span>
+                    {% endif %}
+                  {% endif %}
+                {% endfor %}
               {% else %}
-                <span>Pending</span>
+                {% if scan.xnat_status == 'Uploaded' %}
+                  <span><a href="{{ url_for('display.slice_view',id=scan.id) }}">View</a></span>
+                {% else %}
+                  <span>Pending</span>
+                {% endif %}
               {% endif %}
             </td>
             <td>
