@@ -63,7 +63,7 @@
                   {% endif %}
                 {% endfor %}
               {% else %}
-                {% if scan.xnat_status == 'Uploaded' %}
+                {% if scan.aws_status == 'Uploaded' %}
                   <span><a href="{{ url_for('display.slice_view',id=scan.id) }}">View</a></span>
                 {% else %}
                   <span>Pending</span>
