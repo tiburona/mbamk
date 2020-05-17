@@ -15,7 +15,7 @@ processes = {
             'trusted': ['flask run'],
             'docker': ['flask db upgrade', "gunicorn -w 2 --threads 4 -b :8000 --worker-class gthread 'cookiecutter_mbam.app:create_app()'"],
             'staging': ['flask db upgrade', "gunicorn -w 2 --worker-tmp-dir /dev/shm --threads 4 -b :8000 --worker-class gthread 'cookiecutter_mbam.app:create_app()'"],
-            'qa': ['flask db upgrade', "gunicorn -w 2 --worker-tmp-dir /dev/shm --threads 4 -b :8000 --worker-class gthread 'cookiecutter_mbam.app:create_app()'"]
+            'qa': ['flask db upgrade', "gunicorn -w 2 --threads 4 -b :8000 --worker-class gthread 'cookiecutter_mbam.app:create_app()'"]
         },
         'label': ('FLASK', 'BLUE')
     }

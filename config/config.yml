@@ -98,6 +98,8 @@ QA:
   IMAGE_REPO: mbam/flask-app
   STACK_NAME: qa
   MAIL_SERVER: email-smtp.us-east-1.amazonaws.com
+  MYSQL_USERNAME: mbam
+  MYSQL_PASSWORD: mbam1234
   SECURITY_EMAIL_SENDER: '"My Brain and Me" <info@mybrainandme.org>'
   MYSQL_HOST: braindb-instance.clem3xtlzpyq.us-east-1.rds.amazonaws.com
   JATOS_DB_URL: jdbc:mysql://braindb-instance.clem3xtlzpyq.us-east-1.rds.amazonaws.com/brain_db?characterEncoding=UTF-8&useSSL=false

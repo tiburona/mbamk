@@ -63,6 +63,28 @@ def parameters_to_fetch(config_name):
                 '/STAGING/AMAZON_SMTP_PASSWORD',
                 '/STAGING/AMAZON_SMTP_USERNAME'
                 ]
+    elif config_name=='qa':
+        parameters_to_fetch = [
+                '/QA/MIND_XNAT_USER',
+                '/QA/MIND_XNAT_PASSWORD',
+                '/QA/BACKUP_XNAT_USER',
+                '/QA/BACKUP_XNAT_PASSWORD',
+                '/QA/BASIC_AUTH_USERNAME',
+                '/QA/BASIC_AUTH_PASSWORD',
+                '/QA/CLOUDFRONT_URL',
+                '/QA/CLOUDFRONT_KEY_ID',
+                '/QA/CLOUDFRONT_SECRET_KEY',
+                '/QA/S3_KEY_ID',
+                '/QA/S3_SECRET_KEY',
+                '/QA/SECRET_KEY',
+                '/QA/SECURITY_PASSWORD_SALT',
+                '/QA/MAIL_USERNAME',
+                '/QA/MAIL_PASSWORD',
+                '/QA/MYSQL_USERNAME',
+                '/QA/MYSQL_PASSWORD',
+                '/QA/AMAZON_SMTP_PASSWORD',
+                '/QA/AMAZON_SMTP_USERNAME'
+                ]
     else:
         return
 
@@ -156,7 +178,7 @@ def configure_database(config, kwargs):
     # The below is a stopgap fix to properly configure MYSQL in staging and docker
     if kwargs['env'] in ['STAGING','QA','ALPHA','BETA']:
         print("It looks like we are in an AWS environment, so we will not configure MYSQL"
-              "for local or mysql host.")
+              " for local or mysql host.")
         return
 
     if 'mysql' in kwargs and kwargs['mysql'] in ['local', 'docker']:

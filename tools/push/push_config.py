@@ -121,7 +121,7 @@ if __name__ == '__main__':
 
     arg_info = [
         ('ps', "Push configuration to the AWS parameter store."),
-        ('sem', "Push configuration to Sempahore."),
+        ('sem', "Push configuration to Semaphore."),
         ('cfn', "Sync Cloud Formation Templates.")
     ]
 
@@ -139,5 +139,3 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     push_config(**{'sync_' + dest: getattr(args, dest) for  dest in ['ps', 'sem', 'cfn']})
-
-
