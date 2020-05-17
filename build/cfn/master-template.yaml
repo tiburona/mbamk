@@ -33,7 +33,7 @@ Parameters:
   FlaskAppImageUrl:
     Description: URL to the MBaM Flask app container.
     Type: String
-    Default: 413377292493.dkr.ecr.us-east-1.amazonaws.com/mbam/flask-app:v0.1-alpha-380-ga0f92d9-a0f92d9
+    Default: 413377292493.dkr.ecr.us-east-1.amazonaws.com/mbam/flask-app:v0.1-alpha-431-g9701eea-9701eea
   MakeVPCPublic:
     Description: If set to false will create a private (not public) VPC. Leave to true in order to access EC2 instances with SSH.
     Type: String
@@ -47,11 +47,6 @@ Parameters:
     Type: Number
     Default: 2
     Description: Maximum number of EC2 instances that can be launched in your ECS cluster.
-  FlaskServiceName:
-    Type: String
-    Default: web
-    Description: Name of the flask app service. This will also be the group name, of which celery workers will also be a member
-                  so that they're placed on same instance.
 
 
 Conditions:
@@ -150,7 +145,7 @@ Resources:
         ContainerMemory: 256
         #ContainerCommand: "python tools/start/entry.py run --celery --env staging"
         ContainerCommand: !Sub
-          - bash,-c,python tools/start/entry.py run --flask --env ${Environ}
+          - bash,-c,python tools/start/entry.py run --celery --env ${Environ}
           - { Environ: !Ref EnvironmentName }
         ContainerWorkingDirectory: /app
         ContainerMountPoint: /app/static/files # This should be same as files['files_depot'] in config.py

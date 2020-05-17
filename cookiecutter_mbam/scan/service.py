@@ -178,7 +178,7 @@ class ScanService(BaseService):
         local_dir = os.path.join(self.local_dir, 'cloud')
 
         return chain(
-            self.csc.upload_to_cloud_storage(local_dir, self.scan_info, filenames=[self.filename], delete=True),
+            self.csc.upload_to_cloud_storage(local_dir, self.scan_info, filenames=[self.filename], delete=False),
             self.set_attribute(self.scan.id, 'aws_key', passed_val=True),
             self.set_attribute(self.scan.id, 'aws_status', val='Uploaded')
         ).set(link_error=self._error_proc('aws_status'))

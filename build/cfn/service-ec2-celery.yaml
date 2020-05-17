@@ -110,7 +110,7 @@ Resources:
           MountPoints:
             - ContainerPath: !Ref 'ContainerMountPoint'
               SourceVolume: !Ref 'VolumeName'
-          EntryPoint: ["bash","-c"]
+          # EntryPoint: ["bash","-c"]
           Command: !Ref 'ContainerCommand'
           WorkingDirectory: !Ref 'ContainerWorkingDirectory'
           Secrets:
