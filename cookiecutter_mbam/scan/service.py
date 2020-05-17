@@ -284,7 +284,7 @@ class ScanService(BaseService):
             self.xc.dl_files_from_xnat(local_dir, suffix=suffix, conditions=conditions, single_file=single_file),
         )
 
-    def _upload_derivation_to_cloud_storage(self, local_path, ds, filename='', delete=True):
+    def _upload_derivation_to_cloud_storage(self, local_path, ds, filename='', delete=False):
         """Construct a celery chain to upload a derivation to cloud storage
 
         :param local_path: the path to the file
@@ -346,7 +346,7 @@ class ScanService(BaseService):
         if len(dest_for_zip):
             local_dir = dest_for_zip
 
-        upload_to_cloud_storage = self._upload_derivation_to_cloud_storage(local_dir, ds, delete=True, filename='')
+        upload_to_cloud_storage = self._upload_derivation_to_cloud_storage(local_dir, ds, delete=False, filename='')
 
         if len(dest_for_zip):
             upload_to_cloud_storage = chain(
@@ -448,9 +448,9 @@ class ScanService(BaseService):
 
     def delete(self, scan_id, delete_from_xnat=False):
         # todo: add delete listener
-        """ Delete a scan from the database
+        """ Remove a scan from the database
 
-        Deletes a scan from the database and optionally deletes it from XNAT.
+        Removes a scan from the database and optionally removes it from XNAT.
 
         :param int scan_id: the database id of the scan to delete
         :param bool delete_from_xnat: whether to delete the scan file from XNAT, default False
