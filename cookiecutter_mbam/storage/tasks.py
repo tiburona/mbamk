@@ -7,7 +7,7 @@ from cookiecutter_mbam import celery
 
 
 @celery.task
-def upload_to_cloud_storage(filenames, filedir, bucket_name, auth, scan_info, derivation='', delete=False):
+def upload_to_cloud_storage(filenames, filedir, bucket_name, auth, scan_info, derivation='', delete=True):
     user_id, experiment_id, scan_id = scan_info
 
     if not isinstance(filenames, list):
@@ -22,7 +22,7 @@ def upload_to_cloud_storage(filenames, filedir, bucket_name, auth, scan_info, de
         s3_client = boto3.client('s3', **auth)
         s3_client.upload_file(file_path, bucket_name, key)
     if delete:
-        shutil.rmtree(filedir)
+        shutil.rmtree(filedir,ignore_errors=True)
     if len(filenames) > 1:
         return key_path
     else:

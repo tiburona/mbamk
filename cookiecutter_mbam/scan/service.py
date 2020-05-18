@@ -178,7 +178,7 @@ class ScanService(BaseService):
         local_dir = os.path.join(self.local_dir, 'cloud')
 
         return chain(
-            self.csc.upload_to_cloud_storage(local_dir, self.scan_info, filenames=[self.filename], delete=False),
+            self.csc.upload_to_cloud_storage(local_dir, self.scan_info, filenames=[self.filename], delete=True),
             self.set_attribute(self.scan.id, 'aws_key', passed_val=True),
             self.set_attribute(self.scan.id, 'aws_status', val='Uploaded')
         ).set(link_error=self._error_proc('aws_status'))
@@ -284,7 +284,7 @@ class ScanService(BaseService):
             self.xc.dl_files_from_xnat(local_dir, suffix=suffix, conditions=conditions, single_file=single_file),
         )
 
-    def _upload_derivation_to_cloud_storage(self, local_path, ds, filename='', delete=False):
+    def _upload_derivation_to_cloud_storage(self, local_path, ds, filename='', delete=True):
         """Construct a celery chain to upload a derivation to cloud storage
 
         :param local_path: the path to the file
@@ -346,7 +346,7 @@ class ScanService(BaseService):
         if len(dest_for_zip):
             local_dir = dest_for_zip
 
-        upload_to_cloud_storage = self._upload_derivation_to_cloud_storage(local_dir, ds, delete=False, filename='')
+        upload_to_cloud_storage = self._upload_derivation_to_cloud_storage(local_dir, ds, delete=True, filename='')
 
         if len(dest_for_zip):
             upload_to_cloud_storage = chain(
