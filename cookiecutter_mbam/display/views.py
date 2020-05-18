@@ -53,7 +53,7 @@ def threed_view(id):
     if resource_belongs_to_user(Scan, id):
         try:
             ds = DisplayService(user=current_user)
-            url = ds.get_threed_url(id) + '/file/all.raw.glb'
+            url = ds.get_threed_url(id) + '/file/all.smooth.glb'
             signed_url = ds.sign_url(url)
             scan=Scan.get_by_id(id)
             return render_template('displays/threed_view.html',scan=scan,url=signed_url)
