@@ -40,7 +40,7 @@ def create_resources(xnat_credentials, to_create, urls):
     return responses
 
 @celery.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5})
-def upload_scan_to_xnat(self, xnat_credentials, file_path, url, exp_uri, imp):
+def upload_scan_to_xnat(self, xnat_credentials, file_path, url, exp_uri, imp, delete=True):
     """ Upload a NIFTI format scan to XNAT
     :param self: the task object
     :param tuple xnat_credentials: a three-tuple of the server, username, and password to log into XNAT
@@ -60,7 +60,10 @@ def upload_scan_to_xnat(self, xnat_credentials, file_path, url, exp_uri, imp):
             r = s.post(url, **kwargs)
         else:
             r = s.put(url, **kwargs)
-        shutil.rmtree(os.path.dirname(file_path))
+
+        if delete:
+            shutil.rmtree(os.path.dirname(file_path),ignore_errors=True)
+
         if r.ok:
             return exp_uri
         else:
@@ -224,6 +227,3 @@ def dl_files_from_xnat(self, uri, xnat_credentials, file_path, suffix='', single
 dl_conditions={
     'json_exclusion': lambda result: 'json' not in result['Name']
 }
-
-
-

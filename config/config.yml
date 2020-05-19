@@ -79,6 +79,32 @@ STAGING:
   JATOS_DB_URL: jdbc:mysql://braindb-instance.clem3xtlzpyq.us-east-1.rds.amazonaws.com/brain_db?characterEncoding=UTF-8&useSSL=false
   S3_BUCKET: 'mbam-test-sp'
 
+QA:
+  ENV: qa
+  DEBUG: False
+  SERVER_NAME: qa.mybrainandme.org
+  PREFERRED_URL_SCHEME: https
+  FLASK_APP: autoapp.py
+  FLASK_ENV: production
+  BASIC_AUTH_FORCE: True
+  MIND_XNAT_HOST: https://mind-xnat.nyspi.org
+  MIND_DICOM_TO_NIFTI_COMMAND: 36
+  MIND_FREESURFER_RECON_COMMAND: 37
+  MIND_FS_TO_MESH_COMMAND: 39
+  MIND_XNAT_DOCKER_HOST: http://10.20.193.32:2375
+  MIND_XNAT_PROJECT: MBAM_QA
+  AWS_ACCOUNT_ID: 413377292493
+  AWS_DEFAULT_REGION: us-east-1
+  IMAGE_REPO: mbam/flask-app
+  STACK_NAME: qa
+  MAIL_SERVER: email-smtp.us-east-1.amazonaws.com
+  MYSQL_USERNAME: mbam
+  MYSQL_PASSWORD: mbam1234
+  SECURITY_EMAIL_SENDER: '"My Brain and Me" <info@mybrainandme.org>'
+  MYSQL_HOST: braindb-instance.clem3xtlzpyq.us-east-1.rds.amazonaws.com
+  JATOS_DB_URL: jdbc:mysql://braindb-instance.clem3xtlzpyq.us-east-1.rds.amazonaws.com/brain_db?characterEncoding=UTF-8&useSSL=false
+  S3_BUCKET: 'mbam-test-sp'
+
 TRUSTED:
   ENV: trusted
   TESTING: False

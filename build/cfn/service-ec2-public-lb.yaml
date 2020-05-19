@@ -198,7 +198,7 @@ Resources:
       HealthCheckProtocol: HTTP
       HealthCheckTimeoutSeconds: 5
       HealthyThresholdCount: 2
-      Name: !Ref 'ServiceName'
+      Name: !Sub ${EnvironmentName}-${ServiceName}
       Port: 81
       Protocol: HTTP
       UnhealthyThresholdCount: 5

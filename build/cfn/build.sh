@@ -1,5 +1,12 @@
 #!/usr/bin/env bash
 
+if [ $# -eq 0 ]
+  then
+    STACK_NAME=staging
+  else
+    STACK_NAME=$1
+fi
+
 set -e
 
 REV_TAG=$(git describe --tags)-$(git log -1 --pretty=format:%h)

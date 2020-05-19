@@ -448,9 +448,9 @@ class ScanService(BaseService):
 
     def delete(self, scan_id, delete_from_xnat=False):
         # todo: add delete listener
-        """ Delete a scan from the database
+        """ Remove a scan from the database
 
-        Deletes a scan from the database and optionally deletes it from XNAT.
+        Removes a scan from the database and optionally removes it from XNAT.
 
         :param int scan_id: the database id of the scan to delete
         :param bool delete_from_xnat: whether to delete the scan file from XNAT, default False
