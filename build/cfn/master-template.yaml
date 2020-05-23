@@ -141,8 +141,8 @@ Resources:
         EnvironmentName: !Ref 'EnvironmentName'
         ServiceName: celery
         ImageUrl: !Ref 'FlaskAppImageUrl'
-        ContainerCpu: 256
-        ContainerMemory: 256
+        ContainerCpu: 512
+        ContainerMemory: 512
         #ContainerCommand: "python tools/start/entry.py run --celery --env staging"
         ContainerCommand: !Sub
           - bash,-c,python tools/start/entry.py run --celery --env ${Environ}

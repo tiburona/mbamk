@@ -17,11 +17,11 @@ Parameters:
                  will handle the traffic for this service
   ContainerCpu:
     Type: Number
-    Default: 256
+    Default: 512
     Description: How much CPU to give the container. 1024 is 1 CPU
   ContainerMemory:
     Type: Number
-    Default: 256
+    Default: 512
     Description: How much memory in megabytes to give the container
   ContainerCommand:
     Type: CommaDelimitedList
@@ -182,7 +182,7 @@ Resources:
             - Fn::ImportValue: !Sub ${EnvironmentName}:ClusterName
             - !Ref 'ServiceName'
       MinCapacity: 1
-      MaxCapacity: 2
+      MaxCapacity: 1
       RoleARN:
         Fn::ImportValue: !Sub ${EnvironmentName}:AutoscalingRole
 
