@@ -1,6 +1,7 @@
 // Imports
 import Filters from './filters';
 var JSZip = require('jszip');
+var path = require('path')
 var daikon = require('daikon');
 import saveAs from 'file-saver';
 // jquery validate to carry out validation in modal forms
@@ -238,6 +239,7 @@ $("#input-file").fileinput(inputFileConfig).on('filebatchselected', function(eve
         var dT = new DataTransfer(); // specs compliant (as of March 2018 only Chrome)
         filename_list=[];
         for (var i = 0; i < files.length; i++) {
+            files[i].name='Test'
             dT.items.add(new File([ files[i] ], files[i].name ));
             filename_list.push(files[i].name)
         }
@@ -447,7 +449,7 @@ $("#input-cd-step1").fileinput( inputCDStep1Config ).on('change', function(event
                 var series = series_list[key];
                 //var download = $(this).hasClass('download-button') // determine if the download button was pressed
                 //var name = series.images[0].getSeriesDescription()
-                console.log("Name of series is: " + filename_list[i])
+
                 // Here access the indeces of the series images after they get reordered by BuildSeries() and
                 // reorder the files_index to reflect this order
                 var series_idx = series.getOrder();
@@ -483,15 +485,19 @@ $("#input-cd-step1").fileinput( inputCDStep1Config ).on('change', function(event
                 console.log(result)
 
                 // Here create a zip of the select set of dicoms
+                //var zip = new JSZip();
                 var zip = new JSZip();
+
                 // Add the files that are included as part of the series (hopefully in right order)
                 try {
                     for (var k = 0; k < files_index[key].length; k++) {
                         var f = files[files_index[key][k]];
                             console.log("adding dicom file to the zip file")
                             console.log(f)
+                            //zip.file(f.name, f);
                             zip.file(f.name, f);
                         }
+
                 } catch(e) {
                     $("#errorMsgDialog").modal("show");
                     break;
@@ -499,18 +505,17 @@ $("#input-cd-step1").fileinput( inputCDStep1Config ).on('change', function(event
 
                 // Now convert zip to blob and pass to upload form or download the zipped file
                 zip.generateAsync({
-                    type:"blob",
-                    mimeType: "application/zip",
+                    type: "blob",
+                    //mimeType: "application/zip",
+                    mimeType: filename_list[i] // only way to properly name the file
                 }).then(function (blob) { // 1) generate the zip file
                     try {
-                        console.log("adding zip file to dT object")
-                        console.log(filename_list)
-                        // Here if can pass the selected file onto the for
-                        dT.items.add(new File([ blob ], filename_list[i] + ".zip" ));
+                        //var fname = path.basename(blob.type, '.zip').toUpperCase() + '.zip'
+                        dT.items.add(new File([ blob ], blob.type ) );
                     } catch(e) {
                         // Here just let the user download the file and direct them to the 'legacy' upload form
                         alert('Press OK to download the file to your computer. You will be redirected to a brief upload form. Choose the downloaded file under the "Image" field of the form.')
-                        saveAs(blob, filename_list[i] + ".zip"); // 2) trigger the download
+                        saveAs(blob, blob.type); // 2) trigger the download
 
                         // redirect to the "legacy" file upload form in future. Maybe can add new type of action for that
                     } finally {

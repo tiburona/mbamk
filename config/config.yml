@@ -54,6 +54,7 @@ DOCKER:
   AWS_DEFAULT_REGION: us-east-1
   CLOUDFRONT_URL: https://dc2khv0msnx9b.cloudfront.net/
   S3_BUCKET: 'mbam-test-sp'
+  ACKS_LATE: False
 
 STAGING:
   ENV: staging
@@ -78,6 +79,7 @@ STAGING:
   MYSQL_HOST: braindb-instance.clem3xtlzpyq.us-east-1.rds.amazonaws.com
   JATOS_DB_URL: jdbc:mysql://braindb-instance.clem3xtlzpyq.us-east-1.rds.amazonaws.com/brain_db?characterEncoding=UTF-8&useSSL=false
   S3_BUCKET: 'mbam-test-sp'
+  ACKS_LATE: True
 
 QA:
   ENV: qa
@@ -104,6 +106,7 @@ QA:
   MYSQL_HOST: braindb-instance.clem3xtlzpyq.us-east-1.rds.amazonaws.com
   JATOS_DB_URL: jdbc:mysql://braindb-instance.clem3xtlzpyq.us-east-1.rds.amazonaws.com/brain_db?characterEncoding=UTF-8&useSSL=false
   S3_BUCKET: 'mbam-test-sp'
+  ACKS_LATE: True
 
 TRUSTED:
   ENV: trusted
@@ -136,6 +139,7 @@ TRUSTED:
   MYSQL_LOCAL_HOST: localhost
   MYSQL_DOCKER_HOST: mysql
   MYSQL_PASSWORD: mbam123
+  ACKS_LATE: False
 
 
 LOCAL:
@@ -157,3 +161,4 @@ LOCAL:
   VVM_FREESURFER_RECON_COMMAND: 2
   VVM_XNAT_PASSWORD: admin
   VVM_XNAT_USER: admin
+  ACKS_LATE: False

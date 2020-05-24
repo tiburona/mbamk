@@ -106,5 +106,5 @@ class Config:
     enable_utc = True
     broker_url = env.str('BROKER_URL', 'redis://localhost:6379')
     results_backend = env.str('RESULTS_BACKEND', broker_url)
-    task_acks_late = True
+    task_acks_late = env.bool('ACKS_LATE',False)
     worker_prefetch_multiplier = 1
