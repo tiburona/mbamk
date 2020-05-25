@@ -502,7 +502,7 @@ Freesurfer container that provides output as if Freesurfer ran.  If you are a tr
 this mock container by setting
 
     TRUSTED:
-        FREESURFER_RECON_COMMAND: 38
+        FREESURFER_RECON_COMMAND: 40
 
 in `mbam/config/config.override.yml`.
 
