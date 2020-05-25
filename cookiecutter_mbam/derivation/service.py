@@ -8,15 +8,12 @@ tasks = {'set_attribute': set_derivation_attribute, 'get_attribute': get_derivat
 
 class DerivationService(BaseService):
 
-    def __init__(self, scans, tasks=tasks):
+    def __init__(self, scans, process_name, tasks=tasks):
         super().__init__(Derivation)
         self.scans = scans
         self.tasks = tasks
-
-    def create(self, process_name):
         self.process_name = process_name
         self.derivation = Derivation.create(scans=self.scans, process_name=process_name, container_status='Pending')
-        return self.derivation
 
     def _raise_exception_if_process_fails(self):
         return raise_exception.s(whitelist=['Complete'])

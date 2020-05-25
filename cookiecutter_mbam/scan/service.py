@@ -17,20 +17,19 @@ Todo: consider that the import service leaves a file as a .nii, but upload servi
 
 """
 
-
-import os
 import json
+import logging
 from pathlib import Path
 from celery import chain
 from .models import Scan
+from .utils import gzip_file
+from .tasks import set_scan_attribute, get_scan_attribute, set_scan_attributes, construct_mesh_status_email
 from cookiecutter_mbam.base.models import BaseService
 from cookiecutter_mbam.xnat import XNATConnection
 from cookiecutter_mbam.storage import CloudStorageConnection
 from cookiecutter_mbam.derivation import DerivationService
-from .utils import gzip_file
 from cookiecutter_mbam.xnat.tasks import *
-from .tasks import set_scan_attribute, get_scan_attribute, set_scan_attributes, construct_mesh_status_email
-import logging
+
 
 from flask import current_app
 
@@ -60,7 +59,6 @@ class ScanService(BaseService):
         self.xc = XNATConnection()
         self.csc = CloudStorageConnection()
 
-
     def add_to_database(self, image_file, xnat_labels):
         """Add a scan to the database
 
@@ -75,17 +73,12 @@ class ScanService(BaseService):
         """
 
         self.scan = self._add_scan_to_database()
-
         self._process_file(image_file)
-
-        self.scan.update(label=self.orig_filename)
-
         self._update_xnat_labels(xnat_labels)
-
         self.scan_info = [self.user.id, self.experiment.id, self.scan.id]
 
     def _update_xnat_labels(self, xnat_labels):
-        """Add scan level xnat id to the xnat_labels dictionary
+        """Add scan level XNAT id to the xnat_labels dictionary
 
         :param xnat_labels: the XNAT labels for the subject and experiment the scan belongs to
         :type xnat_labels: dict
@@ -101,24 +94,23 @@ class ScanService(BaseService):
 
         :param image_file: the file object
         :type image_file: werkzeug.datastructures.FileStorage
-        :return: three-tuple of the path to the file on local disk, the name of the file and a boolean indicating if the
-        file is a zip file
-        :rtype: tuple
+        :return: None
         """
 
         self.ext, self.orig_filename = self._process_filename(image_file.filename)
         self.filename = 'T1' + self.ext
         self.dcm = self.ext == '.zip'
-
         self._write_local_files(image_file)
+        self.scan.update(label=self.orig_filename)
 
     @staticmethod
     def _process_filename(filename):
         """Derive information from the filename
 
-        :param str filename: the name of the file as stored on the image_file object
-        :return: a three-tuple of the extension of the file, the basename of the file, and the path to write the file to
-        in local storage
+        :param filename: the name of the file as stored on the image_file object
+        :type filename: str
+        :return: a two-tuple of the extension of the file and the basename of the file
+        :rtype: tuple
         """
 
         ext = ''.join(Path(filename).suffixes)
@@ -126,7 +118,8 @@ class ScanService(BaseService):
         return ext, filename
 
     def _write_local_files(self, image_file):
-        """
+        """Write the user's uploaded file to directories on the web server
+
         :param image_file: the file object
         :type image_file: werkzeug.datastructures.FileStorage
         :return: None
@@ -145,7 +138,7 @@ class ScanService(BaseService):
             if dest == 'cloud':
                 image_file.save(file_path)
                 if self.ext == '.nii':
-                    image_file, file_path = _compress_file(file_path)
+                    image_file, file_path = gzip_file(file_path, delete=True)
                     self.filename += '.gz'
             if dest == 'xnat':
                 shutil.copy(os.path.join(self.local_dir, 'cloud', self.filename), file_path)
@@ -158,7 +151,7 @@ class ScanService(BaseService):
         :param status_type: the attribute that will be set to error on the object
         :type status_type: str
         :return: error_proc, the chain that handles errors and sets the status attribute
-        :rtype: celery.canvas._chain
+        :rtype: Celery.canvas._chain
         """
 
         error_proc = self._error_handler(log_message='generic_message', email_admin=True, email_user=False)
@@ -169,10 +162,10 @@ class ScanService(BaseService):
         return error_proc
 
     def add_to_cloud_storage(self):
-        """Construct the celery chain to upload an original scan file to cloud storage
+        """Construct the Celery chain to upload an original scan file to cloud storage
 
         :return: Celery chain that uploads a scan to cloud storage
-        :rtype: celery.canvas._chain
+        :rtype: Celery.canvas._chain
         """
 
         local_dir = os.path.join(self.local_dir, 'cloud')
@@ -195,7 +188,7 @@ class ScanService(BaseService):
         :param set_sub_and_exp_attrs: None or the signature of the task to set subject and/or experiment XNAT attributes
         :type set_sub_and_exp_attrs: Union([NoneType, celery.canvas.Signature]
         :return: Celery chain that performs XNAT functions
-        :rtype: celery.canvas._chain
+        :rtype: Celery.canvas._chain
         """
 
         if self.dcm:
@@ -212,16 +205,14 @@ class ScanService(BaseService):
     def _run_container(self, download_suffix, upload_suffix, ds):
         """Construct a celery chain to launch a container and poll for completion.
 
-        :param process_name: identifier for the process
-        :type process_name: str
-        :param download_suffix: what to append to the scan uri to locate files to download
+        :param download_suffix: what to append to the scan URI to locate files to download
         :type download_suffix: str
-        :param upload_suffix: what to append to the scan uri to locate files to upload
+        :param upload_suffix: what to append to the scan URI to locate files to upload
         :type upload_suffix: str
         :param ds: derivation service
         :type ds: cookiecutter_mbam.derivation.service.DerivationService
-        :return: the celery chain to run the container
-        :rtype: celery.canvas._chain
+        :return: the Celery chain to run the container
+        :rtype: Celery.canvas._chain
         """
 
         return chain(
@@ -230,7 +221,8 @@ class ScanService(BaseService):
         )
 
     def _launch_container(self, download_suffix, upload_suffix, ds):
-        """Construct a Celery chain to launch a container and set attributes pertaining to the container service process.
+        """Construct a Celery chain to launch a container and set attributes pertaining to the container service
+        process.
 
         :param download_suffix: what to append to the scan uri to locate files to download
         :type download_suffix: str
@@ -241,6 +233,7 @@ class ScanService(BaseService):
         :return: the celery chain to run the container
         :rtype: celery.canvas._chain
         """
+
         return chain(
             self.get_attribute(self.scan.id, attr='xnat_uri'),
             self.xc.gen_container_data(download_suffix=download_suffix, upload_suffix=upload_suffix),
@@ -258,6 +251,7 @@ class ScanService(BaseService):
         :return: the celery chain to run the container
         :rtype: celery.canvas._chain
         """
+
         return chain(
             self.xc.poll_container_service(ds.process_name),
             ds.update_derivation_model('container_status', exception_on_failure=True),
@@ -268,7 +262,7 @@ class ScanService(BaseService):
     def _download_files_from_xnat(self, local_dir, suffix, conditions=[], single_file=True):
         """Construct a celery chain to download files from xnat
 
-        :param local_dir: the directory on the webserver where the file will be saved
+        :param local_dir: the directory on the web server where the file will be saved
         :type local_dir: str
         :param suffix: suffix to attach to xnat uri in order to locate the files to download
         :param conditions: keys to a dictionary of optional conditions to put on whether to download a file
@@ -285,17 +279,18 @@ class ScanService(BaseService):
         )
 
     def _upload_derivation_to_cloud_storage(self, local_path, ds, filename='', delete=True):
-        """Construct a celery chain to upload a derivation to cloud storage
+        """Construct a Celery chain to upload a derivation to cloud storage
 
         :param local_path: the path to the file
         :type local_path: str
-        :param filename: the name of the file
-        :type filename: str
         :param ds: the derivation service object that updates the derivation model
         :type ds: cookiecutter_mbam.derivation.service.DerivationService
+        :param filename: the name of the file
+        :type filename: str
         :param delete: whether to delete the file and its containing directory
         :type delete: bool
-        :return: None
+        :return: a Celery chain to upload a derivation to cloud storage
+        :rtype: celery.canvas._chain
         """
 
         filenames = [filename] if len(filename) else []
@@ -309,20 +304,24 @@ class ScanService(BaseService):
         )
 
     def _send_mesh_status_email(self):
-        return chain(construct_mesh_status_email.si(self.scan.id), self._send_email())
+        """Construct a Celery chain to send an email to the user on completion of the fs2mesh process
 
+        :return: the Celery chain to send an email with the status of the Freesurfer to mesh conversion
+        :rtype: Celery.canvas._chain
+        """
+        return chain(construct_mesh_status_email.si(self.scan.id), self._send_email())
 
     def _run_container_retrieve_and_store_files(
             self, process_name, download_suffix, upload_suffix, local_dir,
             filename='', dl_conditions=[], single_file=True, dest_for_zip='', send_email=False
     ):
-        """Construct a celery chain to run an XNAT container, download the output, and back it up to cloud storage
+        """Construct a Celery chain to run an XNAT container, download the output, and back it up to cloud storage
 
         :param process_name: identifier for the process
         :type process_name: str
-        :param download_suffix: what to append to the scan uri to locate files to download
+        :param download_suffix: what to append to the scan URI to locate files to download
         :type download_suffix: str
-        :param upload_suffix: what to append to the scan uri to locate files to upload
+        :param upload_suffix: what to append to the scan URI to locate files to upload
         :type upload_suffix: str
         :param filename: the name to use when writing the file
         :type filename: str
@@ -331,14 +330,11 @@ class ScanService(BaseService):
         :param single_file: whether one file will be uploaded or more than one
         :type single_file: bool
         :param dest_for_zip: the directory in which to write a zip file (if one is necessary)
-        :return: the celery chain to execute the entire derivation process
+        :return: the Celery chain to execute the entire derivation process
+        :rtype: Celery.canvas._chain
         """
 
-        # todo: why is this two steps?  Shouldn't these create steps happen in the init method of Derivation Services?
-        # consider refactoring DerivationService
-        ds = DerivationService([self.scan])
-        ds.create(process_name)
-
+        ds = DerivationService([self.scan], process_name)
         run_container = self._run_container(download_suffix, upload_suffix, ds)
         download_files = self._download_files_from_xnat(local_dir, upload_suffix, conditions=dl_conditions,
                                                         single_file=single_file)
@@ -359,10 +355,15 @@ class ScanService(BaseService):
 
         return run_container | download_files | upload_to_cloud_storage
 
-
     def _run_fs2mesh(self):
+        """Construct a chan to run the pipeline that converts Freesurfer output to a 3D mesh
 
-        fs2mesh = self._run_container_retrieve_and_store_files(
+        :return: the Celery chain
+        :rtype: Celery.canvas._chain
+
+        """
+
+        return self._run_container_retrieve_and_store_files(
             process_name='fs_to_mesh',
             download_suffix='/resources/FSv6/files',
             upload_suffix='/resources/mesh/files',
@@ -371,14 +372,11 @@ class ScanService(BaseService):
             send_email=True
         )
 
-        return fs2mesh
-
-
     def _run_freesurfer(self):
-        """Construct a chain to run freesurfer recon-all
+        """Construct a chain to run Freesurfer recon-all
 
-        :return: the celery chain
-        :rtype: celery.canvas._chain
+        :return: the Celery chain
+        :rtype: Celery.canvas._chain
         """
 
         return self._run_container_retrieve_and_store_files(
@@ -392,10 +390,10 @@ class ScanService(BaseService):
         )
 
     def _convert_dicom(self):
-        """Construct a chain to convert dicom to nifti
+        """Construct a chain to convert DICOM to NIFTI
 
-        :return: the celery chain
-        :rtype: celery.canvas._chain
+        :return: the Celery chain
+        :rtype: Celery.canvas._chain
         """
 
         return self._run_container_retrieve_and_store_files(
@@ -405,7 +403,6 @@ class ScanService(BaseService):
             local_dir=self.local_dir,
             filename='T1.nii.gz',
             dl_conditions=['json_exclusion']
-
         )
 
     def _upload_file_to_xnat(self, is_first_scan, set_sub_and_exp_attrs):
@@ -420,7 +417,7 @@ class ScanService(BaseService):
         with their XNAT attributes
         :type set_sub_and_exp_attrs: Union([NoneType, celery.canvas.Signature])
         :return: the signature of the chain to upload a file to XNAT
-        :rtype: celery.canvas._chain
+        :rtype: Celery.canvas._chain
         """
 
         local_path = os.path.join(self.local_dir, 'xnat', self.filename)
@@ -436,15 +433,16 @@ class ScanService(BaseService):
     def _add_scan_to_database(self, xnat_status='Pending', aws_status='Pending'):
         """Add a scan to the database
 
-        Creates the scan object, adds it to the database, and sets the initial xnat and cloud storage status
-
+        :param xnat_status: status of upload in XNAT
+        :type xnat_status: str
+        :param aws_status: status of upload in AWS
+        :type aws_status: str
         :return: scan
         :rtype: cookiecutter_mbam.scan.models.Scan
         """
 
         return Scan.create(experiment_id=self.experiment.id, xnat_status=xnat_status, aws_status=aws_status,
                            user_id=self.experiment.user_id)
-
 
     def delete(self, scan_id, delete_from_xnat=False):
         # todo: add delete listener
@@ -463,16 +461,3 @@ class ScanService(BaseService):
         scan.delete()
 
 
-def _compress_file(local_path):
-    """Compress a scan
-
-    Gzips the image file and returns data about the gzipped file.
-
-    :param local_path: the path to the uncompressed file
-    :type local_path: str
-    :return: a two-tuple of the compressed file and the path to that file
-    :rtype: tuple
-    """
-    image_file, gz_path = gzip_file(local_path)
-    os.remove(local_path)
-    return image_file, gz_path

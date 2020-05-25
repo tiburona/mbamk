@@ -24,7 +24,6 @@ class Scan(SurrogatePK, Model):
     experiment_id = reference_col('experiment', nullable=True)
     user_id = reference_col('user', nullable=False)
     label = db.Column(db.String(255), nullable=True)
-    # Add back reference to experiment so can access experiment table from scan
     parent_experiment = relationship('Experiment', backref=backref("experiment_scans", lazy="dynamic"))
     visible = db.Column(db.Boolean(), nullable=True)
 
@@ -32,7 +31,7 @@ class Scan(SurrogatePK, Model):
         """Create instance."""
         db.Model.__init__(self, experiment_id=experiment_id, **kwargs)
 
-    #to do figure out how to put experiment date in the repr
+    #todo figure out how to put experiment date in the repr
     def __repr__(self):
         """Represent instance as a unique string."""
         return f'<Scan(xnat_uri: {self.xnat_uri})>'
