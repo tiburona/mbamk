@@ -1,5 +1,3 @@
-import os
-import zipfile
 from .models import Scan
 from cookiecutter_mbam.user import User
 from cookiecutter_mbam.base.tasks import run_task_factories

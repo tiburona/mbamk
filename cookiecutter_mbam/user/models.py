@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
 """User models."""
 import datetime as dt
-
 from flask_security import UserMixin
-from flask_security.utils import verify_password, hash_password
-
+from flask_security.utils import verify_password
 from cookiecutter_mbam.database import Column, Model, Table, SurrogatePK, db, relationship
 
 roles_users = Table(
@@ -87,3 +85,4 @@ class User(UserMixin, SurrogatePK, Model):
     def __repr__(self):
         """Represent instance as a unique string."""
         return '<User({email!r})>'.format(email=self.email)
+

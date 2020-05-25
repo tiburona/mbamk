@@ -34,18 +34,22 @@ def create_resources(xnat_credentials, to_create, urls):
                 responses[level] = r.text
 
             if not r.ok:
-                print("not ok", level, url)
-                error = ValueError(f'Unexpected status code: {r.status_code} Response: \n {r.text}')
+                raise ValueError(f'Unexpected status code: {r.status_code} Response: \n {r.text}')
 
     return responses
 
 @celery.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5})
 def upload_scan_to_xnat(self, xnat_credentials, file_path, url, exp_uri, imp, delete=True):
     """ Upload a NIFTI format scan to XNAT
-    :param self: the task object
-    :param tuple xnat_credentials: a three-tuple of the server, username, and password to log into XNAT
-    :param str file_path: the location of the file on the local disk
-    :param str url:
+    :param xnat_credentials: a three-tuple of the server, username, and password to log into XNAT
+    :type xnat_credentials: tuple
+    :param file_path: where to find the file on the local server
+    :param url: the path in the API to put or post the file to
+    :type url: str
+    :param exp_uri: the uri of the experiment in XNAT, used as data for the import service
+    :type exp_uri: str
+    :param imp: whether to use XNAT's import service to upload the file
+    :type imp: bool
     :return: uris
     """
 
@@ -71,15 +75,16 @@ def upload_scan_to_xnat(self, xnat_credentials, file_path, url, exp_uri, imp, de
 
 @celery.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5})
 def get_latest_scan_info(self, experiment_uri, xnat_credentials):
-    """ Get XNAT uri and id of the last uploaded scan for the current experiment
+    """ Get XNAT URI and id of the last uploaded scan for the current experiment
 
      XNAT automatically sets the ID of an imported scan and MBAM makes no attempt to overwrite it.  This function
      retrieves that information (regardless of whether the scan was uploaded or imported.)
 
-    :param self: the task object
-    :param dict uris: a dictionary with levels as keys that contains the experiment uri
-    :param tuple xnat_credentials: a three-tuple of the server, username, and password to log into XNAT
-    :return: a dictionary of the XNAT id and XNAT uri of the scan
+    :param uris: a dictionary with levels as keys that contains the experiment uri
+    :type uris: dict
+    :param xnat_credentials: a three-tuple of the server, username, and password to log into XNAT
+    :type xnat_credentials: tuple
+    :return: a dictionary of the XNAT id and XNAT URI of the scan
     :rtype: dict
     """
     server, user, password = xnat_credentials
@@ -96,6 +101,18 @@ def get_latest_scan_info(self, experiment_uri, xnat_credentials):
 
 @celery.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5})
 def gen_container_data(self, uri, xnat_credentials, download_suffix, upload_suffix):
+    """Generate the data necessary to launch a command in XNAT
+    :param uri: URI of the resource, minus the suffix that indicates the specific URI for file download
+    :param uri: str
+    :param xnat_credentials: a three-tuple of the server, username, and password to log into XNAT
+    :type xnat_credentials: tuple
+    :param download_suffix: the suffix that, concatenated with `uri`, indicates the URI for file download
+    :type download_suffix: str
+    :param upload_suffix: the sufficx that, concatenated with `uri`, indicates where to upload processed files
+    :type upload_suffix: str
+    :return: the data that will be passed to the container via a post request
+    :rtype: dict
+    """
     server, _, _ = xnat_credentials
     return {
         'download-url': server + uri + download_suffix,
@@ -107,13 +124,12 @@ def gen_container_data(self, uri, xnat_credentials, download_suffix, upload_suff
 @celery.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5})
 def launch_command(self, data, xnat_credentials, project, command_ids):
     """ Launch a command in XNAT
-
-    :param self: the task object
-    :param dict data: a dictionary with the payload to be included with the post request to launch the command
-    :param tuple xnat_credentials: a three-tuple of the server, username, and password to log into XNAT
-    :param str project: the XNAT project
-    :param tuple command_ids: a two-tuple of the id of the command and the id of the wrapper in the XNAT host executing
-    the command
+    :param data: the payload to be included with the post request to launch the command
+    :type data: dict
+    :param project: the XNAT project
+    :type project: str
+    :param command_ids: a two-tuple of the command id and the id of the wrapper in the XNAT host executing the command
+    :type command_ids: tuple
     :return: container id
     :rtype: str
     """
@@ -129,6 +145,14 @@ def launch_command(self, data, xnat_credentials, project, command_ids):
 
 
 def construct_container_data(r_json, server):
+    """Take the response from the XNAT container service to launching a container and extract data from it
+    :param r_json: the json data from the response from the containre service
+    :type r_json: dict
+    :param server: the XNAT host
+    :type server: str
+    :return container_data: a selection of data returned from the post request to launch the container
+    :rtype: dict
+    """
     container_key = 'container-id' if 'container-id' in r_json else 'service-id'
     container_data = {k: r_json[k] for k in [container_key, 'id']}
     for new, old in [('cs_id', 'id'), ('xnat_container_id', container_key)]:
@@ -138,12 +162,13 @@ def construct_container_data(r_json, server):
 
 
 def poll_cs(container_info, xnat_credentials, interval):
-    """ Check for completion of a Container Service command
-
-    :param str container_id: the id of the launched container
-    :param tuple xnat_credentials: a three-tuple of the server, username, and password to log into XNAT
-    :return: status of the container if the container has terminated, or 'Timed Out' if the container didn't terminate
-    in the allotted time
+    """ Check for completion of a container service command
+    :param container_info: information about the launched container, passed from the previous Celery task
+    :type container_info: dict
+    :param xnat_credentials: a three-tuple of the server, username, and password to log into XNAT
+    :param interval: how long to wait between efforts to poll the container service for container completion
+    :type interval: none
+    :return: status of the container if the container has terminated
     :rtype: str
     """
 
@@ -163,8 +188,20 @@ def poll_cs(container_info, xnat_credentials, interval):
             else:
                 raise ValueError(f'Unexpected status code: {r.status_code}  Response: \n {r.text}')
 
+# These and the two following tasks must be defined separately because the soft_time_limit must be defined in the
+# wrapper arguments, but #todo: make sure there's no way around this.
 @celery.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5}, soft_time_limit=10000)
 def poll_cs_dcm2nii(self, container_id, xnat_credentials, interval):
+    """Check for completion of a dcm2nii command
+    :param container_id: the id of the container
+    :type container_info: str
+    :param xnat_credentials: a three-tuple of the server, username, and password to log into XNAT
+    :param interval: how long to wait between efforts to poll the container service for container completion
+    :type interval: int
+    :return: status of the container if the container has terminated, or 'Timed Out' if the container didn't terminate
+    in the allotted time
+    :rtype: str
+    """
     try:
         return poll_cs(container_id, xnat_credentials, interval)
     except SoftTimeLimitExceeded:
@@ -173,6 +210,16 @@ def poll_cs_dcm2nii(self, container_id, xnat_credentials, interval):
 
 @celery.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5}, soft_time_limit=259200)
 def poll_cs_fsrecon(self, container_id, xnat_credentials, interval):
+    """Check for completion of the Freesurfer recon command
+    :param container_id: the id of the container
+    :type container_info: str
+    :param xnat_credentials: a three-tuple of the server, username, and password to log into XNAT
+    :param interval: how long to wait between efforts to poll the container service for container completion
+    :type interval: int
+    :return: status of the container if the container has terminated, or 'Timed Out' if the container didn't terminate
+    in the allotted time
+    :rtype: str
+    """
     try:
         return poll_cs(container_id, xnat_credentials, interval)
     except SoftTimeLimitExceeded:
@@ -180,6 +227,16 @@ def poll_cs_fsrecon(self, container_id, xnat_credentials, interval):
 
 @celery.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5}, soft_time_limit=259200)
 def poll_cs_fs2mesh(self, container_id, xnat_credentials, interval):
+    """Check for completion of the Freesurfer to 3D mesh command
+    :param container_id: the id of the container
+    :type container_info: str
+    :param xnat_credentials: a three-tuple of the server, username, and password to log into XNAT
+    :param interval: how long to wait between efforts to poll the container service for container completion
+    :type interval: int
+    :return: status of the container if the container has terminated, or 'Timed Out' if the container didn't terminate
+    in the allotted time
+    :rtype: str
+    """
     try:
         return poll_cs(container_id, xnat_credentials, interval)
     except SoftTimeLimitExceeded:
@@ -187,21 +244,31 @@ def poll_cs_fs2mesh(self, container_id, xnat_credentials, interval):
 
 
 @celery.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5})
-def dl_files_from_xnat(self, uri, xnat_credentials, file_path, suffix='', single_file=True, conditions=[]):
+def dl_files_from_xnat(self, uri, xnat_credentials, file_path, suffix='', single_file=True, conditions=None):
     """Download a file from XNAT
 
-    :param self: the task object
-    :param str scan_uri: the XNAT uri of the scan to download
-    :param tuple xnat_credentials: a three-tuple of the server, username, and password to log into XNAT
-    :param str file_path: where to write the file locally
-    :return: the name of the file in XNAT
-    :rtype: str
+    :param uri: the XNAT URI of the resource to download
+    :type uri: str
+    :param xnat_credentials: a three-tuple of the server, username, and password to log into XNAT
+    :type xnat_credentials: tuple
+    :param file_path: where to write the file locally
+    :type file_path: str
+    :param suffix: what to append to the URI to get the full path to the files
+    :type suffix: str
+    :param single_file: whether to download one file or more than one
+    :type single_file: bool
+    :param conditions: keys to the dl_conditions dictionary which contains anonymous functions that place conditions on
+    downloading a file
+    :type conditions: Union([list, NoneType])
+    :return: the name of the file in XNAT, or a list of names if there was more than one file
+    :rtype: Union([str, list])
     """
 
     if not os.path.isdir(file_path):
         os.makedirs(file_path)
 
     server, user, password = xnat_credentials
+    if not conditions: conditions = []
 
     with init_session(user, password) as s:
         r = s.get(server + uri + suffix)
