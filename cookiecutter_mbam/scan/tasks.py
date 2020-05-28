@@ -27,8 +27,8 @@ def construct_mesh_status_email(scan_id):
     greeting = "Dear {},\n".format(user.first_name)
 
     if fs2mesh.aws_status == 'Uploaded':
-        body = "A 3D view of your scan was successfully generated! You can view your scans at {}".format(
-             url_for('display.displays', _external=True))
+        body = "A 3D view of your scan with label {} was successfully generated! You can view it at {}".format(
+             scan.label, url_for('display.displays', _external=True))
     else:
         body = "Something went wrong and My Brain and Me was not able to generate a 3D image of your scan.  The " \
                   "admins have been notified but if you don't hear from us feel free to email us at goodluck@chump.com."
@@ -41,17 +41,3 @@ def construct_mesh_status_email(scan_id):
     }
 
     return user.full_name, user.email, message
-
-
-
-
-
-
-
-
-
-
-
-
-
-
