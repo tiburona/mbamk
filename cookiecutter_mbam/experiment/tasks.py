@@ -50,9 +50,9 @@ def build_status_message(statuses, user):
     responses = {
         'YAY': '''scan was successfully uploaded to My Brain and Me! You can view your scans at {}'''.format(
             url_for('display.displays', _external=True)),
-        'meh': '''scan was uploaded to My Brain and Me, but something went wrong and you may not be able to view it yet. 
+        'meh': '''scan was uploaded to My Brain and Me, but something went wrong and you may not be able to view it yet.
         The admins have been notified but if you don't hear from us feel free to email at goodluck@chump.com.''',
-        'Boo': '''scan was not uploaded to My Brain and Me because something went wrong. The admins have been notified 
+        'Boo': '''scan was not uploaded to My Brain and Me because something went wrong. The admins have been notified
         but if you don't hear from us feel free to email at goodluck@chump.com.'''
     }
 

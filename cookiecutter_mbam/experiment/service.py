@@ -56,10 +56,11 @@ class ExperimentService(BaseService):
         # `callback` will execute after freesurfer recon is *triggered*, not after the 3d procs complete.
         # By setting `callback'`s `link_error` to itself, the upload status email task executes on error or success.
         callback = self._send_upload_status_email()
-        callback.set(link_error=self._send_upload_status_email())
+        #callback.set(link_error=self._send_upload_status_email())
         job = chain(header, callback)
 
-        job.apply_async()
+        job.apply_async(link_error=self._send_upload_status_email())
+        #job.apply_async()
 
     def _send_upload_status_email(self):
         """ Construct a Celery chain to send the user an email with the status of their scan upload

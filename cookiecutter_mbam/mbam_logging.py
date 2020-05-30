@@ -12,7 +12,7 @@ celery_logger = get_task_logger(__name__)
 
 # todo: figure out why this request.url etc. appears as an unhandled error in wsgi logging.
 # It doesn't seem to effect anything but is confusing noise.
-
+ADMIN_EMAIL = getattr(config, 'ADMIN_EMAIL')
 
 class TlsSMTPHandler(SMTPHandler):
     """adapted from http://mynthon.net/howto/-/python/python%20-%20logging.SMTPHandler-how-to-use-gmail-smtp-server.txt"""
@@ -76,7 +76,8 @@ class MailFilter(logging.Filter):
 mail_handler = TlsSMTPHandler(
     mailhost='smtp.gmail.com',
     fromaddr=config.SECURITY_EMAIL_SENDER,
-    toaddrs=['tiburona@gmail.com'],
+    #toaddrs=['tiburona@gmail.com'],
+    toaddrs=[ADMIN_EMAIL],
     subject='Application Error',
     credentials=(config.MAIL_USERNAME, config.MAIL_PASSWORD)
 )
