@@ -87,4 +87,25 @@ class BaseService(BaseModel):
     def _set_config(self, config_vars):
         [setattr(self, attr, getattr(config, config_var)) for attr, config_var in config_vars]
 
-    
+class CeleryErrorTask(Task):
+     #abstract=True
+     # From https://github.com/celery/celery/issues/1282
+     # def __init__(self):
+     # #     self.run = add_kwarg(self.run)
+     #     self.previous_exc=None
+    def __init__(self, user):
+        self.user = current_user
+
+    def on_failure(self, exc, task_id, args, kwargs, einfo):
+        # exc (Exception) - The exception raised by the task.
+        # args (Tuple) - Original arguments for the task that Failed
+        # kwargs (Dict) - Original keyword arguments for the task that Failed
+        print('OK HERE {0!r} failed: {1!r}'.format(task_id, exc))
+        #exp_id=1
+        #user_id = str(current_user.get_id())
+        #ScanService(user_id, exp_id)._error_proc('')
+        #ss._error_proc('xnat_status')
+        subject='subject'
+        body='body'
+        message = {'subject': subject,'body': body}
+        send_email(('My Name',self.user.email, message))
