@@ -2,8 +2,6 @@
 from .config import Config as config
 from celery import Celery
 from cookiecutter_mbam.mbam_logging import app_logger
-#from cookiecutter_mbam.utils.celery_utils import ErrorTask
-#from cookiecutter_mbam.base import CeleryErrorTask
 
 celery = Celery(__name__,
                 broker=config.broker_url,

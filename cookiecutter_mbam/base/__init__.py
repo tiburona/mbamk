@@ -1,1 +1,1 @@
-from .models import BaseService, BaseModel, CeleryErrorTask
+from .models import BaseService, BaseModel

@@ -3,7 +3,7 @@ from flask import request
 from flask_security import current_user
 import traceback
 from functools import reduce
-from celery import chain
+from celery import chain, Task
 from cookiecutter_mbam.config import Config as config
 
 from flask import current_app
@@ -39,9 +39,6 @@ class BaseModel:
         global_error_handler(request, exc, traceback.format_exc(), cel=False, log_message=log_message,
                              user_name=self._username(), user_email=current_user.email, user_message=user_message,
                              email_user=email_user, email_admin=email_admin)
-
-
-
 
 class BaseService(BaseModel):
     def __init__(self, cls=None, tasks={}):
@@ -86,26 +83,3 @@ class BaseService(BaseModel):
 
     def _set_config(self, config_vars):
         [setattr(self, attr, getattr(config, config_var)) for attr, config_var in config_vars]
-
-class CeleryErrorTask(Task):
-     #abstract=True
-     # From https://github.com/celery/celery/issues/1282
-     # def __init__(self):
-     # #     self.run = add_kwarg(self.run)
-     #     self.previous_exc=None
-    def __init__(self, user):
-        self.user = current_user
-
-    def on_failure(self, exc, task_id, args, kwargs, einfo):
-        # exc (Exception) - The exception raised by the task.
-        # args (Tuple) - Original arguments for the task that Failed
-        # kwargs (Dict) - Original keyword arguments for the task that Failed
-        print('OK HERE {0!r} failed: {1!r}'.format(task_id, exc))
-        #exp_id=1
-        #user_id = str(current_user.get_id())
-        #ScanService(user_id, exp_id)._error_proc('')
-        #ss._error_proc('xnat_status')
-        subject='subject'
-        body='body'
-        message = {'subject': subject,'body': body}
-        send_email(('My Name',self.user.email, message))

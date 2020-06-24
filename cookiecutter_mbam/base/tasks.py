@@ -1,4 +1,4 @@
-from celery.signals import after_setup_logger, after_setup_task_logger
+from celery.signals import after_setup_logger, after_setup_task_logger, task_failure
 import json
 import zipfile
 import os
@@ -10,6 +10,7 @@ from email.message import EmailMessage
 from cookiecutter_mbam.config import Config as config
 from . import textbank
 from cookiecutter_mbam.mbam_logging import app_logger, celery_logger
+from flask_security import current_user, login_required
 
 # set mail constants
 mail_constants = ['MAIL_USERNAME', 'MAIL_SERVER', 'MAIL_PASSWORD', 'MAIL_PORT','SECURITY_EMAIL_SENDER']

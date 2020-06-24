@@ -51,16 +51,16 @@ class ExperimentService(BaseService):
 
         add_scans_to_cloud_storage, add_scans_to_xnat_and_trigger_3d_procs = self._add_scans(files)
 
-        header = group([add_scans_to_cloud_storage, add_scans_to_xnat_and_trigger_3d_procs])
+        # The below was changed from group to chain.
+        # See https://github.com/celery/celery/issues/1881
+        header = chain(add_scans_to_cloud_storage, add_scans_to_xnat_and_trigger_3d_procs).on_error(self._error_handler(log_message='generic_message',user_message='user_external_uploads', email_admin=True, email_user=True))
 
         # `callback` will execute after freesurfer recon is *triggered*, not after the 3d procs complete.
-        # By setting `callback'`s `link_error` to itself, the upload status email task executes on error or success.
+        # In theory, setting `callback'`s `link_error` to itself, the upload status email task executes on
+        # error or success, but it doesn't seem to work. Adding on_error to the header seems to work though. 
         callback = self._send_upload_status_email()
-        #callback.set(link_error=self._send_upload_status_email())
         job = chain(header, callback)
-
-        job.apply_async(link_error=self._send_upload_status_email())
-        #job.apply_async()
+        job.apply_async()
 
     def _send_upload_status_email(self):
         """ Construct a Celery chain to send the user an email with the status of their scan upload
@@ -94,7 +94,9 @@ class ExperimentService(BaseService):
             ss.add_to_xnat_run_fs_generate_mesh(*self._gen_xnat_info(i)) for i, ss in enumerate(scan_services)
         ]
 
-        cloud_storage_job = group(add_scans_to_cloud_storage)
+        # The below was changed from group to chain
+        # See https://github.com/celery/celery/issues/1881
+        cloud_storage_job = chain(add_scans_to_cloud_storage)
 
         xnat_job = reduce((lambda x, y: chain(x, y)), add_to_xnat_run_fs_generate_mesh)
 

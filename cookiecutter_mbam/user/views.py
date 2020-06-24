@@ -8,7 +8,6 @@ from .forms import ProfileForm, ConsentForm, AssentForm
 
 blueprint = Blueprint('user', __name__, url_prefix='/users', static_folder='../static')
 
-
 def debug():
     assert current_app.debug == False, "Don't panic! You're here by request of debug()"
 
@@ -16,7 +15,6 @@ def debug():
 def home():
     """ Members page. """
     return render_template('users/members.html')
-
 
 @blueprint.route('/profile', methods=('GET','POST'))
 @login_required
