@@ -196,7 +196,8 @@ class ScanService(BaseService):
         else:
             xnat_chain = self._upload_file_to_xnat(is_first_scan, set_sub_and_exp_attrs)
 
-        mesh_chain = chain(self._run_freesurfer(), self._run_fs2mesh())
+        # Need to add error callback before json.dumps command in the trigger_job!
+        mesh_chain = chain(self._run_freesurfer(), self._run_fs2mesh()).on_error(self._error_handler(log_message='generic_message',user_message='user_external_threed', email_admin=True, email_user=True))
 
         xnat_chain = xnat_chain | self._trigger_job(json.dumps(mesh_chain))
 
@@ -356,11 +357,9 @@ class ScanService(BaseService):
         return run_container | download_files | upload_to_cloud_storage
 
     def _run_fs2mesh(self):
-        """Construct a chan to run the pipeline that converts Freesurfer output to a 3D mesh
-
+        """Construct a chain to run the pipeline that converts Freesurfer output to a 3D mesh
         :return: the Celery chain
         :rtype: Celery.canvas._chain
-
         """
 
         return self._run_container_retrieve_and_store_files(

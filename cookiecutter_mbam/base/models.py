@@ -3,7 +3,7 @@ from flask import request
 from flask_security import current_user
 import traceback
 from functools import reduce
-from celery import chain
+from celery import chain, Task
 from cookiecutter_mbam.config import Config as config
 
 from flask import current_app
@@ -39,9 +39,6 @@ class BaseModel:
         global_error_handler(request, exc, traceback.format_exc(), cel=False, log_message=log_message,
                              user_name=self._username(), user_email=current_user.email, user_message=user_message,
                              email_user=email_user, email_admin=email_admin)
-
-
-
 
 class BaseService(BaseModel):
     def __init__(self, cls=None, tasks={}):
@@ -86,5 +83,3 @@ class BaseService(BaseModel):
 
     def _set_config(self, config_vars):
         [setattr(self, attr, getattr(config, config_var)) for attr, config_var in config_vars]
-
-    

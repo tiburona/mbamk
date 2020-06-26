@@ -1,5 +1,8 @@
-from celery import Celery
+from celery import Celery, Task
+from celery.execute import send_task
 import functools
+from flask_security import current_user
+
 
 def get_celery_worker_status(app):
  i = app.control.inspect()
