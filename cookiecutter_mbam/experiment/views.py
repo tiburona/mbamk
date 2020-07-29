@@ -9,12 +9,9 @@ from cookiecutter_mbam.utils.model_utils import resource_belongs_to_user
 from .forms import ExperimentForm, ExperimentAndScanForm, FlaskForm
 from .models import Experiment
 from .service import ExperimentService
-from cookiecutter_mbam.scan.service import ScanService
 from cookiecutter_mbam.base.tasks import global_error_handler
-from flask import current_app
+from cookiecutter_mbam.utils.debug_utils import debug
 
-def debug():
-    assert current_app.debug == False, "Don't panic! You're here by request of debug()"
 
 blueprint = Blueprint('experiment', __name__, url_prefix='/experiments', static_folder='../static')
 
