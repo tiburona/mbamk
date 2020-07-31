@@ -11,7 +11,7 @@ class TestRegisterForm:
         """Enter email that is already registered."""
         form = RegisterForm(email=user.email,
                             password='example', password_confirm='example')
-
+        assert False
         assert form.validate() is False
         assert user.email + ' is already associated with an account.' in form.email.errors
 

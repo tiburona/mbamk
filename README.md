@@ -123,7 +123,7 @@ If you're a trusted developer, the last command you have to run is
 `npm start` also starts a Redis server and a Celery worker.  You will see output from Redis, Celery, and Webpack in the
 same terminal window.
 
-Visit http://0.0.0.0:8000 to see the welcome screen.
+Vis to see the welcome screen.
 
     mbam run -fcr
 

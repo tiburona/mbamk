@@ -22,7 +22,10 @@ def main():
     build_environment(command, ns)
 
     if command == 'test':
-        send_process(ns.command)
+        rc = send_process(ns.command)
+        if rc:
+            raise ValueError("Received non-zero exit code {}".format(rc))
+        return rc
 
     if command == 'run':
         for process in 'flask', 'redis', 'celery':

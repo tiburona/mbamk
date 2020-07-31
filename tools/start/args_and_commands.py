@@ -45,10 +45,10 @@ run_args = [
 
 
 test_args = [
-    (['-c', '--command'], {'dest':'command', 'default': 'pytest ./tests --verbose', 'nargs': '?',
+    (['-c', '--command'], {'dest': 'command', 'default': 'pytest ./tests --verbose', 'nargs': '?',
                            'const': 'pytest ./tests --verbose', 'help': "Pytest command to run"}),
     (['-d', '--docker'], {'const': 'cd build/docker; docker-compose build && docker-compose -f test.yml up',
-                          'help':'Docker command to run', 'dest':'command', 'nargs':'?'})
+                          'help': 'Docker command to run', 'dest': 'command', 'nargs':'?'})
 ]
 
 deploy_args = []
