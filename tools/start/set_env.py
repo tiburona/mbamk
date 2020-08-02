@@ -175,7 +175,6 @@ def set_config_from_yaml(config_path, config_name):
 
 def configure_database(config, kwargs):
 
-    # The below is a stopgap fix to properly configure MYSQL in staging and docker
     if kwargs['env'] in ['STAGING','QA','ALPHA','BETA']:
         print("It looks like we are in an AWS environment, so we will not configure MYSQL"
               " for local or mysql host.")
@@ -224,14 +223,11 @@ def set_config(config_path, override_config_path, config_name, xnat, **kwargs):
             xnat = override_config['XNAT']
         config.update(override_config)
 
-    print(dict(kwargs,env=config_name))
-    configure_database(config, dict(kwargs,env=config_name)) # tack on env variable
+    configure_database(config, dict(kwargs, env=config_name))
     configure_xnat(xnat)
 
 
-# def set_env_vars(config_dir='.', secrets=True, config=True, env='trusted', xnat='mind',
-#                     params_to_fetch=parameters_to_fetch,**kwargs):
-def set_env_vars(config_dir='.', secrets=True, config=True, env='trusted', xnat='mind',**kwargs):
+def set_env_vars(config_dir='.', secrets=True, config=True, env='trusted', xnat='mind', **kwargs):
 
     if env not in ['local'] and env not in ['test']:
         if secrets:

@@ -27,7 +27,7 @@ class Config:
     WEBPACK_MANIFEST_PATH = 'webpack/manifest.json'
 
     # Debugging and testing
-    DEBUG = env.bool('DEBUG',False) # Be sure the default is False otherwise credentials are exposed in browser
+    DEBUG = env.bool('DEBUG', False) # Be sure the default is False otherwise credentials are exposed in browser
     TESTING = env.bool('TESTING', False)
     WTF_CSRF_ENABLED = env.bool('WTF_CSRF_ENABLED', True)
     DEBUG_TB_ENABLED = env.bool('DEBUG_TB_ENABLED', DEBUG)

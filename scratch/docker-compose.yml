@@ -1,0 +1,8 @@
+version: '3'
+
+services:
+ test:
+   restart: always
+   build: .
+   image: test_image
+   command: python command.py
