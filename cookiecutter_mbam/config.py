@@ -52,6 +52,7 @@ class Config:
     # File upload
     MAX_CONTENT_LENGTH = 60 * 1024 * 1024
     FILE_DEPOT = 'static/files/'
+    EXPERIMENT_CAP = env.int('EXPERIMENT_CAP', '2')
 
     # Database
     SQLALCHEMY_TRACK_MODIFICATIONS = True
@@ -75,7 +76,7 @@ class Config:
     MAIL_PORT = env.int('MAIL_PORT', 587)
     MAIL_USE_SSL = env.bool('MAIL_USE_SSL', False)
     MAIL_USE_TLS = env.bool('MAIL_USE_TLS', True)
-    ADMIN_EMAIL = env.str('ADMIN_EMAIL','spiropan@gmail.com')
+    ADMIN_EMAIL = env.str('ADMIN_EMAIL','tiburona@gmail.com')
 
     # XNAT
     XNAT_HOST = env.str('XNAT_HOST', 'http://10.1.1.17')
