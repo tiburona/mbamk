@@ -11,6 +11,7 @@ from flask import current_app
 def debug():
     assert current_app.debug == False, "Don't panic! You're here by request of debug()"
 
+
 class Experiment(SurrogatePK, Model):
     """A user's experiment, during which they are scanned."""
 
@@ -34,7 +35,6 @@ class Experiment(SurrogatePK, Model):
     def __repr__(self):
         """Represent instance as a unique string."""
         return '<Experiment({date})>'.format(date=self.date)
-
 
 
 scan_insert_listener = make_ins_del_listener(Scan, Experiment, 'scan', 'experiment', 'after_insert', 1, count=True)

@@ -6,15 +6,11 @@ from flask import Blueprint, render_template, request, flash, redirect, url_for,
 from flask_security import current_user, login_required
 from cookiecutter_mbam.utils.error_utils import flash_errors
 from cookiecutter_mbam.utils.model_utils import resource_belongs_to_user
-from .forms import ExperimentForm, ExperimentAndScanForm, FlaskForm
+from .forms import ExperimentForm, ExperimentAndScanForm, FlaskForm, TestForm, ScanForm, KidForm
 from .models import Experiment
 from .service import ExperimentService
-from cookiecutter_mbam.scan.service import ScanService
 from cookiecutter_mbam.base.tasks import global_error_handler
-from flask import current_app
 
-def debug():
-    assert current_app.debug == False, "Don't panic! You're here by request of debug()"
 
 blueprint = Blueprint('experiment', __name__, url_prefix='/experiments', static_folder='../static')
 
@@ -36,9 +32,9 @@ def scan_number_validation(request):
     num_scans_to_add = len(request.files.getlist('scan_file'))
     if num_scans_to_add < 1:
         # This is a workaround for FileRequired() failing inexplicably.  Long-term should fix this.
-        return 'A file is required.'
+        return "A file is required."
     if num_scans_to_add > 3:
-            return 'You can upload up to three files.'
+            return "You can upload up to three files."
     else:
         return ''
 
@@ -50,8 +46,10 @@ def dev_add():
         files = request.files.getlist('scan_file')
         add_experiment(form, files)
         num_scans = len(files)
-        flash('You successfully started the process of adding {}.'.format(num2words[num_scans]), 'success')
+        flash("You successfully started the process of adding {}.".format(num2words[num_scans]), 'success')
         return redirect(url_for('public.home'))
+    else:
+        flash("booo")
     return render_template('experiments/exp_and_scans.html', form=form)
 
 @blueprint.route('/add', methods=['GET', 'POST'])
@@ -74,10 +72,11 @@ def add():
             add_experiment(form, files)
             num_scans = len(files)
 
-            flash('You successfully started the process of adding {}. You should receive emails about upload status shortly.'.format(num2words[num_scans]), 'success')
+            flash("You successfully started the process of adding {}. You should receive emails about the upload "
+                  "status shortly.".format(num2words[num_scans]), 'success')
 
         except Exception as e:
-            flash('There was a problem uploading your scan', 'error')  # todo: error should be color coded red
+            flash("There was a problem uploading your scan", 'error')  # todo: error should be color coded red
             global_error_handler(request, e, traceback.format_exc(), cel=False, log_message='generic_message',
                                  user_email=current_user.email, user_message='generic_message', email_user=True,
                                  email_admin=True)
@@ -99,7 +98,7 @@ def edit_experiment(id):
         if form.validate_on_submit():
             form.populate_obj(exp) # update whatever has been changed in the form
             exp.save()
-            flash('Experiment metadata updated','success')
+            flash("Scan session data update",'success')
             return redirect(url_for('display.displays'))
         else:
             flash_errors(form)
@@ -122,7 +121,7 @@ def delete_experiment(id):
                 scan.delete()
             exp.delete()
 
-            flash('Deleted the session.','success')
+            flash("Deleted the session.", 'success')
             return redirect(url_for('display.displays'))
         else:
             flash_errors(form)
@@ -130,3 +129,38 @@ def delete_experiment(id):
         return render_template('experiments/delete_experiment.html', session_form=form, experiment=exp)
     else:
         return render_template('403.html')
+
+@blueprint.route('/test', methods=['GET', 'POST'])
+@login_required
+def test():
+    form = TestForm()
+    if form.validate_on_submit():
+        flash('yay')
+    else:
+        flash('boo')
+
+    scan_form = ScanForm()
+    if scan_form.validate_on_submit():
+        flash('yayyyyyyy')
+    else:
+        flash('boooooooooo')
+
+
+    return render_template('experiments/test.html', form=form, scan_form=scan_form)
+
+@blueprint.route('/kid', methods=['GET', 'POST'])
+@login_required
+def kid():
+    form = KidForm()
+    if form.validate_on_submit():
+        flash('yay')
+    else:
+        flash('boo')
+
+    return render_template('experiments/kid.html', form=form)
+
+
+
+
+
+

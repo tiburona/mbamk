@@ -69,19 +69,19 @@ class Config:
         BASIC_AUTH_PASSWORD = env.str('BASIC_AUTH_PASSWORD')
 
     # Mail
-    MAIL_USERNAME = env.str('MAIL_USERNAME','foo')
-    MAIL_PASSWORD = env.str('MAIL_PASSWORD','bar')
+    MAIL_USERNAME = env.str('MAIL_USERNAME', 'foo')
+    MAIL_PASSWORD = env.str('MAIL_PASSWORD', 'bar')
     MAIL_SERVER = env.str('MAIL_SERVER', 'smtp.gmail.com')
     MAIL_PORT = env.int('MAIL_PORT', 587)
     MAIL_USE_SSL = env.bool('MAIL_USE_SSL', False)
     MAIL_USE_TLS = env.bool('MAIL_USE_TLS', True)
-    ADMIN_EMAIL = env.str('ADMIN_EMAIL','spiropan@gmail.com')
+    ADMIN_EMAIL = env.str('ADMIN_EMAIL', 'tiburona@gmail.com')
 
     # XNAT
     XNAT_HOST = env.str('XNAT_HOST', 'http://10.1.1.17')
     XNAT_USER = env.str('XNAT_USER', 'admin')
     XNAT_PASSWORD = env.str('XNAT_PASSWORD', 'admin')
-    XNAT_DOCKER_HOST = env.str('XNAT_DOCKER_HOST','unix:///var/run/docker.sock')
+    XNAT_DOCKER_HOST = env.str('XNAT_DOCKER_HOST', 'unix:///var/run/docker.sock')
     XNAT_PROJECT = env.str('XNAT_PROJECT', 'MBAM_TEST')
     DICOM_TO_NIFTI_COMMAND = int(env.str('DICOM_TO_NIFTI_COMMAND', '1'))
     DICOM_TO_NIFTI_WRAPPER = env.str('DICOM_TO_NIFTI_WRAPPER', 'dcm2niix-xfer')
@@ -91,9 +91,9 @@ class Config:
     FS_TO_MESH_WRAPPER = env.str('FS_TO_MESH_WRAPPER', 'fs2mesh-xfer')
 
     # Cloudfront
-    CLOUDFRONT_URL = env.str('CLOUDFRONT_URL','foo')
-    CLOUDFRONT_KEY_ID = env.str('CLOUDFRONT_KEY_ID','bar')
-    CLOUDFRONT_SECRET_KEY = env.str('CLOUDFRONT_SECRET_KEY','bar')
+    CLOUDFRONT_URL = env.str('CLOUDFRONT_URL', 'foo')
+    CLOUDFRONT_KEY_ID = env.str('CLOUDFRONT_KEY_ID', 'bar')
+    CLOUDFRONT_SECRET_KEY = env.str('CLOUDFRONT_SECRET_KEY', 'bar')
 
     # S3
     CLOUD_STORAGE_ACCESS_KEY_ID = env.str('S3_KEY_ID','foo')

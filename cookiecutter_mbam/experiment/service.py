@@ -7,17 +7,13 @@ from functools import reduce
 from celery import group, chain
 from cookiecutter_mbam.base import BaseService
 from cookiecutter_mbam.scan.service import ScanService
-from cookiecutter_mbam.xnat.service import XNATConnection as XC
-from cookiecutter_mbam.config import Config as config
+from cookiecutter_mbam.xnat.service import XNATConnection
 from .models import Experiment
 from .tasks import set_experiment_attribute, get_experiment_attribute, set_sub_and_exp_xnat_attrs, construct_status_email
 
 
-from flask import current_app
-def debug():
-    assert current_app.debug == False, "Don't panic! You're here by request of debug()"
-
 tasks = {'set_attribute': set_experiment_attribute, 'get_attribute': get_experiment_attribute}
+
 
 class ExperimentService(BaseService):
 
@@ -26,7 +22,7 @@ class ExperimentService(BaseService):
         self.user = user
         self.scan_services = []
         self.tasks = tasks
-        self.xc = XC()
+        self.xc = XNATConnection()
 
     def add(self, user, date, scanner, field_strength, files=None):
         """ The top level public method for adding an experiment and scans
@@ -45,7 +41,6 @@ class ExperimentService(BaseService):
         :type files: list
         :return: None
         """
-
         self.experiment = Experiment.create(date=date, scanner=scanner, field_strength=field_strength, user_id=user.id)
         self.xnat_labels, self.attrs_to_set = self.xc.sub_exp_labels(self.user, self.experiment)
 
@@ -53,7 +48,13 @@ class ExperimentService(BaseService):
 
         # The below was changed from group to chain.
         # See https://github.com/celery/celery/issues/1881
-        header = chain(add_scans_to_cloud_storage, add_scans_to_xnat_and_trigger_3d_procs).on_error(self._error_handler(log_message='generic_message',user_message='user_external_uploads', email_admin=True, email_user=True))
+        header = chain(
+            add_scans_to_cloud_storage,
+            add_scans_to_xnat_and_trigger_3d_procs).on_error(
+            self._error_handler(
+                log_message='generic_message', user_message='user_external_uploads', email_admin=True, email_user=True
+            )
+        )
 
         # `callback` will execute after freesurfer recon is *triggered*, not after the 3d procs complete.
         # In theory, setting `callback'`s `link_error` to itself, the upload status email task executes on
@@ -68,7 +69,6 @@ class ExperimentService(BaseService):
         :return: the Celery chain that sends the user a status email
         :rtype:
         """
-
         return chain(
             construct_status_email.si(self.experiment.id),
             self._send_email()
@@ -85,7 +85,6 @@ class ExperimentService(BaseService):
         :return: a two-tuple of the Celery signatures for the cloud storage upload group and
         :rtype: tuple
         """
-
         scan_services = [self._init_scan_service_and_add_scan_to_database(file) for file in files]
 
         add_scans_to_cloud_storage = [ss.add_to_cloud_storage() for ss in scan_services]
@@ -110,7 +109,6 @@ class ExperimentService(BaseService):
         :return: the scan service
         :rtype: cookiecutter_mbam.scan.service.ScanService
         """
-
         ss = ScanService(self.user, self.experiment)
         ss.add_to_database(file, deepcopy(self.xnat_labels))
 
@@ -143,7 +141,6 @@ class ExperimentService(BaseService):
         :return: the signature of the task to set XNAT and experiment attributes (or None)
         :rtype: Union([None, celery.canvas.Signature])
         """
-
         if not len(self.attrs_to_set) or not first_scan:
             return None
         else:

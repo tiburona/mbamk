@@ -2,8 +2,6 @@
 """Scan model."""
 
 from cookiecutter_mbam.database import Model, SurrogatePK, db, reference_col, relationship
-from cookiecutter_mbam.utils.model_utils import make_ins_del_listener
-from flask_sqlalchemy import event
 from sqlalchemy.orm import backref
 
 from flask import current_app
@@ -24,7 +22,7 @@ class Scan(SurrogatePK, Model):
     experiment_id = reference_col('experiment', nullable=True)
     user_id = reference_col('user', nullable=False)
     label = db.Column(db.String(255), nullable=True)
-    parent_experiment = relationship('Experiment', backref=backref("experiment_scans", lazy="dynamic"))
+    parent_experiment = relationship('Experiment', backref=backref('experiment_scans', lazy='dynamic'))
     visible = db.Column(db.Boolean(), nullable=True)
 
     def __init__(self, experiment_id, **kwargs):

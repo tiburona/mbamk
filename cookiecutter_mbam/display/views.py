@@ -8,10 +8,6 @@ from cookiecutter_mbam.scan.models import Scan
 from .service import DisplayService
 from cookiecutter_mbam.experiment.forms import ExperimentForm
 from cookiecutter_mbam.scan.forms import EditScanForm
-import json
-
-def debug():
-    assert current_app.debug == False, "Don't panic! You're here by request of debug()"
 
 blueprint = Blueprint('display', __name__, url_prefix='/displays', static_folder='../static')
 
@@ -25,7 +21,6 @@ def displays():
     scan_form=EditScanForm()
 
     dis = DisplayService(user=current_user).get_user_scans()
-    print(dis)
 
     return render_template('displays/displays.html', displays=dis, session_form=session_form, scan_form=scan_form)
 
