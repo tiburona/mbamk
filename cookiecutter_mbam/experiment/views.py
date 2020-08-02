@@ -2,7 +2,7 @@
 """Experiment views."""
 
 import traceback
-from flask import Blueprint, render_template, request, flash, redirect, url_for, session
+from flask import Blueprint, Markup, render_template, request, flash, redirect, url_for
 from flask_security import current_user, login_required
 from cookiecutter_mbam.utils.error_utils import flash_errors
 from cookiecutter_mbam.utils.model_utils import resource_belongs_to_user
@@ -10,7 +10,7 @@ from .forms import ExperimentForm, ExperimentAndScanForm, FlaskForm
 from .models import Experiment
 from .service import ExperimentService
 from cookiecutter_mbam.base.tasks import global_error_handler
-from flask import current_app
+from cookiecutter_mbam.config import Config
 
 
 blueprint = Blueprint('experiment', __name__, url_prefix='/experiments', static_folder='../static')
@@ -41,9 +41,9 @@ def number_validation(request):
     if num_scans_to_add > 3:
         scan_num_error = "You can upload up to three files."
 
-    if current_user.num_experiments > current_app.EXPERIMENT_CAP - 1:
-        exp_num_error =  "You already have the maximum number of scan sessions.  Consider deleting a session if you " \
-                            "want to upload a new one."
+    if current_user.num_experiments > Config.EXPERIMENT_CAP - 1:
+        exp_num_error = Markup("You already have the maximum number of scan sessions. Consider <a href='/displays' "
+                               "class='alert-link'>deleting a session</a> if you want to upload a new one")
 
     return exp_num_error, scan_num_error
 
@@ -53,6 +53,10 @@ def number_validation(request):
 def dev_add():
     form = ExperimentAndScanForm(request.form)
     if form.validate_on_submit():
+        for error in number_validation(request):
+            if error:
+                flash(error, 'warning')
+                return redirect(url_for('experiment.add'))
         files = request.files.getlist('scan_file')
         add_experiment(form, files)
         num_scans = len(files)
@@ -110,7 +114,7 @@ def edit_experiment(id):
         if form.validate_on_submit():
             form.populate_obj(exp) # update whatever has been changed in the form
             exp.save()
-            flash('Session data updated', 'success')
+            flash("Session data updated", 'success')
             return redirect(url_for('display.displays'))
         else:
             flash_errors(form)
@@ -134,7 +138,7 @@ def delete_experiment(id):
                 scan.delete()
             exp.delete()
 
-            flash('Deleted the session.','success')
+            flash("Deleted the session.",'success')
             return redirect(url_for('display.displays'))
         else:
             flash_errors(form)
