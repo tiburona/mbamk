@@ -31,7 +31,7 @@ class ExperimentForm(FlaskForm):
 class ScanForm(FlaskForm):
     """Scan form."""
 
-    scan_file = FileField(validators=[FileAllowed(['nii', 'nii.gz', 'zip'], 'Allowed file types only!')])
+    scan_file = FileField(validators=[FileRequired(), FileAllowed(['nii', 'nii.gz', 'zip'], 'Allowed file types only!')])
     submit = SubmitField('Upload')
 
     def __init__(self, *args, **kwargs):
@@ -81,14 +81,19 @@ class MomForm(FlaskForm):
         """Validate the form."""
         return super(MomForm, self).validate()
 
-    test_file = FileField(
-        validators=[
-            FileRequired(), FileAllowed(['nii', 'nii.gz'], 'Allowed file types only!')
-        ]
-    )
+    scan_file = FileField(
+    validators=[FileRequired(), FileAllowed(['nii', 'nii.gz', 'zip'], 'Allowed file types only!')])
     submit = SubmitField('Upload')
 
+
 class DadForm(FlaskForm):
+    date = DateField('Scan date', format='%Y-%m-%d')
+    scanner = SelectField('Scanner',
+                          choices=[('Unknown', 'Don\'t know'), ('GE', 'GE'), ('Sie', 'Siemens'), ('Phi', 'Phillips')],
+                          default='Unknown')
+    field_strength = SelectField('Field strength',
+                                 choices=[('Unknown', 'Don\'t know'), ('1.5T', '1.5T'), ('3T', '3T'), ('7T', '7T')],
+                                 default='Unknown')
     notes = TextAreaField('Notes', validators=[DataRequired()])
 
     def __init__(self, *args, **kwargs):
