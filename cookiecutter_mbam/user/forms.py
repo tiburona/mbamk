@@ -9,8 +9,8 @@ from wtforms.validators import DataRequired, Email, Length
 
 class ProfileForm(FlaskForm):
     """ Basic user profile form. """
-    first_name = StringField('First Name', validators=[Length(min=2,max=25)])
-    last_name = StringField('Last Name', validators=[Length(min=2,max=25)])
+    first_name = StringField('First Name', validators=[Length(min=2, max=25)])
+    last_name = StringField('Last Name', validators=[Length(min=2, max=25)])
     sex = SelectField('Gender',
                       choices=[(None, ''), ('Male', 'Male'), ('Female', 'Female'), ('Other', 'Other')],
                       validators=[DataRequired()])

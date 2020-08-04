@@ -1,12 +1,7 @@
 # -*- coding: utf-8 -*-
 """Scan model."""
 
-from cookiecutter_mbam.database import Model, SurrogatePK, db, reference_col, relationship
-from sqlalchemy.orm import backref
-
-from flask import current_app
-def debug():
-    assert current_app.debug == False, "Don't panic! You're here by request of debug()"
+from cookiecutter_mbam.database import Model, SurrogatePK, db, reference_col
 
 
 # Todo: figure out model validation in Flask
@@ -22,14 +17,13 @@ class Scan(SurrogatePK, Model):
     experiment_id = reference_col('experiment', nullable=True)
     user_id = reference_col('user', nullable=False)
     label = db.Column(db.String(255), nullable=True)
-    parent_experiment = relationship('Experiment', backref=backref('experiment_scans', lazy='dynamic'))
     visible = db.Column(db.Boolean(), nullable=True)
 
     def __init__(self, experiment_id, **kwargs):
         """Create instance."""
         db.Model.__init__(self, experiment_id=experiment_id, **kwargs)
 
-    #todo figure out how to put experiment date in the repr
+    # todo figure out how to put experiment date in the repr
     def __repr__(self):
         """Represent instance as a unique string."""
         return f'<Scan(xnat_uri: {self.xnat_uri})>'

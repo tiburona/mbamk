@@ -2,11 +2,11 @@
 """Experiment views."""
 
 import traceback
-from flask import Blueprint, render_template, request, flash, redirect, url_for, session
+from flask import Blueprint, render_template, request, flash, redirect, url_for
 from flask_security import current_user, login_required
 from cookiecutter_mbam.utils.error_utils import flash_errors
 from cookiecutter_mbam.utils.model_utils import resource_belongs_to_user
-from .forms import ExperimentForm, ExperimentAndScanForm, FlaskForm, TestForm, ScanForm, KidForm
+from .forms import ExperimentForm, ExperimentAndScanForm, FlaskForm
 from .models import Experiment
 from .service import ExperimentService
 from cookiecutter_mbam.base.tasks import global_error_handler
@@ -20,11 +20,13 @@ num2words = {
         3: 'three scans'
     }
 
+
 def add_experiment(form, files):
     """Add an experiment"""
     es = ExperimentService(current_user)
     es.add(date=form.date.data, scanner=form.scanner.data, field_strength=form.field_strength.data,
                  user=current_user, files=files)
+
 
 def scan_number_validation(request):
     """Validate that the number of scan files for a given experiment is at least one and no more than three"""
@@ -38,19 +40,24 @@ def scan_number_validation(request):
     else:
         return ''
 
+
 @blueprint.route('/dev_add', methods=['GET', 'POST'])
 @login_required
 def dev_add():
-    form = ExperimentAndScanForm(request.form)
+    form = ExperimentAndScanForm()
     if form.validate_on_submit():
         files = request.files.getlist('scan_file')
-        add_experiment(form, files)
-        num_scans = len(files)
-        flash("You successfully started the process of adding {}.".format(num2words[num_scans]), 'success')
-        return redirect(url_for('public.home'))
+        try:
+            add_experiment(form, files)
+            num_scans = len(files)
+            flash("You successfully started the process of adding {}.".format(num2words[num_scans]), 'success')
+            return redirect(url_for('public.home'))
+        except AssertionError as e:
+            flash(e, 'warning')
     else:
         flash("booo")
     return render_template('experiments/exp_and_scans.html', form=form)
+
 
 @blueprint.route('/add', methods=['GET', 'POST'])
 @login_required
@@ -60,7 +67,7 @@ def add():
     if not current_user.consented:
         return redirect(url_for('user.consent'))
 
-    form = ExperimentAndScanForm(request.form)
+    form = ExperimentAndScanForm()
 
     if form.validate_on_submit():
         scan_number_error = scan_number_validation(request)
@@ -75,17 +82,23 @@ def add():
             flash("You successfully started the process of adding {}. You should receive emails about the upload "
                   "status shortly.".format(num2words[num_scans]), 'success')
 
+        except AssertionError as e:
+            flash(e, 'warning')
+
         except Exception as e:
             flash("There was a problem uploading your scan", 'error')  # todo: error should be color coded red
-            global_error_handler(request, e, traceback.format_exc(), cel=False, log_message='generic_message',
-                                 user_email=current_user.email, user_message='generic_message', email_user=True,
-                                 email_admin=True)
+            global_error_handler(
+                request, e, traceback.format_exc(),
+                cel=False, log_message='generic_message', user_email=current_user.email, user_message='generic_message',
+                email_user=True, email_admin=True
+            )
 
         return redirect(url_for('public.home'))
     else:
         flash_errors(form)
 
     return render_template('experiments/experiment_and_scans.html',form=form)
+
 
 @blueprint.route('/<id>/edit', methods=['GET', 'POST'])
 @login_required
@@ -103,7 +116,7 @@ def edit_experiment(id):
         else:
             flash_errors(form)
 
-        return render_template('experiments/edit_experiment.html',session_form=form, experiment=exp)
+        return render_template('experiments/edit_experiment.html', session_form=form, experiment=exp)
     else:
         return render_template('403.html')
 
@@ -129,38 +142,3 @@ def delete_experiment(id):
         return render_template('experiments/delete_experiment.html', session_form=form, experiment=exp)
     else:
         return render_template('403.html')
-
-@blueprint.route('/test', methods=['GET', 'POST'])
-@login_required
-def test():
-    form = TestForm()
-    if form.validate_on_submit():
-        flash('yay')
-    else:
-        flash('boo')
-
-    scan_form = ScanForm()
-    if scan_form.validate_on_submit():
-        flash('yayyyyyyy')
-    else:
-        flash('boooooooooo')
-
-
-    return render_template('experiments/test.html', form=form, scan_form=scan_form)
-
-@blueprint.route('/kid', methods=['GET', 'POST'])
-@login_required
-def kid():
-    form = KidForm()
-    if form.validate_on_submit():
-        flash('yay')
-    else:
-        flash('boo')
-
-    return render_template('experiments/kid.html', form=form)
-
-
-
-
-
-
