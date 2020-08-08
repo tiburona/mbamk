@@ -1,5 +1,6 @@
 from flask_sqlalchemy import event
 from flask_security import current_user
+from datetime import datetime
 
 
 # Todo: Turn this into a wrapper function that wraps the @app.route like @login_required?
@@ -37,4 +38,15 @@ def make_ins_del_listener(child_model, parent_model, child_model_str, parent_mod
         )
 
     return listener
+
+
+def date_validator(start_date, date, end_date=datetime.today().date()):
+    if not start_date < date <= end_date:
+        raise AssertionError('invalid date')
+    return date
+
+def status_validator(status, key, allowed):
+    if not status in allowed:
+        raise AssertionError("invalid {}: {}".format(key, status))
+    return status
 

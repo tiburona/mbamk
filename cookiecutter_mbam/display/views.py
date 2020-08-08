@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 """ Displays views. """
-from flask import Blueprint, render_template, request, flash, redirect, url_for, session, current_app
+from flask import Blueprint, render_template
 from flask_security import current_user, login_required
-from cookiecutter_mbam.utils.error_utils import flash_errors
 from cookiecutter_mbam.utils.model_utils import resource_belongs_to_user
 from cookiecutter_mbam.scan.models import Scan
 from .service import DisplayService
@@ -17,12 +16,13 @@ def displays():
     """ List all displays available for this user. """
     # For now list and pass the scans that have a aws_orig_key until
     # derivation is updated
-    session_form=ExperimentForm()
-    scan_form=EditScanForm()
+    session_form = ExperimentForm()
+    scan_form = EditScanForm()
 
     dis = DisplayService(user=current_user).get_user_scans()
 
     return render_template('displays/displays.html', displays=dis, session_form=session_form, scan_form=scan_form)
+
 
 @blueprint.route('/scan/<id>/slice_view',methods=['GET'])
 @login_required

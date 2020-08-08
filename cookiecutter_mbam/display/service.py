@@ -4,21 +4,18 @@ import rsa
 from botocore.signers import CloudFrontSigner
 from cookiecutter_mbam.base import BaseService
 from cookiecutter_mbam.scan import Scan
-from cookiecutter_mbam.config import Config as config
+from cookiecutter_mbam.config import Config
 from datetime import datetime
-from flask import current_app
 from flask import url_for
 
-def debug():
-    assert current_app.debug == False, "Don't panic! You're here by request of debug()"
 
 class DisplayService(BaseService):
 
     def __init__(self, user):
         # set Cloudfront parameters from config file
-        self.cf_base_url = config.CLOUDFRONT_URL
-        self.key_id = config.CLOUDFRONT_KEY_ID
-        self.private_key = config.CLOUDFRONT_SECRET_KEY
+        self.cf_base_url = Config.CLOUDFRONT_URL
+        self.key_id = Config.CLOUDFRONT_KEY_ID
+        self.private_key = Config.CLOUDFRONT_SECRET_KEY
         self.user = user
 
     def sign_url(self, url):
@@ -58,7 +55,7 @@ class DisplayService(BaseService):
         :param int user_id:
         :return: list of scan objects """
 
-        return [scan for experiment in self.user.experiments for scan in experiment.scans if scan.aws_key != None]
+        return [scan for experiment in self.user.experiments for scan in experiment.scans if scan.aws_key is not None]
 
     def _rsa_signer(self, message):
         """ Create normalized RSA signer to generate a cloudfront signer
@@ -67,16 +64,17 @@ class DisplayService(BaseService):
         :return: signed message
         """
 
-        return rsa.sign(message,rsa.PrivateKey.load_pkcs1(self.private_key.encode('utf8')),'SHA-1')
+        return rsa.sign(message, rsa.PrivateKey.load_pkcs1(self.private_key.encode('utf8')), 'SHA-1')
 
     def _cf_signer(self):
         """ Return cloudfront signer method """
 
         return CloudFrontSigner(self.key_id, self._rsa_signer)
 
+
 def displays_url():
     try:
-        return url_for('display.displays',_external=True)
+        return url_for('display.displays', _external=True)
     except:
         # Set a default URL for dev in case SERVER_NAME not set
         return 'http://0.0.0.0:8000/displays'

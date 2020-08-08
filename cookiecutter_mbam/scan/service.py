@@ -16,7 +16,8 @@ Todo: figure out why redis-server not running doesn't get caught as Exception.  
 Todo: consider that the import service leaves a file as a .nii, but upload service leaves a file as .nii.gz.
 
 """
-
+import os
+import shutil
 import json
 import logging
 from pathlib import Path
@@ -29,15 +30,9 @@ from cookiecutter_mbam.xnat import XNATConnection
 from cookiecutter_mbam.storage import CloudStorageConnection
 from cookiecutter_mbam.derivation import DerivationService
 from cookiecutter_mbam.xnat.tasks import *
-
-
 from flask import current_app
 
 logger = logging.getLogger()
-
-
-def debug():
-    assert current_app.debug == False, "Don't panic! You're here by request of debug()"
 
 
 tasks = {'set_attribute': set_scan_attribute, 'get_attribute': get_scan_attribute,
@@ -45,7 +40,7 @@ tasks = {'set_attribute': set_scan_attribute, 'get_attribute': get_scan_attribut
 
 
 class ScanService(BaseService):
-    def __init__(self, user, experiment, tasks=tasks):
+    def __init__(self, user, experiment):
         super().__init__(Scan)
         self.user = user
         self.experiment = experiment
@@ -197,7 +192,10 @@ class ScanService(BaseService):
             xnat_chain = self._upload_file_to_xnat(is_first_scan, set_sub_and_exp_attrs)
 
         # Need to add error callback before json.dumps command in the trigger_job!
-        mesh_chain = chain(self._run_freesurfer(), self._run_fs2mesh()).on_error(self._error_handler(log_message='generic_message',user_message='user_external_threed', email_admin=True, email_user=True))
+        mesh_chain = chain(self._run_freesurfer(), self._run_fs2mesh()).on_error(
+            self._error_handler(log_message='generic_message', user_message='user_external_threed', email_admin=True,
+                                email_user=True)
+        )
 
         xnat_chain = xnat_chain | self._trigger_job(json.dumps(mesh_chain))
 
@@ -260,14 +258,14 @@ class ScanService(BaseService):
             ds.set_attribute(ds.derivation.id, 'xnat_uri', passed_val=True)
         )
 
-    def _download_files_from_xnat(self, local_dir, suffix, conditions=[], single_file=True):
+    def _download_files_from_xnat(self, local_dir, suffix, conditions=None, single_file=True):
         """Construct a celery chain to download files from xnat
 
         :param local_dir: the directory on the web server where the file will be saved
         :type local_dir: str
         :param suffix: suffix to attach to xnat uri in order to locate the files to download
         :param conditions: keys to a dictionary of optional conditions to put on whether to download a file
-        :type conditions: list
+        :type conditions: Union([NoneType, list])
         :param single_file: whether the task will download one file or multiple
         :type single_file: bool
         :return: a celery chain to download files from xnat
@@ -314,7 +312,7 @@ class ScanService(BaseService):
 
     def _run_container_retrieve_and_store_files(
             self, process_name, download_suffix, upload_suffix, local_dir,
-            filename='', dl_conditions=[], single_file=True, dest_for_zip='', send_email=False
+            filename='', dl_conditions=None, single_file=True, dest_for_zip='', send_email=False
     ):
         """Construct a Celery chain to run an XNAT container, download the output, and back it up to cloud storage
 
@@ -327,7 +325,7 @@ class ScanService(BaseService):
         :param filename: the name to use when writing the file
         :type filename: str
         :param dl_conditions: keys to a dictionary of optional conditions to put on whether to download a file
-        :type dl_conditions: list
+        :type dl_conditions: Union([NoneType, list])
         :param single_file: whether one file will be uploaded or more than one
         :type single_file: bool
         :param dest_for_zip: the directory in which to write a zip file (if one is necessary)

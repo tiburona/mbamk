@@ -5,7 +5,7 @@ from flask_security import UserMixin
 from flask_security.utils import verify_password
 from cookiecutter_mbam.database import Column, Model, Table, SurrogatePK, db, relationship
 from sqlalchemy.orm import validates
-from cookiecutter_mbam.utils.error_utils import date_validator
+from cookiecutter_mbam.utils.model_utils import date_validator
 
 roles_users = Table(
     'roles_users',

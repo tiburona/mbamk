@@ -7,7 +7,7 @@ from cookiecutter_mbam.scan.models import Scan
 from cookiecutter_mbam.user import User
 from cookiecutter_mbam.utils.model_utils import make_ins_del_listener
 from sqlalchemy.orm import validates
-from cookiecutter_mbam.utils.error_utils import date_validator
+from cookiecutter_mbam.utils.model_utils import date_validator
 
 
 class Experiment(SurrogatePK, Model):

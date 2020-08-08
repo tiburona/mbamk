@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 """Scan model."""
 
+from sqlalchemy.orm import validates
 from cookiecutter_mbam.database import Model, SurrogatePK, db, reference_col
+from cookiecutter_mbam.utils.model_utils import status_validator
 
 
-# Todo: figure out model validation in Flask
 class Scan(SurrogatePK, Model):
     """A user's scan."""
 
@@ -27,3 +28,15 @@ class Scan(SurrogatePK, Model):
     def __repr__(self):
         """Represent instance as a unique string."""
         return f'<Scan(xnat_uri: {self.xnat_uri})>'
+
+    @validates('aws_status')
+    def validate_aws_status(self, key, aws_status):
+        return status_validator(aws_status, key, ['Pending', 'Uploaded', 'Error'])
+
+    @validates('xnat_status')
+    def validate_xnat_status(self, key, xnat_status):
+        return status_validator(
+            xnat_status, key, ['Pending', 'Complete', 'Failed', 'Killed', 'Killed (Out of Memory)', 'Timed Out']
+        )
+
+
