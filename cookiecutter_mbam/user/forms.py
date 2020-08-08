@@ -2,6 +2,7 @@
 """User forms."""
 from flask_wtf import FlaskForm
 # See https://github.com/mattupstate/flask-security/blob/develop/flask_security/forms.py
+from flask_security.forms import RegisterForm, ForgotPasswordForm, ResetPasswordForm
 from wtforms.fields.html5 import DateField, EmailField
 from wtforms import StringField, BooleanField, SelectField
 from wtforms.validators import DataRequired, Email, Length

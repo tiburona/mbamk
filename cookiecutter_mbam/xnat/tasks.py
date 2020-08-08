@@ -8,7 +8,7 @@ from cookiecutter_mbam.utils.request_utils import init_session
 
 @celery.task
 def create_resources(xnat_credentials, to_create, urls):
-    """ Create XNAT resources (subject, experiment, scan, resource) as necessary
+    """ Careate XNAT resources (subject, experiment, scan, resource) as necessary
 
     :param xnat_credentials: a three-tuple of the server, username, and password to log into XNAT
     :type xnat_credentials: tuple
