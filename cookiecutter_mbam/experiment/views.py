@@ -44,7 +44,7 @@ def number_validation(request):
 
     if current_user.num_experiments > Config.EXPERIMENT_CAP - 1:
         exp_num_error = Markup("You already have the maximum number of scan sessions. Consider <a href='/displays' "
-                               "class='alert-link'>deleting a session</a> if you want to upload a new one")
+                               "class='alert-link'>deleting a session</a> if you want to upload a new one.")
 
     return exp_num_error, scan_num_error
 
@@ -73,6 +73,11 @@ def add():
 
     if not current_user.consented:
         return redirect(url_for('user.consent'))
+
+    if current_user.num_experiments > Config.EXPERIMENT_CAP - 1:
+        flash("It looks like you want to upload a new scan session, but you already have the maximum number.  Consider "
+              "<a href='/displays' class='alert-link'>deleting a session</a> if you want to upload a new one.",
+              'warning')
 
     form = ExperimentAndScanForm(request.form)
 
