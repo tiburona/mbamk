@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """ Displays views. """
-from flask import Blueprint, render_template, request, flash, redirect, url_for, session, current_app
+from flask import Blueprint, render_template
 from flask_security import current_user, login_required
 from cookiecutter_mbam.utils.error_utils import flash_errors
 from cookiecutter_mbam.utils.model_utils import resource_belongs_to_user
@@ -8,10 +8,8 @@ from cookiecutter_mbam.scan.models import Scan
 from .service import DisplayService
 from cookiecutter_mbam.experiment.forms import ExperimentForm
 from cookiecutter_mbam.scan.forms import EditScanForm
-import json
+from cookiecutter_mbam.utils.debug_utils import debug
 
-def debug():
-    assert current_app.debug == False, "Don't panic! You're here by request of debug()"
 
 blueprint = Blueprint('display', __name__, url_prefix='/displays', static_folder='../static')
 
