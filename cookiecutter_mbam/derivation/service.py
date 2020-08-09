@@ -6,6 +6,7 @@ from cookiecutter_mbam.base import BaseService
 tasks = {'set_attribute': set_derivation_attribute, 'get_attribute': get_derivation_attribute,
          'set_attributes': set_derivation_attributes}
 
+
 class DerivationService(BaseService):
 
     def __init__(self, scans, process_name, tasks=tasks):
@@ -14,7 +15,7 @@ class DerivationService(BaseService):
         self.tasks = tasks
         self.process_name = process_name
         self.derivation = Derivation.create(scans=self.scans, process_name=process_name, container_status='Pending')
-
+    
     def _raise_exception_if_process_fails(self):
         return raise_exception.s(whitelist=['Complete'])
 

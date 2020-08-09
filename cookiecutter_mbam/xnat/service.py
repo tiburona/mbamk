@@ -3,11 +3,7 @@ from cookiecutter_mbam.base import BaseService
 from .tasks import *
 from celery import chain
 from functools import reduce
-from flask import current_app
-
-
-def debug():
-    assert current_app.debug == False, "Don't panic! You're here by request of debug()"
+from cookiecutter_mbam.utils.debug_utils import debug
 
 
 poll_tasks = {

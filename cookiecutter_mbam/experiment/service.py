@@ -10,6 +10,7 @@ from cookiecutter_mbam.scan.service import ScanService
 from cookiecutter_mbam.xnat.service import XNATConnection
 from .models import Experiment
 from .tasks import set_experiment_attribute, get_experiment_attribute, set_sub_and_exp_xnat_attrs, construct_status_email
+from cookiecutter_mbam.utils.debug_utils import debug
 
 
 tasks = {'set_attribute': set_experiment_attribute, 'get_attribute': get_experiment_attribute}

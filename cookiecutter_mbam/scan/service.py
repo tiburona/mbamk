@@ -4,17 +4,6 @@
 This module implements adding a scan to the database, and setting up Celery chains to upload a scan to cloud storage
 backup, upload the scan to XNAT, and start_mbam the Freesurfer recon process.
 
-Todo: do we want to infer file type from extension?  Or use some other method?
-
-Todo: Right now if we use the import service XNAT is inferring its own scan id.  What do we want to do about that?
-
-Todo: if someone uploads a zip file we don't actually know that there are dicoms inside (could be NIFTI).  Consider this
-fact.
-
-Todo: figure out why redis-server not running doesn't get caught as Exception.  Figure out how to catch it.
-
-Todo: consider that the import service leaves a file as a .nii, but upload service leaves a file as .nii.gz.
-
 """
 import os
 import shutil
@@ -31,6 +20,7 @@ from cookiecutter_mbam.storage import CloudStorageConnection
 from cookiecutter_mbam.derivation import DerivationService
 from cookiecutter_mbam.xnat.tasks import *
 from flask import current_app
+from cookiecutter_mbam.utils.debug_utils import debug
 
 logger = logging.getLogger()
 
