@@ -5,92 +5,49 @@ import sqlalchemy as sqla
 from sqlalchemy.exc import OperationalError
 import traceback
 
-# TODO: make below more elegant and short
-def parameters_to_fetch(config_name):
-    if config_name=="trusted":
-        parameters_to_fetch = [
-                '/TRUSTED/MIND_XNAT_USER',
-                '/TRUSTED/MIND_XNAT_PASSWORD',
-                '/TRUSTED/BACKUP_XNAT_USER',
-                '/TRUSTED/BACKUP_XNAT_PASSWORD',
-                '/TRUSTED/SEMAPHORE_AUTH_TOKEN',
-                '/TRUSTED/CLOUDFRONT_URL',
-                '/TRUSTED/CLOUDFRONT_KEY_ID',
-                '/TRUSTED/CLOUDFRONT_SECRET_KEY',
-                '/TRUSTED/S3_KEY_ID',
-                '/TRUSTED/S3_SECRET_KEY',
-                '/TRUSTED/S3_BUCKET',
-                '/TRUSTED/SECRET_KEY',
-                '/TRUSTED/SECURITY_PASSWORD_SALT',
-                '/TRUSTED/MAIL_USERNAME',
-                '/TRUSTED/MAIL_PASSWORD',
-                '/TRUSTED/SEMAPHORE_HASH_ID'
-            ]
-    elif config_name=="docker":
-        parameters_to_fetch = [
-                '/DOCKER/MIND_XNAT_USER',
-                '/DOCKER/MIND_XNAT_PASSWORD',
-                '/DOCKER/BACKUP_XNAT_USER',
-                '/DOCKER/BACKUP_XNAT_PASSWORD',
-                '/DOCKER/CLOUDFRONT_URL',
-                '/DOCKER/CLOUDFRONT_KEY_ID',
-                '/DOCKER/CLOUDFRONT_SECRET_KEY',
-                '/DOCKER/S3_KEY_ID',
-                '/DOCKER/S3_SECRET_KEY',
-                '/DOCKER/SECRET_KEY',
-                '/DOCKER/MAIL_USERNAME',
-                '/DOCKER/MAIL_PASSWORD'
-            ]
-    elif config_name=='staging':
-        parameters_to_fetch = [
-                '/STAGING/MIND_XNAT_USER',
-                '/STAGING/MIND_XNAT_PASSWORD',
-                '/STAGING/BACKUP_XNAT_USER',
-                '/STAGING/BACKUP_XNAT_PASSWORD',
-                '/STAGING/BASIC_AUTH_USERNAME',
-                '/STAGING/BASIC_AUTH_PASSWORD',
-                '/STAGING/CLOUDFRONT_URL',
-                '/STAGING/CLOUDFRONT_KEY_ID',
-                '/STAGING/CLOUDFRONT_SECRET_KEY',
-                '/STAGING/S3_KEY_ID',
-                '/STAGING/S3_SECRET_KEY',
-                '/STAGING/SECRET_KEY',
-                '/STAGING/SECURITY_PASSWORD_SALT',
-                '/STAGING/MAIL_USERNAME',
-                '/STAGING/MAIL_PASSWORD',
-                '/STAGING/MYSQL_USERNAME',
-                '/STAGING/MYSQL_PASSWORD',
-                '/STAGING/AMAZON_SMTP_PASSWORD',
-                '/STAGING/AMAZON_SMTP_USERNAME'
-                ]
-    elif config_name=='qa':
-        parameters_to_fetch = [
-                '/QA/MIND_XNAT_USER',
-                '/QA/MIND_XNAT_PASSWORD',
-                '/QA/BACKUP_XNAT_USER',
-                '/QA/BACKUP_XNAT_PASSWORD',
-                '/QA/BASIC_AUTH_USERNAME',
-                '/QA/BASIC_AUTH_PASSWORD',
-                '/QA/CLOUDFRONT_URL',
-                '/QA/CLOUDFRONT_KEY_ID',
-                '/QA/CLOUDFRONT_SECRET_KEY',
-                '/QA/S3_KEY_ID',
-                '/QA/S3_SECRET_KEY',
-                '/QA/SECRET_KEY',
-                '/QA/SECURITY_PASSWORD_SALT',
-                '/QA/MAIL_USERNAME',
-                '/QA/MAIL_PASSWORD',
-                '/QA/MYSQL_USERNAME',
-                '/QA/MYSQL_PASSWORD',
-                '/QA/AMAZON_SMTP_PASSWORD',
-                '/QA/AMAZON_SMTP_USERNAME'
-                ]
+env_params = {
+    'trusted': [
+        'MIND_XNAT_USER', 'MIND_XNAT_PASSWORD', 'BACKUP_XNAT_USER', 'SEMAPHORE_AUTH_TOKEN', 'CLOUDFRONT_URL', 
+        'CLOUDFRONT_KEY_ID', 'CLOUDFRONT_SECRET_KEY', 'S3_KEY_ID', 'S3_SECRET_KEY', 'S3_BUCKET', 'SECRET_KEY', 
+        'SECURITY_PASSWORD_SALT', 'MAIL_USERNAME', 'MAIL_PASSWORD', 'SEMAPHORE_HASH_ID'
+    ],
+    'docker': [
+        'MIND_XNAT_USER', 'MIND_XNAT_PASSWORD', 'BACKUP_XNAT_USER', 'BACKUP_XNAT_PASSWORD', 'CLOUDFRONT_URL', 
+        'CLOUDFRONT_KEY_ID', 'CLOUDFRONT_SECRET_KEY', 'S3_KEY_ID', 'S3_SECRET_KEY', 'SECRET_KEY', 'MAIL_USERNAME', 
+        'MAIL_PASSWORD'
+    ],
+    'staging': [
+        'MIND_XNAT_USER', 'MIND_XNAT_PASSWORD', 'BACKUP_XNAT_USER', 'BACKUP_XNAT_PASSWORD', 'BASIC_AUTH_USERNAME', 
+        'BASIC_AUTH_PASSWORD', 'CLOUDFRONT_URL', 'CLOUDFRONT_KEY_ID', 'CLOUDFRONT_SECRET_KEY', 'S3_KEY_ID', 
+        'S3_SECRET_KEY', 'SECRET_KEY', 'SECURITY_PASSWORD_SALT', 'MAIL_USERNAME', 'MAIL_PASSWORD', 'MYSQL_USERNAME', 
+        'MYSQL_PASSWORD', 'AMAZON_SMTP_PASSWORD', 'AMAZON_SMTP_USERNAME'],
+    'qa': [
+        'MIND_XNAT_USER', 'MIND_XNAT_PASSWORD', 'BACKUP_XNAT_USER', 'BACKUP_XNAT_PASSWORD', 'BASIC_AUTH_USERNAME',
+        'BASIC_AUTH_PASSWORD', 'CLOUDFRONT_URL', 'CLOUDFRONT_KEY_ID', 'CLOUDFRONT_SECRET_KEY', 'S3_KEY_ID',
+        'S3_SECRET_KEY', 'SECRET_KEY', 'SECURITY_PASSWORD_SALT', 'MAIL_USERNAME', 'MAIL_PASSWORD', 'MYSQL_USERNAME',
+        'MYSQL_PASSWORD', 'AMAZON_SMTP_PASSWORD', 'AMAZON_SMTP_USERNAME'
+    ]
+}
+
+
+def credentials_to_fetch(config_name):
+    """ Get the list of credentials to fetch from the credential server
+    :param config_name: the name of the environment
+    :type config_name: str
+    :return: the credentials to fetch
+    :rtype: list
+    """
+    prefix = "/{}/".format(config_name).upper()
+    if config_name in env_params:
+        return [prefix + param for param in env_params[config_name]]
     else:
-        return
+        return []
 
-    return parameters_to_fetch
 
-def set_secrets(credential_path, params_to_fetch, xnat):
+def set_secrets(credential_path, creds_to_fetch, xnat):
+    """
+
+    """
 
     try:
         if os.path.exists(credential_path):
@@ -104,29 +61,28 @@ def set_secrets(credential_path, params_to_fetch, xnat):
         else:
             print("Can not locate a local secrets file. Will attempt to load AWS Parameter Store credentials"
                   " directly from the environment.")
-            credentials={'empty:','dict'}
+            credentials = {'empty:', 'dict'}
 
         aws_auth = {'aws_access_key_id': os.environ['PARAMETER_STORE_KEY_ID'],
                     'aws_secret_access_key': os.environ['PARAMETER_STORE_SECRET_KEY']}
 
         try:
-            region_name=os.environ['AWS_DEFAULT_REGION']
+            region_name = os.environ['AWS_DEFAULT_REGION']
         except:
-            region_name='us-east-1'
+            region_name = 'us-east-1'
 
         ssm_client = boto3.client('ssm', region_name=region_name, **aws_auth)
 
-        for parameter_name in params_to_fetch:
+        for parameter_name in creds_to_fetch:
             # todo: this would speed up substantially if I used get_parameters.
             # it's just annoying because you can only get ten.
-            print(parameter_name)
             response = ssm_client.get_parameter(
                 Name=parameter_name,
                 WithDecryption=True
             )
 
             parameter = response['Parameter']
-            slash_index=parameter['Name'][1:].find('/')+2
+            slash_index = parameter['Name'][1:].find('/') + 2
             os.environ[parameter['Name'][slash_index:]] = parameter['Value']
 
         for var in 'XNAT_USER', 'XNAT_PASSWORD':
@@ -172,7 +128,6 @@ def set_config_from_yaml(config_path, config_name):
         print("INFO: No config override file exists.")
 
 
-
 def configure_database(config, kwargs):
 
     if kwargs['env'] in ['STAGING','QA','ALPHA','BETA']:
@@ -203,6 +158,7 @@ def configure_database(config, kwargs):
     else:
         os.environ['SQLALCHEMY_DATABASE_URI'] = config['SQLITE_URI']
 
+
 def configure_xnat(xnat):
     try:
         for var in [
@@ -229,11 +185,10 @@ def set_config(config_path, override_config_path, config_name, xnat, **kwargs):
 
 def set_env_vars(config_dir='.', secrets=True, config=True, env='trusted', xnat='mind', **kwargs):
 
-    if env not in ['local'] and env not in ['test']:
+    if env not in ['local', 'test']:
         if secrets:
-            params_to_fetch=parameters_to_fetch(env)
             config_type, result, tb = set_secrets(os.path.join(config_dir, 'credentials', 'secrets.yml'),
-                                              params_to_fetch, xnat)
+                                              credentials_to_fetch(env), xnat)
 
             if isinstance(result, Exception):
                 print("Received exception when fetching credentials from the parameter store.  This isn't a problem if "
@@ -242,7 +197,6 @@ def set_env_vars(config_dir='.', secrets=True, config=True, env='trusted', xnat=
                   "{}".format(tb))
 
                 xnat = env = 'local'
-
 
     if config:
         set_config(os.path.join(config_dir, 'config.yml'), os.path.join(config_dir, 'config.override.yml'), env.upper(),

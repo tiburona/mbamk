@@ -40,6 +40,7 @@ def main():
                 d = getattr(ns, process + '_dir') if hasattr(ns, process + '_dir') else '.'
 
                 if process == 'flask':
+                    # The processes dictionary
                     for cmd in processes['flask']['cmd'][ns.env]:
                         send_process(cmd, d, output_labels, thread_wrap=thread_wrap, stream_output=True)
                 else:

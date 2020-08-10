@@ -1,5 +1,6 @@
 import argparse
 
+
 processes = {
     'celery': {
         'cmd': 'celery -A cookiecutter_mbam.run_celery:celery worker --pool=gevent --concurrency=500 --loglevel info',
@@ -13,9 +14,12 @@ processes = {
         'cmd': {
             'local': ['flask run'],
             'trusted': ['flask run'],
-            'docker': ['flask db upgrade', "gunicorn -w 2 --threads 4 -b :8000 --worker-class gthread 'cookiecutter_mbam.app:create_app()'"],
-            'staging': ['flask db upgrade', "gunicorn -w 2 --worker-tmp-dir /dev/shm --threads 4 -b :8000 --worker-class gthread 'cookiecutter_mbam.app:create_app()'"],
-            'qa': ['flask db upgrade', "gunicorn -w 2 --threads 4 -b :8000 --worker-class gthread 'cookiecutter_mbam.app:create_app()'"]
+            'docker': ['flask db upgrade', "gunicorn -w 2 --threads 4 -b :8000 --worker-class gthread "
+                                           "'cookiecutter_mbam.app:create_app()'"],
+            'staging': ['flask db upgrade', "gunicorn -w 2 --worker-tmp-dir /dev/shm --threads 4 -b :8000 "
+                                            "--worker-class gthread 'cookiecutter_mbam.app:create_app()'"],
+            'qa': ['flask db upgrade', "gunicorn -w 2 --threads 4 -b :8000 --worker-class gthread "
+                                    "'cookiecutter_mbam.app:create_app()'"]
         },
         'label': ('FLASK', 'BLUE')
     }
@@ -27,6 +31,7 @@ deployments = {
     }
 }
 
+# This list defines the
 run_args = [
     (['--celery_dir'], {'help': "Relative or absolute path to directory in which Celery is initialized",
                         'default': '.'}),
@@ -51,8 +56,10 @@ test_args = [
                           'help': 'Docker command to run', 'dest': 'command', 'nargs':'?'})
 ]
 
+# Right now the start package isn't being used for deployment.  Katie longs for the day it might be.
 deploy_args = []
 
+# Create an action for an argument such that
 class NegateAction(argparse.Action):
     def __call__(self, parser, ns, values, option):
         setattr(ns, self.dest, option[2:4] != 'no')
@@ -77,30 +84,42 @@ shared_args_with_divergence = [
      )
 ]
 
+
 def parse_args():
+    """Create the argument parser and parse the args"""
+
+    # Initialize the argument parser
     parser = argparse.ArgumentParser(description='Run, test, or deploy MBAM.')
 
+    # The creation of parent parser allows the run, test, and deploy subparsers to inherit shared arguments.
     parent_parser = argparse.ArgumentParser(add_help=False)
 
+    # The shared_args tuple defines the arguments that the run, test, and deploy commands all get.
     for args, kwargs in shared_args:
         parent_parser.add_argument(*args, **kwargs)
 
     subparsers = parser.add_subparsers(help='commands')
 
+    # Create the run, test, and deploy subparsers with the argument structure defined in the 'arg' tuples defined above
     for cmd, help_text, sub_args in [('run', 'Run an MBAM development server.', run_args),
                                      ('test', 'Test MBAM', test_args),
                                      ('deploy', 'Deploy MBAM', deploy_args)]:
+
         sparser = subparsers.add_parser(cmd, help=help_text, parents=[parent_parser],
                                         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
         if 'cmd' == 'test':
+            # '--docker' and '--command', the two unshared arguments to 'test', are mutually exclusive.
             sparser = sparser.add_mutually_exclusive_group()
 
+        # Add the arguments to the subparsers
         for args, kwargs in sub_args:
             sparser.add_argument(*args, **kwargs)
 
+    # subparsers.choices is where the list ['run', 'test', 'deploy'] gets stored
     for sparser in subparsers.choices:
         for args, kwargs, defaults in shared_args_with_divergence:
+            # If an argument is shared between more than one environment, but has
             if sparser in defaults:
                 subparsers.choices[sparser].add_argument(*args, **kwargs, default=defaults[sparser])
 
@@ -114,6 +133,4 @@ def construct_kwargs(command, args):
             kwargs[key] = getattr(args, key)
     if command == 'test':
         kwargs['env'] = 'test'
-    # if hasattr(args, 'env') and args.env == 'staging':
-    #     kwargs['params_to_fetch'] = []
     return kwargs

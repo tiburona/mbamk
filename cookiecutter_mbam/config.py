@@ -9,14 +9,6 @@ from environs import Env
 env = Env()
 env.read_env()
 
-from flask import current_app
-
-# TODO: Figure out how to remove the debug function in production environments. Spiro will look into Flask
-# context processor
-
-def debug():
-    assert current_app.debug == False, "Don't panic! You're here by request of debug()"
-
 class Config:
     """ Sets default configuration and reads from environment variables for any overwrites"""
 
