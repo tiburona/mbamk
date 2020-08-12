@@ -1,10 +1,6 @@
-from flask import current_app
 from .tasks import *
 from cookiecutter_mbam.base import BaseService
-
-
-def debug():
-    assert current_app.debug == False, "Don't panic! You're here by request of debug()"
+from cookiecutter_mbam.utils.debug_utils import debug
 
 
 config_vars = [

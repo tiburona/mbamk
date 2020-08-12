@@ -1,4 +1,4 @@
-FROM xnat/dcm2niix
+FROM neurology/dcm2niix
 
 RUN apt-get update
 

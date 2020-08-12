@@ -3,7 +3,6 @@
 import logging
 from flask import Flask, render_template
 from flask_security import SQLAlchemyUserDatastore
-from celery import Celery
 from cookiecutter_mbam import celery
 from cookiecutter_mbam.init_celery import init_celery
 from cookiecutter_mbam import commands, public, user, experiment, scan, display, derivation
@@ -14,10 +13,8 @@ from cookiecutter_mbam.user import User, Role
 from .hooks import create_test_users, models_committed_hooks
 from .config import Config
 from flask_admin import Admin
+from cookiecutter_mbam.utils.debug_utils import debug
 
-from flask import current_app
-def debug():
-    assert current_app.debug == False, "Don't panic! You're here by request of debug()"
 
 def create_app(config=Config):
     """An application factory, as explained here: http://flask.pocoo.org/docs/patterns/appfactories/.

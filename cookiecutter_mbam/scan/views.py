@@ -6,18 +6,14 @@ from flask import Blueprint, flash, redirect, url_for, render_template, request
 from flask_security import current_user, login_required
 from .models import Scan
 from cookiecutter_mbam.experiment.models import Experiment
-from .forms import EditScanForm, DeleteScanForm, FlaskForm
+from .forms import EditScanForm, DeleteScanForm
 from cookiecutter_mbam.utils.error_utils import flash_errors
 from cookiecutter_mbam.utils.model_utils import resource_belongs_to_user
 from cookiecutter_mbam.base.tasks import global_error_handler
 from .service import ScanService
+from cookiecutter_mbam.utils.debug_utils import debug
 
 blueprint = Blueprint('scan', __name__, url_prefix='/scans', static_folder='../static')
-
-from flask import current_app
-
-def debug():
-    assert current_app.debug == False, "Don't panic! You're here by request of debug()"
 
 def add_scans(request, exp_id):
     """Add scan files"""
