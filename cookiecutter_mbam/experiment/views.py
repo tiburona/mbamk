@@ -84,7 +84,9 @@ def add():
                   "status shortly.".format(num2words[num_scans]), 'success')
 
         except AssertionError as e:
-            flash(e, 'warning')
+            error_message = str(e)
+            flash(error_message, 'warning') # todo this should probably be color coded red
+            return redirect(url_for('experiment.add'))
 
         except Exception as e:
             flash("There was a problem uploading your scan", 'error')  # todo: error should be color coded red
