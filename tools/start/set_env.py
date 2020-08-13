@@ -31,12 +31,7 @@ env_params = {
 
 
 def credentials_to_fetch(config_name):
-    """ Get the list of credentials to fetch from the credential server
-    :param config_name: the name of the environment
-    :type config_name: str
-    :return: the credentials to fetch
-    :rtype: list
-    """
+    """Get the list of credentials to fetch from the credential server"""
     prefix = "/{}/".format(config_name).upper()
     if config_name in env_params:
         return [prefix + param for param in env_params[config_name]]
@@ -45,9 +40,7 @@ def credentials_to_fetch(config_name):
 
 
 def set_secrets(credential_path, creds_to_fetch, xnat):
-    """
-
-    """
+    """Get credentials to the AWS parameter store, then fetch more credentials and save them in the environment."""
 
     try:
         if os.path.exists(credential_path):
@@ -68,7 +61,7 @@ def set_secrets(credential_path, creds_to_fetch, xnat):
 
         try:
             region_name = os.environ['AWS_DEFAULT_REGION']
-        except:
+        except KeyError:
             region_name = 'us-east-1'
 
         ssm_client = boto3.client('ssm', region_name=region_name, **aws_auth)
@@ -95,22 +88,29 @@ def set_secrets(credential_path, creds_to_fetch, xnat):
         return 'LOCAL', e, tb
 
 
-def assemble_db_uri(protocol='mysql+pymysql', db_name='brain_db', vars=['MYSQL_USER', 'MYSQL_PASSWORD', 'MYSQL_HOST']):
-    db_user, db_password, db_uri = [os.environ[var] for var in vars]
+def assemble_db_uri(
+        protocol='mysql+pymysql', db_name='brain_db', db_vars=('MYSQL_USER', 'MYSQL_PASSWORD', 'MYSQL_HOST')
+):
+    """Build a complete database URI"""
+    db_user, db_password, db_uri = [os.environ[var] for var in db_vars]
     return '{}://{}:{}@{}/{}'.format(protocol, db_user, db_password, db_uri, db_name)
 
+
 def check_database(uri):
+    """Look for an operational database"""
     db = sqla.create_engine(uri)
     try:
         db.connect()
         return True, 'no error'
-    except (OperationalError, RuntimeError, OSError) as e:
+    except (OperationalError, RuntimeError, OSError):
         # todo: add check for specific runtime error
         # "cryptography is required for sha256_password or caching_sha2_password"
         tb = traceback.format_exc()
         return False, tb
 
+
 def set_config_from_yaml(config_path, config_name):
+    """Load configuration from a YAML file and set environment variables"""
     try:
         with open(config_path) as file:
             configs = yaml.safe_load(file)
@@ -122,15 +122,21 @@ def set_config_from_yaml(config_path, config_name):
 
             else:
                 print("INFO: {} is not a block in {}. This is likely not a problem for the config override file."
-                    .format(config_name, config_path))
+                      .format(config_name, config_path))
 
     except FileNotFoundError:
         print("INFO: No config override file exists.")
 
 
 def configure_database(config, kwargs):
+    """Set database configuration.
 
-    if kwargs['env'] in ['STAGING','QA','ALPHA','BETA']:
+    First checks if we're on AWS, if so does nothing.  Otherwise looks for configuration that would give the host of
+    either a local or dockerized MySQL instance, and defaults to Docker if that configuration is absent.  Checks to see
+    if the specified (or default) MySQL database exists, and if it doesn't defaults to SQLite.
+    """
+
+    if kwargs['env'] in ['STAGING', 'QA', 'ALPHA', 'BETA']:
         print("It looks like we are in an AWS environment, so we will not configure MYSQL"
               " for local or mysql host.")
         return
@@ -160,16 +166,22 @@ def configure_database(config, kwargs):
 
 
 def configure_xnat(xnat):
-    try:
-        for var in [
-            'XNAT_HOST', 'DICOM_TO_NIFTI_COMMAND', 'FREESURFER_RECON_COMMAND', 'FS_TO_MESH_COMMAND', 'XNAT_PROJECT'
-        ]:
-            os.environ[var] = os.environ[xnat + '_' + var]
-    except KeyError as e:
-        print("You've selected {} as your XNAT instance but {} is not configured.".format(xnat, var))
+    """Set XNAT configuration
+
+    The config file has the XNAT variables with their specific XNAT instance prefix ('MIND', 'BACKUP', etc.) This sets
+    the unprefixed environment variables.
+    """
+    for v in ['XNAT_HOST', 'DICOM_TO_NIFTI_COMMAND', 'FREESURFER_RECON_COMMAND', 'FS_TO_MESH_COMMAND', 'XNAT_PROJECT']:
+        try:
+            os.environ[v] = os.environ[xnat + '_' + v]
+        except KeyError:
+            print("You've selected {} as your XNAT instance but {} is not configured.".format(xnat, v))
 
 
 def set_config(config_path, override_config_path, config_name, xnat, **kwargs):
+    """Set configuration by calling function to read YAML files and set env variables. The database and XNAT both need
+    more extensive logic for their config than just setting environment variables, so there are two dedicated methods
+    for them."""
 
     config = set_config_from_yaml(config_path, config_name)
     override_config = set_config_from_yaml(override_config_path, config_name)
@@ -184,17 +196,18 @@ def set_config(config_path, override_config_path, config_name, xnat, **kwargs):
 
 
 def set_env_vars(config_dir='.', secrets=True, config=True, env='trusted', xnat='mind', **kwargs):
+    """Call methods to set the environment with credentials and non-sensitive configuration"""
 
     if env not in ['local', 'test']:
         if secrets:
             config_type, result, tb = set_secrets(os.path.join(config_dir, 'credentials', 'secrets.yml'),
-                                              credentials_to_fetch(env), xnat)
+                                                  credentials_to_fetch(env), xnat)
 
             if isinstance(result, Exception):
                 print("Received exception when fetching credentials from the parameter store.  This isn't a problem if "
-                  "you're not intending to use MBAM credentials.  If you are running `npm start_mbam` and would like to "
-                  "suppress this message in the future, use `npm run start_mbam-local`.  The exception received was \n"
-                  "{}".format(tb))
+                      "you're not intending to use MBAM credentials.  If you are running `npm start_mbam` and would "
+                      "like to suppress this message in the future, use `npm run start_mbam-local`.  The exception "
+                      "received was \n{}".format(tb))
 
                 xnat = env = 'local'
 
