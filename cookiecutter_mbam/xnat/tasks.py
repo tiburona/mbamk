@@ -5,6 +5,7 @@ from celery.exceptions import SoftTimeLimitExceeded
 from cookiecutter_mbam import celery
 from cookiecutter_mbam.utils.request_utils import init_session
 
+
 @celery.task
 def create_resources(xnat_credentials, to_create, urls):
     """ Create XNAT resources (subject, experiment, scan, resource) as necessary
@@ -38,6 +39,7 @@ def create_resources(xnat_credentials, to_create, urls):
 
     return responses
 
+
 @celery.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5})
 def upload_scan_to_xnat(self, xnat_credentials, file_path, url, exp_uri, imp, delete=True):
     """ Upload a NIFTI format scan to XNAT
@@ -66,12 +68,13 @@ def upload_scan_to_xnat(self, xnat_credentials, file_path, url, exp_uri, imp, de
             r = s.put(url, **kwargs)
 
         if delete:
-            shutil.rmtree(os.path.dirname(file_path),ignore_errors=True)
+            shutil.rmtree(os.path.dirname(file_path), ignore_errors=True)
 
         if r.ok:
             return exp_uri
         else:
             raise ValueError(f'Unexpected status code: {r.status_code}  Response: \n {r.text}')
+
 
 @celery.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5})
 def get_latest_scan_info(self, experiment_uri, xnat_credentials):
@@ -80,8 +83,8 @@ def get_latest_scan_info(self, experiment_uri, xnat_credentials):
      XNAT automatically sets the ID of an imported scan and MBAM makes no attempt to overwrite it.  This function
      retrieves that information (regardless of whether the scan was uploaded or imported.)
 
-    :param uris: a dictionary with levels as keys that contains the experiment uri
-    :type uris: dict
+    :param experiment_uri: the uri of the experiment the scan was uploaded to
+    :type experiment_uri: str
     :param xnat_credentials: a three-tuple of the server, username, and password to log into XNAT
     :type xnat_credentials: tuple
     :return: a dictionary of the XNAT id and XNAT URI of the scan
@@ -99,6 +102,7 @@ def get_latest_scan_info(self, experiment_uri, xnat_credentials):
         else:
             raise ValueError(f'Unexpected status code: {r.status_code}  Response: \n {r.text}')
 
+
 @celery.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5})
 def gen_container_data(self, uri, xnat_credentials, download_suffix, upload_suffix):
     """Generate the data necessary to launch a command in XNAT
@@ -108,7 +112,7 @@ def gen_container_data(self, uri, xnat_credentials, download_suffix, upload_suff
     :type xnat_credentials: tuple
     :param download_suffix: the suffix that, concatenated with `uri`, indicates the URI for file download
     :type download_suffix: str
-    :param upload_suffix: the sufficx that, concatenated with `uri`, indicates where to upload processed files
+    :param upload_suffix: the suffix that, concatenated with `uri`, indicates where to upload processed files
     :type upload_suffix: str
     :return: the data that will be passed to the container via a post request
     :rtype: dict
@@ -146,7 +150,7 @@ def launch_command(self, data, xnat_credentials, project, command_ids):
 
 def construct_container_data(r_json, server):
     """Take the response from the XNAT container service to launching a container and extract data from it
-    :param r_json: the json data from the response from the containre service
+    :param r_json: the json data from the response from the container service
     :type r_json: dict
     :param server: the XNAT host
     :type server: str
@@ -188,6 +192,7 @@ def poll_cs(container_info, xnat_credentials, interval):
             else:
                 raise ValueError(f'Unexpected status code: {r.status_code}  Response: \n {r.text}')
 
+
 # These and the two following tasks must be defined separately because the soft_time_limit must be defined in the
 # wrapper arguments, but #todo: make sure there's no way around this.
 @celery.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5}, soft_time_limit=10000)
@@ -224,6 +229,7 @@ def poll_cs_fsrecon(self, container_id, xnat_credentials, interval):
         return poll_cs(container_id, xnat_credentials, interval)
     except SoftTimeLimitExceeded:
         return 'Timed Out'
+
 
 @celery.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5}, soft_time_limit=259200)
 def poll_cs_fs2mesh(self, container_id, xnat_credentials, interval):
