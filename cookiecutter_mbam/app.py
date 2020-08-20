@@ -7,7 +7,7 @@ from cookiecutter_mbam import celery
 from cookiecutter_mbam.init_celery import init_celery
 from cookiecutter_mbam import commands, public, user, experiment, scan, display, derivation
 from cookiecutter_mbam.admin import register_admin_views
-from cookiecutter_mbam.extensions import admin, cache, csrf_protect, db, debug_toolbar, migrate, \
+from cookiecutter_mbam.extensions import cache, csrf_protect, db, debug_toolbar, migrate, \
     security, webpack, mail, jsglue, basicauth
 from cookiecutter_mbam.user import User, Role
 from .hooks import create_test_users, models_committed_hooks
@@ -22,7 +22,6 @@ def create_app(config=Config):
     """
     app = Flask(__name__.split('.')[0])
     app.config.from_object(config)
-
     init_celery(app, celery=celery)
 
     register_extensions(app)
