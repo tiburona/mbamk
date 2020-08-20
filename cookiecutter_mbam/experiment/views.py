@@ -2,7 +2,7 @@
 """Experiment views."""
 
 import traceback
-from flask import Blueprint, Markup, render_template, request, flash, redirect, url_for
+from flask import Blueprint, Markup, render_template, request, flash, redirect, url_for, session
 from flask_security import current_user, login_required
 from cookiecutter_mbam.utils.error_utils import flash_errors
 from cookiecutter_mbam.utils.model_utils import resource_belongs_to_user
@@ -30,22 +30,16 @@ def add_experiment(form, files):
 
 
 def number_validation(request):
-    """Validate that the number of scan files for a given experiment is at least one and no more than three"""
+    """Validate that the number of scan files for a given experiment is no more than three"""
 
-    scan_num_error = exp_num_error = ""
+    scan_num_error = ''
 
     num_scans_to_add = len(request.files.getlist('scan_file'))
-    if num_scans_to_add < 1:
-        # This is a workaround for FileRequired() failing inexplicably.  Long-term should fix this.
-        scan_num_error = "A file is required."
+
     if num_scans_to_add > 3:
-        scan_num_error = "You can upload up to three files."
+        scan_num_error = "You can only upload up to three files. Please try again."
 
-    if current_user.num_experiments > Config.EXPERIMENT_CAP - 1:
-        exp_num_error = Markup("You already have the maximum number of scan sessions. Consider <a href='/displays' "
-                               "class='alert-link'>deleting a session</a> if you want to upload a new one")
-
-    return exp_num_error, scan_num_error
+    return scan_num_error
 
 
 @blueprint.route('/dev_add', methods=['GET', 'POST'])
@@ -53,10 +47,10 @@ def number_validation(request):
 def dev_add():
     form = ExperimentAndScanForm(request.form)
     if form.validate_on_submit():
-        for error in number_validation(request):
-            if error:
-                flash(error, 'warning')
-                return redirect(url_for('experiment.add'))
+        error = number_validation(request)
+        if error:
+            flash(error, 'warning')
+            return redirect(url_for('experiment.add'))
         files = request.files.getlist('scan_file')
         add_experiment(form, files)
         num_scans = len(files)
@@ -73,13 +67,16 @@ def add():
     if not current_user.consented:
         return redirect(url_for('user.consent'))
 
+    if current_user.num_experiments > Config.EXPERIMENT_CAP - 1:
+        return render_template('experiments/too_many_sessions.html')
+
     form = ExperimentAndScanForm(request.form)
 
     if form.validate_on_submit():
-        for error in number_validation(request):
-            if error:
-                flash(error, 'warning')
-                return redirect(url_for('experiment.add'))
+        error = number_validation(request)
+        if error:
+            flash(error, 'warning')
+            return redirect(url_for('experiment.add'))
 
         try:
             files = request.files.getlist('scan_file')
