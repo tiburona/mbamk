@@ -29,7 +29,7 @@ class ExperimentForm(FlaskForm):
 class ScanForm(FlaskForm):
     """Scan form."""
 
-    scan_file = FileField(validators=[FileRequired(), FileAllowed(['nii', 'nii.gz', 'zip'], 'Allowed file types only!')])
+    scan_file = FileField(validators=[FileAllowed(['nii', 'nii.gz', 'zip'], 'Allowed file types only!')])
     submit = SubmitField('Upload')
 
     def __init__(self, *args, **kwargs):
@@ -41,8 +41,8 @@ class ScanForm(FlaskForm):
         return super(ScanForm, self).validate()
 
 
-class ExperimentAndScanForm(ScanForm, ExperimentForm):
-    """Experiment and Scan form."""
+class ExperimentAndScanForm(ExperimentForm, ScanForm):
+    """Experiment and scan Ffrm"""
 
     def __init__(self, *args, **kwargs):
         """Create instance."""

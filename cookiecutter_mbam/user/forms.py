@@ -12,7 +12,7 @@ class ProfileForm(FlaskForm):
     """ Basic user profile form. """
     first_name = StringField('First Name', validators=[Length(min=2, max=25)])
     last_name = StringField('Last Name', validators=[Length(min=2, max=25)])
-    sex = SelectField('Gender',
+    sex = SelectField('Sex',
                       choices=[(None, ''), ('Male', 'Male'), ('Female', 'Female'), ('Other', 'Other')],
                       validators=[DataRequired()])
     dob = DateField('Date of Birth (mm/dd/YYYY).', format='%Y-%m-%d', validators=[DataRequired()])

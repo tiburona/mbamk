@@ -7,14 +7,14 @@ from cookiecutter_mbam import celery as cel
 import ssl
 import smtplib
 from email.message import EmailMessage
-from cookiecutter_mbam.config import Config as config
+from cookiecutter_mbam.config import Config
 from . import textbank
 from cookiecutter_mbam.mbam_logging import app_logger, celery_logger
 from flask_security import current_user, login_required
 
 # set mail constants
 mail_constants = ['MAIL_USERNAME', 'MAIL_SERVER', 'MAIL_PASSWORD', 'MAIL_PORT','SECURITY_EMAIL_SENDER']
-UNAME, SERVER, PASSWORD, PORT, SENDER = [getattr(config, const) for const in mail_constants]
+UNAME, SERVER, PASSWORD, PORT, SENDER = [getattr(Config, const) for const in mail_constants]
 
 # The following three functions are factory functions.  They generate setter and getter functions for the provided model
 # class.  These functions will be converted into Celery tasks, so they can't take model objects as arguments directly;

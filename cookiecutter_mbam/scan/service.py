@@ -444,5 +444,4 @@ class ScanService(BaseService):
         scan = Scan.get_by_id(scan_id)
         if delete_from_xnat:
             self.xc.xnat_delete(scan.xnat_uri)
-            self.experiment.update(num_scans=self.experiment.num_scans - 1)
         scan.delete()

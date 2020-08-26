@@ -10,6 +10,7 @@ from .forms import ExperimentForm, ExperimentAndScanForm, FlaskForm
 from .models import Experiment
 from .service import ExperimentService
 from cookiecutter_mbam.base.tasks import global_error_handler
+from cookiecutter_mbam.config import Config
 from cookiecutter_mbam.utils.debug_utils import debug
 
 
@@ -26,38 +27,20 @@ def add_experiment(form, files):
     """Add an experiment"""
     es = ExperimentService(current_user)
     es.add(date=form.date.data, scanner=form.scanner.data, field_strength=form.field_strength.data,
-                 user=current_user, files=files)
+           user=current_user, files=files)
 
 
-def scan_number_validation(request):
-    """Validate that the number of scan files for a given experiment is at least one and no more than three"""
+def number_validation(request):
+    """Validate that the number of scan files for a given experiment is no more than three"""
 
+    scan_num_error = ''
     num_scans_to_add = len(request.files.getlist('scan_file'))
-    if num_scans_to_add < 1:
-        # This is a workaround for FileRequired() failing inexplicably.  Long-term should fix this.
-        return "A file is required."
     if num_scans_to_add > 3:
-            return "You can upload up to three files."
-    else:
-        return ''
-
-
-@blueprint.route('/dev_add', methods=['GET', 'POST'])
-@login_required
-def dev_add():
-    form = ExperimentAndScanForm()
-    if form.validate_on_submit():
-        files = request.files.getlist('scan_file')
-        try:
-            add_experiment(form, files)
-            num_scans = len(files)
-            flash("You successfully started the process of adding {}.".format(num2words[num_scans]), 'success')
-            return redirect(url_for('public.home'))
-        except AssertionError as e:
-            flash(e, 'warning')
-    else:
-        flash("booo")
-    return render_template('experiments/exp_and_scans.html', form=form)
+        scan_num_error = "You can only upload up to three files. Please try again."
+    if num_scans_to_add < 1:  # In theory, FileRequired should do this. In practice, it fails to validate when there's
+        # a file.
+        scan_num_error = "You need to choose a file to upload."
+    return scan_num_error
 
 
 @blueprint.route('/add', methods=['GET', 'POST'])
@@ -68,24 +51,28 @@ def add():
     if not current_user.consented:
         return redirect(url_for('user.consent'))
 
-    form = ExperimentAndScanForm()
+    if len(current_user.experiments.all()) > Config.EXPERIMENT_CAP - 1:
+        return render_template('experiments/too_many_sessions.html')
+
+    form = ExperimentAndScanForm(request.form)
 
     if form.validate_on_submit():
-        scan_number_error = scan_number_validation(request)
-        if len(scan_number_error):
-            flash(scan_number_error, 'warning')
+        error = number_validation(request)
+        if error:
+            flash(error, 'warning')
             return redirect(url_for('experiment.add'))
+
         try:
             files = request.files.getlist('scan_file')
-            add_experiment(form, files)
             num_scans = len(files)
+            add_experiment(form, files)
 
             flash("You successfully started the process of adding {}. You should receive emails about the upload "
                   "status shortly.".format(num2words[num_scans]), 'success')
 
         except AssertionError as e:
             error_message = str(e)
-            flash(error_message, 'warning') # todo this should probably be color coded red
+            flash(error_message, 'warning')  # todo this should probably be color coded red
             return redirect(url_for('experiment.add'))
 
         except Exception as e:
@@ -96,25 +83,31 @@ def add():
                 email_user=True, email_admin=True
             )
 
+            flash("You successfully started the process of adding {}. "
+                  "You should receive emails about upload status shortly.".format(num2words[num_scans]), 'success')
+
         return redirect(url_for('public.home'))
     else:
         flash_errors(form)
 
-    return render_template('experiments/experiment_and_scans.html',form=form)
+    return render_template('experiments/experiment_and_scans.html', form=form)
 
 
 @blueprint.route('/<id>/edit', methods=['GET', 'POST'])
 @login_required
 def edit_experiment(id):
-    """Access and edit experiment metadata."""
+    """Edit experiment metadata."""
+
     if resource_belongs_to_user(Experiment, id):
-        exp = Experiment.query.filter(Experiment.id==id).first_or_404()
+        exp = Experiment.get_by_id(id)
         form = ExperimentForm(obj=exp)
 
         if form.validate_on_submit():
-            form.populate_obj(exp) # update whatever has been changed in the form
+            form.populate_obj(exp)  # update whatever has been changed in the form
             exp.save()
-            flash("Scan session data update",'success')
+
+            flash("Session data updated", 'success')
+
             return redirect(url_for('display.displays'))
         else:
             flash_errors(form)
@@ -123,12 +116,13 @@ def edit_experiment(id):
     else:
         return render_template('403.html')
 
+
 @blueprint.route('/<id>/delete', methods=['GET', 'POST'])
 @login_required
 def delete_experiment(id):
-    """Access and edit experiment metadata."""
+    """Delete experiment metadata."""
     if resource_belongs_to_user(Experiment, id):
-        exp = Experiment.query.filter(Experiment.id==id).first_or_404()
+        exp = Experiment.get_by_id(id)
         form = FlaskForm()
 
         if form.validate_on_submit():
@@ -138,6 +132,7 @@ def delete_experiment(id):
             exp.delete()
 
             flash("Deleted the session.", 'success')
+
             return redirect(url_for('display.displays'))
         else:
             flash_errors(form)

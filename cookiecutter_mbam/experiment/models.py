@@ -5,7 +5,7 @@ from datetime import datetime
 from cookiecutter_mbam.database import Column, Model, SurrogatePK, db, reference_col, relationship
 from cookiecutter_mbam.scan.models import Scan
 from cookiecutter_mbam.user import User
-from cookiecutter_mbam.utils.model_utils import make_ins_del_listener
+from cookiecutter_mbam.utils.model_utils import make_insert_listener
 from sqlalchemy.orm import validates
 from cookiecutter_mbam.utils.model_utils import date_validator
 
@@ -23,7 +23,6 @@ class Experiment(SurrogatePK, Model):
     user_id = reference_col('user', nullable=False)
     scans = relationship('Scan', backref='experiment', lazy='dynamic')
     scan_counter = Column(db.Integer(), default=0)
-    num_scans = Column(db.Integer(), nullable=True, default=0)
     visible = Column(db.Boolean(), nullable=True)
 
     def __init__(self, date, user_id, **kwargs):
@@ -40,11 +39,6 @@ class Experiment(SurrogatePK, Model):
         return date_validator(date_of_first_mr_image, date)
 
 
-scan_insert_listener = make_ins_del_listener(Scan, Experiment, 'scan', 'experiment', 'after_insert', 1, count=True)
+scan_insert_listener = make_insert_listener(Scan, Experiment, 'scan', 'experiment')
 
-scan_delete_listener = make_ins_del_listener(Scan, Experiment, 'scan', 'experiment', 'after_delete', -1)
-
-experiment_insert_listener = make_ins_del_listener(Experiment, User, 'experiment', 'user', 'after_insert', 1,
-                                                   count=True)
-
-experiment_delete_listener = make_ins_del_listener(Experiment, User, 'experiment', 'user', 'after_delete', -1)
+experiment_insert_listener = make_insert_listener(Experiment, User, 'experiment', 'user')

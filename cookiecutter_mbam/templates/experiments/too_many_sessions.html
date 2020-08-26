@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<div class="container-narrow">
+  <h4 class="mt-5">Add a New Session</h4>
+    <br>
+    <br>
+    <section role="content-uni-wrapper">
+    <div class="container">
+        <div class="section-wrapper">
+            Thank you for uploading your scans to My Brain and Me! The maximum number of scan sessions you can upload is
+            two.  Consider <a href="{{ url_for('display.displays') }}">deleting a session</a> if you would like to
+            upload more.
+        </div>
+    </div>
+    </section>
+</div>
+
+{% endblock %}
+
