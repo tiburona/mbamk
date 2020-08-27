@@ -4,6 +4,7 @@ from .tasks import set_user_attribute, get_user_attribute
 
 tasks = {'set_attribute': set_user_attribute, 'get_attribute': get_user_attribute}
 
+
 class UserService(BaseService):
 
     def __init__(self, tasks=tasks):

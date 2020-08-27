@@ -1,14 +1,12 @@
-FROM freesurfer/freesurfer:6.0
+FROM brainlife/freesurfer:7.1.0
 
-RUN apt-get update
-
-RUN apt-get install -y python3-pip zip && pip3 install requests
+RUN yum install -y python3-pip zip && pip3 install requests
 
 RUN mkdir /input && mkdir /output && mkdir /output/uploads && mkdir /output/uploads/stats && mkdir /output/uploads/surf
 
 ENV SUBJECTS_DIR=/output
 
-COPY resources/license.txt /opt/freesurfer/
+COPY resources/license.txt /usr/local/freesurfer/.license
 
 COPY resources /usr/local/src
 
