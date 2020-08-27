@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 """Derivation model."""
 
+from sqlalchemy.orm import validates
 from cookiecutter_mbam.database import Model, SurrogatePK, db, Table
+from cookiecutter_mbam.utils.model_utils import status_validator
 
-from flask import current_app
-def debug():
-    assert current_app.debug == False, "Don't panic! You're here by request of debug()"
+
 
 derivations_scans = Table(
     'derivations_scans',
@@ -29,10 +29,6 @@ class Derivation(SurrogatePK, Model):
         'Scan', secondary=derivations_scans,
         backref = db.backref('derivations', lazy='dynamic')
         )
-    #todo: fix validations here
-    # __table_args__ = (
-    #     db.CheckConstraint(status in ['started', 'unstarted', 'completed', 'failed'], name='check_status_valid'),
-    #     {})
 
     def __init__(self, scans, container_status, **kwargs):
         """Create instance."""
@@ -41,3 +37,14 @@ class Derivation(SurrogatePK, Model):
     def __repr__(self):
         """Represent instance as a unique string."""
         return '<Derivation({uri})>'.format(uri=self.xnat_uri)
+
+    @validates('aws_status')
+    def validate_aws_status(self, key, aws_status):
+        return status_validator(aws_status, key, ['Pending', 'Uploaded', 'Error'])
+
+    @validates('xnat_status')
+    def validate_xnat_status(self, key, xnat_status):
+        return status_validator(
+            xnat_status, key, ['Pending', 'Complete', 'Failed', 'Killed', 'Killed (Out of Memory)', 'Timed Out']
+        )
+

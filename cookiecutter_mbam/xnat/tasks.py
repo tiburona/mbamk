@@ -8,7 +8,7 @@ from cookiecutter_mbam.utils.request_utils import init_session
 
 @celery.task
 def create_resources(xnat_credentials, to_create, urls):
-    """ Create XNAT resources (subject, experiment, scan, resource) as necessary
+    """ Careate XNAT resources (subject, experiment, scan, resource) as necessary
 
     :param xnat_credentials: a three-tuple of the server, username, and password to log into XNAT
     :type xnat_credentials: tuple
@@ -59,7 +59,8 @@ def upload_scan_to_xnat(self, xnat_credentials, file_path, url, exp_uri, imp, de
 
     filename = 'T1.zip' if imp else 'T1.nii.gz'
     kwargs = {'files': {'file': (filename, open(file_path, 'rb'), 'application/octet-stream')}}
-    if imp: kwargs['data'] = {'dest': exp_uri, 'overwrite': 'delete'}
+    if imp:
+        kwargs['data'] = {'dest': exp_uri, 'overwrite': 'delete'}
 
     with init_session(user, password) as s:
         if imp:
@@ -194,12 +195,12 @@ def poll_cs(container_info, xnat_credentials, interval):
 
 
 # These and the two following tasks must be defined separately because the soft_time_limit must be defined in the
-# wrapper arguments, but #todo: make sure there's no way around this.
+# wrapper arguments, but todo: make sure there's no way around this.
 @celery.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5}, soft_time_limit=10000)
 def poll_cs_dcm2nii(self, container_id, xnat_credentials, interval):
     """Check for completion of a dcm2nii command
     :param container_id: the id of the container
-    :type container_info: str
+    :type container_id: str
     :param xnat_credentials: a three-tuple of the server, username, and password to log into XNAT
     :param interval: how long to wait between efforts to poll the container service for container completion
     :type interval: int
@@ -235,7 +236,7 @@ def poll_cs_fsrecon(self, container_id, xnat_credentials, interval):
 def poll_cs_fs2mesh(self, container_id, xnat_credentials, interval):
     """Check for completion of the Freesurfer to 3D mesh command
     :param container_id: the id of the container
-    :type container_info: str
+    :type container_id: str
     :param xnat_credentials: a three-tuple of the server, username, and password to log into XNAT
     :param interval: how long to wait between efforts to poll the container service for container completion
     :type interval: int
@@ -274,7 +275,8 @@ def dl_files_from_xnat(self, uri, xnat_credentials, file_path, suffix='', single
         os.makedirs(file_path)
 
     server, user, password = xnat_credentials
-    if not conditions: conditions = []
+    if not conditions:
+        conditions = []
 
     with init_session(user, password) as s:
         r = s.get(server + uri + suffix)
@@ -297,6 +299,6 @@ def dl_files_from_xnat(self, uri, xnat_credentials, file_path, suffix='', single
     return r
 
 
-dl_conditions={
+dl_conditions = {
     'json_exclusion': lambda result: 'json' not in result['Name']
 }

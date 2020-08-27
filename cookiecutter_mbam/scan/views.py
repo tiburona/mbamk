@@ -73,15 +73,10 @@ def delete_scan(id):
 
         if form.validate_on_submit():
             form.populate_obj(scan)
-            # First delete the scan's parent experiment if it is the only one
-            if scan.parent_experiment.num_scans == 1:
-                exp_id=scan.parent_experiment.id
-                exp=Experiment.get_by_id(exp_id)
-                scan.delete()
+            exp = scan.experiment
+            scan.delete()
+            if not exp.scans:
                 exp.delete()
-            else:
-                scan.delete()
-
             # Can use ScanService.delete() instead with includes a flag to delete xnat scan
 
             flash('Scan removed.','success')

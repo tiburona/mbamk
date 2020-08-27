@@ -1,15 +1,18 @@
 # -*- coding: utf-8 -*-
 """User models."""
-import datetime as dt
+from datetime import datetime
 from flask_security import UserMixin
 from flask_security.utils import verify_password
 from cookiecutter_mbam.database import Column, Model, Table, SurrogatePK, db, relationship
+from sqlalchemy.orm import validates
+from cookiecutter_mbam.utils.model_utils import date_validator
 
 roles_users = Table(
     'roles_users',
     db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
     db.Column('role_id', db.Integer(), db.ForeignKey('role.id'))
 )
+
 
 class Role(SurrogatePK, Model):
     """A role for a user."""
@@ -27,6 +30,7 @@ class Role(SurrogatePK, Model):
         """Represent instance as a unique string."""
         return '<Role({name})>'.format(name=self.name)
 
+
 class User(UserMixin, SurrogatePK, Model):
     """A user of the app."""
 
@@ -39,7 +43,7 @@ class User(UserMixin, SurrogatePK, Model):
     active = Column(db.Boolean())
     confirmed_at = Column(db.DateTime())
 
-    created_at = Column(db.DateTime, nullable=False, default=dt.datetime.utcnow)
+    created_at = Column(db.DateTime, nullable=False, default=datetime.utcnow)
     first_name = Column(db.String(30), nullable=True)
     last_name = Column(db.String(30), nullable=True)
     sex = Column(db.String(30), nullable=True)
@@ -52,7 +56,6 @@ class User(UserMixin, SurrogatePK, Model):
     xnat_id = Column(db.String(80), nullable=True)
     xnat_label = Column(db.String(80), nullable=True)
     xnat_uri = Column(db.String(255), nullable=True)
-    num_experiments = Column(db.Integer(), default=0)
     experiment_counter = Column(db.Integer(), default=0)
     roles = db.relationship(
         'Role', secondary=roles_users,
@@ -75,7 +78,7 @@ class User(UserMixin, SurrogatePK, Model):
 
     def check_password(self, value):
         """Check password."""
-        return verify_password(value,self.password)
+        return verify_password(value, self.password)
 
     @property
     def full_name(self):
@@ -86,3 +89,7 @@ class User(UserMixin, SurrogatePK, Model):
         """Represent instance as a unique string."""
         return '<User({email!r})>'.format(email=self.email)
 
+    @validates('dob')
+    def validate_date(self, _, date):
+        long_ago = datetime.strptime('1900', '%Y').date()
+        return date_validator(long_ago, date)

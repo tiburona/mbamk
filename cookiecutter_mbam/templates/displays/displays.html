@@ -26,12 +26,12 @@
 
         <tr>
             {% if scan.experiment_id not in exp_id_list %}
-              <td>{{ scan.parent_experiment.date }}
+              <td>{{ scan.experiment.date }}
                 <!-- Uncomment below line, and comment 2nd line to use the modal version of the form -->
                 <a data-toggle="modal" data-target="#editSessionModal" data-url="{{ url_for('experiment.edit_experiment', id=scan.experiment_id) }}"
-                   data-date="{{ scan.parent_experiment.date }}"
-                   data-field_strength="{{ scan.parent_experiment.field_strength }}"
-                   data-scanner="{{ scan.parent_experiment.scanner }}">
+                   data-date="{{ scan.experiment.date }}"
+                   data-field_strength="{{ scan.experiment.field_strength }}"
+                   data-scanner="{{ scan.experiment.scanner }}">
                 <!--<a href="{{ url_for('experiment.edit_experiment', id=scan.experiment_id) }}">-->
                 <i class="fa fa-edit" aria-hidden="true"></i></a>
 
