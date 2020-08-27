@@ -89,7 +89,7 @@ class User(UserMixin, SurrogatePK, Model):
         """Represent instance as a unique string."""
         return '<User({email!r})>'.format(email=self.email)
 
-    @validates('date')
+    @validates('dob')
     def validate_date(self, _, date):
         long_ago = datetime.strptime('1900', '%Y').date()
         return date_validator(long_ago, date)
