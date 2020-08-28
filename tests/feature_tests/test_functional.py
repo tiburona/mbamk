@@ -165,6 +165,6 @@ class TestUpdateUserModel:
         form['sex'] = 'Female'
         res = form.submit().follow()
         # sees flash message and can retrieve user with new attributes
-        assert 'User profile saved' in res
+        assert 'Your profile was saved.' in res
         usr = User.get_by_id(user.id)
         assert usr.sex == 'Female'
