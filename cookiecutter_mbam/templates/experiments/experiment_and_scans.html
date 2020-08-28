@@ -7,17 +7,17 @@
     <div class="section-wrapper">
           {% if request.args.get('action') != "old" and request.args.get('action') != "edit" %}
                 <h4 class="mb-4">New Scan Upload</h4>
-                <p>For the best experience use Chrome, Opera browser or Firefox. <span class="not-supported">Internet Explorer and Safari are not supported.</span></p>
+                <p>For the best experience use Chrome, Opera or Firefox.</p>
                 <br>
-                <label for="input-cd-step1" class="scan-head">If you have your scan on a CD, please insert it and select the drive using the "Browse" button. You may also select a folder with dicom files.</label>
+                <label for="input-cd-step1" class="scan-head">Select a CD/DVD drive or a folder with DICOM files.</label>
                 <div class="file-loading">
                     <input id="input-cd-step1" name="input-cd-step1[]" type="file" multiple mozdirectory webkitdirectory>
                 </div>
                 <div id="errorBlock-cd" class="help-block"></div>
                 <p><br></p>
-                <h4>Or...</h4>
+                <h4>or</h4>
                 <p><br></p>
-                <label for="input-file" class="scan-head">If you already have it, you may also select a NIFTI file or a zipped folder of DICOM files.</label>
+                <label for="input-file" class="scan-head">Select a NIFTI file or a zipped folder of DICOM files.</label>
                 <div class="file-loading">
                     <input id="input-file" name="input-file" type="file" multiple>
                 </div>
@@ -30,7 +30,7 @@
               <div class="modal-dialog">
                   <div class="modal-content">
                       <div class="modal-header">
-                          <h3>Scanning files...</h3>
+                          <h3>Scanning files ...</h3>
                       </div>
                       <div class="modal-body">
                           <div class="progress">
@@ -90,20 +90,17 @@
                             </button>
                         </div>
                         <div class="modal-body">
-                            <p class="modal-tile">Please confirm the scan date is correct, then click upload.</p>
+                            <p class="modal-tile">Please confirm that the scan date is correct.</p>
                             <form method="POST" action="{{ url_for('experiment.add') }}" enctype="multipart/form-data" role="form" id="uploadForm">
                             {% from "security/_macros.html" import render_field, render_field_with_errors %}
                             {{ form.hidden_tag() }}
                             {{ render_field_with_errors(form.date, class='form-control') }}
-                            <!-- {{ render_field_with_errors(form.scanner, class='form-control') }}
-                            {{ render_field_with_errors(form.field_strength, class='form-control') }} -->
                             <div class="pb-2"></div>
                             <div style="display: none;">
                                 {{ render_field(form.scan_file, class='form-control') }}
                             </div>
                             <button type="submit" class="btn btn-success submit-button" id="upload-toggle" style="float:right;">Upload</button>
                             <button id="go-back" class="btn btn-outline-secondary" onclick="return false;">Go Back</button>
-                            <!-- <button type="button" class="btn btn-primary start-over" onclick="return false;">Cancel</button> -->
                             </form>
                         </div>
                       </div>
@@ -131,10 +128,7 @@
               <div class="modal-dialog">
                   <div class="modal-content">
                     <div class="modal-header">
-                        <h4>Uploading...</h4>
-                    </div>
-                    <div class="modal-body">
-                      <p>We appreciate your patience as your MRI scan is being uploaded and archived</p>
+                        <h4>Uploading ...</h4>
                     </div>
                     <div class="row">
                         <div class="mx-auto" style="width:150px;">

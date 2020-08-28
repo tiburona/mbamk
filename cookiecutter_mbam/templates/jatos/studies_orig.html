@@ -1,0 +1,93 @@
+{% extends "layout.html" %}
+{% block title %}Available Studies{% endblock title %}
+
+{% block content %}
+<section role="content-uni-wrapper">
+  <div class="container">
+      <div class="jumbotron">
+          <div class="text-center">
+          <h3 style="margin-top: 0px;">Available Surveys and Psychophysics Experiments</h3>
+          <br>
+          </div>
+          <footer>
+              <div class="row">
+                  <ul id="menu" class="text-center">
+                      <li><a href="#recent">Unpaid </a>&#8226;</li>
+                      <li><a href="#paid">Paid </a></li>
+                  </ul>
+              </div>
+          </footer>
+
+          {% if current_user.has_role('researcher') %}
+              <div class="pull-right">
+                  <a href="{{ url_for('admin') }}" id="new">
+                      <span class="glyphicon glyphicon-plus"></span>&nbsp;New
+                  </a>
+              </div>
+          {% endif %}
+
+          <hr>
+
+          <div class="text-center">
+              <a name="recent"></a><h4>Unpaid studies</h4>
+              <h5>All available surveys and psychophysics experiments.</h5>
+          </div>
+          <br>
+          <div class="row text-center" style="display:flex; flex-wrap: wrap;">
+              {% for study,completed in studies_completed %}
+                  <div class="col-md-3 col-sm-6">
+                      <div class="thumbnail" style="height:100px;">
+                          <div class="caption text-left" style="padding-top: 0px;">
+                              <a href="{{ url_for('jatos.study_description',study_id=study.id) }}">
+                                  <h4 style="margin-top: 5px">{{ study.title }}</h4>
+                              </a>
+                              <div class="bottom-align-text-thumb">
+                                  {% if 'yes' in completed %}
+                                      <p style = "font-size:16px;">Completed <i class="fa fa-check-square-o fa-lg" aria-hidden="true"></i></p>
+                                  {% elif 'no' in completed %}
+                                      <p style = "font-size:16px">Not Completed <i class="fa fa-square-o fa-lg" aria-hidden="true"></i></p>
+                                  {% endif %}
+
+                                  {% if study.date %}
+                                      <p>Added on {{ study.date.strftime('%d %b, %Y')}}</p>
+                                  {% endif %}
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              {% endfor %}
+              <hr>
+          </div>
+
+          <br>
+          <hr>
+          <div class="text-center">
+              <a name="paid"></a><h4>Paid studies</h4>
+              <h5>Paid surveys and psychophysics experiments (Amazon Mechanical Turk).</h5>
+          </div>
+          <br>
+          <div class="row text-center" style="display:flex; flex-wrap: wrap;">
+              {% if MTStudies %}
+              {% for study in MTStudies.items %}
+                  <div class="col-md-3 col-sm-6">
+                      <div class="thumbnail">
+                          <div class="caption text-left">
+                              <a href="{{ url_for('study_description',study_id=study.id) }}">
+                                  <h4>{{ study.title }}</h4>
+                              </a>
+                              <p style = "font-size:12px">{{study.comments}}</p>
+                              {% if study.date %}
+                                  <p>Added on {{ study.date.strftime('%d %b, %Y')}}</p>
+                              {% endif %}
+                          </div>
+                      </div>
+                  </div>
+              {% endfor %}
+              {% endif %}
+              <hr>
+          </div>
+
+      </div>
+  </div>
+</section>
+{% endblock content %}

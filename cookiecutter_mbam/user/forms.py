@@ -15,7 +15,7 @@ class ProfileForm(FlaskForm):
     sex = SelectField('Sex',
                       choices=[(None, ''), ('Male', 'Male'), ('Female', 'Female'), ('Other', 'Other')],
                       validators=[DataRequired()])
-    dob = DateField('Date of Birth (mm/dd/YYYY).', format='%Y-%m-%d', validators=[DataRequired()])
+    dob = DateField('Date of Birth', format='%Y-%m-%d', validators=[DataRequired()])
 
     def __init__(self, *args, **kwargs):
         """Create instance."""

@@ -205,12 +205,12 @@ export function createThumbnailUri(series) {
     }
 }
 
-var inputFileConfig = { hideThumbnailContent: true, showPreview: false, msgPlaceholder: "Select file...", dropZoneEnabled: false, msgSelected: "Selected a file.",
+var inputFileConfig = { hideThumbnailContent: true, showPreview: false, msgPlaceholder: "Select file ...", dropZoneEnabled: false, msgSelected: "Selected a file.",
     browseLabel: "Browse ...", browseIcon: "<i class=\"fa fa-file\" aria-hidden=\"true\"></i>", elErrorContainer: "#errorBlock-file", showRemove: true, showUpload: false,
     maxFileCount: 3, allowedFileExtensions: ['nii','zip','nii.gz']
 }
 
-var inputCDStep1Config = { hideThumbnailContent: false, showPreview: false, maxFileCount: 2000, msgPlaceholder: "Select CD Drive or folder...", dropZoneEnabled: false, msgSelected: "Found {n} files.",
+var inputCDStep1Config = { hideThumbnailContent: false, showPreview: false, maxFileCount: 2000, msgPlaceholder: "Select media ...", dropZoneEnabled: false, msgSelected: "Found {n} files.",
     browseLabel: "Browse ...", browseIcon: "<i class=\"fa fa-folder-open\"></i>", elErrorContainer: "#errorBlock-cd", showRemove: true, showUpload: false, minFileSize: null
 }
 

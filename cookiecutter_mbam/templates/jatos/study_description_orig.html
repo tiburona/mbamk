@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+{% block title %}Study description{% endblock title %}
+
+{% block content %}
+<section role="content-uni-wrapper">
+  <div class="container">
+      <div class="jumbotron">
+          <div class="text-center">
+          <h3>{{ study.title }}</h3>
+          </div>
+
+          <br>
+          <div class="row text-center" style="display:flex; flex-wrap: wrap; padding: 15px;">
+              <div class="caption text-left">
+                  <p style = "font-size:16px">{{study.description}}</p>
+                  {% if study.date %}
+                      <p>Added on {{ study.date.strftime('%d %b, %Y')}}</p>
+                  {% endif %}
+
+                  <br>
+                  <hr>
+                  {% if 'yes' in completed %}
+                      <a href="#">
+                          <h4>You have already completed this study. In future will present results.</h4>
+                      </a>
+                  {% else %}
+                      <a target="_blank" href="{{ url_for('jatos.present_study',study_id=study.id) }}">
+                          <h4>Click here to conduct study</h4>
+                      </a>
+                      <br>
+                      {% if study.comments %}
+                          {% if 'https' in study.comments %}
+                          <a target="_blank" href="{{ study.comments }}">
+                              <h4>Click here to conduct paid study on Amazon Mechanical Turk</h4>
+                          </a>
+                              {% if not current_user.mtWorker_id %}
+                              <h5>Note to conduct the study and receive credit for it you should first <a href="{{ url_for('mtWorkerId') }}">tell us your Amazon MT ID</a>.</h5>
+                              {% endif %}
+                          {% endif %}
+                      {% endif %}
+                  {% endif %}
+              </div>
+          </div>
+      </div>
+  </div>
+</section>
+{% endblock content %}
