@@ -76,7 +76,6 @@ class MailFilter(logging.Filter):
 mail_handler = TlsSMTPHandler(
     mailhost='smtp.gmail.com',
     fromaddr=config.SECURITY_EMAIL_SENDER,
-    #toaddrs=['tiburona@gmail.com'],
     toaddrs=[ADMIN_EMAIL],
     subject='Application Error',
     credentials=(config.MAIL_USERNAME, config.MAIL_PASSWORD)

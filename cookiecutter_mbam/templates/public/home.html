@@ -19,7 +19,7 @@
         <h1>Your Neuroscience and Psychology Portal</h1>
 
         {% if current_user.is_authenticated %}
-            {% if current_user.num_experiments == 0 %}
+            {% if not current_user.experiments.all() %}
                 <p>First Visit? We will guide you through the steps</p>
                 <p class="btn-ca"><a class="btn btn-large btn-y" href="{{ url_for( 'experiment.add' ) }}" role="button"><i class="fa fa-upload" aria-hidden="true"></i> Upload my scan</a></p>
             {% else %}
@@ -33,7 +33,7 @@
         {% else %}
 
             <p>Create a 3D model of your brain scan. Contribute to mental health research.</p>
-            <p><a class="btn btn-primary btn-large btn-y" href="{{ url_for('security.register') }}" role="button">Create account</a></p>
+            <p><a class="btn bqtn-primary btn-large btn-y" href="{{ url_for('security.register') }}" role="button">Create account</a></p>
             <p class="hype-t"><i>Already have an account?<a href="{{ url_for('security.login') }}" role="button"> <u>Login</u></a></i></p>
 
         {% endif %}

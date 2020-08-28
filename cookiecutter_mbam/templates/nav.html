@@ -31,7 +31,7 @@
         <div class="dropdown-menu user-d" aria-labelledby="navbarDropdown">
           <a class="dropdown-item nav-us-p" href="{{ url_for('user.profile') }}"><i class="fa fa-user"></i>Edit Profile</a>
           <!--<a class="dropdown-item nav-us-p" data-toggle="modal" data-target= "#myModal"><i class="fa fa-user"></i>Edit Profile</a>-->
-          {% if current_user.num_experiments != 0 %}
+          {% if current_user.experiments.all() %}
           <a class="dropdown-item nav-us-p" href="{{ url_for('display.displays') }}"><i class="fa fa-desktop"></i>View Scans</a>
           {% endif %}
           <a class="dropdown-item nav-us-p" href="{{ url_for_security('logout') }}"><i class="fa fa-sign-out"></i>Logout</a>
@@ -49,7 +49,7 @@
         {% endif %}
       </li>
       <li class="nav-item"><a href="{{ url_for('user.profile') }}"><i class="fa fa-user"></i>Edit Profile</a></li>
-      {% if current_user.num_experiments != 0 %}
+      {% if current_user.experiments.all() %}
       <li class="nav-item"><a href="{{ url_for('display.displays') }}"><i class="fa fa-desktop"></i>View Scans</a></li>
       {% endif %}
       <li class="nav-item"><a href="{{ url_for_security('logout') }}"><i class="fa fa-sign-out"></i>Logout</a></li>

@@ -4,7 +4,7 @@ import rsa
 from botocore.signers import CloudFrontSigner
 from cookiecutter_mbam.base import BaseService
 from cookiecutter_mbam.scan import Scan
-from cookiecutter_mbam.config import Config as config
+from cookiecutter_mbam.config import Config
 from datetime import datetime
 from flask import url_for
 from cookiecutter_mbam.utils.debug_utils import debug
@@ -14,9 +14,9 @@ class DisplayService(BaseService):
 
     def __init__(self, user):
         # set Cloudfront parameters from config file
-        self.cf_base_url = config.CLOUDFRONT_URL
-        self.key_id = config.CLOUDFRONT_KEY_ID
-        self.private_key = config.CLOUDFRONT_SECRET_KEY
+        self.cf_base_url = Config.CLOUDFRONT_URL
+        self.key_id = Config.CLOUDFRONT_KEY_ID
+        self.private_key = Config.CLOUDFRONT_SECRET_KEY
         self.user = user
 
     def sign_url(self, url):
@@ -65,8 +65,6 @@ class DisplayService(BaseService):
 
     def get_user_scans(self):
         """ Get all scans belonging to a user that also have orig_aws_key
-        :param user_id: id of the user
-        :type user_id: into
         :return: list of scan objects
         :rtype: list
         """
@@ -80,6 +78,7 @@ class DisplayService(BaseService):
         :type message: str
         :return: signed message
         """
+
         return rsa.sign(message, rsa.PrivateKey.load_pkcs1(self.private_key.encode('utf8')), 'SHA-1')
 
     def _cf_signer(self):
@@ -89,6 +88,7 @@ class DisplayService(BaseService):
         """
 
         return CloudFrontSigner(self.key_id, self._rsa_signer)
+
 
 def displays_url():
     try:
