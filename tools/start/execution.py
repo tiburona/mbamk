@@ -6,6 +6,8 @@ init(autoreset=True)
 
 
 def execute(cmd, stream_output=False, output_labels=None):
+    """Invoke the subprocess module to start a process.  If stream_output, prints any output to standard out as the
+    process is running, or else prints after the process is done."""
     if stream_output:
 
         proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
@@ -26,6 +28,7 @@ def execute(cmd, stream_output=False, output_labels=None):
 
 
 def thread(func):
+    """A wrapper that produces a threaded function"""
     def wrapper(*args, **kwargs):
         x = threading.Thread(target=func, args=args, kwargs=kwargs)
         x.start()
@@ -33,6 +36,8 @@ def thread(func):
 
 
 def send_process(command, directory='.', output_labels=None, thread_wrap=False, stream_output=False):
+    """Changes directory and wraps the function to create a threaded function if necessary, then calls execute to run
+    the process."""
     if directory != '.':
         command = 'cd {}; '.format(directory) + command
 
