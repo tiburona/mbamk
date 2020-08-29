@@ -7,19 +7,19 @@ import traceback
 
 env_params = {
     'trusted': [
-        'MIND_XNAT_USER', 'MIND_XNAT_PASSWORD', 'BACKUP_XNAT_USER', 'SEMAPHORE_AUTH_TOKEN', 'CLOUDFRONT_URL', 
-        'CLOUDFRONT_KEY_ID', 'CLOUDFRONT_SECRET_KEY', 'S3_KEY_ID', 'S3_SECRET_KEY', 'S3_BUCKET', 'SECRET_KEY', 
+        'MIND_XNAT_USER', 'MIND_XNAT_PASSWORD', 'BACKUP_XNAT_USER', 'SEMAPHORE_AUTH_TOKEN', 'CLOUDFRONT_URL',
+        'CLOUDFRONT_KEY_ID', 'CLOUDFRONT_SECRET_KEY', 'S3_KEY_ID', 'S3_SECRET_KEY', 'S3_BUCKET', 'SECRET_KEY',
         'SECURITY_PASSWORD_SALT', 'MAIL_USERNAME', 'MAIL_PASSWORD', 'SEMAPHORE_HASH_ID'
     ],
     'docker': [
-        'MIND_XNAT_USER', 'MIND_XNAT_PASSWORD', 'BACKUP_XNAT_USER', 'BACKUP_XNAT_PASSWORD', 'CLOUDFRONT_URL', 
-        'CLOUDFRONT_KEY_ID', 'CLOUDFRONT_SECRET_KEY', 'S3_KEY_ID', 'S3_SECRET_KEY', 'SECRET_KEY', 'MAIL_USERNAME', 
+        'MIND_XNAT_USER', 'MIND_XNAT_PASSWORD', 'BACKUP_XNAT_USER', 'BACKUP_XNAT_PASSWORD', 'CLOUDFRONT_URL',
+        'CLOUDFRONT_KEY_ID', 'CLOUDFRONT_SECRET_KEY', 'S3_KEY_ID', 'S3_SECRET_KEY', 'SECRET_KEY', 'MAIL_USERNAME',
         'MAIL_PASSWORD'
     ],
     'staging': [
-        'MIND_XNAT_USER', 'MIND_XNAT_PASSWORD', 'BACKUP_XNAT_USER', 'BACKUP_XNAT_PASSWORD', 'BASIC_AUTH_USERNAME', 
-        'BASIC_AUTH_PASSWORD', 'CLOUDFRONT_URL', 'CLOUDFRONT_KEY_ID', 'CLOUDFRONT_SECRET_KEY', 'S3_KEY_ID', 
-        'S3_SECRET_KEY', 'SECRET_KEY', 'SECURITY_PASSWORD_SALT', 'MAIL_USERNAME', 'MAIL_PASSWORD', 'MYSQL_USERNAME', 
+        'MIND_XNAT_USER', 'MIND_XNAT_PASSWORD', 'BACKUP_XNAT_USER', 'BACKUP_XNAT_PASSWORD', 'BASIC_AUTH_USERNAME',
+        'BASIC_AUTH_PASSWORD', 'CLOUDFRONT_URL', 'CLOUDFRONT_KEY_ID', 'CLOUDFRONT_SECRET_KEY', 'S3_KEY_ID',
+        'S3_SECRET_KEY', 'SECRET_KEY', 'SECURITY_PASSWORD_SALT', 'MAIL_USERNAME', 'MAIL_PASSWORD', 'MYSQL_USERNAME',
         'MYSQL_PASSWORD', 'AMAZON_SMTP_PASSWORD', 'AMAZON_SMTP_USERNAME'],
     'qa': [
         'MIND_XNAT_USER', 'MIND_XNAT_PASSWORD', 'BACKUP_XNAT_USER', 'BACKUP_XNAT_PASSWORD', 'BASIC_AUTH_USERNAME',
@@ -111,6 +111,7 @@ def check_database(uri):
 
 def set_config_from_yaml(config_path, config_name):
     """Load configuration from a YAML file and set environment variables"""
+
     try:
         with open(config_path) as file:
             configs = yaml.safe_load(file)
@@ -182,6 +183,8 @@ def set_config(config_path, override_config_path, config_name, xnat, **kwargs):
     """Set configuration by calling function to read YAML files and set env variables. The database and XNAT both need
     more extensive logic for their config than just setting environment variables, so there are two dedicated methods
     for them."""
+
+    print("MBaM was started using the configuration named: " + config_name)
 
     config = set_config_from_yaml(config_path, config_name)
     override_config = set_config_from_yaml(override_config_path, config_name)
