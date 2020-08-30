@@ -223,9 +223,6 @@ class TestDLFilesFromXnat(TestXNATTasks):
         self.file_uri = os.path.join(self.files_uri, 'T1.nii.gz')
         self.signature = dl_files_from_xnat.s(self.scan_uri, self.auth, self.file_depot, suffix=self.suffix)
         self.name = 'T1.nii.gz'
-        # dir_path = os.path.dirname(os.path.realpath(__file__))
-        # par_path = os.path.abspath(os.path.join(dir_path, os.pardir, os.pardir)
-        # self.test_file_src = os.path.join(par_path, 'test_files', self.name)
         self.test_file = tempfile.NamedTemporaryFile()
         self.test_file_path = self.test_file.name
         self.files_mock_args = [responses.GET, self.xnat_host + self.files_uri]

@@ -40,7 +40,7 @@ class BaseModel:
 
     def _username(self):
         try:
-            return current_user.name
+            return current_user.full_name
         except (NameError, AttributeError) as e:
             self._call_error_handler(e, "Received error in setting username property", email_user=False)
             return ''
