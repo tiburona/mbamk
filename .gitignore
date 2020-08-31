@@ -80,5 +80,8 @@ cookiecutter_mbam/node_modules
 secrets*
 
 
+tests/test_files/*
+
+
 
 
