@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """User views."""
-from flask import Blueprint, render_template, flash, redirect, url_for, current_app
+from flask import Blueprint, render_template, flash, redirect, url_for, current_app, session
 from flask_security import login_required, current_user
 
 from cookiecutter_mbam.utils.error_utils import flash_errors
@@ -40,10 +40,15 @@ def profile():
 @login_required
 def consent():
     """ Consent form for participation in research."""
+    flash("Uploading your brain scan to My Brain and Me is participation in a "
+          "research study. You can learn about what that means below. If you "
+          "decide to participate, you can provide consent after reading the study "
+          "description.", 'success')
     if isinstance(current_user.sex,str): # Check if user profile was filled out
         form = ConsentForm()
         if form.validate_on_submit():
             current_user.update(consented=form.consented.data)
+            session.pop('_flashes', None)
             flash('Thank you for providing consent.','success')
             return redirect(url_for('experiment.add'))
     else:

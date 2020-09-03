@@ -54,7 +54,7 @@ def build_status_message(statuses, user):
             url_for('display.displays', _external=True)),
 
         'meh': "scan was uploaded to My Brain and Me, but something went wrong and you may not be able to view it yet. "
-               "If you can not view it at {} please feel free to email us at info@mybrainandme.org.".format(
+               "If you can not view it at {}, please feel free to email us at info@mybrainandme.org.".format(
             url_for('display.displays', _external=True)),
 
         'Boo': "scan was not uploaded to My Brain and Me because something went wrong. The admins have been notified. "
