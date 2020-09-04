@@ -143,7 +143,6 @@ Resources:
         ImageUrl: !Ref 'FlaskAppImageUrl'
         ContainerCpu: 256
         ContainerMemory: 384
-        #ContainerCommand: "python tools/start/entry.py run --celery --env staging"
         ContainerCommand: !Sub
           - bash,-c,python tools/start/entry.py run --celery --env ${Environ}
           - { Environ: !Ref EnvironmentName }
