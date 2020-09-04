@@ -438,7 +438,8 @@ class ScanService(BaseService):
         Removes a scan from the database and optionally removes it from XNAT and/or S3.
 
         :param int scan_id: the database id of the scan to delete
-        :param bool delete_from_xnat: whether to delete the scan file from XNAT, default False
+        :param bool delete_from_xnat: whether to delete the scan and derivations from XNAT, default False
+        :param bool delete_from_S3: whether to delete the scan and derivations from S3, default False
         :return: None
         """
         scan = Scan.get_by_id(scan_id)
@@ -448,14 +449,8 @@ class ScanService(BaseService):
         if delete_from_S3:
             if scan.aws_key is not None:
                 self.csc.delete_object(scan.aws_key)
-
                 [self.csc.delete_folder(d.aws_key) for d in scan.derivations if d.aws_key is not None]
 
-                # for der in scan.derivations:
-                #     if der.aws_key is not None:
-                #         self.csc.delete_folder(der.aws_key)
-
-        # First delete the scan's derivations
         for der in scan.derivations:
             der.delete()
 
