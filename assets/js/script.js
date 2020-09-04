@@ -18,6 +18,13 @@ $(document).ready(function() {
 	 else {
 		$(".navbar").css('background', '#193b48');
 	 }
+
+	 $('.remove-button').click(function(){
+		$(this).html("")
+	 	$(this).append('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Removing...')
+	 })
+
+
 });
 
 // Below modals appear after user hits edit/delete icons in the displays dashboard

@@ -45,7 +45,7 @@ def register_extensions(app):
     migrate.init_app(app, db)
     webpack.init_app(app)
     # Must register views before initalizing the Flask admin
-    # And recreate admin instance within create_app to avoide blueprint name collisions during testing
+    # And recreate admin instance within create_app to avoid blueprint name collisions during testing
     # https://github.com/flask-admin/flask-admin/issues/910
     admin=Admin()
     register_admin_views(admin)

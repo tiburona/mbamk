@@ -431,11 +431,11 @@ class ScanService(BaseService):
         return Scan.create(experiment_id=self.experiment.id, xnat_status=xnat_status, aws_status=aws_status,
                            user_id=self.experiment.user_id)
 
-    def delete(self, scan_id, delete_from_xnat=False):
+    def delete(self, scan_id, delete_from_xnat=False, delete_from_S3=False):
         # todo: add delete listener
         """ Remove a scan from the database
 
-        Removes a scan from the database and optionally removes it from XNAT.
+        Removes a scan from the database and optionally removes it from XNAT and/or S3.
 
         :param int scan_id: the database id of the scan to delete
         :param bool delete_from_xnat: whether to delete the scan file from XNAT, default False
@@ -444,4 +444,19 @@ class ScanService(BaseService):
         scan = Scan.get_by_id(scan_id)
         if delete_from_xnat:
             self.xc.xnat_delete(scan.xnat_uri)
+
+        if delete_from_S3:
+            if scan.aws_key is not None:
+                self.csc.delete_object(scan.aws_key)
+
+                [self.csc.delete_folder(d.aws_key) for d in scan.derivations if d.aws_key is not None]
+
+                # for der in scan.derivations:
+                #     if der.aws_key is not None:
+                #         self.csc.delete_folder(der.aws_key)
+
+        # First delete the scan's derivations
+        for der in scan.derivations:
+            der.delete()
+
         scan.delete()

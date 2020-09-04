@@ -9,7 +9,7 @@
                     {% from "security/_macros.html" import render_field, render_field_with_errors %}
           		      {{ session_form.hidden_tag() }}
                   <div class="btn-section mt-4">
-                        <button type="submit" class="btn btn-success custom-width float-right">Remove</button>
+                        <button type="submit" class="btn btn-success custom-width float-right remove-button">Remove</button>
                         <button type="cancel" onclick="window.location='{{ url_for('display.displays') }}';return false;" class="btn btn-outline-secondary">Cancel</button>
                   </div>
                   </form>
