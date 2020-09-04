@@ -69,15 +69,17 @@ def delete_scan(id):
     """ Delete the scan."""
     if resource_belongs_to_user(Scan, id):
         scan = Scan.query.filter(Scan.id==id).first_or_404()
+        exp = scan.experiment
         form = DeleteScanForm(obj=scan)
+        ss=ScanService(current_user,exp)
 
         if form.validate_on_submit():
             form.populate_obj(scan)
-            exp = scan.experiment
-            scan.delete()
-            if not exp.scans:
+
+            ss.delete(scan.id, delete_from_xnat=True, delete_from_S3=True)
+
+            if len(exp.scans.all()) == 0:
                 exp.delete()
-            # Can use ScanService.delete() instead with includes a flag to delete xnat scan
 
             flash('Scan removed.','success')
             return redirect(url_for('display.displays'))

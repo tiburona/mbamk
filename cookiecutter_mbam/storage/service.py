@@ -44,3 +44,8 @@ class CloudStorageConnection(BaseService):
 
     def delete_object(self, key):
         self.s3_client.delete_object(Bucket=self.bucket_name, Key=key)
+
+    def delete_folder(self, key):
+        bucket = self.s3_resource.Bucket(self.bucket_name)
+        for obj in list(bucket.objects.filter(Prefix=key)):
+            obj.delete()
