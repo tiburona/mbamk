@@ -54,7 +54,7 @@ def build_status_message(statuses, user):
     ordinal_words = ['first', 'second', 'third']
 
     responses = {
-        'YAY': "scan was successfully uploaded to My Brain and Me! You can view your scans at {}".format(
+        'YAY': "scan was successfully uploaded to My Brain and Me! You can view your scans at {}.".format(
             url_for('display.displays', _external=True)),
 
         'meh': "scan was uploaded to My Brain and Me, but something went wrong and you may not be able to view it yet. "
