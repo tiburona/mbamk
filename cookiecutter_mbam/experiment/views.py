@@ -13,7 +13,7 @@ from cookiecutter_mbam.base.tasks import global_error_handler
 from cookiecutter_mbam.config import Config
 from cookiecutter_mbam.utils.debug_utils import debug
 
-blueprint = Blueprint('experiment', __name__, url_prefix='/experiments', static_folder='../static')
+blueprint = Blueprint('experiment', __name__, url_prefix='/', static_folder='../static')
 
 num2words = {
         1: 'one scan',
