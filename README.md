@@ -467,7 +467,7 @@ Then
     mysql> drop database brain_db;
     mysql> create database brain_db;
 
-Now, back at your command line in mbam/cookiecutter_mbam, run:
+Now, back at your command line in mbam folder (be sure to first export FLASK_APP=autoapp.py), run:
 
     flask db upgrade
 

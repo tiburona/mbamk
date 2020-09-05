@@ -84,8 +84,8 @@ def get_latest_scan_info(self, experiment_uri, xnat_credentials):
      XNAT automatically sets the ID of an imported scan and MBAM makes no attempt to overwrite it.  This function
      retrieves that information (regardless of whether the scan was uploaded or imported.)
 
-    :param uris: a dictionary with levels as keys that contains the experiment uri
-    :type uris: dict
+    :param experiment_uri: the uri of the experiment the scan was uploaded to
+    :type experiment_uri: str
     :param xnat_credentials: a three-tuple of the server, username, and password to log into XNAT
     :type xnat_credentials: tuple
     :return: a dictionary of the XNAT id and XNAT URI of the scan
@@ -113,7 +113,7 @@ def gen_container_data(self, uri, xnat_credentials, download_suffix, upload_suff
     :type xnat_credentials: tuple
     :param download_suffix: the suffix that, concatenated with `uri`, indicates the URI for file download
     :type download_suffix: str
-    :param upload_suffix: the sufficx that, concatenated with `uri`, indicates where to upload processed files
+    :param upload_suffix: the suffix that, concatenated with `uri`, indicates where to upload processed files
     :type upload_suffix: str
     :return: the data that will be passed to the container via a post request
     :rtype: dict
@@ -151,7 +151,7 @@ def launch_command(self, data, xnat_credentials, project, command_ids):
 
 def construct_container_data(r_json, server):
     """Take the response from the XNAT container service to launching a container and extract data from it
-    :param r_json: the json data from the response from the containre service
+    :param r_json: the json data from the response from the container service
     :type r_json: dict
     :param server: the XNAT host
     :type server: str
@@ -230,6 +230,7 @@ def poll_cs_fsrecon(self, container_id, xnat_credentials, interval):
         return poll_cs(container_id, xnat_credentials, interval)
     except SoftTimeLimitExceeded:
         return 'Timed Out'
+
 
 @celery.task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5}, soft_time_limit=259200)
 def poll_cs_fs2mesh(self, container_id, xnat_credentials, interval):

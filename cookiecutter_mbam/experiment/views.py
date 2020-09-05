@@ -12,6 +12,7 @@ from .service import ExperimentService
 from cookiecutter_mbam.base.tasks import global_error_handler
 from cookiecutter_mbam.config import Config
 from cookiecutter_mbam.utils.debug_utils import debug
+from cookiecutter_mbam.scan.service import ScanService
 
 blueprint = Blueprint('experiment', __name__, url_prefix='/', static_folder='../static')
 
@@ -123,11 +124,12 @@ def delete_experiment(id):
     if resource_belongs_to_user(Experiment, id):
         exp = Experiment.get_by_id(id)
         form = FlaskForm()
+        ss=ScanService(current_user,exp)
 
         if form.validate_on_submit():
             for scan in exp.scans:
-                # Replace with ScanService.delete() to also delete from XNAT?
-                scan.delete()
+                ss.delete(scan.id, delete_from_xnat=True, delete_from_S3=True)
+                
             exp.delete()
 
             flash("Deleted the session.", 'success')

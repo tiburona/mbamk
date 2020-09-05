@@ -350,8 +350,8 @@ class XNATConnection(BaseService):
         :return: None
         """
         try:
-            with xnat.connect(self.server, self.user, self.password) as session:
-                session.delete(url)
+            with init_session(self.user, self.password) as session:
+                return session.delete(self.server + url)
         except:
             # todo: handle errors!
             pass

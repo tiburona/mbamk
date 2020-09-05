@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 4268b3e24840
-Revises:
-Create Date: 2019-07-21 11:24:05.948814
+Revision ID: f60552e61426
+Revises: 7dc4d40ca6e8
+Create Date: 2020-08-30 11:57:35.740272
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '4268b3e24840'
+revision = 'f60552e61426'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -23,11 +23,14 @@ def upgrade():
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('process_name', sa.String(length=255), nullable=False),
     sa.Column('xnat_container_id', sa.String(length=80), nullable=True),
+    sa.Column('cs_id', sa.String(length=80), nullable=True),
     sa.Column('xnat_uri', sa.String(length=255), nullable=True),
-    sa.Column('cloud_storage_key', sa.String(length=255), nullable=True),
-    sa.Column('status', sa.String(length=255), nullable=False),
+    sa.Column('xnat_host', sa.String(length=255), nullable=True),
+    sa.Column('aws_key', sa.String(length=255), nullable=True),
+    sa.Column('aws_status', sa.String(length=255), nullable=False),
+    sa.Column('container_status', sa.String(length=255), nullable=False),
     sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('cloud_storage_key'),
+    sa.UniqueConstraint('aws_key'),
     sa.UniqueConstraint('xnat_uri')
     )
     op.create_table('role',
@@ -54,7 +57,9 @@ def upgrade():
     sa.Column('parent_email', sa.String(length=80), nullable=True),
     sa.Column('is_admin', sa.Boolean(), nullable=True),
     sa.Column('xnat_id', sa.String(length=80), nullable=True),
-    sa.Column('num_experiments', sa.Integer(), nullable=True),
+    sa.Column('xnat_label', sa.String(length=80), nullable=True),
+    sa.Column('xnat_uri', sa.String(length=255), nullable=True),
+    sa.Column('experiment_counter', sa.Integer(), nullable=True),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('email')
     )
@@ -64,10 +69,12 @@ def upgrade():
     sa.Column('date', sa.Date(), nullable=False),
     sa.Column('scanner', sa.String(length=80), nullable=True),
     sa.Column('field_strength', sa.String(length=80), nullable=True),
-    sa.Column('num_scans', sa.Integer(), nullable=True),
     sa.Column('xnat_id', sa.String(length=80), nullable=True),
-    sa.Column('xnat_uri', sa.String(length=80), nullable=True),
+    sa.Column('xnat_label', sa.String(length=80), nullable=True),
+    sa.Column('xnat_uri', sa.String(length=255), nullable=True),
     sa.Column('user_id', sa.Integer(), nullable=False),
+    sa.Column('scan_counter', sa.Integer(), nullable=True),
+    sa.Column('visible', sa.Boolean(), nullable=True),
     sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
@@ -82,18 +89,23 @@ def upgrade():
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('xnat_status', sa.String(length=80), nullable=False),
     sa.Column('aws_status', sa.String(length=80), nullable=False),
-    sa.Column('xnat_uri', sa.String(length=255), nullable=True),
     sa.Column('xnat_id', sa.String(length=80), nullable=True),
-    sa.Column('orig_aws_key', sa.String(length=255), nullable=True),
+    sa.Column('xnat_uri', sa.String(length=255), nullable=True),
+    sa.Column('aws_key', sa.String(length=255), nullable=True),
     sa.Column('experiment_id', sa.Integer(), nullable=True),
+    sa.Column('user_id', sa.Integer(), nullable=False),
+    sa.Column('label', sa.String(length=255), nullable=True),
+    sa.Column('visible', sa.Boolean(), nullable=True),
     sa.ForeignKeyConstraint(['experiment_id'], ['experiment.id'], ),
+    sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('derivations_scans',
-    sa.Column('scan_id', sa.Integer(), primary_key=True),
-    sa.Column('derivation_id', sa.Integer(), primary_key=True),
+    sa.Column('scan_id', sa.Integer(), nullable=False),
+    sa.Column('derivation_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['derivation_id'], ['derivation.id'], ),
-    sa.ForeignKeyConstraint(['scan_id'], ['scan.id'], )
+    sa.ForeignKeyConstraint(['scan_id'], ['scan.id'], ),
+    sa.PrimaryKeyConstraint('scan_id', 'derivation_id')
     )
     # ### end Alembic commands ###
 

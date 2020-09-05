@@ -1,23 +1,24 @@
-import os
 import responses
-
 import pytest
-import collections
 import random
+import tempfile
 from datetime import datetime
 from cookiecutter_mbam.xnat.tasks import *
+from cookiecutter_mbam.config import Config
+import pdb
+
+config_vars = ['file_depot', 'xnat_host', 'xnat_user', 'xnat_password', 'xnat_docker_host', 'xnat_project',
+               'dicom_to_nifti_command', 'dicom_to_nifti_wrapper', 'freesurfer_recon_command',
+               'freesurfer_recon_wrapper', 'fs_to_mesh_command', 'fs_to_mesh_wrapper']
 
 
 class TestXNATTasks:
+
     @pytest.fixture(autouse=True)
     def setup_xnat_tests(self):
-        self.project = 'MBAM_TEST'
-        self.file_depot = config.files['file_depot']
-        self.xnat_config = config.XNAT
-        self.server = self.xnat_config['server']
-        self.xnat_credentials = (self.server, self.xnat_config['user'], self.xnat_config['password'])
-        self.command_ids = (self.xnat_config['dicom_to_nifti_command_id'], self.xnat_config['dicom_to_nifti_wrapper_id'])
-        self.command_id, self.wrapper_id = self.command_ids
+        for config_var in config_vars:
+            setattr(self, config_var, getattr(Config, config_var.upper()))
+        self.auth = (self.xnat_host, self.xnat_user, self.xnat_password)
         self.scan_uri = '/data/experiments/XNAT_E00001/scans/10'
         self.ids = {
             'subject': 'XNAT_S00001',
@@ -32,7 +33,7 @@ class TestXNATTasks:
     @responses.activate
     def failure_response(self, mocked_uri, signature, method='GET'):
         responses.add(getattr(responses, method), mocked_uri, status=404, json={'error': 'not found'})
-        with pytest.raises(ValueError) as e_info:
+        with pytest.raises(ValueError):
             signature.apply(throw=True)
 
     @responses.activate
@@ -43,6 +44,7 @@ class TestXNATTasks:
         for assertion in assertions:
             assert assertion(req)
         return task
+
 
 class TestCreateResources(TestXNATTasks):
 
@@ -62,7 +64,7 @@ class TestCreateResources(TestXNATTasks):
 
         self.responses = {level: self.ids[level] for level in self.to_create if level in ['subject', 'experiment']}
 
-        prefix = self.server + '/data/archive/projects/MBAM_TEST'
+        prefix = self.xnat_host + '/data/archive/projects/MBAM_TEST'
         subject_url = prefix + '/subjects/000001'
         experiment_url = subject_url + '/experiments/000001_MR1'
         scan_url = experiment_url + '/scans/T1_1'
@@ -79,8 +81,7 @@ class TestCreateResources(TestXNATTasks):
             'file':file_url + '?xsi:type=xnat:mrScanData'
         }
 
-        self.signature = create_resources.s(self.xnat_credentials, self.to_create, self.mocked_urls)
-
+        self.signature = create_resources.s(self.auth, self.to_create, self.mocked_urls)
 
     @responses.activate
     def test_create_resources(self):
@@ -104,35 +105,32 @@ class TestCreateResources(TestXNATTasks):
 
 class TestUploadsAndImports(TestXNATTasks):
 
-
     @pytest.fixture(
         autouse=True,
-        params=[('T1.nii.gz', upload_scan_to_xnat, '/resources/NIFTI/files/T1.nii.gz', 'PUT'),
-                ('DICOMS.zip', import_scan_to_xnat, '/data/services/import', 'POST')]
+        params=[('T1.nii.gz', False, '/resources/NIFTI/files/T1.nii.gz', 'PUT'),
+                ('DICOMS.zip', True, '/data/services/import', 'POST')]
     )
     def setup_tests(self, setup_xnat_tests, request):
-        filename, celery_task, uri, method = request.param
+        filename, imp, uri, method = request.param
         if filename == 'T1.nii.gz':
             uri = self.scan_uri + uri
-        self.mocked_url = self.server + uri
+        self.mocked_url = self.xnat_host + uri
         self.method = method
-        dir_path = os.path.dirname(os.path.realpath(__file__))
-        par_path = os.path.abspath(os.path.join(dir_path, os.pardir, os.pardir))
-        local_path = os.path.join(par_path, 'test_files', filename)
-        self.files =  {'file': (filename, open(local_path, 'rb'), 'application/octet-stream')}
+        self.test_file = tempfile.NamedTemporaryFile()
+        self.test_file_path = self.test_file.name
+        self.files = {'file': (filename, open(self.test_file_path, 'rb'), 'application/octet-stream')}
         self.mocked_json_response = {}
-        self.signature = celery_task.s(self.xnat_credentials, local_path, self.mocked_url, self.uris['experiment'])
-        self.assertions = [self.assert_request_type, self.assert_request_size]
+        self.signature = upload_scan_to_xnat.s(self.auth, self.test_file_path, self.mocked_url, self.uris['experiment'],
+                                               imp, delete=False)
+        self.assertions = [self.assert_request_type]
 
-    def assert_request_type(self, req):
+    @staticmethod
+    def assert_request_type(req):
         return req.headers['Content-Type'][0:19] == 'multipart/form-data'
 
-    def assert_request_size(self, req):
-        return int(req.headers['Content-Length']) > 1000
-
     def test_scan_to_xnat(self):
-        task = self.success_response(self.mocked_url, self.mocked_json_response, self.signature,
-                              method=self.method, assertions=self.assertions)
+        task = self.success_response(self.mocked_url, self.mocked_json_response, self.signature, method=self.method,
+                                     assertions=self.assertions)
         assert task.result == self.uris['experiment']
 
     def test_scan_to_xnat_raises_error_if_failure_response(self):
@@ -143,16 +141,16 @@ class TestGetLatestScanInfo(TestXNATTasks):
 
     @pytest.fixture(autouse=True)
     def set_up(self, setup_xnat_tests):
-        self.mocked_url = self.server + self.uris['experiment'] + '/scans'
+        self.mocked_url = self.xnat_host + self.uris['experiment'] + '/scans'
         self.mocked_json_response = {
-            'ResultSet':{
+            'ResultSet': {
                 'Result':
-                    [{'xnat_imagescandata_id':'2', 'ID': '10', 'URI': self.scan_uri},
-                     {'xnat_imagescandata_id':'1', 'ID': 'T1_1', 'URI': '/data/experiments/XNAT_E00001/scans/T1_1'}
+                    [{'xnat_imagescandata_id': '2', 'ID': '10', 'URI': self.scan_uri},
+                     {'xnat_imagescandata_id': '1', 'ID': 'T1_1', 'URI': '/data/experiments/XNAT_E00001/scans/T1_1'}
                      ]
             }
         }
-        self.signature = get_latest_scan_info.s(self.uris['experiment'], self.xnat_credentials)
+        self.signature = get_latest_scan_info.s(self.uris['experiment'], self.auth)
 
     def test_get_latest_scan_info(self):
         task = self.success_response(self.mocked_url, json=self.mocked_json_response, signature=self.signature)
@@ -162,29 +160,38 @@ class TestGetLatestScanInfo(TestXNATTasks):
         self.failure_response(self.mocked_url, self.signature)
 
 
-class TestGenDicomConversionData(TestXNATTasks):
+class TestGenContainerData(TestXNATTasks):
 
-    @pytest.fixture(autouse=True)
-    def set_up(self, setup_xnat_tests):
-        self.signature = gen_dicom_conversion_data.s(self.scan_uri)
+    @pytest.fixture(
+        autouse=True,
+        params=[('/resources/DICOM/files', '/resources/NIFTI/files')]
+    )
+    def setup_tests(self, setup_xnat_tests, request):
+        self.download_suffix, self.upload_suffix = request.param
+        self.signature = gen_container_data.s(self.scan_uri, self.auth, self.download_suffix, self.upload_suffix)
 
-    def test_gen_dicom_conversion_data(self):
+    def test_gen_container_data(self):
         task = self.signature.apply()
-        assert task.result == {'scan': self.scan_uri[5:]}
+        assert task.result == {
+            'download-url': self.xnat_host + self.scan_uri + self.download_suffix,
+            'upload-url': self.xnat_host + self.scan_uri + self.upload_suffix,
+            'xnat-host': self.xnat_host
+        }
 
 
 class TestLaunchCommand(TestXNATTasks):
 
     @pytest.fixture(autouse=True)
     def set_up(self, setup_xnat_tests):
+        self.command_ids = (self.dicom_to_nifti_command, self.dicom_to_nifti_wrapper)
         self.mocked_uri = '{}/xapi/projects/{}/commands/{}/wrappers/{}/launch'.format(
-            self.server, self.project, self.command_id, self.wrapper_id)
-        self.signature = launch_command.s(self.scan_uri, self.xnat_credentials, self.project, self.command_ids)
-        self.mocked_json_response = {'container-id': 'hello'}
+            self.xnat_host, self.xnat_project, self.dicom_to_nifti_command, self.dicom_to_nifti_wrapper)
+        self.signature = launch_command.s(self.scan_uri, self.auth, self.xnat_project, self.command_ids)
+        self.mocked_json_response = {'container-id': 'hello', 'id': 'hi'}
 
     def test_launch_command(self):
         task = self.success_response(self.mocked_uri, self.mocked_json_response, self.signature, method='POST')
-        assert task.result == 'hello'
+        assert task.result == {'cs_id': 'hi', 'xnat_container_id': 'hello', 'xnat_host': 'https://mind-xnat.nyspi.org'}
 
     def test_launch_command_raises_value_error_if_failure_response(self):
         self.failure_response(self.mocked_uri, self.signature, method='POST')
@@ -194,11 +201,12 @@ class TestPollCS(TestXNATTasks):
     @pytest.fixture(autouse=True)
     def set_up(self, setup_xnat_tests):
         self.container_id = 'hello'
-        self.mocked_uri = self.server + '/xapi/containers/{}'.format(self.container_id)
-        self.signature = poll_cs.s(self.container_id, self.xnat_credentials)
+        self.container_info = {'xnat_container_id': self.container_id}
+        self.mocked_uri = self.xnat_host + '/xapi/containers/{}'.format(self.container_id)
+        self.signature = poll_cs_dcm2nii.s(self.container_info, self.auth, 1)
         self.mocked_json_response = {'status': 'Complete'}
 
-    def test_poll_cs_result_is_value_for_status_key_on_json_response(self):
+    def test_poll_cs_dcm2nii_result_is_value_for_status_key_on_json_response(self):
         task = self.success_response(self.mocked_uri, json=self.mocked_json_response, signature=self.signature)
         assert task.result == 'Complete'
 
@@ -206,28 +214,29 @@ class TestPollCS(TestXNATTasks):
         self.failure_response(self.mocked_uri, self.signature)
 
 
-class TestDLFileFromXnat(TestXNATTasks):
+class TestDLFilesFromXnat(TestXNATTasks):
+
     @pytest.fixture(autouse=True)
     def set_up(self, setup_xnat_tests):
         self.files_uri = os.path.join(self.scan_uri, 'resources', 'NIFTI', 'files')
+        self.suffix = os.path.join('/resources', 'NIFTI', 'files')
         self.file_uri = os.path.join(self.files_uri, 'T1.nii.gz')
-        self.signature = dl_file_from_xnat.s(self.scan_uri, self.xnat_credentials, self.file_depot)
+        self.signature = dl_files_from_xnat.s(self.scan_uri, self.auth, self.file_depot, suffix=self.suffix)
         self.name = 'T1.nii.gz'
-        dir_path = os.path.dirname(os.path.realpath(__file__))
-        par_path = os.path.abspath(os.path.join(dir_path, os.pardir, os.pardir))
-        self.test_file_src = os.path.join(par_path, 'test_files', self.name)
-        self.files_mock_args = [responses.GET, self.server + self.files_uri]
+        self.test_file = tempfile.NamedTemporaryFile()
+        self.test_file_path = self.test_file.name
+        self.files_mock_args = [responses.GET, self.xnat_host + self.files_uri]
         self.files_mock_kwargs = {'status': 200,
                                   'json': {'ResultSet': {'Result': [{'Name': self.name, 'URI': self.file_uri}]}}}
 
     @responses.activate
-    def test_dl_file_from_xnat(self):
+    def test_dl_files_from_xnat(self):
 
         responses.add(*self.files_mock_args, **self.files_mock_kwargs)
 
-        with open(self.test_file_src, 'rb') as f:
+        with open(self.test_file_path, 'rb') as f:
 
-            responses.add(responses.GET, self.server + self.file_uri, body=f.read(), status=200)
+            responses.add(responses.GET, self.xnat_host + self.file_uri, body=f.read(), status=200)
             task = self.signature.apply()
 
             dl_path = os.path.join(self.file_depot, self.name)
@@ -238,12 +247,12 @@ class TestDLFileFromXnat(TestXNATTasks):
 
         os.remove(dl_path)
 
-    def test_dl_file_from_xnat_raises_value_error_if_failure_response_for_files(self):
-        self.failure_response(self.server + self.files_uri, self.signature)
+    def test_dl_files_from_xnat_raises_value_error_if_failure_response_for_files(self):
+        self.failure_response(self.xnat_host + self.files_uri, self.signature)
 
     @responses.activate
-    def test_dl_file_from_xnat_raises_value_error_if_failure_response_for_file(self):
+    def test_dl_files_from_xnat_raises_value_error_if_failure_response_for_file(self):
         responses.add(*self.files_mock_args, **self.files_mock_kwargs)
-        responses.add(responses.GET, self.server + self.file_uri, status=404, json={'error': 'not found'})
-        with pytest.raises(ValueError) as e_info:
+        responses.add(responses.GET, self.xnat_host + self.file_uri, status=404, json={'error': 'not found'})
+        with pytest.raises(ValueError):
             self.signature.apply(throw=True)
