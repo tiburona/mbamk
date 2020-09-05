@@ -6,9 +6,13 @@ from celery import group, chain
 from cookiecutter_mbam.scan.tasks import get_scan_attribute
 from cookiecutter_mbam.user.tasks import set_attributes as set_subject_attributes
 from flask import url_for
+from cookiecutter_mbam.config import Config
 
 set_attribute, set_attributes, get_attribute = run_task_factories(Experiment)
 
+# set mail constants
+mail_constants = ['EMAIL_SIGNATURE']
+SIGNATURE = [getattr(Config, const) for const in mail_constants]
 
 @cel.task
 def set_experiment_attribute(*args):
@@ -64,11 +68,10 @@ def build_status_message(statuses, user):
 
     scan_word = 'scans' if len(responses) > 1 else 'scan'
 
-    message_text = '''Dear {},\nThank you for uploading your brain {} to My Brain and Me! '''.format(
-        user.first_name, scan_word)
+    message_text = '''Thank you for uploading your brain {} to My Brain and Me! '''.format(scan_word)
 
     for i, status in enumerate(statuses):
-        message_text += "Your {} ".format(ordinal_words[i]) + responses[status] + '\n'
+        message_text += "Your {} ".format(ordinal_words[i]) + responses[status]
 
     return message_text
 

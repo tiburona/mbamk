@@ -13,8 +13,9 @@ from cookiecutter_mbam.mbam_logging import app_logger, celery_logger
 from flask_security import current_user, login_required
 
 # set mail constants
-mail_constants = ['MAIL_USERNAME', 'MAIL_SERVER', 'MAIL_PASSWORD', 'MAIL_PORT','SECURITY_EMAIL_SENDER']
-UNAME, SERVER, PASSWORD, PORT, SENDER = [getattr(Config, const) for const in mail_constants]
+mail_constants = ['MAIL_USERNAME', 'MAIL_SERVER', 'MAIL_PASSWORD', 'MAIL_PORT',
+                        'SECURITY_EMAIL_SENDER','EMAIL_SIGNATURE','EMAIL_ADMIN']
+UNAME, SERVER, PASSWORD, PORT, SENDER, SIGNATURE, EMAIL_ADMIN = [getattr(Config, const) for const in mail_constants]
 
 # The following three functions are factory functions.  They generate setter and getter functions for the provided model
 # class.  These functions will be converted into Celery tasks, so they can't take model objects as arguments directly;
@@ -84,13 +85,8 @@ def send_email(email_info):
     :return:
     """
     context = ssl.create_default_context()
-    user_name, user_email, message = email_info
 
-    msg = EmailMessage()
-    msg.set_content(message['body'])
-    msg['Subject'] = message['subject']
-    msg['To'] = f'{user_name} <{user_email}>'
-    msg['From'] = SENDER
+    msg = format_email(email_info)
 
     with smtplib.SMTP(SERVER, PORT) as server:
         server.starttls(context=context)
@@ -98,7 +94,7 @@ def send_email(email_info):
         server.send_message(msg)
     return
 
-def format_email(sender_email, email_info):
+def format_email(email_info):
     """ Format an email message
 
     :param str sender_email: the email of the sender
@@ -108,17 +104,22 @@ def format_email(sender_email, email_info):
     :rtype: EmailMessage
     """
     user_name, user_email, message = email_info
+
+    # Extract first name from user_name to add salutation to the email
+    first_name=user_name.split(' ',1)[0]
+    message_text = '''Dear {},\n\n{}\n\n{}'''.format(first_name, message['body'],SIGNATURE)
+
     msg = EmailMessage()
-    msg.set_content(message['body'])
+    msg.set_content(message_text)
     msg['Subject'] = message['subject']
     msg['To'] = f'{user_name} <{user_email}>'
-    msg['From'] = sender_email
+    msg['From'] = SENDER
     return msg
 
 
 @cel.task
 def global_error_handler(req, exc, tb, cel, log_message='generic_message', user_name='', user_email='',
-                         user_message='generic_message', email_user=True, email_admin=False):
+                         user_message='generic_message', email_user=True, email_admin=EMAIL_ADMIN):
     """
     :param Request req: with the following two parameters, arguments that are automatically passed to Celery error
     handlers, and so must be included, even though they are not used

@@ -20,7 +20,7 @@ class BaseModel:
 
     def _username(self):
         try:
-            return current_user.name
+            return current_user.full_name
         except:
             return ''
 

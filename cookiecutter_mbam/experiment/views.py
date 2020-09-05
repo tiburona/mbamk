@@ -78,7 +78,7 @@ def add():
             flash("There was a problem uploading your scan", 'error')  # todo: error should be color coded red
             global_error_handler(
                 request, e, traceback.format_exc(),
-                cel=False, log_message='generic_message', user_email=current_user.email, user_message='generic_message',
+                cel=False, log_message='generic_message', user_name=current_user.full_name, user_email=current_user.email, user_message='generic_message',
                 email_user=True, email_admin=True
             )
 
