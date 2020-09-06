@@ -9,17 +9,13 @@
   </button>
 
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
-    <!-- <ul class="navbar-nav mr-auto"> -->
-     <!--  <li class="nav-item"><a href="{{ url_for('public.home') }}">Home
-          <span class="sr-only">(current)</span>
-        </a>
-      </li>
-      <li class="nav-item"><a href="{{ url_for('public.about') }}">About</a></li>
-      <li class="nav-item"><a href="{{ url_for('public.FAQ') }}">FAQ</a></li> -->
-    <!-- </ul> -->
 
     {% if current_user and current_user.is_authenticated %}
     <ul class="navbar-nav my-auto mobile-hide">
+      <li class="nav-item"><a href="{{ url_for('public.about') }}">About</a></li>
+      <li class="nav-item"><a href="{{ url_for('public.home', _anchor='media-section') }}" >Media</a></li>
+      <li class="nav-item"><a href="{{ url_for('public.home', _anchor='team-section') }}">Team</a></li>
+      <li class="nav-item"><a href="{{ url_for('public.FAQ') }}">FAQ</a></li>
 
       <li class="nav-item dropdown">
         {% if current_user.first_name %}
@@ -30,7 +26,7 @@
 
         <div class="dropdown-menu user-d" aria-labelledby="navbarDropdown">
           <a class="dropdown-item nav-us-p" href="{{ url_for('user.profile') }}"><i class="fa fa-user"></i>Edit Profile</a>
-          <!--<a class="dropdown-item nav-us-p" data-toggle="modal" data-target= "#myModal"><i class="fa fa-user"></i>Edit Profile</a>-->
+          <a class="dropdown-item nav-us-p" href="{{ url_for('experiment.add') }}"><i class="fa fa-upload"></i>Add Scan</a>
           {% if current_user.experiments.all() %}
           <a class="dropdown-item nav-us-p" href="{{ url_for('display.displays') }}"><i class="fa fa-desktop"></i>View Scans</a>
           {% endif %}
@@ -41,6 +37,7 @@
 
     <!-- for mobile version without dropdown -->
     <ul class="navbar-nav my-auto mobile-show nav-edit-section">
+
       <li class="nav-item">
          {% if current_user.first_name %}
         <a class="nav-link" href="{{ url_for('user.home') }}">Logged in as {{ current_user.first_name }}</a>
@@ -49,28 +46,21 @@
         {% endif %}
       </li>
       <li class="nav-item"><a href="{{ url_for('user.profile') }}"><i class="fa fa-user"></i>Edit Profile</a></li>
+      <li class="nav-item"><a href="{{ url_for('experiment.add') }}"><i class="fa fa-upload"></i>Add Scan</a></li>
       {% if current_user.experiments.all() %}
       <li class="nav-item"><a href="{{ url_for('display.displays') }}"><i class="fa fa-desktop"></i>View Scans</a></li>
       {% endif %}
       <li class="nav-item"><a href="{{ url_for_security('logout') }}"><i class="fa fa-sign-out"></i>Logout</a></li>
     </ul>
+
     {% else %}
 
+    <!-- What to display when not logged in -->
     <ul class="navbar-menu nav-default nav-edit-section">
-<!--       <li class="nav-item"><a href="{{ url_for('public.home') }}">Home
-          <span class="sr-only">(current)</span>
-        </a>
-      </li> -->
       <li class="nav-item"><a href="{{ url_for('public.about') }}">About</a></li>
-<!--       <li class="nav-item"><a href="{{ url_for('public.media') }}">Media</a></li>
-      <li class="nav-item"><a href="{{ url_for('public.team') }}">Team</a></li> -->
       <li class="nav-item"><a href="{{ url_for('public.home', _anchor='media-section') }}" >Media</a></li>
       <li class="nav-item"><a href="{{ url_for('public.home', _anchor='team-section') }}">Team</a></li>
       <li class="nav-item"><a href="{{ url_for('public.FAQ') }}">FAQ</a></li>
-
-<!--       <li class="nav-item">
-        <a class="nav-link navbar-text" href="{{ url_for_security('register') }}"><i class="fa fa-user-plus"></i> Register</a>
-      </li> -->
       <li class="nav-item">
        <a class="nav-link navbar-text" href="{{ url_for_security('login') }}"><i class="fa fa-sign-in"></i> Login</a>
      </li>
@@ -78,7 +68,6 @@
     {% endif %}
   </div><!-- /.navbar-collapse -->
 </nav>
-
 
 {% with messages = get_flashed_messages(with_categories=true) %}
 {% if messages %}

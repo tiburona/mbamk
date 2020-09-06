@@ -5,7 +5,7 @@
     <link href="{{ url_for('static',filename='papaya/papaya.css') }}" rel="stylesheet">
 
     <div class="container-narrow">
-      <p class="go-b"><a href="{{ url_for('display.displays') }}"><i class="fa fa-arrow-left pr-2"></i>Go to menu</a></p>
+      <p class="go-b"><a href="{{ url_for('display.displays') }}"><i class="fa fa-arrow-left pr-2"></i>Go to scans dashboard</a></p>
       <h4 class="mt-5 mb-3">{{ scan.label }}
       <!-- Uncomment below line, and comment 2nd line to use the modal version of the form -->
       <a data-toggle= "modal" data-target="#editScanModal" data-url="{{ url_for('scan.edit_scan', id=scan.id) }}" data-label="{{ scan.label }}">

@@ -9,7 +9,7 @@ from wtforms.fields.html5 import DateField
 class ExperimentForm(FlaskForm):
     """Experiment form."""
 
-    date = DateField('Scan date', format='%Y-%m-%d')
+    date = DateField('Scan Date', format='%Y-%m-%d')
     scanner = SelectField('Scanner',
                           choices=[('Unknown','Don\'t know'),('GE', 'GE'), ('Sie', 'Siemens'), ('Phi', 'Phillips')],
                           default='Unknown')
@@ -47,5 +47,3 @@ class ExperimentAndScanForm(ExperimentForm, ScanForm):
     def __init__(self, *args, **kwargs):
         """Create instance."""
         super(ExperimentAndScanForm, self).__init__(*args, **kwargs)
-
-

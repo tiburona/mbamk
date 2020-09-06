@@ -5,9 +5,9 @@
     <div class="container">
       <div class="container-displays">
         {% if displays %}
-          <h4>These are your available displays.</h4>
+          <h4>Scans Dashboard</h4>
         {% else %}
-          <h4>There are no scans in your dashboard. Upload a scan <a href="{{ url_for( 'experiment.add' ) }}">here</a></h4>
+          <h4>There are no scans in your dashboard.</h4>
         {% endif %}
 
         <table>
@@ -88,6 +88,9 @@
         </tbody>
 
         </table>
+
+        <p>&nbsp;<a href="{{ url_for( 'experiment.add' ) }}"><u>Add a scan</u>. <i class="fa fa-upload"></i></a></p>
+
       </div>
     </div>
 </section>

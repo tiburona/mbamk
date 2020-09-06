@@ -20,15 +20,14 @@
 
         {% if current_user.is_authenticated %}
             {% if not current_user.experiments.all() %}
-                <p>First Visit? We will guide you through the steps</p>
+              
                 <p class="btn-ca"><a class="btn btn-large btn-y" href="{{ url_for( 'experiment.add' ) }}" role="button"><i class="fa fa-upload" aria-hidden="true"></i> Upload my scan</a></p>
             {% else %}
-                <p>Click below to view your uploaded scans or upload a new one.</p>
-                <p>
+
                     <p class="btn-ca"><a class="btn btn-large btn-y" href="{{ url_for('display.displays') }}" role="button"><i class="fa fa-desktop" aria-hidden="true"></i> View my scans</a></p>
-                    <p class="hype-t"><i>Would you like add another scan?<a href="{{ url_for('experiment.add') }}" role="button"> <u>Upload a scan</u></a></i></p>
-                    <!--<a class="btn btn-primary btn-large" href="" role="button"><i class="fa fa-pencil-square" aria-hidden="true"></i> My surveys</a>-->
-                </p>
+                    <p class="hype-t"><i>Would you like to <a href="{{ url_for('experiment.add') }}" role="button"> <u>add another scan</u></a>?</i></p>
+
+
             {% endif %}
         {% else %}
 

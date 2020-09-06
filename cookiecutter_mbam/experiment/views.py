@@ -14,7 +14,7 @@ from cookiecutter_mbam.config import Config
 from cookiecutter_mbam.utils.debug_utils import debug
 from cookiecutter_mbam.scan.service import ScanService
 
-blueprint = Blueprint('experiment', __name__, url_prefix='/experiments', static_folder='../static')
+blueprint = Blueprint('experiment', __name__, url_prefix='/', static_folder='../static')
 
 num2words = {
         1: 'one scan',
@@ -79,7 +79,7 @@ def add():
             flash("There was a problem uploading your scan", 'error')  # todo: error should be color coded red
             global_error_handler(
                 request, e, traceback.format_exc(),
-                cel=False, log_message='generic_message', user_email=current_user.email, user_message='generic_message',
+                cel=False, log_message='generic_message', user_name=current_user.full_name, user_email=current_user.email, user_message='generic_message',
                 email_user=True, email_admin=True
             )
 

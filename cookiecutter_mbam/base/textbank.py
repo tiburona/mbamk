@@ -1,3 +1,5 @@
+# TODO: Add a salutation to these messages, and also add a signature including a link to the site.
+# TODO: Override default Flask security emails for registration and confirmation. 
 messages = {
     'generic_message': {
         'subject': "An error occurred",
@@ -9,7 +11,7 @@ messages = {
         },
     'user_external_uploads': {
         'subject': "An error occurred",
-        'body': "Your scan was uploaded to our site, but something went wrong with the services we use to " 
+        'body': "Your scan was uploaded to our site, but something went wrong with the services we use to "
                 "process it, so it won't be visible until we fix it.  The admins have been notified."},
     'user_external_threed': {
         'subject': "An error occurred",

@@ -9,9 +9,7 @@ from cookiecutter_mbam.experiment.forms import ExperimentForm
 from cookiecutter_mbam.scan.forms import EditScanForm
 from cookiecutter_mbam.utils.debug_utils import debug
 
-
-blueprint = Blueprint('display', __name__, url_prefix='/displays', static_folder='../static')
-
+blueprint = Blueprint('display', __name__, url_prefix='/scans/dashboard', static_folder='../static')
 
 @blueprint.route('/')
 @login_required

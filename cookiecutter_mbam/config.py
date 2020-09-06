@@ -9,7 +9,6 @@ from environs import Env
 env = Env()
 env.read_env()
 
-
 class Config:
     """ Sets default configuration and reads from environment variables for any overwrites"""
 
@@ -69,7 +68,9 @@ class Config:
     MAIL_PORT = env.int('MAIL_PORT', 587)
     MAIL_USE_SSL = env.bool('MAIL_USE_SSL', False)
     MAIL_USE_TLS = env.bool('MAIL_USE_TLS', True)
-    ADMIN_EMAIL = env.str('ADMIN_EMAIL', 'tiburona@gmail.com')
+    ADMIN_EMAIL = env.str('ADMIN_EMAIL', 'spiropan@gmail.com')
+    EMAIL_ADMIN = env.bool('EMAIL_ADMIN', True)
+    EMAIL_SIGNATURE = 'My Brain and Me Team'
 
     # XNAT
     XNAT_HOST = env.str('XNAT_HOST', 'http://10.1.1.17')
