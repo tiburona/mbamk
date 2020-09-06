@@ -33,13 +33,19 @@ def create_app(config=Config):
 
     return app
 
-def register_extensions(app):
+def register_extensions(app, config=Config):
     """Register Flask extensions."""
     cache.init_app(app)
     db.init_app(app)
     csrf_protect.init_app(app)
     user_datastore = SQLAlchemyUserDatastore(db, User, Role)
-    security.init_app(app, datastore=user_datastore)
+    security_ctx=security.init_app(app, datastore=user_datastore)
+
+    # # This context processor is added to all emails from Flask Security
+    @security_ctx.mail_context_processor
+    def security_mail_processor():
+        return dict(signature=config.EMAIL_SIGNATURE)
+
     create_test_users(app, user_datastore, db)
     debug_toolbar.init_app(app)
     migrate.init_app(app, db)

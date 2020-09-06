@@ -1,0 +1,11 @@
+{% if user.first_name %}
+  <p>{{ _('Hello %(name)s,', name=user.first_name) }}</p>
+{% else %}
+  <p>Hello!</p>
+{% endif %}
+
+<p>{{ _('You can log into your account through the link below:') }}</p>
+
+<p><a href="{{ login_link }}">{{ _('Login now') }}</a></p>
+
+<p>{{ signature }}</p>

@@ -40,11 +40,14 @@ def profile():
 @login_required
 def consent():
     """ Consent form for participation in research."""
-    flash("Uploading your brain scan to My Brain and Me is participation in a "
-          "research study. You can learn about what that means below. If you "
-          "decide to participate, you can provide consent after reading the study "
-          "description.", 'success')
+
     if isinstance(current_user.sex,str): # Check if user profile was filled out
+
+        flash("Uploading your brain scan to My Brain and Me is participation in a "
+              "research study. You can learn about what that means below. If you "
+              "decide to participate, you can provide consent after reading the study "
+              "description.", 'success')
+
         form = ConsentForm()
         if form.validate_on_submit():
             current_user.update(consented=form.consented.data)

@@ -1,0 +1,11 @@
+{% if user.first_name %}
+  <p>{{ _('Hello %(name)s,', name=user.first_name) }}</p>
+{% else %}
+  <p>Hello!</p>
+{% endif %}
+
+<p>{{ _('Please confirm your email through the link below:') }}</p>
+
+<p><a href="{{ confirmation_link }}">{{ _('Confirm my account') }}</a></p>
+
+<p>{{ signature }}</p>

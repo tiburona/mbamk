@@ -1,0 +1,9 @@
+{% if user.first_name %}
+  <p>{{ _('Hello %(name)s,', name=user.first_name) }}</p>
+{% else %}
+  <p>Hello!</p>
+{% endif %}
+
+<p>{{ _('Your password has been reset.') }}</p>
+
+<p>{{ signature }}</p>
