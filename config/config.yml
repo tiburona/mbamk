@@ -112,6 +112,63 @@ QA:
   ACKS_LATE: True
   TASK_REJECT_ON_WORKER_LOST: True
 
+ALPHA:
+  ENV: alpha
+  DEBUG: False
+  SERVER_NAME: alpha.mybrainandme.org
+  PREFERRED_URL_SCHEME: https
+  FLASK_APP: autoapp.py
+  FLASK_ENV: production
+  BASIC_AUTH_FORCE: True
+  MIND_XNAT_HOST: https://mind-xnat.nyspi.org
+  MIND_DICOM_TO_NIFTI_COMMAND: 41
+  MIND_FREESURFER_RECON_COMMAND: 43 # 42 is mock freesurfer
+  MIND_FS_TO_MESH_COMMAND: 44
+  MIND_XNAT_DOCKER_HOST: http://10.20.193.214:2375
+  MIND_XNAT_PROJECT: MBAM_ALPHA
+  AWS_ACCOUNT_ID: 413377292493
+  AWS_DEFAULT_REGION: us-east-1
+  IMAGE_REPO: mbam/flask-app
+  STACK_NAME: alpha
+  MAIL_SERVER: email-smtp.us-east-1.amazonaws.com
+  MYSQL_USERNAME: mbam
+  MYSQL_PASSWORD: mbam1234
+  SECURITY_EMAIL_SENDER: '"My Brain and Me" <info@mybrainandme.org>'
+  MYSQL_HOST: braindb-instance.clem3xtlzpyq.us-east-1.rds.amazonaws.com
+  JATOS_DB_URL: jdbc:mysql://braindb-instance.clem3xtlzpyq.us-east-1.rds.amazonaws.com/brain_db?characterEncoding=UTF-8&useSSL=false
+  S3_BUCKET: 'mbam-test-sp'
+  ACKS_LATE: True
+  TASK_REJECT_ON_WORKER_LOST: True
+
+
+BETA:
+  ENV: beta
+  DEBUG: False
+  SERVER_NAME: beta.mybrainandme.org
+  PREFERRED_URL_SCHEME: https
+  FLASK_APP: autoapp.py
+  FLASK_ENV: production
+  BASIC_AUTH_FORCE: True
+  MIND_XNAT_HOST: https://mind-xnat.nyspi.org
+  MIND_DICOM_TO_NIFTI_COMMAND: 41
+  MIND_FREESURFER_RECON_COMMAND: 43 # 42 is mock freesurfer
+  MIND_FS_TO_MESH_COMMAND: 44
+  MIND_XNAT_DOCKER_HOST: http://10.20.193.214:2375
+  MIND_XNAT_PROJECT: MBAM_BETA
+  AWS_ACCOUNT_ID: 413377292493
+  AWS_DEFAULT_REGION: us-east-1
+  IMAGE_REPO: mbam/flask-app
+  STACK_NAME: beta
+  MAIL_SERVER: email-smtp.us-east-1.amazonaws.com
+  MYSQL_USERNAME: mbam
+  MYSQL_PASSWORD: mbam1234
+  SECURITY_EMAIL_SENDER: '"My Brain and Me" <info@mybrainandme.org>'
+  MYSQL_HOST: braindb-instance.clem3xtlzpyq.us-east-1.rds.amazonaws.com
+  JATOS_DB_URL: jdbc:mysql://braindb-instance.clem3xtlzpyq.us-east-1.rds.amazonaws.com/brain_db?characterEncoding=UTF-8&useSSL=false
+  S3_BUCKET: 'mbam-test-sp'
+  ACKS_LATE: True
+  TASK_REJECT_ON_WORKER_LOST: True
+
 TRUSTED:
   ENV: trusted
   TESTING: False

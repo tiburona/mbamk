@@ -3,7 +3,7 @@
 
 <section role="content-uni-wrapper">
       <div class="container-displays">
-        <p class="go-b"><a href="{{ url_for('display.displays') }}"><i class="fa fa-arrow-left pr-2"></i>Go to menu</a></p>
+        <p class="go-b"><a href="{{ url_for('display.displays') }}"><i class="fa fa-arrow-left pr-2"></i>Go to scans dashboard</a></p>
         <h4 class="mt-5 mb-3">{{ scan.label }}</h4>
         <!-- Use some slightly different colors from default, or funky colors to make it obvious the overrides worked. -->
         <iframe id="dragonfruit" src="dragonfruit.html" style="width:100%;height:480px" data-objects='[ {"url": "{{ url|safe }}" }]'></iframe>

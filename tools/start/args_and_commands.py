@@ -20,6 +20,10 @@ processes = {
             'staging': ["flask db upgrade", "gunicorn -w 2 --worker-tmp-dir /dev/shm --threads 4 -b :8000 "
                                             "--worker-class gthread 'cookiecutter_mbam.app:create_app()'"],
             'qa': ["flask db upgrade", "gunicorn -w 2 --threads 4 -b :8000 --worker-class gthread "
+                                       "'cookiecutter_mbam.app:create_app()'"],
+            'alpha': ["flask db upgrade", "gunicorn -w 2 --threads 4 -b :8000 --worker-class gthread "
+                                       "'cookiecutter_mbam.app:create_app()'"],
+            'beta': ["flask db upgrade", "gunicorn -w 2 --threads 4 -b :8000 --worker-class gthread "
                                        "'cookiecutter_mbam.app:create_app()'"]
         },
         'label': ('FLASK', 'BLUE')
@@ -40,7 +44,7 @@ run_args = [
                        'default': '.'}),
     (['-e', '--env'], {'default': 'trusted',
                        'help': "The type of environment. Determines configuration.",
-                       'choices': ['local', 'docker', 'trusted', 'staging', 'qa']}),
+                       'choices': ['local', 'docker', 'trusted', 'staging', 'qa', 'alpha', 'beta']}),
     (['-f', '--flask'], {'action': 'store_true', 'help': "Start the Flask app"}),
     (['-c', '--celery'], {'action': 'store_true', 'help': "Start Celery worker"}),
     (['-r', '--redis'], {'action': 'store_true', 'help': "Start Redis"}),
