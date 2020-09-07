@@ -78,6 +78,7 @@ STAGING:
   STACK_NAME: staging
   MAIL_SERVER: email-smtp.us-east-1.amazonaws.com
   SECURITY_EMAIL_SENDER: '"My Brain and Me" <info@mybrainandme.org>'
+  SECURITY_CONFIRMABLE: True
   MYSQL_HOST: braindb-instance.clem3xtlzpyq.us-east-1.rds.amazonaws.com
   JATOS_DB_URL: jdbc:mysql://braindb-instance.clem3xtlzpyq.us-east-1.rds.amazonaws.com/brain_db?characterEncoding=UTF-8&useSSL=false
   S3_BUCKET: 'mbam-test-sp'
@@ -106,6 +107,7 @@ QA:
   MYSQL_USERNAME: mbam
   MYSQL_PASSWORD: mbam1234
   SECURITY_EMAIL_SENDER: '"My Brain and Me" <info@mybrainandme.org>'
+  SECURITY_CONFIRMABLE: True
   MYSQL_HOST: braindb-instance.clem3xtlzpyq.us-east-1.rds.amazonaws.com
   JATOS_DB_URL: jdbc:mysql://braindb-instance.clem3xtlzpyq.us-east-1.rds.amazonaws.com/brain_db?characterEncoding=UTF-8&useSSL=false
   S3_BUCKET: 'mbam-test-sp'
@@ -134,6 +136,7 @@ ALPHA:
   MYSQL_USERNAME: mbam
   MYSQL_PASSWORD: mbam1234
   SECURITY_EMAIL_SENDER: '"My Brain and Me" <info@mybrainandme.org>'
+  SECURITY_CONFIRMABLE: True
   MYSQL_HOST: braindb-instance.clem3xtlzpyq.us-east-1.rds.amazonaws.com
   JATOS_DB_URL: jdbc:mysql://braindb-instance.clem3xtlzpyq.us-east-1.rds.amazonaws.com/brain_db?characterEncoding=UTF-8&useSSL=false
   S3_BUCKET: 'mbam-test-sp'
@@ -163,6 +166,7 @@ BETA:
   MYSQL_USERNAME: mbam
   MYSQL_PASSWORD: mbam1234
   SECURITY_EMAIL_SENDER: '"My Brain and Me" <info@mybrainandme.org>'
+  SECURITY_CONFIRMABLE: True
   MYSQL_HOST: braindb-instance.clem3xtlzpyq.us-east-1.rds.amazonaws.com
   JATOS_DB_URL: jdbc:mysql://braindb-instance.clem3xtlzpyq.us-east-1.rds.amazonaws.com/brain_db?characterEncoding=UTF-8&useSSL=false
   S3_BUCKET: 'mbam-test-sp'
@@ -200,6 +204,7 @@ TRUSTED:
   MYSQL_DOCKER_HOST: mysql
   MYSQL_PASSWORD: mbam123
   ACKS_LATE: False
+  SECURITY_CONFIRMABLE: False
 
 
 LOCAL:
