@@ -12,7 +12,7 @@ Parameters:
                  cluster resources. Example: staging, qa, or production"
     Type: String
     Default: staging
-    AllowedValues: [ 'staging', 'qa']
+    AllowedValues: [ 'staging', 'qa', 'alpha', 'beta']
   InstanceType:
     Description: EC2 instance type
     Type: String
