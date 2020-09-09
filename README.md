@@ -539,5 +539,4 @@ For more information about XNAT you may be interested in visiting
 
 For developing an intuitive sense of the XNAT container service, an interface to the Docker daemon MBAM uses to launch
 Docker containers, you may be interested in working through
-[this tutorial](https://github.com/MIND-NYSPI/xnat-cs-tutorial/blob/master/tutorial.md), written by one of the MBAM
-developers, Katie Surrence.  You may find it more user friendly than the XNAT docs.  
+[this tutorial](https://github.com/MIND-NYSPI/xnat-cs-tutorial/blob/master/tutorial.md).  You may find it more user friendly than the XNAT docs.  

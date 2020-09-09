@@ -20,15 +20,15 @@
     "type": "git",
     "url": "git+https://github.com/spiropan/mbam.git"
   },
-  "author": "Katie Surrence",
+  "author": "Spiro Pantazatos",
   "license": "BSD-3-Clause",
   "engines": {
     "node": ">=4"
   },
   "bugs": {
-    "url": "https://github.com/tiburona/cookiecutter_mbam/issues"
+    "url": "https://github.com/spiropan/mbam/issues"
   },
-  "homepage": "https://github.com/tiburona/cookiecutter_mbam#readme",
+  "homepage": "https://github.com/spiropan/mbam#readme",
   "dependencies": {
     "bootstrap": "^4.4.1",
     "bootstrap-fileinput": "^4.5.3",
